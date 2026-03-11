@@ -1,0 +1,22 @@
+# Local development overrides — never commit real secrets
+spring:
+  datasource:
+    username: root
+    password: root
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+
+app:
+  jwt:
+    # 64-char hex string — replace with your own before committing real services
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  cors:
+    allowed-origins: http://localhost:5173
+
+logging:
+  level:
+    com.freightclub: DEBUG
+    org.springframework.security: DEBUG

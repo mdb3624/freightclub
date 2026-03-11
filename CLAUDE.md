@@ -17,13 +17,26 @@ See the `docs/` folder for persona-specific requirements. Claude should consult 
 
 ---
 
+## Tech Stack (confirmed)
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18 + TypeScript + Vite + Tailwind CSS |
+| State | Zustand (UI) + React Query (server state) |
+| Backend | Spring Boot 3.x, Java 21 |
+| Auth | Spring Security + JWT (RS256, HTTP-only refresh cookie) |
+| Database | MySQL 8.x |
+| ORM | Spring Data JPA + Hibernate |
+| Migrations | Flyway |
+
 ## Architecture
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for:
-- System design and component breakdown
-- User roles and domain concepts
-- Tech stack decisions
-- Directory structure
+- Full system design and component breakdown
+- Multi-tenancy strategy (shared schema, tenant_id isolation)
+- Backend layered structure and conventions
+- Frontend folder structure and conventions
+- Database design principles and core table schema
 - Architectural Decision Records (ADRs)
 
 Keep ARCHITECTURE.md up to date as the system evolves.

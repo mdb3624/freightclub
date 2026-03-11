@@ -15,6 +15,16 @@ See the `docs/` folder for persona-specific requirements. Claude should consult 
 | Owner/Operator (trucker) | [docs/owner_operator.md](./docs/owner_operator.md) |
 | Shipper | [docs/shipper.md](./docs/shipper.md) |
 
+## Database Migrations
+
+All schema changes are managed with Flyway. See [docs/database-migrations.md](./docs/database-migrations.md) for:
+- Naming convention (`V{YYYYMMDD}_{seq}__{description}.sql`)
+- Migration writing standards (UUIDs, tenant_id, soft deletes, indexes)
+- Team workflow and conflict resolution
+- CI integration and useful commands
+
+**Never modify a committed migration. Never use `ddl-auto=update` in any shared environment.**
+
 ---
 
 ## Tech Stack (confirmed)

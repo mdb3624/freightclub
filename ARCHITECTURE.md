@@ -197,7 +197,7 @@ src/
 - Use `created_at` and `updated_at` timestamps on all tables (managed by JPA `@CreationTimestamp` / `@UpdateTimestamp`)
 - Use `deleted_at` for soft deletes
 - Foreign keys enforced at DB level
-- All migrations managed via **Flyway** (`db/migration/V{n}__{description}.sql`)
+- All migrations managed via **Flyway** — see [docs/database-migrations.md](./docs/database-migrations.md) for the full team guide
 
 ### Core Tables (initial)
 

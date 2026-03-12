@@ -5,6 +5,7 @@ export interface Profile {
   lastName: string
   role: string
   companyName: string | null
+  companyJoinCode: string | null
   businessName: string | null
   phone: string | null
   billingAddress: string | null

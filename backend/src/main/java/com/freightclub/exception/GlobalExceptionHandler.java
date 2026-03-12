@@ -43,6 +43,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, message, req);
     }
 
+    @ExceptionHandler(InvalidJoinCodeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidJoinCode(InvalidJoinCodeException ex, HttpServletRequest req) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req);
+    }
+
     @ExceptionHandler(LoadNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleLoadNotFound(LoadNotFoundException ex, HttpServletRequest req) {
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), req);

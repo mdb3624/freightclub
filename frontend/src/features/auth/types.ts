@@ -13,4 +13,5 @@ export interface RegisterFormValues {
   lastName: string
   role: UserRole
   companyName: string
+  joinCode: string
 }

@@ -6,20 +6,26 @@ import com.freightclub.domain.UserRole;
 import com.freightclub.dto.LoginRequest;
 import com.freightclub.dto.RegisterRequest;
 import com.freightclub.exception.EmailAlreadyExistsException;
+import com.freightclub.exception.InvalidJoinCodeException;
 import com.freightclub.repository.TenantRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.JwtService;
 import com.freightclub.security.RefreshTokenService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
+
 @Service
 @Transactional
 public class AuthService {
+
+    private static final String JOIN_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    private static final int JOIN_CODE_LENGTH = 8;
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private final UserRepository userRepository;
     private final TenantRepository tenantRepository;
@@ -47,9 +53,21 @@ public class AuthService {
             throw new EmailAlreadyExistsException(request.email());
         }
 
-        Tenant tenant = new Tenant();
-        tenant.setName(request.companyName());
-        tenantRepository.save(tenant);
+        Tenant tenant;
+        boolean hasJoinCode = request.joinCode() != null && !request.joinCode().isBlank();
+        boolean hasCompanyName = request.companyName() != null && !request.companyName().isBlank();
+
+        if (hasJoinCode) {
+            tenant = tenantRepository.findByJoinCode(request.joinCode().toUpperCase().trim())
+                    .orElseThrow(InvalidJoinCodeException::new);
+        } else if (hasCompanyName) {
+            tenant = new Tenant();
+            tenant.setName(request.companyName());
+            tenant.setJoinCode(generateJoinCode());
+            tenantRepository.save(tenant);
+        } else {
+            throw new IllegalArgumentException("Either companyName or joinCode is required");
+        }
 
         User user = new User();
         user.setTenantId(tenant.getId());
@@ -98,6 +116,14 @@ public class AuthService {
 
     public long accessTokenExpirySeconds() {
         return jwtService.getAccessTokenExpiryMs() / 1000;
+    }
+
+    private String generateJoinCode() {
+        StringBuilder sb = new StringBuilder(JOIN_CODE_LENGTH);
+        for (int i = 0; i < JOIN_CODE_LENGTH; i++) {
+            sb.append(JOIN_CODE_CHARS.charAt(RANDOM.nextInt(JOIN_CODE_CHARS.length())));
+        }
+        return sb.toString();
     }
 
     public record AuthResult(String accessToken, String rawRefreshToken, User user) {}

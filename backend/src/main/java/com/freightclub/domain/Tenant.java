@@ -18,6 +18,9 @@ public class Tenant {
     @Column(nullable = false)
     private String name;
 
+    @Column(name = "join_code", nullable = true, unique = true, length = 12)
+    private String joinCode;
+
     @Column(nullable = false, length = 50)
     private String plan = "FREE";
 
@@ -42,5 +45,7 @@ public class Tenant {
     public String getId() { return id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+    public String getJoinCode() { return joinCode; }
+    public void setJoinCode(String joinCode) { this.joinCode = joinCode; }
     public String getPlan() { return plan; }
 }

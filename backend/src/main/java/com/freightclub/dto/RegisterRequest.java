@@ -22,6 +22,9 @@ public record RegisterRequest(
         @NotNull
         UserRole role,
 
-        @NotBlank
-        String companyName
+        // Provide companyName to create a new company, or joinCode to join an existing one.
+        // Exactly one must be supplied; validated in AuthService.
+        String companyName,
+
+        String joinCode
 ) {}

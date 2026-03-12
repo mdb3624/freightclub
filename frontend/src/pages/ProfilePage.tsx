@@ -107,7 +107,17 @@ export function ProfilePage() {
             <section className="rounded-xl border border-gray-200 bg-white p-6">
               <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Company</h3>
               <p className="text-sm text-gray-900 font-medium">{profile.companyName}</p>
-              <p className="text-xs text-gray-500 mt-1">Contact support to update your company name.</p>
+              {profile.companyJoinCode && (
+                <div className="mt-3 flex items-center gap-3">
+                  <div className="rounded-md bg-gray-100 px-3 py-2">
+                    <p className="text-xs text-gray-500 mb-0.5">Join code</p>
+                    <p className="font-mono text-sm font-semibold text-gray-900 tracking-widest">
+                      {profile.companyJoinCode}
+                    </p>
+                  </div>
+                  <p className="text-xs text-gray-500">Share this code with colleagues to add them to your company.</p>
+                </div>
+              )}
             </section>
           )}
 

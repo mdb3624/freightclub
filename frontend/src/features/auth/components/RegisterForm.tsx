@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -17,7 +18,8 @@ const schema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string().min(1, 'Please confirm your password'),
   role: z.enum(['SHIPPER', 'TRUCKER', 'ADMIN'], { required_error: 'Please select your role' }),
-  companyName: z.string().min(1, 'Company name is required'),
+  companyName: z.string().optional().default(''),
+  joinCode: z.string().optional().default(''),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword'],
@@ -25,9 +27,11 @@ const schema = z.object({
 
 export function RegisterForm() {
   const { mutate, isPending, error } = useRegister()
+  const [joining, setJoining] = useState(false)
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<RegisterFormValues>({
     resolver: zodResolver(schema),
+    defaultValues: { companyName: '', joinCode: '' },
   })
 
   const selectedRole = watch('role')
@@ -70,13 +74,46 @@ export function RegisterForm() {
         <input type="hidden" {...register('role')} />
       </div>
 
-      <Input
-        label="Company name"
-        autoComplete="organization"
-        error={errors.companyName?.message}
-        placeholder="e.g. Acme Logistics LLC"
-        {...register('companyName')}
-      />
+      {/* Company: create or join toggle */}
+      <div className="rounded-lg border border-gray-200 p-4 space-y-3">
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setJoining(false)}
+            className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${
+              !joining ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            Create company
+          </button>
+          <button
+            type="button"
+            onClick={() => setJoining(true)}
+            className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${
+              joining ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            Join existing
+          </button>
+        </div>
+
+        {!joining ? (
+          <Input
+            label="Company name"
+            autoComplete="organization"
+            error={errors.companyName?.message}
+            placeholder="e.g. Acme Logistics LLC"
+            {...register('companyName')}
+          />
+        ) : (
+          <Input
+            label="Company join code"
+            error={errors.joinCode?.message}
+            placeholder="e.g. AB3K7PQR"
+            {...register('joinCode')}
+          />
+        )}
+      </div>
 
       <div className="grid grid-cols-2 gap-3">
         <Input

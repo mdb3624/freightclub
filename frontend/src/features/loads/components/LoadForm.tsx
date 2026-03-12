@@ -25,6 +25,7 @@ const schema = z.object({
   weightLbs: z.number({ invalid_type_error: 'Weight is required' }).min(0.01, 'Weight must be > 0'),
   equipmentType: z.enum(['DRY_VAN', 'FLATBED', 'REEFER', 'STEP_DECK']),
   payRate: z.number({ invalid_type_error: 'Pay rate is required' }).min(0.01, 'Pay rate must be > 0'),
+  payRateType: z.enum(['PER_MILE', 'FLAT_RATE']),
   specialRequirements: z.string().optional().default(''),
 })
 
@@ -51,6 +52,7 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
     resolver: zodResolver(schema),
     defaultValues: {
       equipmentType: 'DRY_VAN',
+      payRateType: 'FLAT_RATE',
       specialRequirements: '',
       distanceMiles: null,
       originZip: '',
@@ -60,6 +62,8 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
   })
 
   const distanceMiles = watch('distanceMiles')
+  const payRateType = watch('payRateType')
+  const payRate = watch('payRate')
   const originAddress = watch('originAddress')
   const originZip = watch('originZip')
   const destinationAddress = watch('destinationAddress')
@@ -230,14 +234,43 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
             <p className="text-xs text-red-600">{errors.equipmentType.message}</p>
           )}
         </div>
-        <Input
-          label="Pay Rate ($)"
-          type="number"
-          error={errors.payRate?.message}
-          step="0.01"
-          min="0.01"
-          {...register('payRate', { valueAsNumber: true })}
-        />
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">Pay Rate</label>
+          <div className="flex gap-1 mb-1">
+            {(['FLAT_RATE', 'PER_MILE'] as const).map((type) => (
+              <button
+                key={type}
+                type="button"
+                onClick={() => setValue('payRateType', type, { shouldValidate: true })}
+                className={`flex-1 rounded py-1 text-xs font-medium transition-colors ${
+                  payRateType === type
+                    ? 'bg-primary-600 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {type === 'FLAT_RATE' ? 'Flat Rate' : 'Per Mile'}
+              </button>
+            ))}
+          </div>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">$</span>
+            <input
+              type="number"
+              step="0.01"
+              min="0.01"
+              className={`w-full rounded-md border px-3 py-2 pl-6 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 ${errors.payRate ? 'border-red-500' : 'border-gray-300'}`}
+              {...register('payRate', { valueAsNumber: true })}
+            />
+          </div>
+          <p className="text-xs text-gray-500">
+            {payRateType === 'PER_MILE' ? (
+              distanceMiles != null && payRate > 0
+                ? `≈ $${(payRate * distanceMiles).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} estimated total`
+                : 'per mile'
+            ) : 'flat rate'}
+          </p>
+          {errors.payRate && <p className="text-xs text-red-600">{errors.payRate.message}</p>}
+        </div>
       </div>
 
       <div>

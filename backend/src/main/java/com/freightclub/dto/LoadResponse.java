@@ -3,6 +3,7 @@ package com.freightclub.dto;
 import com.freightclub.domain.EquipmentType;
 import com.freightclub.domain.Load;
 import com.freightclub.domain.LoadStatus;
+import com.freightclub.domain.PayRateType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ public record LoadResponse(
         BigDecimal weightLbs,
         EquipmentType equipmentType,
         BigDecimal payRate,
+        PayRateType payRateType,
         String specialRequirements,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
@@ -52,6 +54,7 @@ public record LoadResponse(
                 load.getWeightLbs(),
                 load.getEquipmentType(),
                 load.getPayRate(),
+                load.getPayRateType(),
                 load.getSpecialRequirements(),
                 load.getCreatedAt(),
                 load.getUpdatedAt()

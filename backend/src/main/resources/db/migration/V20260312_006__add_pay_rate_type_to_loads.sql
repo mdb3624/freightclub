@@ -1,0 +1,2 @@
+ALTER TABLE loads
+    ADD COLUMN pay_rate_type VARCHAR(20) NOT NULL DEFAULT 'FLAT_RATE' AFTER pay_rate;

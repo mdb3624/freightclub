@@ -3,6 +3,7 @@ package com.freightclub.dto;
 import com.freightclub.domain.EquipmentType;
 import com.freightclub.domain.Load;
 import com.freightclub.domain.LoadStatus;
+import com.freightclub.domain.PayRateType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public record LoadSummaryResponse(
         LocalDateTime pickupFrom,
         EquipmentType equipmentType,
         BigDecimal payRate,
+        PayRateType payRateType,
         LocalDateTime createdAt
 ) {
     public static LoadSummaryResponse from(Load load) {
@@ -28,6 +30,7 @@ public record LoadSummaryResponse(
                 load.getPickupFrom(),
                 load.getEquipmentType(),
                 load.getPayRate(),
+                load.getPayRateType(),
                 load.getCreatedAt()
         );
     }

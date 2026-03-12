@@ -37,6 +37,7 @@ export function LoadEditPage() {
     weightLbs: load.weightLbs,
     equipmentType: load.equipmentType,
     payRate: load.payRate,
+    payRateType: load.payRateType,
     specialRequirements: load.specialRequirements ?? '',
   }
 

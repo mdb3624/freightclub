@@ -55,6 +55,9 @@ export function LoadsTable({ loads, onCancel, isCancelling }: LoadsTableProps) {
                 </td>
                 <td className="px-4 py-3 text-sm font-medium text-gray-900">
                   ${load.payRate.toLocaleString()}
+                  <span className="text-xs font-normal text-gray-500 ml-0.5">
+                    {load.payRateType === 'PER_MILE' ? '/mi' : ' flat'}
+                  </span>
                 </td>
                 <td className="px-4 py-3">
                   <StatusBadge status={load.status} />

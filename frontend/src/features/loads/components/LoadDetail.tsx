@@ -82,7 +82,17 @@ export function LoadDetail({ load }: LoadDetailProps) {
 
       <section>
         <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Rate</h3>
-        <p className="text-2xl font-bold text-gray-900">${load.payRate.toLocaleString()}</p>
+        <p className="text-2xl font-bold text-gray-900">
+          ${load.payRate.toLocaleString()}
+          <span className="text-base font-normal text-gray-500 ml-1">
+            {load.payRateType === 'PER_MILE' ? '/mi' : 'flat'}
+          </span>
+        </p>
+        {load.payRateType === 'PER_MILE' && load.distanceMiles != null && (
+          <p className="text-sm text-gray-500 mt-1">
+            ≈ ${(load.payRate * load.distanceMiles).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} estimated total
+          </p>
+        )}
       </section>
 
       {load.specialRequirements && (

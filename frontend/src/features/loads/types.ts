@@ -9,6 +9,8 @@ export type LoadStatus =
 
 export type EquipmentType = 'DRY_VAN' | 'FLATBED' | 'REEFER' | 'STEP_DECK'
 
+export type PayRateType = 'PER_MILE' | 'FLAT_RATE'
+
 export interface Load {
   id: string
   tenantId: string
@@ -29,6 +31,7 @@ export interface Load {
   weightLbs: number
   equipmentType: EquipmentType
   payRate: number
+  payRateType: PayRateType
   specialRequirements: string | null
   createdAt: string
   updatedAt: string
@@ -43,6 +46,7 @@ export interface LoadSummary {
   pickupFrom: string
   equipmentType: EquipmentType
   payRate: number
+  payRateType: PayRateType
   createdAt: string
 }
 
@@ -62,6 +66,7 @@ export interface LoadFormValues {
   weightLbs: number
   equipmentType: EquipmentType
   payRate: number
+  payRateType: PayRateType
   specialRequirements: string
 }
 

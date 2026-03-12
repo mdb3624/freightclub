@@ -43,6 +43,16 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, message, req);
     }
 
+    @ExceptionHandler(LoadNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleLoadNotFound(LoadNotFoundException ex, HttpServletRequest req) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), req);
+    }
+
+    @ExceptionHandler(LoadEditForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleLoadEditForbidden(LoadEditForbiddenException ex, HttpServletRequest req) {
+        return build(HttpStatus.FORBIDDEN, ex.getMessage(), req);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(HttpServletRequest req) {
         return build(HttpStatus.FORBIDDEN, "Access denied", req);

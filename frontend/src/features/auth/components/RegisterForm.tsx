@@ -16,7 +16,7 @@ const schema = z.object({
   email: z.string().min(1, 'Email is required').email('Enter a valid email'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string().min(1, 'Please confirm your password'),
-  role: z.enum(['SHIPPER', 'TRUCKER'], { required_error: 'Please select your role' }),
+  role: z.enum(['SHIPPER', 'TRUCKER', 'ADMIN'], { required_error: 'Please select your role' }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword'],
@@ -42,24 +42,24 @@ export function RegisterForm() {
       {/* Role selection */}
       <div>
         <p className="mb-2 text-sm font-medium text-gray-700">I am a...</p>
-        <div className="grid grid-cols-2 gap-3">
-          {(['SHIPPER', 'TRUCKER'] as const).map((role) => (
+        <div className="grid grid-cols-3 gap-3">
+          {([
+            { value: 'SHIPPER', label: 'Shipper', description: 'I need freight transported' },
+            { value: 'TRUCKER', label: 'Trucker', description: 'I haul loads' },
+            { value: 'ADMIN',   label: 'Admin',   description: 'Platform administrator' },
+          ] as const).map(({ value, label, description }) => (
             <button
-              key={role}
+              key={value}
               type="button"
-              onClick={() => setValue('role', role)}
+              onClick={() => setValue('role', value, { shouldValidate: true })}
               className={`rounded-lg border-2 p-4 text-left transition-colors ${
-                selectedRole === role
+                selectedRole === value
                   ? 'border-primary-600 bg-primary-50'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
-              <p className="font-medium text-gray-900">
-                {role === 'SHIPPER' ? 'Shipper' : 'Trucker'}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                {role === 'SHIPPER' ? 'I need freight transported' : 'I haul loads'}
-              </p>
+              <p className="font-medium text-gray-900">{label}</p>
+              <p className="text-xs text-gray-500 mt-1">{description}</p>
             </button>
           ))}
         </div>

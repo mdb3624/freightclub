@@ -7,9 +7,8 @@ export function useLogout() {
   const logout = useAuthStore((s) => s.logout)
 
   return () => {
-    authApi.logout().finally(() => {
-      logout()
-      navigate('/login', { replace: true })
-    })
+    logout()
+    navigate('/login', { replace: true })
+    authApi.logout().catch(() => {})
   }
 }

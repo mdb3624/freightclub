@@ -6,4 +6,4 @@
 set JAVA_EXEC=java
 if not "%JAVA_HOME%"=="" set JAVA_EXEC=%JAVA_HOME%\bin\java
 
-%JAVA_EXEC% -classpath "%~dp0.mvn\wrapper\maven-wrapper.jar" "-Dmaven.multiModuleProjectDirectory=%~dp0" org.apache.maven.wrapper.MavenWrapperMain %*
+"%JAVA_EXEC%" -classpath "%~dp0.mvn\wrapper\maven-wrapper.jar" "-Dmaven.multiModuleProjectDirectory=%~dp0" org.apache.maven.wrapper.MavenWrapperMain %*

@@ -1,9 +1,22 @@
 import { Link } from 'react-router-dom'
 import { useCreateLoad } from '@/features/loads/hooks/useCreateLoad'
+import { useProfile } from '@/features/profile/hooks/useProfile'
 import { LoadForm } from '@/features/loads/components/LoadForm'
+import type { LoadFormValues } from '@/features/loads/types'
 
 export function LoadCreatePage() {
   const { mutate, isPending, error } = useCreateLoad()
+  const { data: profile } = useProfile()
+
+  const defaultValues: Partial<LoadFormValues> = {}
+
+  if (profile?.defaultPickupAddress || profile?.defaultPickupCity || profile?.defaultPickupZip) {
+    const city = profile.defaultPickupCity ?? ''
+    const state = profile.defaultPickupState ?? ''
+    defaultValues.origin = city && state ? `${city}, ${state}` : city || state
+    defaultValues.originAddress = profile.defaultPickupAddress ?? ''
+    defaultValues.originZip = profile.defaultPickupZip ?? ''
+  }
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-8">
@@ -17,6 +30,7 @@ export function LoadCreatePage() {
       <div className="rounded-xl border border-gray-200 bg-white p-6">
         <LoadForm
           onSubmit={mutate}
+          defaultValues={defaultValues}
           isSubmitting={isPending}
           error={error}
           submitLabel="Post Load"

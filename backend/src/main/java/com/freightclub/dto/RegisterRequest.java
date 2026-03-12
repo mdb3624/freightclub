@@ -20,5 +20,8 @@ public record RegisterRequest(
         String lastName,
 
         @NotNull
-        UserRole role
+        UserRole role,
+
+        @NotBlank
+        String companyName
 ) {}

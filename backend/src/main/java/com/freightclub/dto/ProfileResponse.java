@@ -1,5 +1,6 @@
 package com.freightclub.dto;
 
+import com.freightclub.domain.Tenant;
 import com.freightclub.domain.User;
 
 public record ProfileResponse(
@@ -8,6 +9,7 @@ public record ProfileResponse(
         String firstName,
         String lastName,
         String role,
+        String companyName,
         String businessName,
         String phone,
         String billingAddress,
@@ -22,13 +24,14 @@ public record ProfileResponse(
         boolean notifySms,
         boolean notifyInApp
 ) {
-    public static ProfileResponse from(User user) {
+    public static ProfileResponse from(User user, Tenant tenant) {
         return new ProfileResponse(
                 user.getId(),
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getRole().name(),
+                tenant != null ? tenant.getName() : null,
                 user.getBusinessName(),
                 user.getPhone(),
                 user.getBillingAddress(),

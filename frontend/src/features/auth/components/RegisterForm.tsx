@@ -17,6 +17,7 @@ const schema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string().min(1, 'Please confirm your password'),
   role: z.enum(['SHIPPER', 'TRUCKER', 'ADMIN'], { required_error: 'Please select your role' }),
+  companyName: z.string().min(1, 'Company name is required'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword'],
@@ -68,6 +69,14 @@ export function RegisterForm() {
         )}
         <input type="hidden" {...register('role')} />
       </div>
+
+      <Input
+        label="Company name"
+        autoComplete="organization"
+        error={errors.companyName?.message}
+        placeholder="e.g. Acme Logistics LLC"
+        {...register('companyName')}
+      />
 
       <div className="grid grid-cols-2 gap-3">
         <Input

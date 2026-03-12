@@ -102,6 +102,15 @@ export function ProfilePage() {
             </div>
           )}
 
+          {/* Company (read-only) */}
+          {profile?.companyName && (
+            <section className="rounded-xl border border-gray-200 bg-white p-6">
+              <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Company</h3>
+              <p className="text-sm text-gray-900 font-medium">{profile.companyName}</p>
+              <p className="text-xs text-gray-500 mt-1">Contact support to update your company name.</p>
+            </section>
+          )}
+
           {/* Personal Info */}
           <section className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
             <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Personal Information</h3>

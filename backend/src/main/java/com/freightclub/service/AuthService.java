@@ -1,10 +1,12 @@
 package com.freightclub.service;
 
+import com.freightclub.domain.Tenant;
 import com.freightclub.domain.User;
 import com.freightclub.domain.UserRole;
 import com.freightclub.dto.LoginRequest;
 import com.freightclub.dto.RegisterRequest;
 import com.freightclub.exception.EmailAlreadyExistsException;
+import com.freightclub.repository.TenantRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.JwtService;
 import com.freightclub.security.RefreshTokenService;
@@ -20,20 +22,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final TenantRepository tenantRepository;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    @Value("${app.default-tenant-id}")
-    private String defaultTenantId;
-
     public AuthService(UserRepository userRepository,
+                       TenantRepository tenantRepository,
                        JwtService jwtService,
                        RefreshTokenService refreshTokenService,
                        PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
+        this.tenantRepository = tenantRepository;
         this.jwtService = jwtService;
         this.refreshTokenService = refreshTokenService;
         this.passwordEncoder = passwordEncoder;
@@ -45,8 +47,12 @@ public class AuthService {
             throw new EmailAlreadyExistsException(request.email());
         }
 
+        Tenant tenant = new Tenant();
+        tenant.setName(request.companyName());
+        tenantRepository.save(tenant);
+
         User user = new User();
-        user.setTenantId(defaultTenantId);
+        user.setTenantId(tenant.getId());
         user.setEmail(request.email());
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setRole(request.role());

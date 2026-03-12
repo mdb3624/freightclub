@@ -1,8 +1,10 @@
 package com.freightclub.service;
 
+import com.freightclub.domain.Tenant;
 import com.freightclub.domain.User;
 import com.freightclub.dto.ProfileResponse;
 import com.freightclub.dto.UpdateProfileRequest;
+import com.freightclub.repository.TenantRepository;
 import com.freightclub.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,15 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProfileService {
 
     private final UserRepository userRepository;
+    private final TenantRepository tenantRepository;
 
-    public ProfileService(UserRepository userRepository) {
+    public ProfileService(UserRepository userRepository, TenantRepository tenantRepository) {
         this.userRepository = userRepository;
+        this.tenantRepository = tenantRepository;
     }
 
     @Transactional(readOnly = true)
     public ProfileResponse getProfile(String userId) {
         User user = findUser(userId);
-        return ProfileResponse.from(user);
+        Tenant tenant = tenantRepository.findById(user.getTenantId()).orElse(null);
+        return ProfileResponse.from(user, tenant);
     }
 
     public ProfileResponse updateProfile(String userId, UpdateProfileRequest request) {
@@ -40,7 +45,9 @@ public class ProfileService {
         user.setNotifyEmail(request.notifyEmail());
         user.setNotifySms(request.notifySms());
         user.setNotifyInApp(request.notifyInApp());
-        return ProfileResponse.from(userRepository.save(user));
+        User saved = userRepository.save(user);
+        Tenant tenant = tenantRepository.findById(saved.getTenantId()).orElse(null);
+        return ProfileResponse.from(saved, tenant);
     }
 
     private User findUser(String userId) {

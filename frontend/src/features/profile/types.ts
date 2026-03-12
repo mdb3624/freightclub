@@ -4,6 +4,7 @@ export interface Profile {
   firstName: string
   lastName: string
   role: string
+  companyName: string | null
   businessName: string | null
   phone: string | null
   billingAddress: string | null

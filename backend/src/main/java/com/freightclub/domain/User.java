@@ -12,10 +12,10 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @Column(length = 36, nullable = false, updatable = false)
+    @Column(columnDefinition = "CHAR(36)", nullable = false, updatable = false)
     private String id;
 
-    @Column(name = "tenant_id", length = 36, nullable = false, updatable = false)
+    @Column(name = "tenant_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
     private String tenantId;
 
     @Column(nullable = false, unique = true)
@@ -25,7 +25,7 @@ public class User {
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, columnDefinition = "VARCHAR(20)")
     private UserRole role;
 
     @Column(name = "first_name", nullable = false, length = 100)

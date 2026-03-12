@@ -11,10 +11,10 @@ import java.util.UUID;
 public class RefreshToken {
 
     @Id
-    @Column(length = 36, nullable = false, updatable = false)
+    @Column(columnDefinition = "CHAR(36)", nullable = false, updatable = false)
     private String id;
 
-    @Column(name = "user_id", length = 36, nullable = false, updatable = false)
+    @Column(name = "user_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
     private String userId;
 
     @Column(name = "token_hash", nullable = false, unique = true)

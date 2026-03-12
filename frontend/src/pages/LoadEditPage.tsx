@@ -15,7 +15,7 @@ export function LoadEditPage() {
 
   useEffect(() => {
     if (load && !editableStatuses.has(load.status)) {
-      navigate(`/shipper/loads/${id}`, { replace: true })
+      navigate('/dashboard/shipper', { replace: true })
     }
   }, [load, id, navigate])
 
@@ -43,8 +43,8 @@ export function LoadEditPage() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-8">
       <div className="mb-6">
-        <Link to={`/shipper/loads/${id}`} className="text-sm text-primary-600 hover:underline">
-          ← Back to Load
+        <Link to="/dashboard/shipper" className="text-sm text-primary-600 hover:underline">
+          ← Back to Dashboard
         </Link>
         <h1 className="mt-2 text-2xl font-semibold text-gray-900">Edit Load</h1>
       </div>

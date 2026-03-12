@@ -20,8 +20,8 @@ export function LoadDetailPage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-8">
       <div className="mb-6">
-        <Link to="/shipper/loads" className="text-sm text-primary-600 hover:underline">
-          ← Back to My Loads
+        <Link to="/dashboard/shipper" className="text-sm text-primary-600 hover:underline">
+          ← Back to Dashboard
         </Link>
         <h1 className="mt-2 text-2xl font-semibold text-gray-900">Load Detail</h1>
       </div>

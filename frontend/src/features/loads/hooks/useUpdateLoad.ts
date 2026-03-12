@@ -12,7 +12,7 @@ export function useUpdateLoad(id: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['loads'] })
       queryClient.invalidateQueries({ queryKey: ['loads', id] })
-      navigate(`/shipper/loads/${id}`)
+      navigate('/dashboard/shipper')
     },
   })
 }

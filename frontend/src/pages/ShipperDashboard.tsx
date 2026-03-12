@@ -23,6 +23,9 @@ export function ShipperDashboard() {
           <span className="text-sm text-gray-600">
             {user?.firstName} {user?.lastName}
           </span>
+          <Link to="/profile" className="text-sm text-primary-600 hover:underline">
+            My Profile
+          </Link>
           <Button variant="secondary" onClick={logout}>
             Sign out
           </Button>

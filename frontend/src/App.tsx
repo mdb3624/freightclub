@@ -7,6 +7,7 @@ import { LoadsListPage } from '@/pages/LoadsListPage'
 import { LoadCreatePage } from '@/pages/LoadCreatePage'
 import { LoadDetailPage } from '@/pages/LoadDetailPage'
 import { LoadEditPage } from '@/pages/LoadEditPage'
+import { ProfilePage } from '@/pages/ProfilePage'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 
 export default function App() {
@@ -62,6 +63,15 @@ export default function App() {
         element={
           <ProtectedRoute role="SHIPPER">
             <LoadEditPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         }
       />

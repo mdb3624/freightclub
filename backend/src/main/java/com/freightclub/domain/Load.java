@@ -79,6 +79,10 @@ public class Load {
     @Column(name = "pay_rate_type", nullable = false, columnDefinition = "VARCHAR(20)")
     private PayRateType payRateType;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_terms", columnDefinition = "VARCHAR(20)")
+    private PaymentTerms paymentTerms;
+
     @Column(name = "special_requirements", columnDefinition = "TEXT")
     private String specialRequirements;
 
@@ -141,6 +145,8 @@ public class Load {
     public void setPayRate(BigDecimal payRate) { this.payRate = payRate; }
     public PayRateType getPayRateType() { return payRateType; }
     public void setPayRateType(PayRateType payRateType) { this.payRateType = payRateType; }
+    public PaymentTerms getPaymentTerms() { return paymentTerms; }
+    public void setPaymentTerms(PaymentTerms paymentTerms) { this.paymentTerms = paymentTerms; }
     public String getSpecialRequirements() { return specialRequirements; }
     public void setSpecialRequirements(String specialRequirements) { this.specialRequirements = specialRequirements; }
     public LocalDateTime getCreatedAt() { return createdAt; }

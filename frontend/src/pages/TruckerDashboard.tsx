@@ -198,7 +198,7 @@ export function TruckerDashboard() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      {['Route', 'Distance', 'Pay', 'Status', 'Pickup Date'].map((h) => (
+                      {['Route', 'Distance', 'Pay', 'Status', 'Pickup', 'Delivery'].map((h) => (
                         <th
                           key={h}
                           className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide"
@@ -261,7 +261,10 @@ export function TruckerDashboard() {
                             </span>
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-600">
-                            {new Date(load.pickupFrom).toLocaleDateString()}
+                            {isCancelled ? '—' : new Date(load.pickupFrom).toLocaleDateString()}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-600">
+                            {isCancelled ? '—' : new Date(load.deliveryTo).toLocaleDateString()}
                           </td>
                         </tr>
                       )

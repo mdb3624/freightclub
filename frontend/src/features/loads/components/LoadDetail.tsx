@@ -1,4 +1,5 @@
 import type { Load } from '../types'
+import { PAYMENT_TERMS_LABELS } from '../types'
 import { StatusBadge } from './StatusBadge'
 
 interface LoadDetailProps {
@@ -91,6 +92,14 @@ export function LoadDetail({ load }: LoadDetailProps) {
         {load.payRateType === 'PER_MILE' && load.distanceMiles != null && (
           <p className="text-sm text-gray-500 mt-1">
             ≈ ${(load.payRate * load.distanceMiles).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} estimated total
+          </p>
+        )}
+        {load.paymentTerms && (
+          <p className="text-sm text-gray-600 mt-2">
+            Payment terms:{' '}
+            <span className="font-medium text-gray-900">
+              {PAYMENT_TERMS_LABELS[load.paymentTerms]}
+            </span>
           </p>
         )}
       </section>

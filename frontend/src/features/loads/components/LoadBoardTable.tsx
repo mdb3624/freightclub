@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import type { LoadSummary } from '../types'
+import { PAYMENT_TERMS_LABELS } from '../types'
 
 interface LoadBoardTableProps {
   loads: LoadSummary[]
@@ -21,7 +22,7 @@ export function LoadBoardTable({ loads }: LoadBoardTableProps) {
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            {['Route', 'Distance', 'Pickup', 'Equipment', 'Pay', ''].map((h) => (
+            {['Route', 'Distance', 'Pickup', 'Equipment', 'Pay', 'Terms', ''].map((h) => (
               <th
                 key={h}
                 className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide"
@@ -75,6 +76,11 @@ export function LoadBoardTable({ loads }: LoadBoardTableProps) {
                       est.
                     </p>
                   )}
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-600">
+                  {load.paymentTerms
+                    ? PAYMENT_TERMS_LABELS[load.paymentTerms]
+                    : <span className="text-gray-300">—</span>}
                 </td>
                 <td className="px-4 py-3 text-sm">
                   <span className="text-primary-600 font-medium">View →</span>

@@ -38,6 +38,7 @@ export function LoadEditPage() {
     equipmentType: load.equipmentType,
     payRate: load.payRate,
     payRateType: load.payRateType,
+    paymentTerms: load.paymentTerms ?? '',
     specialRequirements: load.specialRequirements ?? '',
   }
 

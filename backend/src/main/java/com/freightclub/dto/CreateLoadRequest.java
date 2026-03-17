@@ -2,6 +2,7 @@ package com.freightclub.dto;
 
 import com.freightclub.domain.EquipmentType;
 import com.freightclub.domain.PayRateType;
+import com.freightclub.domain.PaymentTerms;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,5 +27,6 @@ public record CreateLoadRequest(
         @NotNull EquipmentType equipmentType,
         @NotNull @DecimalMin("0.01") BigDecimal payRate,
         @NotNull PayRateType payRateType,
+        PaymentTerms paymentTerms,
         String specialRequirements
 ) {}

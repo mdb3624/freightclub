@@ -11,6 +11,15 @@ export type EquipmentType = 'DRY_VAN' | 'FLATBED' | 'REEFER' | 'STEP_DECK'
 
 export type PayRateType = 'PER_MILE' | 'FLAT_RATE'
 
+export type PaymentTerms = 'QUICK_PAY' | 'NET_7' | 'NET_15' | 'NET_30'
+
+export const PAYMENT_TERMS_LABELS: Record<PaymentTerms, string> = {
+  QUICK_PAY: 'Quick Pay',
+  NET_7: 'Net 7',
+  NET_15: 'Net 15',
+  NET_30: 'Net 30',
+}
+
 export interface Load {
   id: string
   tenantId: string
@@ -33,6 +42,7 @@ export interface Load {
   equipmentType: EquipmentType
   payRate: number
   payRateType: PayRateType
+  paymentTerms: PaymentTerms | null
   specialRequirements: string | null
   createdAt: string
   updatedAt: string
@@ -48,6 +58,8 @@ export interface LoadSummary {
   equipmentType: EquipmentType
   payRate: number
   payRateType: PayRateType
+  paymentTerms: PaymentTerms | null
+  deliveryTo: string
   createdAt: string
 }
 
@@ -68,6 +80,7 @@ export interface LoadFormValues {
   equipmentType: EquipmentType
   payRate: number
   payRateType: PayRateType
+  paymentTerms: PaymentTerms | ''
   specialRequirements: string
 }
 

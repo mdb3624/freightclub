@@ -26,6 +26,7 @@ const schema = z.object({
   equipmentType: z.enum(['DRY_VAN', 'FLATBED', 'REEFER', 'STEP_DECK']),
   payRate: z.number({ invalid_type_error: 'Pay rate is required' }).min(0.01, 'Pay rate must be > 0'),
   payRateType: z.enum(['PER_MILE', 'FLAT_RATE']),
+  paymentTerms: z.enum(['QUICK_PAY', 'NET_7', 'NET_15', 'NET_30']).or(z.literal('')),
   specialRequirements: z.string().optional().default(''),
 })
 
@@ -53,6 +54,7 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
     defaultValues: {
       equipmentType: 'DRY_VAN',
       payRateType: 'FLAT_RATE',
+      paymentTerms: '',
       specialRequirements: '',
       distanceMiles: null,
       originZip: '',
@@ -271,6 +273,26 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
           </p>
           {errors.payRate && <p className="text-xs text-red-600">{errors.payRate.message}</p>}
         </div>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="paymentTerms" className="text-sm font-medium text-gray-700">
+          Payment Terms
+        </label>
+        <select
+          id="paymentTerms"
+          className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 max-w-xs"
+          {...register('paymentTerms')}
+        >
+          <option value="">Not specified</option>
+          <option value="QUICK_PAY">Quick Pay</option>
+          <option value="NET_7">Net 7</option>
+          <option value="NET_15">Net 15</option>
+          <option value="NET_30">Net 30</option>
+        </select>
+        <p className="text-xs text-gray-500">
+          Quick Pay = same day or next day. Net 7/15/30 = days after delivery.
+        </p>
       </div>
 
       <div>

@@ -47,7 +47,7 @@ public class LoadService {
                 request.deliveryFrom(), request.deliveryTo(),
                 request.commodity(), request.weightLbs(),
                 request.equipmentType(), request.payRate(), request.payRateType(),
-                request.specialRequirements());
+                request.paymentTerms(), request.specialRequirements());
         return LoadResponse.from(loadRepository.save(load));
     }
 
@@ -75,7 +75,7 @@ public class LoadService {
                 request.deliveryFrom(), request.deliveryTo(),
                 request.commodity(), request.weightLbs(),
                 request.equipmentType(), request.payRate(), request.payRateType(),
-                request.specialRequirements());
+                request.paymentTerms(), request.specialRequirements());
         return LoadResponse.from(loadRepository.save(load));
     }
 
@@ -200,6 +200,7 @@ public class LoadService {
                               String commodity, java.math.BigDecimal weightLbs,
                               com.freightclub.domain.EquipmentType equipmentType,
                               java.math.BigDecimal payRate, com.freightclub.domain.PayRateType payRateType,
+                              com.freightclub.domain.PaymentTerms paymentTerms,
                               String specialRequirements) {
         load.setOrigin(origin);
         load.setOriginAddress(originAddress);
@@ -217,6 +218,7 @@ public class LoadService {
         load.setEquipmentType(equipmentType);
         load.setPayRate(payRate);
         load.setPayRateType(payRateType);
+        load.setPaymentTerms(paymentTerms);
         load.setSpecialRequirements(specialRequirements);
     }
 }

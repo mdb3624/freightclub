@@ -4,6 +4,7 @@ import com.freightclub.domain.EquipmentType;
 import com.freightclub.domain.Load;
 import com.freightclub.domain.LoadStatus;
 import com.freightclub.domain.PayRateType;
+import com.freightclub.domain.PaymentTerms;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,6 +19,8 @@ public record LoadSummaryResponse(
         EquipmentType equipmentType,
         BigDecimal payRate,
         PayRateType payRateType,
+        PaymentTerms paymentTerms,
+        LocalDateTime deliveryTo,
         LocalDateTime createdAt
 ) {
     public static LoadSummaryResponse from(Load load) {
@@ -31,6 +34,8 @@ public record LoadSummaryResponse(
                 load.getEquipmentType(),
                 load.getPayRate(),
                 load.getPayRateType(),
+                load.getPaymentTerms(),
+                load.getDeliveryTo(),
                 load.getCreatedAt()
         );
     }

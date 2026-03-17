@@ -10,7 +10,10 @@ export function useRegister() {
 
   return useMutation({
     mutationFn: ({ confirmPassword: _, ...data }: RegisterFormValues) =>
-      authApi.register(data),
+      authApi.register({
+        ...data,
+        equipmentType: data.equipmentType || undefined,
+      }),
     onSuccess: (response) => {
       setAuth(response.accessToken, response.user)
       const destination = response.user.role === 'SHIPPER'

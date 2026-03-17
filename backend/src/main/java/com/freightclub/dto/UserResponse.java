@@ -8,7 +8,8 @@ public record UserResponse(
         String firstName,
         String lastName,
         String role,
-        String tenantId
+        String tenantId,
+        String equipmentType
 ) {
     public static UserResponse from(User user) {
         return new UserResponse(
@@ -17,7 +18,8 @@ public record UserResponse(
                 user.getFirstName(),
                 user.getLastName(),
                 user.getRole().name(),
-                user.getTenantId()
+                user.getTenantId(),
+                user.getEquipmentType() != null ? user.getEquipmentType().name() : null
         );
     }
 }

@@ -22,6 +22,9 @@ public class Load {
     @Column(name = "shipper_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
     private String shipperId;
 
+    @Column(name = "trucker_id", columnDefinition = "CHAR(36)")
+    private String truckerId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(20)")
     private LoadStatus status;
@@ -102,6 +105,8 @@ public class Load {
     public void setTenantId(String tenantId) { this.tenantId = tenantId; }
     public String getShipperId() { return shipperId; }
     public void setShipperId(String shipperId) { this.shipperId = shipperId; }
+    public String getTruckerId() { return truckerId; }
+    public void setTruckerId(String truckerId) { this.truckerId = truckerId; }
     public LoadStatus getStatus() { return status; }
     public void setStatus(LoadStatus status) { this.status = status; }
     public String getOrigin() { return origin; }

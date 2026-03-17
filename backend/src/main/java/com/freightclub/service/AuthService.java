@@ -77,6 +77,12 @@ public class AuthService {
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());
 
+        if (request.role() == UserRole.TRUCKER) {
+            user.setMcNumber(request.mcNumber());
+            user.setDotNumber(request.dotNumber());
+            user.setEquipmentType(request.equipmentType());
+        }
+
         userRepository.save(user);
 
         String accessToken = jwtService.generateAccessToken(user);

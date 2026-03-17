@@ -15,6 +15,7 @@ export interface Load {
   id: string
   tenantId: string
   shipperId: string
+  truckerId: string | null
   status: LoadStatus
   origin: string
   originAddress: string

@@ -64,6 +64,16 @@ public class User {
     @Column(name = "default_pickup_zip", length = 10)
     private String defaultPickupZip;
 
+    @Column(name = "mc_number", length = 20)
+    private String mcNumber;
+
+    @Column(name = "dot_number", length = 20)
+    private String dotNumber;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "equipment_type", columnDefinition = "VARCHAR(30)")
+    private EquipmentType equipmentType;
+
     @Column(name = "notify_email", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
     private boolean notifyEmail = true;
 
@@ -124,6 +134,12 @@ public class User {
     public void setDefaultPickupState(String defaultPickupState) { this.defaultPickupState = defaultPickupState; }
     public String getDefaultPickupZip() { return defaultPickupZip; }
     public void setDefaultPickupZip(String defaultPickupZip) { this.defaultPickupZip = defaultPickupZip; }
+    public String getMcNumber() { return mcNumber; }
+    public void setMcNumber(String mcNumber) { this.mcNumber = mcNumber; }
+    public String getDotNumber() { return dotNumber; }
+    public void setDotNumber(String dotNumber) { this.dotNumber = dotNumber; }
+    public EquipmentType getEquipmentType() { return equipmentType; }
+    public void setEquipmentType(EquipmentType equipmentType) { this.equipmentType = equipmentType; }
     public boolean isNotifyEmail() { return notifyEmail; }
     public void setNotifyEmail(boolean notifyEmail) { this.notifyEmail = notifyEmail; }
     public boolean isNotifySms() { return notifySms; }

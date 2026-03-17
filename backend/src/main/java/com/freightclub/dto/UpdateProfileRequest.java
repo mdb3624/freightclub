@@ -1,5 +1,6 @@
 package com.freightclub.dto;
 
+import com.freightclub.domain.EquipmentType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -18,5 +19,8 @@ public record UpdateProfileRequest(
         @Size(max = 10) String defaultPickupZip,
         boolean notifyEmail,
         boolean notifySms,
-        boolean notifyInApp
+        boolean notifyInApp,
+        @Size(max = 20) String mcNumber,
+        @Size(max = 20) String dotNumber,
+        EquipmentType equipmentType
 ) {}

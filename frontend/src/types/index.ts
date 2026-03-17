@@ -7,6 +7,7 @@ export interface User {
   lastName: string
   role: UserRole
   tenantId: string
+  equipmentType?: string
 }
 
 export interface AuthResponse {

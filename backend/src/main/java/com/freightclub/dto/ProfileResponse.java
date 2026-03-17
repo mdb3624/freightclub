@@ -1,5 +1,6 @@
 package com.freightclub.dto;
 
+import com.freightclub.domain.EquipmentType;
 import com.freightclub.domain.Tenant;
 import com.freightclub.domain.User;
 
@@ -23,7 +24,10 @@ public record ProfileResponse(
         String defaultPickupZip,
         boolean notifyEmail,
         boolean notifySms,
-        boolean notifyInApp
+        boolean notifyInApp,
+        String mcNumber,
+        String dotNumber,
+        EquipmentType equipmentType
 ) {
     public static ProfileResponse from(User user, Tenant tenant) {
         return new ProfileResponse(
@@ -46,7 +50,10 @@ public record ProfileResponse(
                 user.getDefaultPickupZip(),
                 user.isNotifyEmail(),
                 user.isNotifySms(),
-                user.isNotifyInApp()
+                user.isNotifyInApp(),
+                user.getMcNumber(),
+                user.getDotNumber(),
+                user.getEquipmentType()
         );
     }
 }

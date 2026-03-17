@@ -16,4 +16,25 @@ export const loadsApi = {
 
   cancel: (id: string) =>
     apiClient.patch<Load>(`/loads/${id}/cancel`).then((r) => r.data),
+
+  claim: (id: string) =>
+    apiClient.post<Load>(`/loads/${id}/claim`).then((r) => r.data),
+
+  listOpen: (page = 0, size = 20) =>
+    apiClient.get<Page<LoadSummary>>('/board', { params: { page, size } }).then((r) => r.data),
+
+  getBoardLoad: (id: string) =>
+    apiClient.get<Load>(`/board/${id}`).then((r) => r.data),
+
+  getMyActiveLoad: () =>
+    apiClient.get<Load>('/board/my-load').then((r) => r.data || null),
+
+  getMyLoadHistory: (page = 0, size = 20) =>
+    apiClient.get<Page<LoadSummary>>('/board/my-history', { params: { page, size } }).then((r) => r.data),
+
+  pickup: (id: string) =>
+    apiClient.post<Load>(`/board/${id}/pickup`).then((r) => r.data),
+
+  deliver: (id: string) =>
+    apiClient.post<Load>(`/board/${id}/deliver`).then((r) => r.data),
 }

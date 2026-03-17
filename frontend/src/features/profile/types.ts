@@ -1,3 +1,5 @@
+import type { EquipmentType } from '@/features/loads/types'
+
 export interface Profile {
   id: string
   email: string
@@ -19,6 +21,9 @@ export interface Profile {
   notifyEmail: boolean
   notifySms: boolean
   notifyInApp: boolean
+  mcNumber: string | null
+  dotNumber: string | null
+  equipmentType: EquipmentType | null
 }
 
 export interface UpdateProfileValues {
@@ -37,4 +42,7 @@ export interface UpdateProfileValues {
   notifyEmail: boolean
   notifySms: boolean
   notifyInApp: boolean
+  mcNumber: string
+  dotNumber: string
+  equipmentType: EquipmentType | ''
 }

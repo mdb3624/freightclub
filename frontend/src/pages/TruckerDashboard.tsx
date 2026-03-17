@@ -106,15 +106,34 @@ export function TruckerDashboard() {
                       </span>
                     )}
                     <span>Pickup {new Date(activeLoad.pickupFrom).toLocaleDateString()}</span>
-                    {activeLoad.status === 'IN_TRANSIT' && (
-                      <span>Deliver by {new Date(activeLoad.deliveryTo).toLocaleDateString()}</span>
-                    )}
+                    <span>Deliver by {new Date(activeLoad.deliveryTo).toLocaleDateString()}</span>
                   </div>
                 </div>
                 <Link to={`/trucker/loads/${activeLoad.id}`}>
                   <Button>View Load</Button>
                 </Link>
               </div>
+              {activeLoad.shipperContact && (
+                <div className="mt-4 pt-4 border-t border-current border-opacity-20 flex flex-wrap gap-x-6 gap-y-1 text-sm">
+                  <span className="font-medium text-gray-700">
+                    {activeLoad.shipperContact.businessName ?? activeLoad.shipperContact.name}
+                  </span>
+                  {activeLoad.shipperContact.phone && (
+                    <a
+                      href={`tel:${activeLoad.shipperContact.phone}`}
+                      className="text-primary-600 hover:underline"
+                    >
+                      {activeLoad.shipperContact.phone}
+                    </a>
+                  )}
+                  <a
+                    href={`mailto:${activeLoad.shipperContact.email}`}
+                    className="text-primary-600 hover:underline"
+                  >
+                    {activeLoad.shipperContact.email}
+                  </a>
+                </div>
+              )}
               {STATUS_NEXT_STEP[activeLoad.status] && (
                 <p className={`mt-3 text-sm ${STATUS_TEXT_COLORS[activeLoad.status]}`}>
                   {STATUS_NEXT_STEP[activeLoad.status]}

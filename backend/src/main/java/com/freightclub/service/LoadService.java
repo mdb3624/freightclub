@@ -3,6 +3,7 @@ package com.freightclub.service;
 import com.freightclub.domain.EquipmentType;
 import com.freightclub.domain.Load;
 import com.freightclub.domain.LoadStatus;
+import com.freightclub.domain.User;
 import com.freightclub.dto.CreateLoadRequest;
 import com.freightclub.dto.LoadResponse;
 import com.freightclub.dto.LoadSummaryResponse;
@@ -48,7 +49,7 @@ public class LoadService {
                 request.commodity(), request.weightLbs(),
                 request.equipmentType(), request.payRate(), request.payRateType(),
                 request.paymentTerms(), request.specialRequirements());
-        return LoadResponse.from(loadRepository.save(load));
+        return buildResponse(loadRepository.save(load));
     }
 
     @Transactional(readOnly = true)
@@ -62,7 +63,7 @@ public class LoadService {
     @Transactional(readOnly = true)
     public LoadResponse getLoad(String id, String shipperId) {
         Load load = findOwnedLoad(id, shipperId);
-        return LoadResponse.from(load);
+        return buildResponse(load);
     }
 
     public LoadResponse updateLoad(String id, UpdateLoadRequest request, String shipperId) {
@@ -110,7 +111,7 @@ public class LoadService {
     public LoadResponse getOpenLoad(String id) {
         Load load = loadRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new LoadNotFoundException(id));
-        return LoadResponse.from(load);
+        return buildResponse(load);
     }
 
     public LoadResponse claimLoad(String id, String truckerId) {
@@ -126,7 +127,7 @@ public class LoadService {
         }
         load.setStatus(LoadStatus.CLAIMED);
         load.setTruckerId(truckerId);
-        return LoadResponse.from(loadRepository.save(load));
+        return buildResponse(loadRepository.save(load));
     }
 
     public LoadResponse markPickedUp(String id, String truckerId) {
@@ -135,7 +136,7 @@ public class LoadService {
             throw new LoadStatusTransitionException("Load must be CLAIMED to mark as picked up");
         }
         load.setStatus(LoadStatus.IN_TRANSIT);
-        return LoadResponse.from(loadRepository.save(load));
+        return buildResponse(loadRepository.save(load));
     }
 
     public LoadResponse markDelivered(String id, String truckerId) {
@@ -144,7 +145,7 @@ public class LoadService {
             throw new LoadStatusTransitionException("Load must be IN_TRANSIT to mark as delivered");
         }
         load.setStatus(LoadStatus.DELIVERED);
-        return LoadResponse.from(loadRepository.save(load));
+        return buildResponse(loadRepository.save(load));
     }
 
     @Transactional(readOnly = true)
@@ -163,7 +164,7 @@ public class LoadService {
         return loadRepository.findFirstByTruckerIdAndStatusInAndDeletedAtIsNull(
                         truckerId,
                         List.of(LoadStatus.CLAIMED, LoadStatus.IN_TRANSIT))
-                .map(LoadResponse::from);
+                .map(this::buildResponse);
     }
 
     // --- helpers ---
@@ -190,6 +191,14 @@ public class LoadService {
         if (load.getStatus() != LoadStatus.DRAFT && load.getStatus() != LoadStatus.OPEN) {
             throw new LoadEditForbiddenException("Load cannot be edited in status: " + load.getStatus());
         }
+    }
+
+    private LoadResponse buildResponse(Load load) {
+        User shipper = userRepository.findById(load.getShipperId()).orElse(null);
+        User trucker = load.getTruckerId() != null
+                ? userRepository.findById(load.getTruckerId()).orElse(null)
+                : null;
+        return LoadResponse.from(load, shipper, trucker);
     }
 
     private void applyFields(Load load, String origin, String originAddress, String originZip,

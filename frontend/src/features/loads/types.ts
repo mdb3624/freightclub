@@ -20,6 +20,15 @@ export const PAYMENT_TERMS_LABELS: Record<PaymentTerms, string> = {
   NET_30: 'Net 30',
 }
 
+export interface LoadContactInfo {
+  name: string
+  businessName: string | null
+  phone: string | null
+  email: string
+  mcNumber: string | null
+  dotNumber: string | null
+}
+
 export interface Load {
   id: string
   tenantId: string
@@ -44,6 +53,8 @@ export interface Load {
   payRateType: PayRateType
   paymentTerms: PaymentTerms | null
   specialRequirements: string | null
+  shipperContact: LoadContactInfo | null
+  truckerContact: LoadContactInfo | null
   createdAt: string
   updatedAt: string
 }

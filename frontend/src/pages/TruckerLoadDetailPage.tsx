@@ -7,6 +7,7 @@ import { useClaimLoad } from '@/features/loads/hooks/useClaimLoad'
 import { useMarkPickedUp } from '@/features/loads/hooks/useMarkPickedUp'
 import { useMarkDelivered } from '@/features/loads/hooks/useMarkDelivered'
 import { LoadDetail } from '@/features/loads/components/LoadDetail'
+import { ContactCard } from '@/features/loads/components/ContactCard'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import type { ApiError } from '@/types'
@@ -81,6 +82,12 @@ export function TruckerLoadDetailPage() {
                     'This load is no longer available.'
                   }
                 />
+              </div>
+            )}
+
+            {load.shipperContact && (load.status === 'CLAIMED' || load.status === 'IN_TRANSIT') && (
+              <div className="mb-4">
+                <ContactCard title="Shipper Contact" contact={load.shipperContact} />
               </div>
             )}
 

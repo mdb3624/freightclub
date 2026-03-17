@@ -5,6 +5,7 @@ import com.freightclub.domain.Load;
 import com.freightclub.domain.LoadStatus;
 import com.freightclub.domain.PayRateType;
 import com.freightclub.domain.PaymentTerms;
+import com.freightclub.domain.User;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -34,9 +35,15 @@ public record LoadResponse(
         PaymentTerms paymentTerms,
         String specialRequirements,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        LoadContactInfo shipperContact,
+        LoadContactInfo truckerContact
 ) {
     public static LoadResponse from(Load load) {
+        return from(load, null, null);
+    }
+
+    public static LoadResponse from(Load load, User shipper, User trucker) {
         return new LoadResponse(
                 load.getId(),
                 load.getTenantId(),
@@ -62,7 +69,9 @@ public record LoadResponse(
                 load.getPaymentTerms(),
                 load.getSpecialRequirements(),
                 load.getCreatedAt(),
-                load.getUpdatedAt()
+                load.getUpdatedAt(),
+                shipper != null ? LoadContactInfo.fromShipper(shipper) : null,
+                trucker != null ? LoadContactInfo.fromTrucker(trucker) : null
         );
     }
 }

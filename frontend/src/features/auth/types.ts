@@ -1,4 +1,5 @@
 import type { UserRole } from '@/types'
+import type { EquipmentType } from '@/features/loads/types'
 
 export interface LoginFormValues {
   email: string
@@ -14,4 +15,7 @@ export interface RegisterFormValues {
   role: UserRole
   companyName: string
   joinCode: string
+  mcNumber: string
+  dotNumber: string
+  equipmentType: EquipmentType | ''
 }

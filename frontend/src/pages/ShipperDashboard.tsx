@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/authStore'
 import { useLogout } from '@/features/auth/hooks/useLogout'
 import { useLoads } from '@/features/loads/hooks/useLoads'
@@ -7,13 +8,19 @@ import { useCancelLoad } from '@/features/loads/hooks/useCancelLoad'
 import { LoadsTable } from '@/features/loads/components/LoadsTable'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
+import { TableSkeleton } from '@/components/ui/Skeleton'
 
 export function ShipperDashboard() {
   const user = useAuthStore((s) => s.user)
   const logout = useLogout()
+  const queryClient = useQueryClient()
   const [page, setPage] = useState(0)
-  const { data, isLoading, isError } = useLoads(page)
+  const { data, isLoading, isError, isFetching } = useLoads(page)
   const { mutate: cancelLoad, isPending: isCancelling } = useCancelLoad()
+
+  function handleRefresh() {
+    queryClient.invalidateQueries({ queryKey: ['loads'] })
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -40,12 +47,17 @@ export function ShipperDashboard() {
               Welcome back, {user?.firstName}. Post and manage your loads here.
             </p>
           </div>
-          <Link to="/shipper/loads/new">
-            <Button>Post a Load</Button>
-          </Link>
+          <div className="flex gap-2">
+            <Button variant="secondary" onClick={handleRefresh} isLoading={isFetching}>
+              Refresh
+            </Button>
+            <Link to="/shipper/loads/new">
+              <Button>Post a Load</Button>
+            </Link>
+          </div>
         </div>
 
-        {isLoading && <p className="text-center text-gray-500 py-12">Loading...</p>}
+        {isLoading && <TableSkeleton rows={5} cols={8} />}
         {isError && <ErrorBanner message="Failed to load your loads. Please try again." />}
 
         {data && (

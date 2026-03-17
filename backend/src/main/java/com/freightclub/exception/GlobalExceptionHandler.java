@@ -58,6 +58,16 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.FORBIDDEN, ex.getMessage(), req);
     }
 
+    @ExceptionHandler(LoadNotClaimableException.class)
+    public ResponseEntity<ErrorResponse> handleLoadNotClaimable(LoadNotClaimableException ex, HttpServletRequest req) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), req);
+    }
+
+    @ExceptionHandler(LoadStatusTransitionException.class)
+    public ResponseEntity<ErrorResponse> handleLoadStatusTransition(LoadStatusTransitionException ex, HttpServletRequest req) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), req);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(HttpServletRequest req) {
         return build(HttpStatus.FORBIDDEN, "Access denied", req);

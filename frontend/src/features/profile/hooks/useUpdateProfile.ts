@@ -6,7 +6,8 @@ export function useUpdateProfile() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: UpdateProfileValues) => profileApi.update(data),
+    mutationFn: (data: UpdateProfileValues) =>
+      profileApi.update({ ...data, equipmentType: data.equipmentType || undefined }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] })
     },

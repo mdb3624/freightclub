@@ -54,4 +54,10 @@ public class LoadController {
                                @AuthenticationPrincipal String userId) {
         return loadService.cancelLoad(id, userId);
     }
+
+    @PostMapping("/{id}/claim")
+    public LoadResponse claim(@PathVariable String id,
+                              @AuthenticationPrincipal String userId) {
+        return loadService.claimLoad(id, userId);
+    }
 }

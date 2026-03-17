@@ -1,5 +1,6 @@
 package com.freightclub.dto;
 
+import com.freightclub.domain.EquipmentType;
 import com.freightclub.domain.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -26,5 +27,10 @@ public record RegisterRequest(
         // Exactly one must be supplied; validated in AuthService.
         String companyName,
 
-        String joinCode
+        String joinCode,
+
+        // Trucker-specific fields (optional for non-trucker roles)
+        @Size(max = 20) String mcNumber,
+        @Size(max = 20) String dotNumber,
+        EquipmentType equipmentType
 ) {}

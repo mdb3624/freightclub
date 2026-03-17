@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { AxiosError } from 'axios'
+import { useAuthStore } from '@/store/authStore'
 import { useProfile } from '@/features/profile/hooks/useProfile'
 import { useUpdateProfile } from '@/features/profile/hooks/useUpdateProfile'
 import type { UpdateProfileValues } from '@/features/profile/types'
@@ -11,6 +12,13 @@ import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import type { ApiError } from '@/types'
+
+const EQUIPMENT_OPTIONS = [
+  { value: 'DRY_VAN',   label: 'Dry Van' },
+  { value: 'FLATBED',   label: 'Flatbed' },
+  { value: 'REEFER',    label: 'Reefer' },
+  { value: 'STEP_DECK', label: 'Step Deck' },
+] as const
 
 const schema = z.object({
   firstName: z.string().min(1, 'First name is required'),
@@ -28,9 +36,16 @@ const schema = z.object({
   notifyEmail: z.boolean(),
   notifySms: z.boolean(),
   notifyInApp: z.boolean(),
+  mcNumber: z.string().max(20).optional().default(''),
+  dotNumber: z.string().max(20).optional().default(''),
+  equipmentType: z.enum(['DRY_VAN', 'FLATBED', 'REEFER', 'STEP_DECK', '']).optional().default(''),
 })
 
 export function ProfilePage() {
+  const user = useAuthStore((s) => s.user)
+  const isTrucker = user?.role === 'TRUCKER'
+  const dashboardPath = isTrucker ? '/dashboard/trucker' : '/dashboard/shipper'
+
   const { data: profile, isLoading } = useProfile()
   const { mutate, isPending, error, isSuccess } = useUpdateProfile()
   const [saved, setSaved] = useState(false)
@@ -62,6 +77,9 @@ export function ProfilePage() {
         notifyEmail: profile.notifyEmail,
         notifySms: profile.notifySms,
         notifyInApp: profile.notifyInApp,
+        mcNumber: profile.mcNumber ?? '',
+        dotNumber: profile.dotNumber ?? '',
+        equipmentType: profile.equipmentType ?? '',
       })
     }
   }, [profile, reset])
@@ -88,7 +106,7 @@ export function ProfilePage() {
 
       <main className="mx-auto max-w-2xl px-6 py-8">
         <div className="mb-6">
-          <Link to="/dashboard/shipper" className="text-sm text-primary-600 hover:underline">
+          <Link to={dashboardPath} className="text-sm text-primary-600 hover:underline">
             ← Back to Dashboard
           </Link>
           <h2 className="mt-2 text-2xl font-semibold text-gray-900">My Profile</h2>
@@ -132,6 +150,41 @@ export function ProfilePage() {
             <Input label="Phone" type="tel" placeholder="e.g. 555-123-4567" maxLength={20} {...register('phone')} />
           </section>
 
+          {/* Trucker: Carrier Information */}
+          {isTrucker && (
+            <section className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
+              <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Carrier Information</h3>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Input
+                  label="MC Number"
+                  placeholder="e.g. MC-123456"
+                  maxLength={20}
+                  error={errors.mcNumber?.message}
+                  {...register('mcNumber')}
+                />
+                <Input
+                  label="DOT Number"
+                  placeholder="e.g. 1234567"
+                  maxLength={20}
+                  error={errors.dotNumber?.message}
+                  {...register('dotNumber')}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Primary Equipment</label>
+                <select
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  {...register('equipmentType')}
+                >
+                  <option value="">Select equipment type</option>
+                  {EQUIPMENT_OPTIONS.map(({ value, label }) => (
+                    <option key={value} value={value}>{label}</option>
+                  ))}
+                </select>
+              </div>
+            </section>
+          )}
+
           {/* Billing Address */}
           <section className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
             <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Billing Address</h3>
@@ -143,17 +196,19 @@ export function ProfilePage() {
             </div>
           </section>
 
-          {/* Default Pickup Location */}
-          <section className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Default Pickup Location</h3>
-            <p className="text-xs text-gray-500">Pre-fills the origin address when posting a new load.</p>
-            <Input label="Street Address" placeholder="e.g. 456 Warehouse Dr" {...register('defaultPickupAddress')} />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <Input label="City" {...register('defaultPickupCity')} />
-              <Input label="State" {...register('defaultPickupState')} />
-              <Input label="Zip Code" maxLength={10} {...register('defaultPickupZip')} />
-            </div>
-          </section>
+          {/* Default Pickup Location (shippers only) */}
+          {!isTrucker && (
+            <section className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
+              <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Default Pickup Location</h3>
+              <p className="text-xs text-gray-500">Pre-fills the origin address when posting a new load.</p>
+              <Input label="Street Address" placeholder="e.g. 456 Warehouse Dr" {...register('defaultPickupAddress')} />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <Input label="City" {...register('defaultPickupCity')} />
+                <Input label="State" {...register('defaultPickupState')} />
+                <Input label="Zip Code" maxLength={10} {...register('defaultPickupZip')} />
+              </div>
+            </section>
+          )}
 
           {/* Notification Preferences */}
           <section className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">

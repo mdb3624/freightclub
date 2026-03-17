@@ -45,6 +45,9 @@ public class ProfileService {
         user.setNotifyEmail(request.notifyEmail());
         user.setNotifySms(request.notifySms());
         user.setNotifyInApp(request.notifyInApp());
+        user.setMcNumber(request.mcNumber());
+        user.setDotNumber(request.dotNumber());
+        user.setEquipmentType(request.equipmentType());
         User saved = userRepository.save(user);
         Tenant tenant = tenantRepository.findById(saved.getTenantId()).orElse(null);
         return ProfileResponse.from(saved, tenant);

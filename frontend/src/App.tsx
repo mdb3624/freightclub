@@ -6,12 +6,16 @@ import { TruckerDashboard } from '@/pages/TruckerDashboard'
 import { LoadCreatePage } from '@/pages/LoadCreatePage'
 import { LoadDetailPage } from '@/pages/LoadDetailPage'
 import { LoadEditPage } from '@/pages/LoadEditPage'
+import { TruckerLoadDetailPage } from '@/pages/TruckerLoadDetailPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
+import { Toaster } from '@/components/ui/Toaster'
 
 export default function App() {
   return (
-    <Routes>
+    <>
+      <Toaster />
+      <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
@@ -29,6 +33,15 @@ export default function App() {
         element={
           <ProtectedRoute role="TRUCKER">
             <TruckerDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/trucker/loads/:id"
+        element={
+          <ProtectedRoute role="TRUCKER">
+            <TruckerLoadDetailPage />
           </ProtectedRoute>
         }
       />
@@ -70,5 +83,6 @@ export default function App() {
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
+    </>
   )
 }

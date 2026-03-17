@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import type { LoadSummary } from '../types'
 import { StatusBadge } from './StatusBadge'
 
@@ -10,8 +10,10 @@ interface LoadsTableProps {
 }
 
 const editableStatuses = new Set(['DRAFT', 'OPEN'])
+const cancellableStatuses = new Set(['DRAFT', 'OPEN', 'CLAIMED'])
 
 export function LoadsTable({ loads, onCancel, isCancelling }: LoadsTableProps) {
+  const navigate = useNavigate()
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
 
   if (loads.length === 0) {
@@ -40,8 +42,13 @@ export function LoadsTable({ loads, onCancel, isCancelling }: LoadsTableProps) {
         <tbody className="divide-y divide-gray-100">
           {loads.map((load) => {
             const canEdit = editableStatuses.has(load.status)
+            const canCancel = cancellableStatuses.has(load.status)
             return (
-              <tr key={load.id} className="hover:bg-gray-50">
+              <tr
+                key={load.id}
+                className="hover:bg-primary-50 cursor-pointer transition-colors"
+                onClick={() => navigate(`/shipper/loads/${load.id}`)}
+              >
                 <td className="px-4 py-3 text-sm text-gray-900">{load.origin}</td>
                 <td className="px-4 py-3 text-sm text-gray-900">{load.destination}</td>
                 <td className="px-4 py-3 text-sm text-gray-600">
@@ -62,7 +69,7 @@ export function LoadsTable({ loads, onCancel, isCancelling }: LoadsTableProps) {
                 <td className="px-4 py-3">
                   <StatusBadge status={load.status} />
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                   {confirmingId === load.id ? (
                     <span className="flex items-center gap-2 text-sm">
                       <span className="text-gray-700">Confirm?</span>
@@ -85,21 +92,16 @@ export function LoadsTable({ loads, onCancel, isCancelling }: LoadsTableProps) {
                     </span>
                   ) : (
                     <span className="flex items-center gap-3 text-sm">
-                      <Link
-                        to={`/shipper/loads/${load.id}`}
-                        className="text-primary-600 hover:underline font-medium"
-                      >
-                        View
-                      </Link>
                       {canEdit && (
                         <Link
                           to={`/shipper/loads/${load.id}/edit`}
                           className="text-primary-600 hover:underline font-medium"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           Edit
                         </Link>
                       )}
-                      {canEdit && (
+                      {canCancel && (
                         <button
                           className="text-red-600 hover:underline font-medium"
                           onClick={() => setConfirmingId(load.id)}

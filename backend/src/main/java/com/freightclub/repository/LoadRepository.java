@@ -1,6 +1,7 @@
 package com.freightclub.repository;
 
 import com.freightclub.domain.Load;
+import com.freightclub.domain.LoadStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,21 @@ public interface LoadRepository extends JpaRepository<Load, String> {
             String tenantId, String shipperId, Pageable pageable);
 
     Optional<Load> findByIdAndTenantIdAndDeletedAtIsNull(String id, String tenantId);
+
+    Page<Load> findByTenantIdAndStatusAndDeletedAtIsNull(
+            String tenantId, LoadStatus status, Pageable pageable);
+
+    // Board queries — cross-tenant (marketplace: all truckers see all open loads)
+    Page<Load> findByStatusAndDeletedAtIsNull(LoadStatus status, Pageable pageable);
+
+    Page<Load> findByStatusAndEquipmentTypeAndDeletedAtIsNull(
+            LoadStatus status, com.freightclub.domain.EquipmentType equipmentType, Pageable pageable);
+
+    Optional<Load> findByIdAndDeletedAtIsNull(String id);
+
+    java.util.Optional<Load> findFirstByTruckerIdAndStatusInAndDeletedAtIsNull(
+            String truckerId, java.util.List<LoadStatus> statuses);
+
+    Page<Load> findByTruckerIdAndStatusInAndDeletedAtIsNull(
+            String truckerId, java.util.List<LoadStatus> statuses, Pageable pageable);
 }

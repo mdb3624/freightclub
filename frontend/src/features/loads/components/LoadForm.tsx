@@ -10,12 +10,16 @@ import { calculateDistanceMiles } from '../utils/distance'
 import type { LoadFormValues } from '../types'
 
 const schema = z.object({
-  origin: z.string().min(1, 'Origin city/state is required'),
-  originAddress: z.string().min(1, 'Origin address is required'),
+  originCity: z.string().min(1, 'Origin city is required'),
+  originState: z.string().min(1, 'Origin state is required'),
   originZip: z.string().min(1, 'Origin zip code is required'),
-  destination: z.string().min(1, 'Destination city/state is required'),
-  destinationAddress: z.string().min(1, 'Destination address is required'),
+  originAddress1: z.string().min(1, 'Origin address is required'),
+  originAddress2: z.string().optional().default(''),
+  destinationCity: z.string().min(1, 'Destination city is required'),
+  destinationState: z.string().min(1, 'Destination state is required'),
   destinationZip: z.string().min(1, 'Destination zip code is required'),
+  destinationAddress1: z.string().min(1, 'Destination address is required'),
+  destinationAddress2: z.string().optional().default(''),
   distanceMiles: z.number().nullable(),
   pickupFrom: z.string().min(1, 'Pickup start is required'),
   pickupTo: z.string().min(1, 'Pickup end is required'),
@@ -58,7 +62,9 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
       specialRequirements: '',
       distanceMiles: null,
       originZip: '',
+      originAddress2: '',
       destinationZip: '',
+      destinationAddress2: '',
       ...defaultValues,
     },
   })
@@ -66,19 +72,28 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
   const distanceMiles = watch('distanceMiles')
   const payRateType = watch('payRateType')
   const payRate = watch('payRate')
-  const originAddress = watch('originAddress')
+  const originCity = watch('originCity')
+  const originState = watch('originState')
   const originZip = watch('originZip')
-  const destinationAddress = watch('destinationAddress')
+  const originAddress1 = watch('originAddress1')
+  const originAddress2 = watch('originAddress2')
+  const destinationCity = watch('destinationCity')
+  const destinationState = watch('destinationState')
   const destinationZip = watch('destinationZip')
+  const destinationAddress1 = watch('destinationAddress1')
+  const destinationAddress2 = watch('destinationAddress2')
 
   useEffect(() => {
-    if (!originAddress || !originZip || !destinationAddress || !destinationZip) return
+    if (!originAddress1 || !originCity || !originState || !originZip) return
+    if (!destinationAddress1 || !destinationCity || !destinationState || !destinationZip) return
 
     if (debounceRef.current) clearTimeout(debounceRef.current)
 
     debounceRef.current = setTimeout(async () => {
-      const fullOrigin = `${originAddress} ${originZip}`
-      const fullDest = `${destinationAddress} ${destinationZip}`
+      const addr2Origin = originAddress2 ? ` ${originAddress2}` : ''
+      const addr2Dest = destinationAddress2 ? ` ${destinationAddress2}` : ''
+      const fullOrigin = `${originAddress1}${addr2Origin}, ${originCity}, ${originState} ${originZip}`
+      const fullDest = `${destinationAddress1}${addr2Dest}, ${destinationCity}, ${destinationState} ${destinationZip}`
       setDistanceLoading(true)
       setDistanceError(null)
       try {
@@ -94,7 +109,8 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [originAddress, originZip, destinationAddress, destinationZip, setValue])
+  }, [originAddress1, originAddress2, originCity, originState, originZip,
+      destinationAddress1, destinationAddress2, destinationCity, destinationState, destinationZip, setValue])
 
   const errorMessage = error
     ? ((error as AxiosError<{ message: string }>).response?.data?.message ?? 'An error occurred')
@@ -107,12 +123,18 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
       {/* Origin */}
       <div className="space-y-3">
         <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Origin</h3>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <Input
-            label="City, State"
-            error={errors.origin?.message}
-            placeholder="e.g. Chicago, IL"
-            {...register('origin')}
+            label="City"
+            error={errors.originCity?.message}
+            placeholder="e.g. Chicago"
+            {...register('originCity')}
+          />
+          <Input
+            label="State"
+            error={errors.originState?.message}
+            placeholder="e.g. IL"
+            {...register('originState')}
           />
           <Input
             label="Zip Code"
@@ -123,22 +145,33 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
           />
         </div>
         <Input
-          label="Street Address"
-          error={errors.originAddress?.message}
+          label="Address Line 1"
+          error={errors.originAddress1?.message}
           placeholder="e.g. 123 Main St"
-          {...register('originAddress')}
+          {...register('originAddress1')}
+        />
+        <Input
+          label="Address Line 2"
+          placeholder="Suite, unit, building (optional)"
+          {...register('originAddress2')}
         />
       </div>
 
       {/* Destination */}
       <div className="space-y-3">
         <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Destination</h3>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <Input
-            label="City, State"
-            error={errors.destination?.message}
-            placeholder="e.g. Detroit, MI"
-            {...register('destination')}
+            label="City"
+            error={errors.destinationCity?.message}
+            placeholder="e.g. Detroit"
+            {...register('destinationCity')}
+          />
+          <Input
+            label="State"
+            error={errors.destinationState?.message}
+            placeholder="e.g. MI"
+            {...register('destinationState')}
           />
           <Input
             label="Zip Code"
@@ -149,10 +182,15 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
           />
         </div>
         <Input
-          label="Street Address"
-          error={errors.destinationAddress?.message}
+          label="Address Line 1"
+          error={errors.destinationAddress1?.message}
           placeholder="e.g. 456 Industrial Blvd"
-          {...register('destinationAddress')}
+          {...register('destinationAddress1')}
+        />
+        <Input
+          label="Address Line 2"
+          placeholder="Suite, unit, building (optional)"
+          {...register('destinationAddress2')}
         />
       </div>
 

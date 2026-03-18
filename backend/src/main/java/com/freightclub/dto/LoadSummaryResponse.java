@@ -27,8 +27,8 @@ public record LoadSummaryResponse(
         return new LoadSummaryResponse(
                 load.getId(),
                 load.getStatus(),
-                load.getOrigin(),
-                load.getDestination(),
+                load.getOriginCity() + ", " + load.getOriginState(),
+                load.getDestinationCity() + ", " + load.getDestinationState(),
                 load.getDistanceMiles(),
                 load.getPickupFrom(),
                 load.getEquipmentType(),

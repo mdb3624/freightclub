@@ -10,12 +10,12 @@ export function LoadCreatePage() {
 
   const defaultValues: Partial<LoadFormValues> = {}
 
-  if (profile?.defaultPickupAddress || profile?.defaultPickupCity || profile?.defaultPickupZip) {
-    const city = profile.defaultPickupCity ?? ''
-    const state = profile.defaultPickupState ?? ''
-    defaultValues.origin = city && state ? `${city}, ${state}` : city || state
-    defaultValues.originAddress = profile.defaultPickupAddress ?? ''
+  if (profile?.defaultPickupAddress1 || profile?.defaultPickupCity || profile?.defaultPickupZip) {
+    defaultValues.originCity = profile.defaultPickupCity ?? ''
+    defaultValues.originState = profile.defaultPickupState ?? ''
     defaultValues.originZip = profile.defaultPickupZip ?? ''
+    defaultValues.originAddress1 = profile.defaultPickupAddress1 ?? ''
+    defaultValues.originAddress2 = profile.defaultPickupAddress2 ?? ''
   }
 
   return (

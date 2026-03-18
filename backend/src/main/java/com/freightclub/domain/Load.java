@@ -29,23 +29,35 @@ public class Load {
     @Column(nullable = false, columnDefinition = "VARCHAR(20)")
     private LoadStatus status;
 
-    @Column(nullable = false, length = 500)
-    private String origin;
+    @Column(name = "origin_city", nullable = false, length = 100)
+    private String originCity;
 
-    @Column(name = "origin_address", nullable = false, length = 500)
-    private String originAddress;
+    @Column(name = "origin_state", nullable = false, length = 50)
+    private String originState;
 
     @Column(name = "origin_zip", nullable = false, length = 10)
     private String originZip;
 
-    @Column(nullable = false, length = 500)
-    private String destination;
+    @Column(name = "origin_address_1", nullable = false, length = 500)
+    private String originAddress1;
 
-    @Column(name = "destination_address", nullable = false, length = 500)
-    private String destinationAddress;
+    @Column(name = "origin_address_2", length = 500)
+    private String originAddress2;
+
+    @Column(name = "destination_city", nullable = false, length = 100)
+    private String destinationCity;
+
+    @Column(name = "destination_state", nullable = false, length = 50)
+    private String destinationState;
 
     @Column(name = "destination_zip", nullable = false, length = 10)
     private String destinationZip;
+
+    @Column(name = "destination_address_1", nullable = false, length = 500)
+    private String destinationAddress1;
+
+    @Column(name = "destination_address_2", length = 500)
+    private String destinationAddress2;
 
     @Column(name = "distance_miles")
     private BigDecimal distanceMiles;
@@ -113,18 +125,26 @@ public class Load {
     public void setTruckerId(String truckerId) { this.truckerId = truckerId; }
     public LoadStatus getStatus() { return status; }
     public void setStatus(LoadStatus status) { this.status = status; }
-    public String getOrigin() { return origin; }
-    public void setOrigin(String origin) { this.origin = origin; }
-    public String getOriginAddress() { return originAddress; }
-    public void setOriginAddress(String originAddress) { this.originAddress = originAddress; }
+    public String getOriginCity() { return originCity; }
+    public void setOriginCity(String originCity) { this.originCity = originCity; }
+    public String getOriginState() { return originState; }
+    public void setOriginState(String originState) { this.originState = originState; }
     public String getOriginZip() { return originZip; }
     public void setOriginZip(String originZip) { this.originZip = originZip; }
-    public String getDestination() { return destination; }
-    public void setDestination(String destination) { this.destination = destination; }
-    public String getDestinationAddress() { return destinationAddress; }
-    public void setDestinationAddress(String destinationAddress) { this.destinationAddress = destinationAddress; }
+    public String getOriginAddress1() { return originAddress1; }
+    public void setOriginAddress1(String originAddress1) { this.originAddress1 = originAddress1; }
+    public String getOriginAddress2() { return originAddress2; }
+    public void setOriginAddress2(String originAddress2) { this.originAddress2 = originAddress2; }
+    public String getDestinationCity() { return destinationCity; }
+    public void setDestinationCity(String destinationCity) { this.destinationCity = destinationCity; }
+    public String getDestinationState() { return destinationState; }
+    public void setDestinationState(String destinationState) { this.destinationState = destinationState; }
     public String getDestinationZip() { return destinationZip; }
     public void setDestinationZip(String destinationZip) { this.destinationZip = destinationZip; }
+    public String getDestinationAddress1() { return destinationAddress1; }
+    public void setDestinationAddress1(String destinationAddress1) { this.destinationAddress1 = destinationAddress1; }
+    public String getDestinationAddress2() { return destinationAddress2; }
+    public void setDestinationAddress2(String destinationAddress2) { this.destinationAddress2 = destinationAddress2; }
     public BigDecimal getDistanceMiles() { return distanceMiles; }
     public void setDistanceMiles(BigDecimal distanceMiles) { this.distanceMiles = distanceMiles; }
     public LocalDateTime getPickupFrom() { return pickupFrom; }

@@ -88,7 +88,7 @@ export function TruckerDashboard() {
                     {STATUS_LABELS[activeLoad.status] ?? activeLoad.status}
                   </p>
                   <p className="text-gray-900 font-semibold text-lg truncate">
-                    {activeLoad.origin} → {activeLoad.destination}
+                    {activeLoad.originCity}, {activeLoad.originState} → {activeLoad.destinationCity}, {activeLoad.destinationState}
                   </p>
                   <div className="flex flex-wrap items-center gap-4 mt-1.5 text-sm text-gray-600">
                     {activeLoad.distanceMiles != null && (

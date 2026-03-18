@@ -70,12 +70,14 @@ class LoadServiceTest {
         load.setTenantId(TENANT_ID);
         load.setShipperId(SHIPPER_ID);
         load.setStatus(status);
-        load.setOrigin("Chicago, IL");
-        load.setOriginAddress("123 Main St");
+        load.setOriginCity("Chicago");
+        load.setOriginState("IL");
         load.setOriginZip("60601");
-        load.setDestination("Detroit, MI");
-        load.setDestinationAddress("456 Industrial Blvd");
+        load.setOriginAddress1("123 Main St");
+        load.setDestinationCity("Detroit");
+        load.setDestinationState("MI");
         load.setDestinationZip("48201");
+        load.setDestinationAddress1("456 Industrial Blvd");
         load.setPickupFrom(LocalDateTime.now().plusDays(1));
         load.setPickupTo(LocalDateTime.now().plusDays(1).plusHours(4));
         load.setDeliveryFrom(LocalDateTime.now().plusDays(2));
@@ -90,8 +92,8 @@ class LoadServiceTest {
 
     private CreateLoadRequest makeCreateRequest() {
         return new CreateLoadRequest(
-                "Chicago, IL", "123 Main St", "60601",
-                "Detroit, MI", "456 Industrial Blvd", "48201",
+                "Chicago", "IL", "60601", "123 Main St", null,
+                "Detroit", "MI", "48201", "456 Industrial Blvd", null,
                 BigDecimal.valueOf(280),
                 LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(1).plusHours(4),
                 LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(2).plusHours(4),
@@ -103,8 +105,8 @@ class LoadServiceTest {
 
     private UpdateLoadRequest makeUpdateRequest() {
         return new UpdateLoadRequest(
-                "Milwaukee, WI", "789 Harbor Dr", "53202",
-                "Cleveland, OH", "321 Steel Ave", "44101",
+                "Milwaukee", "WI", "53202", "789 Harbor Dr", null,
+                "Cleveland", "OH", "44101", "321 Steel Ave", null,
                 BigDecimal.valueOf(190),
                 LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(2).plusHours(4),
                 LocalDateTime.now().plusDays(3), LocalDateTime.now().plusDays(3).plusHours(4),
@@ -164,8 +166,9 @@ class LoadServiceTest {
             LoadResponse response = loadService.createLoad(makeCreateRequest(), SHIPPER_ID);
 
             assertThat(response.status()).isEqualTo(LoadStatus.OPEN);
-            assertThat(response.origin()).isEqualTo("Chicago, IL");
-            assertThat(response.destination()).isEqualTo("Detroit, MI");
+            assertThat(response.originCity()).isEqualTo("Chicago");
+            assertThat(response.originState()).isEqualTo("IL");
+            assertThat(response.destinationCity()).isEqualTo("Detroit");
             assertThat(response.shipperId()).isEqualTo(SHIPPER_ID);
             assertThat(response.paymentTerms()).isEqualTo(PaymentTerms.NET_30);
             verify(loadRepository).save(any());
@@ -270,8 +273,9 @@ class LoadServiceTest {
 
             LoadResponse response = loadService.updateLoad(LOAD_ID, makeUpdateRequest(), SHIPPER_ID);
 
-            assertThat(response.origin()).isEqualTo("Milwaukee, WI");
-            assertThat(response.destination()).isEqualTo("Cleveland, OH");
+            assertThat(response.originCity()).isEqualTo("Milwaukee");
+            assertThat(response.originState()).isEqualTo("WI");
+            assertThat(response.destinationCity()).isEqualTo("Cleveland");
             assertThat(response.commodity()).isEqualTo("Lumber");
         }
 
@@ -284,7 +288,7 @@ class LoadServiceTest {
 
             LoadResponse response = loadService.updateLoad(LOAD_ID, makeUpdateRequest(), SHIPPER_ID);
 
-            assertThat(response.origin()).isEqualTo("Milwaukee, WI");
+            assertThat(response.originCity()).isEqualTo("Milwaukee");
         }
 
         @Test

@@ -22,12 +22,16 @@ export function LoadEditPage() {
   if (isLoading || !load) return <p className="text-center text-gray-500 py-12">Loading...</p>
 
   const defaultValues: Partial<LoadFormValues> = {
-    origin: load.origin,
-    originAddress: load.originAddress,
+    originCity: load.originCity,
+    originState: load.originState,
     originZip: load.originZip,
-    destination: load.destination,
-    destinationAddress: load.destinationAddress,
+    originAddress1: load.originAddress1,
+    originAddress2: load.originAddress2 ?? '',
+    destinationCity: load.destinationCity,
+    destinationState: load.destinationState,
     destinationZip: load.destinationZip,
+    destinationAddress1: load.destinationAddress1,
+    destinationAddress2: load.destinationAddress2 ?? '',
     distanceMiles: load.distanceMiles,
     pickupFrom: load.pickupFrom.slice(0, 16),
     pickupTo: load.pickupTo.slice(0, 16),

@@ -34,11 +34,13 @@ public class ProfileService {
         user.setLastName(request.lastName());
         user.setBusinessName(request.businessName());
         user.setPhone(request.phone());
-        user.setBillingAddress(request.billingAddress());
+        user.setBillingAddress1(request.billingAddress1());
+        user.setBillingAddress2(request.billingAddress2());
         user.setBillingCity(request.billingCity());
         user.setBillingState(request.billingState());
         user.setBillingZip(request.billingZip());
-        user.setDefaultPickupAddress(request.defaultPickupAddress());
+        user.setDefaultPickupAddress1(request.defaultPickupAddress1());
+        user.setDefaultPickupAddress2(request.defaultPickupAddress2());
         user.setDefaultPickupCity(request.defaultPickupCity());
         user.setDefaultPickupState(request.defaultPickupState());
         user.setDefaultPickupZip(request.defaultPickupZip());

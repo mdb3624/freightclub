@@ -11,12 +11,16 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record UpdateLoadRequest(
-        @NotBlank String origin,
-        @NotBlank String originAddress,
+        @NotBlank String originCity,
+        @NotBlank String originState,
         @NotBlank String originZip,
-        @NotBlank String destination,
-        @NotBlank String destinationAddress,
+        @NotBlank String originAddress1,
+        String originAddress2,
+        @NotBlank String destinationCity,
+        @NotBlank String destinationState,
         @NotBlank String destinationZip,
+        @NotBlank String destinationAddress1,
+        String destinationAddress2,
         BigDecimal distanceMiles,
         @NotNull LocalDateTime pickupFrom,
         @NotNull LocalDateTime pickupTo,

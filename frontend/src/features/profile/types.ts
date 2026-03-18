@@ -10,11 +10,13 @@ export interface Profile {
   companyJoinCode: string | null
   businessName: string | null
   phone: string | null
-  billingAddress: string | null
+  billingAddress1: string | null
+  billingAddress2: string | null
   billingCity: string | null
   billingState: string | null
   billingZip: string | null
-  defaultPickupAddress: string | null
+  defaultPickupAddress1: string | null
+  defaultPickupAddress2: string | null
   defaultPickupCity: string | null
   defaultPickupState: string | null
   defaultPickupZip: string | null
@@ -31,11 +33,13 @@ export interface UpdateProfileValues {
   lastName: string
   businessName: string
   phone: string
-  billingAddress: string
+  billingAddress1: string
+  billingAddress2: string
   billingCity: string
   billingState: string
   billingZip: string
-  defaultPickupAddress: string
+  defaultPickupAddress1: string
+  defaultPickupAddress2: string
   defaultPickupCity: string
   defaultPickupState: string
   defaultPickupZip: string

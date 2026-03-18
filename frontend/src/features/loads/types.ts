@@ -35,12 +35,16 @@ export interface Load {
   shipperId: string
   truckerId: string | null
   status: LoadStatus
-  origin: string
-  originAddress: string
+  originCity: string
+  originState: string
   originZip: string
-  destination: string
-  destinationAddress: string
+  originAddress1: string
+  originAddress2: string | null
+  destinationCity: string
+  destinationState: string
   destinationZip: string
+  destinationAddress1: string
+  destinationAddress2: string | null
   distanceMiles: number | null
   pickupFrom: string
   pickupTo: string
@@ -75,12 +79,16 @@ export interface LoadSummary {
 }
 
 export interface LoadFormValues {
-  origin: string
-  originAddress: string
+  originCity: string
+  originState: string
   originZip: string
-  destination: string
-  destinationAddress: string
+  originAddress1: string
+  originAddress2: string
+  destinationCity: string
+  destinationState: string
   destinationZip: string
+  destinationAddress1: string
+  destinationAddress2: string
   distanceMiles: number | null
   pickupFrom: string
   pickupTo: string

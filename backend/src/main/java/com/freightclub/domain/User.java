@@ -40,8 +40,11 @@ public class User {
     @Column(name = "phone", length = 20)
     private String phone;
 
-    @Column(name = "billing_address", length = 500)
-    private String billingAddress;
+    @Column(name = "billing_address_1", length = 500)
+    private String billingAddress1;
+
+    @Column(name = "billing_address_2", length = 500)
+    private String billingAddress2;
 
     @Column(name = "billing_city", length = 100)
     private String billingCity;
@@ -52,8 +55,11 @@ public class User {
     @Column(name = "billing_zip", length = 10)
     private String billingZip;
 
-    @Column(name = "default_pickup_address", length = 500)
-    private String defaultPickupAddress;
+    @Column(name = "default_pickup_address_1", length = 500)
+    private String defaultPickupAddress1;
+
+    @Column(name = "default_pickup_address_2", length = 500)
+    private String defaultPickupAddress2;
 
     @Column(name = "default_pickup_city", length = 100)
     private String defaultPickupCity;
@@ -118,16 +124,20 @@ public class User {
     public void setBusinessName(String businessName) { this.businessName = businessName; }
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
-    public String getBillingAddress() { return billingAddress; }
-    public void setBillingAddress(String billingAddress) { this.billingAddress = billingAddress; }
+    public String getBillingAddress1() { return billingAddress1; }
+    public void setBillingAddress1(String billingAddress1) { this.billingAddress1 = billingAddress1; }
+    public String getBillingAddress2() { return billingAddress2; }
+    public void setBillingAddress2(String billingAddress2) { this.billingAddress2 = billingAddress2; }
     public String getBillingCity() { return billingCity; }
     public void setBillingCity(String billingCity) { this.billingCity = billingCity; }
     public String getBillingState() { return billingState; }
     public void setBillingState(String billingState) { this.billingState = billingState; }
     public String getBillingZip() { return billingZip; }
     public void setBillingZip(String billingZip) { this.billingZip = billingZip; }
-    public String getDefaultPickupAddress() { return defaultPickupAddress; }
-    public void setDefaultPickupAddress(String defaultPickupAddress) { this.defaultPickupAddress = defaultPickupAddress; }
+    public String getDefaultPickupAddress1() { return defaultPickupAddress1; }
+    public void setDefaultPickupAddress1(String defaultPickupAddress1) { this.defaultPickupAddress1 = defaultPickupAddress1; }
+    public String getDefaultPickupAddress2() { return defaultPickupAddress2; }
+    public void setDefaultPickupAddress2(String defaultPickupAddress2) { this.defaultPickupAddress2 = defaultPickupAddress2; }
     public String getDefaultPickupCity() { return defaultPickupCity; }
     public void setDefaultPickupCity(String defaultPickupCity) { this.defaultPickupCity = defaultPickupCity; }
     public String getDefaultPickupState() { return defaultPickupState; }

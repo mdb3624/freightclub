@@ -25,11 +25,13 @@ const schema = z.object({
   lastName: z.string().min(1, 'Last name is required'),
   businessName: z.string().optional().default(''),
   phone: z.string().max(20).optional().default(''),
-  billingAddress: z.string().optional().default(''),
+  billingAddress1: z.string().optional().default(''),
+  billingAddress2: z.string().optional().default(''),
   billingCity: z.string().optional().default(''),
   billingState: z.string().optional().default(''),
   billingZip: z.string().max(10).optional().default(''),
-  defaultPickupAddress: z.string().optional().default(''),
+  defaultPickupAddress1: z.string().optional().default(''),
+  defaultPickupAddress2: z.string().optional().default(''),
   defaultPickupCity: z.string().optional().default(''),
   defaultPickupState: z.string().optional().default(''),
   defaultPickupZip: z.string().max(10).optional().default(''),
@@ -66,11 +68,13 @@ export function ProfilePage() {
         lastName: profile.lastName,
         businessName: profile.businessName ?? '',
         phone: profile.phone ?? '',
-        billingAddress: profile.billingAddress ?? '',
+        billingAddress1: profile.billingAddress1 ?? '',
+        billingAddress2: profile.billingAddress2 ?? '',
         billingCity: profile.billingCity ?? '',
         billingState: profile.billingState ?? '',
         billingZip: profile.billingZip ?? '',
-        defaultPickupAddress: profile.defaultPickupAddress ?? '',
+        defaultPickupAddress1: profile.defaultPickupAddress1 ?? '',
+        defaultPickupAddress2: profile.defaultPickupAddress2 ?? '',
         defaultPickupCity: profile.defaultPickupCity ?? '',
         defaultPickupState: profile.defaultPickupState ?? '',
         defaultPickupZip: profile.defaultPickupZip ?? '',
@@ -188,12 +192,13 @@ export function ProfilePage() {
           {/* Billing Address */}
           <section className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
             <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Billing Address</h3>
-            <Input label="Street Address" placeholder="e.g. 123 Main St" {...register('billingAddress')} />
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <Input label="City" {...register('billingCity')} />
               <Input label="State" {...register('billingState')} />
               <Input label="Zip Code" maxLength={10} {...register('billingZip')} />
             </div>
+            <Input label="Address Line 1" placeholder="e.g. 123 Main St" {...register('billingAddress1')} />
+            <Input label="Address Line 2" placeholder="Suite, unit, building (optional)" {...register('billingAddress2')} />
           </section>
 
           {/* Default Pickup Location (shippers only) */}
@@ -201,12 +206,13 @@ export function ProfilePage() {
             <section className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
               <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Default Pickup Location</h3>
               <p className="text-xs text-gray-500">Pre-fills the origin address when posting a new load.</p>
-              <Input label="Street Address" placeholder="e.g. 456 Warehouse Dr" {...register('defaultPickupAddress')} />
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <Input label="City" {...register('defaultPickupCity')} />
                 <Input label="State" {...register('defaultPickupState')} />
                 <Input label="Zip Code" maxLength={10} {...register('defaultPickupZip')} />
               </div>
+              <Input label="Address Line 1" placeholder="e.g. 456 Warehouse Dr" {...register('defaultPickupAddress1')} />
+              <Input label="Address Line 2" placeholder="Suite, unit, building (optional)" {...register('defaultPickupAddress2')} />
             </section>
           )}
 

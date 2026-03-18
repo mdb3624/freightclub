@@ -33,13 +33,19 @@ export function LoadDetail({ load }: LoadDetailProps) {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="rounded-lg bg-gray-50 p-3">
             <p className="text-xs font-medium text-gray-500 mb-1">Origin</p>
-            <p className="font-semibold text-gray-900">{load.origin} {load.originZip}</p>
-            <p className="text-sm text-gray-600 mt-0.5">{load.originAddress}</p>
+            <p className="font-semibold text-gray-900">{load.originCity}, {load.originState} {load.originZip}</p>
+            <p className="text-sm text-gray-600 mt-0.5">{load.originAddress1}</p>
+            {load.originAddress2 && (
+              <p className="text-sm text-gray-600">{load.originAddress2}</p>
+            )}
           </div>
           <div className="rounded-lg bg-gray-50 p-3">
             <p className="text-xs font-medium text-gray-500 mb-1">Destination</p>
-            <p className="font-semibold text-gray-900">{load.destination} {load.destinationZip}</p>
-            <p className="text-sm text-gray-600 mt-0.5">{load.destinationAddress}</p>
+            <p className="font-semibold text-gray-900">{load.destinationCity}, {load.destinationState} {load.destinationZip}</p>
+            <p className="text-sm text-gray-600 mt-0.5">{load.destinationAddress1}</p>
+            {load.destinationAddress2 && (
+              <p className="text-sm text-gray-600">{load.destinationAddress2}</p>
+            )}
           </div>
         </div>
         {load.distanceMiles != null && (

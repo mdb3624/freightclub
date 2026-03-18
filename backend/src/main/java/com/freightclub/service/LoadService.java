@@ -41,8 +41,10 @@ public class LoadService {
         load.setTenantId(TenantContextHolder.getTenantId());
         load.setShipperId(shipperId);
         load.setStatus(LoadStatus.OPEN);
-        applyFields(load, request.origin(), request.originAddress(), request.originZip(),
-                request.destination(), request.destinationAddress(), request.destinationZip(),
+        applyFields(load, request.originCity(), request.originState(), request.originZip(),
+                request.originAddress1(), request.originAddress2(),
+                request.destinationCity(), request.destinationState(), request.destinationZip(),
+                request.destinationAddress1(), request.destinationAddress2(),
                 request.distanceMiles(),
                 request.pickupFrom(), request.pickupTo(),
                 request.deliveryFrom(), request.deliveryTo(),
@@ -69,8 +71,10 @@ public class LoadService {
     public LoadResponse updateLoad(String id, UpdateLoadRequest request, String shipperId) {
         Load load = findOwnedLoad(id, shipperId);
         requireEditable(load);
-        applyFields(load, request.origin(), request.originAddress(), request.originZip(),
-                request.destination(), request.destinationAddress(), request.destinationZip(),
+        applyFields(load, request.originCity(), request.originState(), request.originZip(),
+                request.originAddress1(), request.originAddress2(),
+                request.destinationCity(), request.destinationState(), request.destinationZip(),
+                request.destinationAddress1(), request.destinationAddress2(),
                 request.distanceMiles(),
                 request.pickupFrom(), request.pickupTo(),
                 request.deliveryFrom(), request.deliveryTo(),
@@ -201,8 +205,10 @@ public class LoadService {
         return LoadResponse.from(load, shipper, trucker);
     }
 
-    private void applyFields(Load load, String origin, String originAddress, String originZip,
-                              String destination, String destinationAddress, String destinationZip,
+    private void applyFields(Load load, String originCity, String originState, String originZip,
+                              String originAddress1, String originAddress2,
+                              String destinationCity, String destinationState, String destinationZip,
+                              String destinationAddress1, String destinationAddress2,
                               java.math.BigDecimal distanceMiles,
                               java.time.LocalDateTime pickupFrom, java.time.LocalDateTime pickupTo,
                               java.time.LocalDateTime deliveryFrom, java.time.LocalDateTime deliveryTo,
@@ -211,12 +217,16 @@ public class LoadService {
                               java.math.BigDecimal payRate, com.freightclub.domain.PayRateType payRateType,
                               com.freightclub.domain.PaymentTerms paymentTerms,
                               String specialRequirements) {
-        load.setOrigin(origin);
-        load.setOriginAddress(originAddress);
+        load.setOriginCity(originCity);
+        load.setOriginState(originState);
         load.setOriginZip(originZip);
-        load.setDestination(destination);
-        load.setDestinationAddress(destinationAddress);
+        load.setOriginAddress1(originAddress1);
+        load.setOriginAddress2(originAddress2);
+        load.setDestinationCity(destinationCity);
+        load.setDestinationState(destinationState);
         load.setDestinationZip(destinationZip);
+        load.setDestinationAddress1(destinationAddress1);
+        load.setDestinationAddress2(destinationAddress2);
         load.setDistanceMiles(distanceMiles);
         load.setPickupFrom(pickupFrom);
         load.setPickupTo(pickupTo);

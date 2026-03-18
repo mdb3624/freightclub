@@ -10,13 +10,24 @@ const colorMap: Record<LoadStatus, string> = {
   CANCELLED: 'bg-red-100 text-red-700',
 }
 
+const iconMap: Record<LoadStatus, string> = {
+  DRAFT: '✎',
+  OPEN: '●',
+  CLAIMED: '⚑',
+  IN_TRANSIT: '▶',
+  DELIVERED: '✓',
+  SETTLED: '★',
+  CANCELLED: '✕',
+}
+
 interface StatusBadgeProps {
   status: LoadStatus
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
   return (
-    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${colorMap[status]}`}>
+    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${colorMap[status]}`}>
+      <span aria-hidden="true">{iconMap[status]}</span>
       {status.replace('_', ' ')}
     </span>
   )

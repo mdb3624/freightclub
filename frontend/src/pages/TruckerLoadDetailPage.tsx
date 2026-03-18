@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import type { AxiosError } from 'axios'
 import { useAuthStore } from '@/store/authStore'
@@ -12,6 +13,8 @@ import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import type { ApiError } from '@/types'
 
+type PendingAction = 'pickup' | 'deliver' | null
+
 export function TruckerLoadDetailPage() {
   const { id } = useParams<{ id: string }>()
   const user = useAuthStore((s) => s.user)
@@ -21,23 +24,25 @@ export function TruckerLoadDetailPage() {
   const { mutate: markPickedUp, isPending: isPickingUp } = useMarkPickedUp()
   const { mutate: markDelivered, isPending: isDelivering } = useMarkDelivered()
   const navigate = useNavigate()
+  const [pendingAction, setPendingAction] = useState<PendingAction>(null)
 
   function handleClaim() {
     claimLoad(load!.id, {
-      onSuccess: () => navigate('/dashboard/trucker'),
+      onSuccess: () => navigate('/dashboard/trucker', { state: { scrollToActive: true } }),
     })
   }
 
-  function handlePickedUp() {
-    markPickedUp(load!.id, {
-      onSuccess: () => navigate('/dashboard/trucker'),
-    })
-  }
-
-  function handleDelivered() {
-    markDelivered(load!.id, {
-      onSuccess: () => navigate('/dashboard/trucker'),
-    })
+  function confirmAction() {
+    if (pendingAction === 'pickup') {
+      markPickedUp(load!.id, {
+        onSuccess: () => navigate('/dashboard/trucker'),
+      })
+    } else if (pendingAction === 'deliver') {
+      markDelivered(load!.id, {
+        onSuccess: () => navigate('/dashboard/trucker'),
+      })
+    }
+    setPendingAction(null)
   }
 
   return (
@@ -101,12 +106,12 @@ export function TruckerLoadDetailPage() {
                   </Button>
                 )}
                 {load.status === 'CLAIMED' && (
-                  <Button isLoading={isPickingUp} onClick={handlePickedUp}>
+                  <Button onClick={() => setPendingAction('pickup')}>
                     Mark as Picked Up
                   </Button>
                 )}
                 {load.status === 'IN_TRANSIT' && (
-                  <Button isLoading={isDelivering} onClick={handleDelivered}>
+                  <Button onClick={() => setPendingAction('deliver')}>
                     Mark as Delivered
                   </Button>
                 )}
@@ -114,6 +119,37 @@ export function TruckerLoadDetailPage() {
                   <Button variant="secondary">Back to Board</Button>
                 </Link>
               </div>
+
+              {pendingAction && (
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="confirm-dialog-title"
+                  className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-4"
+                >
+                  <p id="confirm-dialog-title" className="text-sm font-semibold text-amber-900">
+                    {pendingAction === 'pickup'
+                      ? 'Confirm pickup — this cannot be undone'
+                      : 'Confirm delivery — this cannot be undone'}
+                  </p>
+                  <p className="mt-1 text-sm text-amber-800">
+                    {pendingAction === 'pickup'
+                      ? 'You are confirming you have physically picked up this load at the origin. The load will move to In Transit.'
+                      : 'You are confirming this load has been delivered to the destination. The shipper will be notified.'}
+                  </p>
+                  <div className="mt-3 flex gap-3">
+                    <Button
+                      isLoading={isPickingUp || isDelivering}
+                      onClick={confirmAction}
+                    >
+                      {pendingAction === 'pickup' ? 'Yes, I have the load' : 'Yes, delivered'}
+                    </Button>
+                    <Button variant="secondary" onClick={() => setPendingAction(null)}>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           </>
         )}

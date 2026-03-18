@@ -1,12 +1,17 @@
 package com.freightclub.controller;
 
+import com.freightclub.domain.EquipmentType;
+import com.freightclub.dto.LoadBoardFilter;
 import com.freightclub.dto.LoadResponse;
 import com.freightclub.dto.LoadSummaryResponse;
 import com.freightclub.service.LoadService;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/v1/board")
@@ -22,8 +27,13 @@ public class LoadBoardController {
     public Page<LoadSummaryResponse> listOpenLoads(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String originState,
+            @RequestParam(required = false) String destinationState,
+            @RequestParam(required = false) EquipmentType equipmentType,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate pickupDate,
             @AuthenticationPrincipal String userId) {
-        return loadService.listOpenLoads(userId, page, size);
+        LoadBoardFilter filter = new LoadBoardFilter(originState, destinationState, equipmentType, pickupDate);
+        return loadService.listOpenLoads(userId, filter, page, size);
     }
 
     @GetMapping("/{id}")

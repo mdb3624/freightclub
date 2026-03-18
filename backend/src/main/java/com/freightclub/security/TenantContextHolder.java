@@ -11,7 +11,11 @@ public final class TenantContextHolder {
     }
 
     public static String getTenantId() {
-        return TENANT_ID.get();
+        String tenantId = TENANT_ID.get();
+        if (tenantId == null) {
+            throw new IllegalStateException("No tenant context bound to this request");
+        }
+        return tenantId;
     }
 
     public static void clear() {

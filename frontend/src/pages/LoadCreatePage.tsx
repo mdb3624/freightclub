@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom'
 import { useCreateLoad } from '@/features/loads/hooks/useCreateLoad'
+import { useCreateDraft } from '@/features/loads/hooks/useCreateDraft'
 import { useProfile } from '@/features/profile/hooks/useProfile'
 import { LoadForm } from '@/features/loads/components/LoadForm'
 import type { LoadFormValues } from '@/features/loads/types'
 
 export function LoadCreatePage() {
   const { mutate, isPending, error } = useCreateLoad()
+  const { mutate: saveDraft, isPending: isDraftSaving, error: draftError } = useCreateDraft()
   const { data: profile } = useProfile()
 
   const defaultValues: Partial<LoadFormValues> = {}
@@ -30,9 +32,11 @@ export function LoadCreatePage() {
       <div className="rounded-xl border border-gray-200 bg-white p-6">
         <LoadForm
           onSubmit={mutate}
+          onSaveDraft={saveDraft}
           defaultValues={defaultValues}
           isSubmitting={isPending}
-          error={error}
+          isDraftSaving={isDraftSaving}
+          error={error ?? draftError}
           submitLabel="Post Load"
         />
       </div>

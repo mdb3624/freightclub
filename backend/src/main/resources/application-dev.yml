@@ -2,7 +2,7 @@
 spring:
   datasource:
     username: root
-    password: root
+    password: N1kk101!
   jpa:
     properties:
       hibernate:

@@ -27,6 +27,9 @@ const schema = z.object({
   deliveryTo: z.string().min(1, 'Delivery end is required'),
   commodity: z.string().min(1, 'Commodity is required'),
   weightLbs: z.number({ invalid_type_error: 'Weight is required' }).min(0.01, 'Weight must be > 0'),
+  lengthFt: z.union([z.number().min(0.01), z.literal('')]).optional(),
+  widthFt: z.union([z.number().min(0.01), z.literal('')]).optional(),
+  heightFt: z.union([z.number().min(0.01), z.literal('')]).optional(),
   equipmentType: z.enum(['DRY_VAN', 'FLATBED', 'REEFER', 'STEP_DECK']),
   payRate: z.number({ invalid_type_error: 'Pay rate is required' }).min(0.01, 'Pay rate must be > 0'),
   payRateType: z.enum(['PER_MILE', 'FLAT_RATE']),
@@ -36,13 +39,15 @@ const schema = z.object({
 
 interface LoadFormProps {
   onSubmit: (values: LoadFormValues) => void
+  onSaveDraft?: (values: LoadFormValues) => void
   defaultValues?: Partial<LoadFormValues>
   isSubmitting: boolean
+  isDraftSaving?: boolean
   error: unknown
   submitLabel: string
 }
 
-export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitLabel }: LoadFormProps) {
+export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, isDraftSaving, error, submitLabel }: LoadFormProps) {
   const [distanceLoading, setDistanceLoading] = useState(false)
   const [distanceError, setDistanceError] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -65,6 +70,9 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
       originAddress2: '',
       destinationZip: '',
       destinationAddress2: '',
+      lengthFt: '',
+      widthFt: '',
+      heightFt: '',
       ...defaultValues,
     },
   })
@@ -145,13 +153,13 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
           />
         </div>
         <Input
-          label="Address Line 1"
+          label="Street Address"
           error={errors.originAddress1?.message}
           placeholder="e.g. 123 Main St"
           {...register('originAddress1')}
         />
         <Input
-          label="Address Line 2"
+          label="Suite / Unit"
           placeholder="Suite, unit, building (optional)"
           {...register('originAddress2')}
         />
@@ -182,13 +190,13 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
           />
         </div>
         <Input
-          label="Address Line 1"
+          label="Street Address"
           error={errors.destinationAddress1?.message}
           placeholder="e.g. 456 Industrial Blvd"
           {...register('destinationAddress1')}
         />
         <Input
-          label="Address Line 2"
+          label="Suite / Unit"
           placeholder="Suite, unit, building (optional)"
           {...register('destinationAddress2')}
         />
@@ -256,6 +264,34 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
           min="0.01"
           {...register('weightLbs', { valueAsNumber: true })}
         />
+      </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <Input
+          label="Length (ft)"
+          type="number"
+          step="any"
+          min="0"
+          placeholder="Optional"
+          {...register('lengthFt', { setValueAs: v => v === '' ? '' : Number(v) })}
+        />
+        <Input
+          label="Width (ft)"
+          type="number"
+          step="any"
+          min="0"
+          placeholder="Optional"
+          {...register('widthFt', { setValueAs: v => v === '' ? '' : Number(v) })}
+        />
+        <Input
+          label="Height (ft)"
+          type="number"
+          step="any"
+          min="0"
+          placeholder="Optional"
+          {...register('heightFt', { setValueAs: v => v === '' ? '' : Number(v) })}
+        />
+      </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
         <div className="flex flex-col gap-1">
           <label htmlFor="equipmentType" className="text-sm font-medium text-gray-700">
             Equipment Type
@@ -276,11 +312,13 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium text-gray-700">Pay Rate</label>
-          <div className="flex gap-1 mb-1">
+          <div role="group" aria-label="Pay rate type" className="flex gap-1 mb-1">
             {(['FLAT_RATE', 'PER_MILE'] as const).map((type) => (
               <button
                 key={type}
                 type="button"
+                role="radio"
+                aria-checked={payRateType === type}
                 onClick={() => setValue('payRateType', type, { shouldValidate: true })}
                 className={`flex-1 rounded py-1 text-xs font-medium transition-colors ${
                   payRateType === type
@@ -346,7 +384,17 @@ export function LoadForm({ onSubmit, defaultValues, isSubmitting, error, submitL
         />
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-3">
+        {onSaveDraft && (
+          <Button
+            type="button"
+            variant="secondary"
+            isLoading={isDraftSaving}
+            onClick={handleSubmit(onSaveDraft)}
+          >
+            Save as Draft
+          </Button>
+        )}
         <Button type="submit" isLoading={isSubmitting}>
           {submitLabel}
         </Button>

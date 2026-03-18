@@ -197,8 +197,8 @@ export function ProfilePage() {
               <Input label="State" {...register('billingState')} />
               <Input label="Zip Code" maxLength={10} {...register('billingZip')} />
             </div>
-            <Input label="Address Line 1" placeholder="e.g. 123 Main St" {...register('billingAddress1')} />
-            <Input label="Address Line 2" placeholder="Suite, unit, building (optional)" {...register('billingAddress2')} />
+            <Input label="Street Address" placeholder="e.g. 123 Main St" {...register('billingAddress1')} />
+            <Input label="Suite / Unit" placeholder="Suite, unit, building (optional)" {...register('billingAddress2')} />
           </section>
 
           {/* Default Pickup Location (shippers only) */}
@@ -211,8 +211,8 @@ export function ProfilePage() {
                 <Input label="State" {...register('defaultPickupState')} />
                 <Input label="Zip Code" maxLength={10} {...register('defaultPickupZip')} />
               </div>
-              <Input label="Address Line 1" placeholder="e.g. 456 Warehouse Dr" {...register('defaultPickupAddress1')} />
-              <Input label="Address Line 2" placeholder="Suite, unit, building (optional)" {...register('defaultPickupAddress2')} />
+              <Input label="Street Address" placeholder="e.g. 456 Warehouse Dr" {...register('defaultPickupAddress1')} />
+              <Input label="Suite / Unit" placeholder="Suite, unit, building (optional)" {...register('defaultPickupAddress2')} />
             </section>
           )}
 

@@ -7,6 +7,8 @@ import com.freightclub.domain.PayRateType;
 import com.freightclub.domain.PaymentTerms;
 import com.freightclub.domain.User;
 
+import org.springframework.lang.Nullable;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -33,6 +35,9 @@ public record LoadResponse(
         LocalDateTime deliveryTo,
         String commodity,
         BigDecimal weightLbs,
+        BigDecimal lengthFt,
+        BigDecimal widthFt,
+        BigDecimal heightFt,
         EquipmentType equipmentType,
         BigDecimal payRate,
         PayRateType payRateType,
@@ -47,7 +52,7 @@ public record LoadResponse(
         return from(load, null, null);
     }
 
-    public static LoadResponse from(Load load, User shipper, User trucker) {
+    public static LoadResponse from(Load load, @Nullable User shipper, @Nullable User trucker) {
         return new LoadResponse(
                 load.getId(),
                 load.getTenantId(),
@@ -71,6 +76,9 @@ public record LoadResponse(
                 load.getDeliveryTo(),
                 load.getCommodity(),
                 load.getWeightLbs(),
+                load.getLengthFt(),
+                load.getWidthFt(),
+                load.getHeightFt(),
                 load.getEquipmentType(),
                 load.getPayRate(),
                 load.getPayRateType(),

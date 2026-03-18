@@ -17,5 +17,5 @@ export interface RegisterFormValues {
   joinCode: string
   mcNumber: string
   dotNumber: string
-  equipmentType: EquipmentType | ''
+  equipmentType: EquipmentType | '' | undefined
 }

@@ -5,9 +5,11 @@ import com.freightclub.domain.Load;
 import com.freightclub.domain.LoadStatus;
 import com.freightclub.domain.User;
 import com.freightclub.dto.CreateLoadRequest;
+import com.freightclub.dto.LoadBoardFilter;
 import com.freightclub.dto.LoadResponse;
 import com.freightclub.dto.LoadSummaryResponse;
 import com.freightclub.dto.UpdateLoadRequest;
+import com.freightclub.repository.LoadSpecifications;
 import com.freightclub.exception.LoadEditForbiddenException;
 import com.freightclub.exception.LoadNotClaimableException;
 import com.freightclub.exception.LoadNotFoundException;
@@ -36,6 +38,25 @@ public class LoadService {
         this.userRepository = userRepository;
     }
 
+    public LoadResponse createDraft(CreateLoadRequest request, String shipperId) {
+        Load load = new Load();
+        load.setTenantId(TenantContextHolder.getTenantId());
+        load.setShipperId(shipperId);
+        load.setStatus(LoadStatus.DRAFT);
+        applyFields(load, request.originCity(), request.originState(), request.originZip(),
+                request.originAddress1(), request.originAddress2(),
+                request.destinationCity(), request.destinationState(), request.destinationZip(),
+                request.destinationAddress1(), request.destinationAddress2(),
+                request.distanceMiles(),
+                request.pickupFrom(), request.pickupTo(),
+                request.deliveryFrom(), request.deliveryTo(),
+                request.commodity(), request.weightLbs(),
+                request.lengthFt(), request.widthFt(), request.heightFt(),
+                request.equipmentType(), request.payRate(), request.payRateType(),
+                request.paymentTerms(), request.specialRequirements());
+        return buildResponse(loadRepository.save(load));
+    }
+
     public LoadResponse createLoad(CreateLoadRequest request, String shipperId) {
         Load load = new Load();
         load.setTenantId(TenantContextHolder.getTenantId());
@@ -49,6 +70,7 @@ public class LoadService {
                 request.pickupFrom(), request.pickupTo(),
                 request.deliveryFrom(), request.deliveryTo(),
                 request.commodity(), request.weightLbs(),
+                request.lengthFt(), request.widthFt(), request.heightFt(),
                 request.equipmentType(), request.payRate(), request.payRateType(),
                 request.paymentTerms(), request.specialRequirements());
         return buildResponse(loadRepository.save(load));
@@ -79,6 +101,7 @@ public class LoadService {
                 request.pickupFrom(), request.pickupTo(),
                 request.deliveryFrom(), request.deliveryTo(),
                 request.commodity(), request.weightLbs(),
+                request.lengthFt(), request.widthFt(), request.heightFt(),
                 request.equipmentType(), request.payRate(), request.payRateType(),
                 request.paymentTerms(), request.specialRequirements());
         return LoadResponse.from(loadRepository.save(load));
@@ -95,19 +118,32 @@ public class LoadService {
         return LoadResponse.from(loadRepository.save(load));
     }
 
-    @Transactional(readOnly = true)
-    public Page<LoadSummaryResponse> listOpenLoads(String truckerId, int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        EquipmentType equipmentType = userRepository.findById(truckerId)
-                .map(com.freightclub.domain.User::getEquipmentType)
-                .orElse(null);
-        if (equipmentType != null) {
-            return loadRepository
-                    .findByStatusAndEquipmentTypeAndDeletedAtIsNull(LoadStatus.OPEN, equipmentType, pageable)
-                    .map(LoadSummaryResponse::from);
+    public LoadResponse publishLoad(String id, String shipperId) {
+        Load load = findOwnedLoad(id, shipperId);
+        if (load.getStatus() != LoadStatus.DRAFT) {
+            throw new LoadEditForbiddenException("Only DRAFT loads can be published");
         }
-        return loadRepository
-                .findByStatusAndDeletedAtIsNull(LoadStatus.OPEN, pageable)
+        load.setStatus(LoadStatus.OPEN);
+        return LoadResponse.from(loadRepository.save(load));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<LoadSummaryResponse> listOpenLoads(String truckerId, LoadBoardFilter filter, int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        // If no explicit equipment filter, default to trucker's equipment type
+        LoadBoardFilter effective = filter;
+        if (filter.equipmentType() == null) {
+            EquipmentType truckerEquipment = userRepository.findById(truckerId)
+                    .map(com.freightclub.domain.User::getEquipmentType)
+                    .orElse(null);
+            if (truckerEquipment != null) {
+                effective = new LoadBoardFilter(
+                        filter.originState(), filter.destinationState(), truckerEquipment, filter.pickupDate());
+            }
+        }
+
+        return loadRepository.findAll(LoadSpecifications.withFilter(effective), pageable)
                 .map(LoadSummaryResponse::from);
     }
 
@@ -213,6 +249,7 @@ public class LoadService {
                               java.time.LocalDateTime pickupFrom, java.time.LocalDateTime pickupTo,
                               java.time.LocalDateTime deliveryFrom, java.time.LocalDateTime deliveryTo,
                               String commodity, java.math.BigDecimal weightLbs,
+                              java.math.BigDecimal lengthFt, java.math.BigDecimal widthFt, java.math.BigDecimal heightFt,
                               com.freightclub.domain.EquipmentType equipmentType,
                               java.math.BigDecimal payRate, com.freightclub.domain.PayRateType payRateType,
                               com.freightclub.domain.PaymentTerms paymentTerms,
@@ -234,6 +271,9 @@ public class LoadService {
         load.setDeliveryTo(deliveryTo);
         load.setCommodity(commodity);
         load.setWeightLbs(weightLbs);
+        load.setLengthFt(lengthFt);
+        load.setWidthFt(widthFt);
+        load.setHeightFt(heightFt);
         load.setEquipmentType(equipmentType);
         load.setPayRate(payRate);
         load.setPayRateType(payRateType);

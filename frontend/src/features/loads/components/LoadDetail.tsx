@@ -84,6 +84,16 @@ export function LoadDetail({ load }: LoadDetailProps) {
             <dt className="text-gray-500">Equipment</dt>
             <dd className="font-medium text-gray-900">{load.equipmentType.replace('_', ' ')}</dd>
           </div>
+          {(load.lengthFt != null || load.widthFt != null || load.heightFt != null) && (
+            <div className="col-span-3">
+              <dt className="text-gray-500">Dimensions (L × W × H)</dt>
+              <dd className="font-medium text-gray-900">
+                {load.lengthFt != null ? `${load.lengthFt} ft` : '—'}{' × '}
+                {load.widthFt != null ? `${load.widthFt} ft` : '—'}{' × '}
+                {load.heightFt != null ? `${load.heightFt} ft` : '—'}
+              </dd>
+            </div>
+          )}
         </dl>
       </section>
 

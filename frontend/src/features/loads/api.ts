@@ -1,16 +1,25 @@
 import apiClient from '@/lib/apiClient'
-import type { Load, LoadSummary, LoadFormValues, Page } from './types'
+import type { BoardFilter, Load, LoadSummary, LoadFormValues, Page } from './types'
 
 function sanitize(data: LoadFormValues) {
   return {
     ...data,
     paymentTerms: data.paymentTerms === '' ? undefined : data.paymentTerms,
+    lengthFt: data.lengthFt === '' ? null : data.lengthFt,
+    widthFt: data.widthFt === '' ? null : data.widthFt,
+    heightFt: data.heightFt === '' ? null : data.heightFt,
   }
 }
 
 export const loadsApi = {
   create: (data: LoadFormValues) =>
     apiClient.post<Load>('/loads', sanitize(data)).then((r) => r.data),
+
+  createDraft: (data: LoadFormValues) =>
+    apiClient.post<Load>('/loads/draft', sanitize(data)).then((r) => r.data),
+
+  publish: (id: string) =>
+    apiClient.post<Load>(`/loads/${id}/publish`).then((r) => r.data),
 
   list: (page = 0, size = 20) =>
     apiClient.get<Page<LoadSummary>>('/loads', { params: { page, size } }).then((r) => r.data),
@@ -27,8 +36,14 @@ export const loadsApi = {
   claim: (id: string) =>
     apiClient.post<Load>(`/loads/${id}/claim`).then((r) => r.data),
 
-  listOpen: (page = 0, size = 20) =>
-    apiClient.get<Page<LoadSummary>>('/board', { params: { page, size } }).then((r) => r.data),
+  listOpen: (page = 0, size = 20, filter: BoardFilter = {}) => {
+    const params: Record<string, unknown> = { page, size }
+    if (filter.originState) params.originState = filter.originState
+    if (filter.destinationState) params.destinationState = filter.destinationState
+    if (filter.equipmentType) params.equipmentType = filter.equipmentType
+    if (filter.pickupDate) params.pickupDate = filter.pickupDate
+    return apiClient.get<Page<LoadSummary>>('/board', { params }).then((r) => r.data)
+  },
 
   getBoardLoad: (id: string) =>
     apiClient.get<Load>(`/board/${id}`).then((r) => r.data),

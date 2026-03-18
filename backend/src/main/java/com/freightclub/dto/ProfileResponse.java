@@ -3,6 +3,7 @@ package com.freightclub.dto;
 import com.freightclub.domain.EquipmentType;
 import com.freightclub.domain.Tenant;
 import com.freightclub.domain.User;
+import org.springframework.lang.Nullable;
 
 public record ProfileResponse(
         String id,
@@ -31,7 +32,7 @@ public record ProfileResponse(
         String dotNumber,
         EquipmentType equipmentType
 ) {
-    public static ProfileResponse from(User user, Tenant tenant) {
+    public static ProfileResponse from(User user, @Nullable Tenant tenant) {
         return new ProfileResponse(
                 user.getId(),
                 user.getEmail(),

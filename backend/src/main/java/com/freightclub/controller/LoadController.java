@@ -28,6 +28,19 @@ public class LoadController {
         return loadService.createLoad(request, userId);
     }
 
+    @PostMapping("/draft")
+    @ResponseStatus(HttpStatus.CREATED)
+    public LoadResponse createDraft(@Valid @RequestBody CreateLoadRequest request,
+                                    @AuthenticationPrincipal String userId) {
+        return loadService.createDraft(request, userId);
+    }
+
+    @PostMapping("/{id}/publish")
+    public LoadResponse publish(@PathVariable String id,
+                                @AuthenticationPrincipal String userId) {
+        return loadService.publishLoad(id, userId);
+    }
+
     @GetMapping
     public Page<LoadSummaryResponse> list(
             @RequestParam(defaultValue = "0") int page,

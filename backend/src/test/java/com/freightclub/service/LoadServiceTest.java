@@ -98,6 +98,7 @@ class LoadServiceTest {
                 LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(1).plusHours(4),
                 LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(2).plusHours(4),
                 "Steel coils", BigDecimal.valueOf(40000),
+                null, null, null,
                 EquipmentType.FLATBED, BigDecimal.valueOf(3.50), PayRateType.PER_MILE,
                 PaymentTerms.NET_30, null
         );
@@ -111,6 +112,7 @@ class LoadServiceTest {
                 LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(2).plusHours(4),
                 LocalDateTime.now().plusDays(3), LocalDateTime.now().plusDays(3).plusHours(4),
                 "Lumber", BigDecimal.valueOf(30000),
+                null, null, null,
                 EquipmentType.FLATBED, BigDecimal.valueOf(2.75), PayRateType.PER_MILE,
                 null, null
         );
@@ -553,58 +555,38 @@ class LoadServiceTest {
     }
 
     // -------------------------------------------------------------------------
-    // listOpenLoads — equipment type filtering
+    // listOpenLoads — filtering
     // -------------------------------------------------------------------------
 
     @Nested
     class ListOpenLoads {
 
         @Test
-        void filtersBy_truckerEquipmentType_whenSet() {
+        void returnsLoads_usingSpecification() {
+            Page<Load> page = new PageImpl<>(List.of(makeLoad(LOAD_ID, LoadStatus.OPEN)));
+            when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.empty());
+            when(loadRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(Pageable.class)))
+                    .thenReturn(page);
+
+            LoadBoardFilter filter = new LoadBoardFilter(null, null, null, null);
+            Page<LoadSummaryResponse> result = loadService.listOpenLoads(TRUCKER_ID, filter, 0, 20);
+
+            assertThat(result.getContent()).hasSize(1);
+            verify(loadRepository).findAll(any(org.springframework.data.jpa.domain.Specification.class), any(Pageable.class));
+        }
+
+        @Test
+        void defaultsToTruckerEquipmentType_whenNoFilterSet() {
             User trucker = makeTrucker(); // has FLATBED
             Page<Load> page = new PageImpl<>(List.of(makeLoad(LOAD_ID, LoadStatus.OPEN)));
             when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.of(trucker));
-            when(loadRepository.findByStatusAndEquipmentTypeAndDeletedAtIsNull(
-                    eq(LoadStatus.OPEN), eq(EquipmentType.FLATBED), any(Pageable.class)))
+            when(loadRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(Pageable.class)))
                     .thenReturn(page);
 
-            Page<LoadSummaryResponse> result = loadService.listOpenLoads(TRUCKER_ID, 0, 20);
+            LoadBoardFilter filter = new LoadBoardFilter(null, null, null, null);
+            Page<LoadSummaryResponse> result = loadService.listOpenLoads(TRUCKER_ID, filter, 0, 20);
 
             assertThat(result.getContent()).hasSize(1);
-            verify(loadRepository).findByStatusAndEquipmentTypeAndDeletedAtIsNull(
-                    eq(LoadStatus.OPEN), eq(EquipmentType.FLATBED), any(Pageable.class));
-            verify(loadRepository, never()).findByStatusAndDeletedAtIsNull(any(), any());
-        }
-
-        @Test
-        void returnsAllLoads_whenTruckerHasNoEquipmentType() {
-            User trucker = makeTrucker();
-            trucker.setEquipmentType(null);
-            Page<Load> page = new PageImpl<>(List.of(makeLoad(LOAD_ID, LoadStatus.OPEN)));
-            when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.of(trucker));
-            when(loadRepository.findByStatusAndDeletedAtIsNull(
-                    eq(LoadStatus.OPEN), any(Pageable.class)))
-                    .thenReturn(page);
-
-            Page<LoadSummaryResponse> result = loadService.listOpenLoads(TRUCKER_ID, 0, 20);
-
-            assertThat(result.getContent()).hasSize(1);
-            verify(loadRepository).findByStatusAndDeletedAtIsNull(eq(LoadStatus.OPEN), any());
-            verify(loadRepository, never()).findByStatusAndEquipmentTypeAndDeletedAtIsNull(
-                    any(), any(), any());
-        }
-
-        @Test
-        void returnsAllLoads_whenTruckerNotFound() {
-            Page<Load> page = new PageImpl<>(List.of());
-            when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.empty());
-            when(loadRepository.findByStatusAndDeletedAtIsNull(
-                    eq(LoadStatus.OPEN), any(Pageable.class)))
-                    .thenReturn(page);
-
-            loadService.listOpenLoads(TRUCKER_ID, 0, 20);
-
-            verify(loadRepository).findByStatusAndDeletedAtIsNull(eq(LoadStatus.OPEN), any());
         }
     }
 

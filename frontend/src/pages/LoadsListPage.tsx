@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLoads } from '@/features/loads/hooks/useLoads'
 import { useCancelLoad } from '@/features/loads/hooks/useCancelLoad'
+import { usePublishLoad } from '@/features/loads/hooks/usePublishLoad'
 import { LoadsTable } from '@/features/loads/components/LoadsTable'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
@@ -10,6 +11,7 @@ export function LoadsListPage() {
   const [page, setPage] = useState(0)
   const { data, isLoading, isError } = useLoads(page)
   const { mutate: cancelLoad, isPending: isCancelling } = useCancelLoad()
+  const { mutate: publishLoad, isPending: isPublishing } = usePublishLoad()
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-8">
@@ -29,6 +31,8 @@ export function LoadsListPage() {
             loads={data.content}
             onCancel={cancelLoad}
             isCancelling={isCancelling}
+            onPublish={publishLoad}
+            isPublishing={isPublishing}
           />
 
           {data.totalPages > 1 && (

@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/authStore'
 import { useLogout } from '@/features/auth/hooks/useLogout'
@@ -7,9 +7,29 @@ import { useLoadBoard } from '@/features/loads/hooks/useLoadBoard'
 import { useMyActiveLoad } from '@/features/loads/hooks/useMyActiveLoad'
 import { useMyLoadHistory } from '@/features/loads/hooks/useMyLoadHistory'
 import { LoadBoardTable } from '@/features/loads/components/LoadBoardTable'
+import { StatusBadge } from '@/features/loads/components/StatusBadge'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { TableSkeleton } from '@/components/ui/Skeleton'
+import type { BoardFilter, EquipmentType } from '@/features/loads/types'
+
+type Tab = 'board' | 'history'
+
+const US_STATES: [string, string][] = [
+  ['AL', 'Alabama'], ['AK', 'Alaska'], ['AZ', 'Arizona'], ['AR', 'Arkansas'],
+  ['CA', 'California'], ['CO', 'Colorado'], ['CT', 'Connecticut'], ['DE', 'Delaware'],
+  ['FL', 'Florida'], ['GA', 'Georgia'], ['HI', 'Hawaii'], ['ID', 'Idaho'],
+  ['IL', 'Illinois'], ['IN', 'Indiana'], ['IA', 'Iowa'], ['KS', 'Kansas'],
+  ['KY', 'Kentucky'], ['LA', 'Louisiana'], ['ME', 'Maine'], ['MD', 'Maryland'],
+  ['MA', 'Massachusetts'], ['MI', 'Michigan'], ['MN', 'Minnesota'], ['MS', 'Mississippi'],
+  ['MO', 'Missouri'], ['MT', 'Montana'], ['NE', 'Nebraska'], ['NV', 'Nevada'],
+  ['NH', 'New Hampshire'], ['NJ', 'New Jersey'], ['NM', 'New Mexico'], ['NY', 'New York'],
+  ['NC', 'North Carolina'], ['ND', 'North Dakota'], ['OH', 'Ohio'], ['OK', 'Oklahoma'],
+  ['OR', 'Oregon'], ['PA', 'Pennsylvania'], ['RI', 'Rhode Island'], ['SC', 'South Carolina'],
+  ['SD', 'South Dakota'], ['TN', 'Tennessee'], ['TX', 'Texas'], ['UT', 'Utah'],
+  ['VT', 'Vermont'], ['VA', 'Virginia'], ['WA', 'Washington'], ['WV', 'West Virginia'],
+  ['WI', 'Wisconsin'], ['WY', 'Wyoming'],
+]
 
 const STATUS_LABELS: Record<string, string> = {
   CLAIMED: 'Claimed — Ready for Pickup',
@@ -35,14 +55,27 @@ export function TruckerDashboard() {
   const user = useAuthStore((s) => s.user)
   const logout = useLogout()
   const navigate = useNavigate()
+  const location = useLocation()
   const queryClient = useQueryClient()
+  const [tab, setTab] = useState<Tab>('board')
   const [page, setPage] = useState(0)
-  const { data, isLoading, isError, isFetching } = useLoadBoard(page)
+  const [filter, setFilter] = useState<BoardFilter>(() => ({
+    equipmentType: user?.equipmentType as EquipmentType | undefined,
+  }))
+  const { data, isLoading, isError, isFetching } = useLoadBoard(page, filter)
   const { data: activeLoad, isLoading: isLoadingActiveLoad } = useMyActiveLoad()
   const [historyPage, setHistoryPage] = useState(0)
   const { data: history } = useMyLoadHistory(historyPage)
+  const activeLoadRef = useRef<HTMLElement>(null)
 
   const hasActiveLoad = !isLoadingActiveLoad && !!activeLoad
+
+  // Scroll to active load section when returning from a claim action
+  useEffect(() => {
+    if (location.state?.scrollToActive && activeLoad && activeLoadRef.current) {
+      activeLoadRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [location.state, activeLoad])
 
   function handleRefresh() {
     queryClient.invalidateQueries({ queryKey: ['board'] })
@@ -77,7 +110,7 @@ export function TruckerDashboard() {
 
       <main className="mx-auto max-w-5xl px-6 py-8 space-y-8">
         {activeLoad && (
-          <section>
+          <section ref={activeLoadRef}>
             <h2 className="text-lg font-semibold text-gray-900 mb-3">Your Active Load</h2>
             <div
               className={`rounded-xl border p-5 ${STATUS_COLORS[activeLoad.status] ?? 'border-primary-200 bg-primary-50'}`}
@@ -153,18 +186,127 @@ export function TruckerDashboard() {
           </div>
         )}
 
+        {/* Tab bar */}
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex gap-6" aria-label="Dashboard tabs">
+            {([
+              { id: 'board', label: 'Load Board' },
+              { id: 'history', label: 'History' },
+            ] as { id: Tab; label: string }[]).map(({ id, label }) => (
+              <button
+                key={id}
+                onClick={() => setTab(id)}
+                className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
+                  tab === id
+                    ? 'border-primary-600 text-primary-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+                aria-selected={tab === id}
+                role="tab"
+              >
+                {label}
+                {id === 'history' && history && history.totalElements > 0 && (
+                  <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                    {history.totalElements}
+                  </span>
+                )}
+                {id === 'board' && data && data.totalElements > 0 && (
+                  <span className="ml-2 rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
+                    {data.totalElements}
+                  </span>
+                )}
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        {tab === 'board' && (
         <section>
           <div className="mb-4 flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-900">Load Board</h2>
-              <p className="mt-1 text-gray-600 text-sm">
-                {hasActiveLoad
-                  ? 'Complete your active load before claiming another.'
-                  : 'Browse open loads and claim one to get started.'}
-              </p>
+            <p className="text-sm text-gray-600">
+              {hasActiveLoad
+                ? 'Complete your active load before claiming another.'
+                : 'Browse open loads and claim one to get started.'}
+            </p>
+          </div>
+
+          <div className="mb-4 flex flex-wrap gap-3 items-end">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Origin State</label>
+              <select
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                value={filter.originState ?? ''}
+                onChange={(e) => {
+                  setFilter((f) => ({ ...f, originState: e.target.value || undefined }))
+                  setPage(0)
+                }}
+              >
+                <option value="">Any</option>
+                {US_STATES.map(([abbr, name]) => (
+                  <option key={abbr} value={abbr}>{abbr} — {name}</option>
+                ))}
+              </select>
             </div>
-            {data && data.totalElements > 0 && (
-              <span className="text-sm text-gray-500">{data.totalElements} available</span>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Dest. State</label>
+              <select
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                value={filter.destinationState ?? ''}
+                onChange={(e) => {
+                  setFilter((f) => ({ ...f, destinationState: e.target.value || undefined }))
+                  setPage(0)
+                }}
+              >
+                <option value="">Any</option>
+                {US_STATES.map(([abbr, name]) => (
+                  <option key={abbr} value={abbr}>{abbr} — {name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Equipment</label>
+              <select
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                value={filter.equipmentType ?? ''}
+                onChange={(e) => {
+                  setFilter((f) => ({ ...f, equipmentType: (e.target.value as EquipmentType) || undefined }))
+                  setPage(0)
+                }}
+              >
+                {user?.equipmentType
+                  ? <option value={user.equipmentType}>{user.equipmentType.replace(/_/g, ' ')}</option>
+                  : <>
+                      <option value="">Any</option>
+                      <option value="DRY_VAN">Dry Van</option>
+                      <option value="FLATBED">Flatbed</option>
+                      <option value="REEFER">Reefer</option>
+                      <option value="STEP_DECK">Step Deck</option>
+                    </>
+                }
+              </select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Pickup Date</label>
+              <input
+                type="date"
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                value={filter.pickupDate ?? ''}
+                onChange={(e) => {
+                  setFilter((f) => ({ ...f, pickupDate: e.target.value || undefined }))
+                  setPage(0)
+                }}
+              />
+            </div>
+            {(filter.originState || filter.destinationState || filter.equipmentType || filter.pickupDate) && (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setFilter({ equipmentType: user?.equipmentType as EquipmentType | undefined })
+                  setPage(0)
+                }}
+              >
+                Clear Filters
+              </Button>
             )}
           </div>
 
@@ -204,16 +346,18 @@ export function TruckerDashboard() {
             </>
           )}
         </section>
+        )}
 
+        {tab === 'history' && (
         <section>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">History</h2>
+          <h2 className="sr-only">History</h2>
           {!history || history.totalElements === 0 ? (
             <div className="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center">
               <p className="text-gray-400 text-sm">No past loads yet.</p>
             </div>
           ) : (
             <>
-              <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+              <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
@@ -269,15 +413,7 @@ export function TruckerDashboard() {
                             )}
                           </td>
                           <td className="px-4 py-3">
-                            <span
-                              className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                                isCancelled
-                                  ? 'bg-red-100 text-red-700'
-                                  : 'bg-green-100 text-green-700'
-                              }`}
-                            >
-                              {load.status.toLowerCase().replace('_', ' ')}
-                            </span>
+                            <StatusBadge status={load.status} />
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-600">
                             {isCancelled ? '—' : new Date(load.pickupFrom).toLocaleDateString()}
@@ -319,6 +455,7 @@ export function TruckerDashboard() {
             </>
           )}
         </section>
+        )}
       </main>
     </div>
   )

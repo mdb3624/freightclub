@@ -6,6 +6,7 @@ import com.freightclub.dto.ProfileResponse;
 import com.freightclub.dto.UpdateProfileRequest;
 import com.freightclub.repository.TenantRepository;
 import com.freightclub.repository.UserRepository;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +25,7 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public ProfileResponse getProfile(String userId) {
         User user = findUser(userId);
-        Tenant tenant = tenantRepository.findById(user.getTenantId()).orElse(null);
+        Tenant tenant = resolveTenant(user.getTenantId());
         return ProfileResponse.from(user, tenant);
     }
 
@@ -51,12 +52,18 @@ public class ProfileService {
         user.setDotNumber(request.dotNumber());
         user.setEquipmentType(request.equipmentType());
         User saved = userRepository.save(user);
-        Tenant tenant = tenantRepository.findById(saved.getTenantId()).orElse(null);
+        Tenant tenant = resolveTenant(saved.getTenantId());
         return ProfileResponse.from(saved, tenant);
     }
 
     private User findUser(String userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException("User not found: " + userId));
+    }
+
+    @Nullable
+    private Tenant resolveTenant(@Nullable String tenantId) {
+        if (tenantId == null) return null;
+        return tenantRepository.findById(tenantId).orElse(null);
     }
 }

@@ -48,5 +48,5 @@ export interface UpdateProfileValues {
   notifyInApp: boolean
   mcNumber: string
   dotNumber: string
-  equipmentType: EquipmentType | ''
+  equipmentType: EquipmentType | '' | undefined
 }

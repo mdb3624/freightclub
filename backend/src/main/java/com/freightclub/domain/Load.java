@@ -80,6 +80,15 @@ public class Load {
     @Column(name = "weight_lbs", nullable = false)
     private BigDecimal weightLbs;
 
+    @Column(name = "length_ft")
+    private BigDecimal lengthFt;
+
+    @Column(name = "width_ft")
+    private BigDecimal widthFt;
+
+    @Column(name = "height_ft")
+    private BigDecimal heightFt;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "equipment_type", nullable = false, columnDefinition = "VARCHAR(20)")
     private EquipmentType equipmentType;
@@ -159,6 +168,12 @@ public class Load {
     public void setCommodity(String commodity) { this.commodity = commodity; }
     public BigDecimal getWeightLbs() { return weightLbs; }
     public void setWeightLbs(BigDecimal weightLbs) { this.weightLbs = weightLbs; }
+    public BigDecimal getLengthFt() { return lengthFt; }
+    public void setLengthFt(BigDecimal lengthFt) { this.lengthFt = lengthFt; }
+    public BigDecimal getWidthFt() { return widthFt; }
+    public void setWidthFt(BigDecimal widthFt) { this.widthFt = widthFt; }
+    public BigDecimal getHeightFt() { return heightFt; }
+    public void setHeightFt(BigDecimal heightFt) { this.heightFt = heightFt; }
     public EquipmentType getEquipmentType() { return equipmentType; }
     public void setEquipmentType(EquipmentType equipmentType) { this.equipmentType = equipmentType; }
     public BigDecimal getPayRate() { return payRate; }

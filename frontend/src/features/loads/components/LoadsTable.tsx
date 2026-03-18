@@ -7,12 +7,14 @@ interface LoadsTableProps {
   loads: LoadSummary[]
   onCancel: (id: string) => void
   isCancelling: boolean
+  onPublish: (id: string) => void
+  isPublishing: boolean
 }
 
 const editableStatuses = new Set(['DRAFT', 'OPEN'])
 const cancellableStatuses = new Set(['DRAFT', 'OPEN', 'CLAIMED'])
 
-export function LoadsTable({ loads, onCancel, isCancelling }: LoadsTableProps) {
+export function LoadsTable({ loads, onCancel, isCancelling, onPublish, isPublishing }: LoadsTableProps) {
   const navigate = useNavigate()
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
 
@@ -25,7 +27,7 @@ export function LoadsTable({ loads, onCancel, isCancelling }: LoadsTableProps) {
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+    <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
@@ -92,6 +94,15 @@ export function LoadsTable({ loads, onCancel, isCancelling }: LoadsTableProps) {
                     </span>
                   ) : (
                     <span className="flex items-center gap-3 text-sm">
+                      {load.status === 'DRAFT' && (
+                        <button
+                          className="text-green-600 hover:underline font-medium disabled:opacity-50"
+                          disabled={isPublishing}
+                          onClick={() => onPublish(load.id)}
+                        >
+                          Publish
+                        </button>
+                      )}
                       {canEdit && (
                         <Link
                           to={`/shipper/loads/${load.id}/edit`}

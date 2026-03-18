@@ -5,6 +5,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useLogout } from '@/features/auth/hooks/useLogout'
 import { useLoads } from '@/features/loads/hooks/useLoads'
 import { useCancelLoad } from '@/features/loads/hooks/useCancelLoad'
+import { usePublishLoad } from '@/features/loads/hooks/usePublishLoad'
 import { LoadsTable } from '@/features/loads/components/LoadsTable'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
@@ -17,6 +18,7 @@ export function ShipperDashboard() {
   const [page, setPage] = useState(0)
   const { data, isLoading, isError, isFetching } = useLoads(page)
   const { mutate: cancelLoad, isPending: isCancelling } = useCancelLoad()
+  const { mutate: publishLoad, isPending: isPublishing } = usePublishLoad()
 
   function handleRefresh() {
     queryClient.invalidateQueries({ queryKey: ['loads'] })
@@ -66,6 +68,8 @@ export function ShipperDashboard() {
               loads={data.content}
               onCancel={cancelLoad}
               isCancelling={isCancelling}
+              onPublish={publishLoad}
+              isPublishing={isPublishing}
             />
 
             {data.totalPages > 1 && (

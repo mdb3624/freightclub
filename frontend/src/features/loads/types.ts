@@ -52,6 +52,9 @@ export interface Load {
   deliveryTo: string
   commodity: string
   weightLbs: number
+  lengthFt: number | null
+  widthFt: number | null
+  heightFt: number | null
   equipmentType: EquipmentType
   payRate: number
   payRateType: PayRateType
@@ -96,11 +99,21 @@ export interface LoadFormValues {
   deliveryTo: string
   commodity: string
   weightLbs: number
+  lengthFt: number | ''
+  widthFt: number | ''
+  heightFt: number | ''
   equipmentType: EquipmentType
   payRate: number
   payRateType: PayRateType
   paymentTerms: PaymentTerms | ''
   specialRequirements: string
+}
+
+export interface BoardFilter {
+  originState?: string
+  destinationState?: string
+  equipmentType?: EquipmentType | ''
+  pickupDate?: string
 }
 
 export interface Page<T> {

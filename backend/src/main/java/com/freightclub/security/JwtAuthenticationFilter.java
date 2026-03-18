@@ -37,7 +37,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String role = claims.get("role", String.class);
                 String tenantId = claims.get("tenantId", String.class);
 
-                TenantContextHolder.setTenantId(tenantId);
+                if (tenantId != null) {
+                    TenantContextHolder.setTenantId(tenantId);
+                }
 
                 var auth = new UsernamePasswordAuthenticationToken(
                         userId,

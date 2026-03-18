@@ -1,8 +1,7 @@
 package com.freightclub.service;
 
 import com.freightclub.domain.*;
-import com.freightclub.dto.LoadResponse;
-import com.freightclub.dto.LoadSummaryResponse;
+import com.freightclub.dto.*;
 import com.freightclub.exception.LoadEditForbiddenException;
 import com.freightclub.exception.LoadNotClaimableException;
 import com.freightclub.exception.LoadNotFoundException;
@@ -89,6 +88,32 @@ class LoadServiceTest {
         return load;
     }
 
+    private CreateLoadRequest makeCreateRequest() {
+        return new CreateLoadRequest(
+                "Chicago, IL", "123 Main St", "60601",
+                "Detroit, MI", "456 Industrial Blvd", "48201",
+                BigDecimal.valueOf(280),
+                LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(1).plusHours(4),
+                LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(2).plusHours(4),
+                "Steel coils", BigDecimal.valueOf(40000),
+                EquipmentType.FLATBED, BigDecimal.valueOf(3.50), PayRateType.PER_MILE,
+                PaymentTerms.NET_30, null
+        );
+    }
+
+    private UpdateLoadRequest makeUpdateRequest() {
+        return new UpdateLoadRequest(
+                "Milwaukee, WI", "789 Harbor Dr", "53202",
+                "Cleveland, OH", "321 Steel Ave", "44101",
+                BigDecimal.valueOf(190),
+                LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(2).plusHours(4),
+                LocalDateTime.now().plusDays(3), LocalDateTime.now().plusDays(3).plusHours(4),
+                "Lumber", BigDecimal.valueOf(30000),
+                EquipmentType.FLATBED, BigDecimal.valueOf(2.75), PayRateType.PER_MILE,
+                null, null
+        );
+    }
+
     private User makeShipper() {
         User user = new User();
         setField(user, "id", SHIPPER_ID);
@@ -125,59 +150,160 @@ class LoadServiceTest {
     }
 
     // -------------------------------------------------------------------------
-    // claimLoad
+    // createLoad
     // -------------------------------------------------------------------------
 
     @Nested
-    class ClaimLoad {
+    class CreateLoad {
 
         @Test
-        void succeeds_whenLoadIsOpenAndTruckerHasNoActiveLoad() {
-            Load load = makeLoad(LOAD_ID, LoadStatus.OPEN);
-            when(loadRepository.findFirstByTruckerIdAndStatusInAndDeletedAtIsNull(
-                    eq(TRUCKER_ID), any())).thenReturn(Optional.empty());
-            when(loadRepository.findByIdAndDeletedAtIsNull(LOAD_ID)).thenReturn(Optional.of(load));
+        void createsLoad_withCorrectFields() {
             when(loadRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
             when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(makeShipper()));
-            when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.of(makeTrucker()));
 
-            LoadResponse response = loadService.claimLoad(LOAD_ID, TRUCKER_ID);
+            LoadResponse response = loadService.createLoad(makeCreateRequest(), SHIPPER_ID);
 
-            assertThat(response.status()).isEqualTo(LoadStatus.CLAIMED);
-            assertThat(response.truckerId()).isEqualTo(TRUCKER_ID);
+            assertThat(response.status()).isEqualTo(LoadStatus.OPEN);
+            assertThat(response.origin()).isEqualTo("Chicago, IL");
+            assertThat(response.destination()).isEqualTo("Detroit, MI");
+            assertThat(response.shipperId()).isEqualTo(SHIPPER_ID);
+            assertThat(response.paymentTerms()).isEqualTo(PaymentTerms.NET_30);
+            verify(loadRepository).save(any());
         }
 
         @Test
-        void throws_whenTruckerAlreadyHasActiveLoad() {
-            Load activeLoad = makeLoad("other-load", LoadStatus.IN_TRANSIT);
-            activeLoad.setTruckerId(TRUCKER_ID);
-            when(loadRepository.findFirstByTruckerIdAndStatusInAndDeletedAtIsNull(
-                    eq(TRUCKER_ID), any())).thenReturn(Optional.of(activeLoad));
+        void setsTenantId_fromContext() {
+            when(loadRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+            when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(makeShipper()));
 
-            assertThatThrownBy(() -> loadService.claimLoad(LOAD_ID, TRUCKER_ID))
-                    .isInstanceOf(LoadNotClaimableException.class)
-                    .hasMessageContaining("active load");
+            LoadResponse response = loadService.createLoad(makeCreateRequest(), SHIPPER_ID);
+
+            assertThat(response.tenantId()).isEqualTo(TENANT_ID);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // listLoads
+    // -------------------------------------------------------------------------
+
+    @Nested
+    class ListLoads {
+
+        @Test
+        void returnsLoads_forShipper() {
+            Page<Load> page = new PageImpl<>(List.of(makeLoad(LOAD_ID, LoadStatus.OPEN)));
+            when(loadRepository.findByTenantIdAndShipperIdAndDeletedAtIsNull(
+                    eq(TENANT_ID), eq(SHIPPER_ID), any(Pageable.class)))
+                    .thenReturn(page);
+
+            Page<LoadSummaryResponse> result = loadService.listLoads(SHIPPER_ID, 0, 20);
+
+            assertThat(result.getContent()).hasSize(1);
+            assertThat(result.getContent().get(0).origin()).isEqualTo("Chicago, IL");
         }
 
         @Test
-        void throws_whenLoadIsNotOpen() {
-            Load load = makeLoad(LOAD_ID, LoadStatus.CLAIMED);
-            when(loadRepository.findFirstByTruckerIdAndStatusInAndDeletedAtIsNull(
-                    eq(TRUCKER_ID), any())).thenReturn(Optional.empty());
-            when(loadRepository.findByIdAndDeletedAtIsNull(LOAD_ID)).thenReturn(Optional.of(load));
+        void returnsEmpty_whenNoLoads() {
+            when(loadRepository.findByTenantIdAndShipperIdAndDeletedAtIsNull(
+                    eq(TENANT_ID), eq(SHIPPER_ID), any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of()));
 
-            assertThatThrownBy(() -> loadService.claimLoad(LOAD_ID, TRUCKER_ID))
-                    .isInstanceOf(LoadNotClaimableException.class)
-                    .hasMessageContaining("not available");
+            Page<LoadSummaryResponse> result = loadService.listLoads(SHIPPER_ID, 0, 20);
+
+            assertThat(result.getContent()).isEmpty();
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // getLoad
+    // -------------------------------------------------------------------------
+
+    @Nested
+    class GetLoad {
+
+        @Test
+        void returns_ownedLoad() {
+            Load load = makeLoad(LOAD_ID, LoadStatus.OPEN);
+            when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
+                    .thenReturn(Optional.of(load));
+            when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(makeShipper()));
+
+            LoadResponse response = loadService.getLoad(LOAD_ID, SHIPPER_ID);
+
+            assertThat(response.id()).isEqualTo(LOAD_ID);
+            assertThat(response.shipperContact()).isNotNull();
         }
 
         @Test
-        void throws_whenLoadDoesNotExist() {
-            when(loadRepository.findFirstByTruckerIdAndStatusInAndDeletedAtIsNull(
-                    eq(TRUCKER_ID), any())).thenReturn(Optional.empty());
-            when(loadRepository.findByIdAndDeletedAtIsNull(LOAD_ID)).thenReturn(Optional.empty());
+        void throws_whenLoadNotFound() {
+            when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
+                    .thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> loadService.claimLoad(LOAD_ID, TRUCKER_ID))
+            assertThatThrownBy(() -> loadService.getLoad(LOAD_ID, SHIPPER_ID))
+                    .isInstanceOf(LoadNotFoundException.class);
+        }
+
+        @Test
+        void throws_whenShipperDoesNotOwnLoad() {
+            Load load = makeLoad(LOAD_ID, LoadStatus.OPEN);
+            when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
+                    .thenReturn(Optional.of(load));
+
+            assertThatThrownBy(() -> loadService.getLoad(LOAD_ID, "other-shipper"))
+                    .isInstanceOf(LoadNotFoundException.class);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // updateLoad
+    // -------------------------------------------------------------------------
+
+    @Nested
+    class UpdateLoad {
+
+        @Test
+        void updatesFields_forOpenLoad() {
+            Load load = makeLoad(LOAD_ID, LoadStatus.OPEN);
+            when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
+                    .thenReturn(Optional.of(load));
+            when(loadRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            LoadResponse response = loadService.updateLoad(LOAD_ID, makeUpdateRequest(), SHIPPER_ID);
+
+            assertThat(response.origin()).isEqualTo("Milwaukee, WI");
+            assertThat(response.destination()).isEqualTo("Cleveland, OH");
+            assertThat(response.commodity()).isEqualTo("Lumber");
+        }
+
+        @Test
+        void updatesFields_forDraftLoad() {
+            Load load = makeLoad(LOAD_ID, LoadStatus.DRAFT);
+            when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
+                    .thenReturn(Optional.of(load));
+            when(loadRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            LoadResponse response = loadService.updateLoad(LOAD_ID, makeUpdateRequest(), SHIPPER_ID);
+
+            assertThat(response.origin()).isEqualTo("Milwaukee, WI");
+        }
+
+        @Test
+        void throws_whenLoadIsNotEditable() {
+            Load load = makeLoad(LOAD_ID, LoadStatus.IN_TRANSIT);
+            when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
+                    .thenReturn(Optional.of(load));
+
+            assertThatThrownBy(() -> loadService.updateLoad(LOAD_ID, makeUpdateRequest(), SHIPPER_ID))
+                    .isInstanceOf(LoadEditForbiddenException.class);
+        }
+
+        @Test
+        void throws_whenShipperDoesNotOwnLoad() {
+            Load load = makeLoad(LOAD_ID, LoadStatus.OPEN);
+            when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
+                    .thenReturn(Optional.of(load));
+
+            assertThatThrownBy(() -> loadService.updateLoad(LOAD_ID, makeUpdateRequest(), "other-shipper"))
                     .isInstanceOf(LoadNotFoundException.class);
         }
     }
@@ -195,7 +321,18 @@ class LoadServiceTest {
             when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
                     .thenReturn(Optional.of(load));
             when(loadRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
-            when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(makeShipper()));
+
+            LoadResponse response = loadService.cancelLoad(LOAD_ID, SHIPPER_ID);
+
+            assertThat(response.status()).isEqualTo(LoadStatus.CANCELLED);
+        }
+
+        @Test
+        void succeeds_forDraftLoad() {
+            Load load = makeLoad(LOAD_ID, LoadStatus.DRAFT);
+            when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
+                    .thenReturn(Optional.of(load));
+            when(loadRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
             LoadResponse response = loadService.cancelLoad(LOAD_ID, SHIPPER_ID);
 
@@ -209,8 +346,6 @@ class LoadServiceTest {
             when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
                     .thenReturn(Optional.of(load));
             when(loadRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
-            when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(makeShipper()));
-            when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.of(makeTrucker()));
 
             LoadResponse response = loadService.cancelLoad(LOAD_ID, SHIPPER_ID);
 
@@ -341,6 +476,75 @@ class LoadServiceTest {
 
             assertThatThrownBy(() -> loadService.markDelivered(LOAD_ID, TRUCKER_ID))
                     .isInstanceOf(LoadNotFoundException.class);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // getMyLoadHistory
+    // -------------------------------------------------------------------------
+
+    @Nested
+    class GetMyLoadHistory {
+
+        @Test
+        void returnsDeliveredAndCancelledLoads() {
+            Load delivered = makeLoad("load-d", LoadStatus.DELIVERED);
+            delivered.setTruckerId(TRUCKER_ID);
+            Load cancelled = makeLoad("load-c", LoadStatus.CANCELLED);
+            cancelled.setTruckerId(TRUCKER_ID);
+            when(loadRepository.findByTruckerIdAndStatusInAndDeletedAtIsNull(
+                    eq(TRUCKER_ID), any(), any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(delivered, cancelled)));
+
+            Page<LoadSummaryResponse> result = loadService.getMyLoadHistory(TRUCKER_ID, 0, 20);
+
+            assertThat(result.getContent()).hasSize(2);
+        }
+
+        @Test
+        void returnsEmpty_whenNoHistory() {
+            when(loadRepository.findByTruckerIdAndStatusInAndDeletedAtIsNull(
+                    eq(TRUCKER_ID), any(), any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of()));
+
+            Page<LoadSummaryResponse> result = loadService.getMyLoadHistory(TRUCKER_ID, 0, 20);
+
+            assertThat(result.getContent()).isEmpty();
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // getMyActiveLoad
+    // -------------------------------------------------------------------------
+
+    @Nested
+    class GetMyActiveLoad {
+
+        @Test
+        void returns_activeLoad_whenPresent() {
+            Load load = makeLoad(LOAD_ID, LoadStatus.IN_TRANSIT);
+            load.setTruckerId(TRUCKER_ID);
+            when(loadRepository.findFirstByTruckerIdAndStatusInAndDeletedAtIsNull(
+                    eq(TRUCKER_ID), any()))
+                    .thenReturn(Optional.of(load));
+            when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(makeShipper()));
+            when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.of(makeTrucker()));
+
+            Optional<LoadResponse> result = loadService.getMyActiveLoad(TRUCKER_ID);
+
+            assertThat(result).isPresent();
+            assertThat(result.get().status()).isEqualTo(LoadStatus.IN_TRANSIT);
+        }
+
+        @Test
+        void returns_empty_whenNoActiveLoad() {
+            when(loadRepository.findFirstByTruckerIdAndStatusInAndDeletedAtIsNull(
+                    eq(TRUCKER_ID), any()))
+                    .thenReturn(Optional.empty());
+
+            Optional<LoadResponse> result = loadService.getMyActiveLoad(TRUCKER_ID);
+
+            assertThat(result).isEmpty();
         }
     }
 

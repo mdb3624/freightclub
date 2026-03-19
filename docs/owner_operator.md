@@ -13,7 +13,9 @@ An owner/operator is an independent truck driver who owns their own vehicle and 
 ## Goals
 
 - Find loads that match their truck type, preferred lanes, and schedule
-- Maximize revenue per mile and minimize deadhead (empty) miles
+- Maximize revenue per mile (RPM) and minimize deadhead (empty) miles
+- Know immediately whether a load is profitable before claiming it
+- Stay compliant with FMCSA Hours of Service (HOS) regulations
 - Get paid quickly and reliably after delivery
 - Manage their business with minimal administrative overhead
 
@@ -22,44 +24,75 @@ An owner/operator is an independent truck driver who owns their own vehicle and 
 ## Pain Points
 
 - Wasted time browsing irrelevant or already-claimed loads
+- Accepting loads below break-even because RPM isn't visible at a glance
 - Brokers or shippers who are unresponsive or unreliable
 - Unclear or late payments
 - Too much paperwork (BOL, POD, invoicing)
 - Loads that don't match their equipment type or preferred region
+- No visibility into earnings trends or cost-per-mile performance
 
 ---
 
 ## Functional Requirements
 
 ### Account & Profile
-- [ ] Register with name, contact info, and business details (MC number, DOT number)
+- [x] Register with name, contact info, and business details (MC number, DOT number)
+- [x] Set primary equipment type
+- [x] View and edit profile at any time
+- [x] Cost profile: monthly fixed costs, fuel cost per gallon, MPG, maintenance cost per mile, monthly miles target, target profit margin per mile
 - [ ] Upload and manage truck/trailer information (type, dimensions, capacity)
 - [ ] Set preferred lanes (origin/destination regions)
 - [ ] Set availability (days/hours available to pick up)
-- [ ] View and edit profile at any time
+
+### Financial Intelligence
+- [x] Cost Per Mile (CPM) calculator — live breakdown on profile: fixed CPM, variable CPM (fuel + maintenance), total CPM, minimum RPM
+- [x] Minimum RPM = total CPM + target margin per mile
+- [x] 30-day earnings summary: loads completed, total miles, total revenue, effective CPM
+- [ ] Per-load earnings log with actual miles driven and fuel used
+- [ ] Weekly/monthly P&L report
+- [ ] IFTA mileage tracking by state
 
 ### Load Discovery
-- [ ] Browse open loads on the load board
-- [ ] Filter loads by origin, destination, equipment type, weight, and pay rate
-- [ ] Search loads by pickup/delivery date range
-- [ ] View load details: origin, destination, distance, weight, dimensions, freight type, pay rate, shipper info
-- [ ] See how many truckers have viewed or expressed interest in a load
-- [ ] Receive suggested loads based on current location and preferred lanes
+- [x] Browse open loads on the load board
+- [x] Filter by origin state, destination state, equipment type, pickup date
+- [x] Equipment filter defaults to trucker's assigned type; hides irrelevant types
+- [x] View full load details: origin, destination, distance, weight, dimensions (L×W×H), commodity, equipment type, pay rate, payment terms, special requirements
+- [x] RPM column on load board with color-coded profitability badge:
+  - Green — at or above minimum RPM
+  - Yellow — within 10% below minimum RPM
+  - Red — significantly below minimum RPM
+- [x] Profitability breakdown on load detail: estimated revenue, fuel cost, maintenance, net profit, effective RPM vs minimum RPM
+- [ ] Filter by weight range or minimum pay rate
+- [ ] See view/interest count per load
+- [ ] Suggested loads based on current location and preferred lanes
+- [ ] Deadhead mileage estimate from current location to pickup
 
 ### Claiming a Load
+- [x] Claim a load directly (first-come-first-served)
+- [x] One active load at a time enforced; must deliver before claiming another
+- [x] View active load prominently on dashboard with shipper contact info
+- [x] Scroll automatically to active load after claiming
+- [x] View full load history (delivered, settled, cancelled)
 - [ ] Express interest / bid on a load
-- [ ] Claim a load directly if posted as first-come-first-served
-- [ ] Receive confirmation when a load is assigned to them
-- [ ] View all loads currently assigned to them
+- [ ] Receive push/email confirmation when a load is assigned
 
 ### Load Execution
-- [ ] Mark a load as picked up (with timestamp and optional photo of BOL)
-- [ ] Update load status to in-transit
-- [ ] Mark a load as delivered (with timestamp and optional proof of delivery photo)
-- [ ] Report issues during transit (delay, damage, etc.)
+- [x] Mark load as picked up (CLAIMED → IN_TRANSIT) with confirmation dialog
+- [x] Mark load as delivered (IN_TRANSIT → DELIVERED) with confirmation dialog
+- [x] Hours of Service (HOS) widget:
+  - 11-hour drive rule progress bar with remaining time
+  - 14-hour on-duty window progress bar with remaining time
+  - Color-coded warnings: amber < 30% remaining, red < 15% remaining
+  - "Under 2 hours" alert prompting stop planning
+  - Persisted across sessions via localStorage
+- [ ] BOL photo upload at pickup
+- [ ] Proof of Delivery (POD) photo upload at delivery
+- [ ] Report issue during transit (delay, damage, etc.)
 
 ### Payments
-- [ ] View agreed pay rate before claiming a load
+- [x] View agreed pay rate (flat or per-mile) before claiming
+- [x] View estimated total pay on per-mile loads
+- [x] View payment terms on every load (Quick Pay, Net 7/15/30)
 - [ ] Receive payment notification after delivery confirmation
 - [ ] View payment history and status per load
 - [ ] Connect a bank account or payment method for direct deposit
@@ -81,6 +114,7 @@ An owner/operator is an independent truck driver who owns their own vehicle and 
 - Fast load board refresh — loads should update in near real-time to avoid claiming already-taken loads
 - Offline tolerance — key info (current load details, BOL) should be accessible with poor connectivity
 - Simple, low-friction UI — minimize steps to claim a load or update status
+- HOS widget must be visible without navigating away from the load board
 
 ---
 
@@ -101,17 +135,37 @@ An owner/operator is an independent truck driver who owns their own vehicle and 
 ## Load Status Transitions (Trucker Actions)
 
 ```
-open → claimed      (trucker claims the load)
+open → claimed        (trucker claims the load)
 claimed → in_transit  (trucker marks pickup)
 in_transit → delivered  (trucker marks delivery)
 ```
 
 ---
 
+## Cost Profile Formula
+
+```
+Fixed CPM      = Monthly Fixed Costs ÷ Monthly Miles Target
+Fuel CPM       = Fuel Cost per Gallon ÷ Miles per Gallon
+Variable CPM   = Fuel CPM + Maintenance Cost per Mile
+Total CPM      = Fixed CPM + Variable CPM
+Minimum RPM    = Total CPM + Target Margin per Mile
+```
+
+A load is **profitable** if its RPM ≥ Minimum RPM.
+A load **breaks even** if its RPM = Total CPM.
+A load **loses money** if its RPM < Total CPM.
+
+---
+
 ## Future Considerations
 
+- Deadhead cost inclusion in profitability calculations
+- IFTA mileage log by state for quarterly tax filing
+- Fuel surcharge (FSC) calculation based on DOE national average
 - Document upload: insurance certificates, CDL, medical card
 - Preferred shipper / blocklist
 - In-app navigation integration (Google Maps, Waze)
-- Earnings dashboard and tax summary
+- Annual earnings and tax summary
 - Team drivers / co-driver support
+- ELD integration for automated HOS tracking

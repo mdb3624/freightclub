@@ -67,18 +67,26 @@ Legend: ✅ Built · 🔲 Not yet built
 - ✅ Register with name, contact info, MC number, DOT number
 - ✅ Set primary equipment type
 - ✅ View and edit profile at any time
+- ✅ Cost profile: monthly fixed costs, fuel $/gal, MPG, maintenance $/mi, monthly miles target, target margin
 - 🔲 Upload truck/trailer information (dimensions, capacity)
 - 🔲 Set preferred lanes (origin/destination regions)
 - 🔲 Set availability (days/hours)
+
+### Financial Intelligence
+- ✅ Cost Per Mile (CPM) calculator: fixed CPM, variable CPM, total CPM displayed live on profile
+- ✅ Minimum RPM calculated from CPM + target margin
+- ✅ 30-day earnings summary on history tab: loads completed, total miles, total revenue, effective CPM
 
 ### Load Discovery
 - ✅ Browse open loads on the load board
 - ✅ Filter by origin state, destination state, equipment type, pickup date
 - ✅ Equipment filter defaults to trucker's assigned type
 - ✅ View full load details: origin, destination, distance, weight, dimensions, commodity, pay rate, equipment type, payment terms, special requirements
+- ✅ RPM column on load board with color-coded profitability badge (green / yellow / red vs minimum RPM)
+- ✅ Profitability breakdown on load detail: estimated revenue, fuel cost, maintenance, net profit, RPM vs minimum RPM
 - 🔲 Filter by weight range or pay rate
 - 🔲 See view/interest count per load
-- 🔲 Suggested loads based on current location and preferred lanes
+- 🔲 Suggested loads based on preferred lanes
 
 ### Claiming a Load
 - ✅ Claim a load (first-come-first-served; one active load at a time)
@@ -89,6 +97,7 @@ Legend: ✅ Built · 🔲 Not yet built
 ### Load Execution
 - ✅ Mark load as picked up (CLAIMED → IN_TRANSIT) with confirmation dialog
 - ✅ Mark load as delivered (IN_TRANSIT → DELIVERED) with confirmation dialog
+- ✅ Hours of Service (HOS) widget: 11-hour drive rule and 14-hour on-duty window with color-coded progress bars and warnings
 - 🔲 BOL photo upload at pickup
 - 🔲 Proof of Delivery photo upload at delivery
 - 🔲 Report issue during transit (delay, damage)

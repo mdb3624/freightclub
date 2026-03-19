@@ -27,9 +27,12 @@ const schema = z.object({
   deliveryTo: z.string().min(1, 'Delivery end is required'),
   commodity: z.string().min(1, 'Commodity is required'),
   weightLbs: z.number({ invalid_type_error: 'Weight is required' }).min(0.01, 'Weight must be > 0'),
-  lengthFt: z.union([z.number().min(0.01), z.literal('')]).optional(),
-  widthFt: z.union([z.number().min(0.01), z.literal('')]).optional(),
-  heightFt: z.union([z.number().min(0.01), z.literal('')]).optional(),
+  lengthFt: z.union([z.number().min(0), z.literal('')]).optional(),
+  lengthIn: z.union([z.number().min(0).max(11), z.literal('')]).optional(),
+  widthFt: z.union([z.number().min(0), z.literal('')]).optional(),
+  widthIn: z.union([z.number().min(0).max(11), z.literal('')]).optional(),
+  heightFt: z.union([z.number().min(0), z.literal('')]).optional(),
+  heightIn: z.union([z.number().min(0).max(11), z.literal('')]).optional(),
   equipmentType: z.enum(['DRY_VAN', 'FLATBED', 'REEFER', 'STEP_DECK']),
   payRate: z.number({ invalid_type_error: 'Pay rate is required' }).min(0.01, 'Pay rate must be > 0'),
   payRateType: z.enum(['PER_MILE', 'FLAT_RATE']),
@@ -71,8 +74,11 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
       destinationZip: '',
       destinationAddress2: '',
       lengthFt: '',
+      lengthIn: '',
       widthFt: '',
+      widthIn: '',
       heightFt: '',
+      heightIn: '',
       ...defaultValues,
     },
   })
@@ -266,30 +272,45 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
         />
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Input
-          label="Length (ft)"
-          type="number"
-          step="any"
-          min="0"
-          placeholder="Optional"
-          {...register('lengthFt', { setValueAs: v => v === '' ? '' : Number(v) })}
-        />
-        <Input
-          label="Width (ft)"
-          type="number"
-          step="any"
-          min="0"
-          placeholder="Optional"
-          {...register('widthFt', { setValueAs: v => v === '' ? '' : Number(v) })}
-        />
-        <Input
-          label="Height (ft)"
-          type="number"
-          step="any"
-          min="0"
-          placeholder="Optional"
-          {...register('heightFt', { setValueAs: v => v === '' ? '' : Number(v) })}
-        />
+        {(['Length', 'Width', 'Height'] as const).map((label) => {
+          const ftKey = `${label.toLowerCase()}Ft` as 'lengthFt' | 'widthFt' | 'heightFt'
+          const inKey = `${label.toLowerCase()}In` as 'lengthIn' | 'widthIn' | 'heightIn'
+          return (
+            <div key={label} className="flex flex-col gap-1">
+              <span className="text-sm font-medium text-gray-700">
+                {label} <span className="text-gray-400 font-normal text-xs">(optional)</span>
+              </span>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    placeholder="0"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 pr-8 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    {...register(ftKey, { setValueAs: v => v === '' ? '' : Number(v) })}
+                  />
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">ft</span>
+                </div>
+                <div className="relative flex-1">
+                  <input
+                    type="number"
+                    min="0"
+                    max="11"
+                    step="1"
+                    placeholder="0"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 pr-8 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    {...register(inKey, { setValueAs: v => v === '' ? '' : Number(v) })}
+                  />
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">in</span>
+                </div>
+              </div>
+              {(errors[ftKey] || errors[inKey]) && (
+                <p className="text-xs text-red-600">{errors[ftKey]?.message ?? errors[inKey]?.message}</p>
+              )}
+            </div>
+          )
+        })}
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
         <div className="flex flex-col gap-1">

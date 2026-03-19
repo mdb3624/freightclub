@@ -20,10 +20,14 @@ Legend: ✅ Built · 🔲 Not yet built
 - ✅ Publish draft → open
 - ✅ Edit a load while in DRAFT or OPEN status
 - ✅ Cancel a load (any pre-delivered status)
-- ✅ Dashboard shows all loads with status (draft, open, claimed, in transit, delivered, cancelled)
+- ✅ Dashboard shows all loads with status (draft, open, claimed, in transit, delivered, cancelled, settled)
+- 🔲 Cancel with reason (required reason field stored and shown to trucker)
+- 🔲 Trucker notified when shipper cancels a claimed load; active load slot freed immediately
 - 🔲 Duplicate a load for recurring lanes
+- 🔲 Recurring load scheduling (post same lane on a weekly/monthly cadence)
 - 🔲 Freight class field (LTL)
 - 🔲 Post as open-to-bids vs first-come-first-served
+- 🔲 Load posting validation prompts: in-form tips for accurate weight, special requirements, competitive rates, realistic windows
 
 ### Carrier Selection
 - ✅ View trucker contact info (name, phone, email, MC/DOT) after load is claimed
@@ -39,10 +43,12 @@ Legend: ✅ Built · 🔲 Not yet built
 - 🔲 Full status history and timeline per load
 
 ### Documentation
-- 🔲 Digital Bill of Lading (BOL) generation
-- 🔲 Signed BOL upload by trucker at pickup
+- 🔲 Platform-generated digital BOL from load data at publish time (distinct from trucker-uploaded copy)
+- 🔲 Signed BOL photo upload by trucker at pickup
 - 🔲 Proof of Delivery (POD) photo upload
-- 🔲 PDF export per load
+- 🔲 View BOL and POD on load detail (shipper + trucker)
+- 🔲 PDF export per load (details + documents)
+- 🔲 Document history per load for auditing
 
 ### Payments
 - ✅ Pay rate and payment terms visible on load
@@ -57,7 +63,8 @@ Legend: ✅ Built · 🔲 Not yet built
 
 ### Ratings & Reviews
 - 🔲 Rate and review trucker after completion
-- 🔲 View own shipper rating (visible to truckers)
+- 🔲 Shipper public profile visible to truckers before claiming: overall rating, avg payment speed, completed load count, dispute/cancellation flags
+- 🔲 View own shipper rating and feedback history
 
 ---
 
@@ -68,9 +75,9 @@ Legend: ✅ Built · 🔲 Not yet built
 - ✅ Set primary equipment type
 - ✅ View and edit profile at any time
 - ✅ Cost profile: monthly fixed costs, fuel $/gal, MPG, maintenance $/mi, monthly miles target, target margin
-- 🔲 Upload truck/trailer information (dimensions, capacity)
-- 🔲 Set preferred lanes (origin/destination regions)
-- 🔲 Set availability (days/hours)
+- 🔲 Upload truck/trailer information (type, dimensions, capacity) — Phase 7
+- 🔲 Set preferred lanes (origin/destination regions) — Phase 7
+- 🔲 Set availability (days/hours) — Phase 7
 
 ### Financial Intelligence
 - ✅ Cost Per Mile (CPM) calculator: fixed CPM, variable CPM, total CPM displayed live on profile
@@ -84,7 +91,8 @@ Legend: ✅ Built · 🔲 Not yet built
 - ✅ View full load details: origin, destination, distance, weight, dimensions, commodity, pay rate, equipment type, payment terms, special requirements
 - ✅ RPM column on load board with color-coded profitability badge (green / yellow / red vs minimum RPM)
 - ✅ Profitability breakdown on load detail: estimated revenue, fuel cost, maintenance, net profit, RPM vs minimum RPM
-- 🔲 Filter by weight range or pay rate
+- 🔲 Shipper reputation badge on load cards (star rating, avg payment speed)
+- 🔲 Filter by weight range or minimum pay rate
 - 🔲 See view/interest count per load
 - 🔲 Suggested loads based on preferred lanes
 
@@ -116,6 +124,7 @@ Legend: ✅ Built · 🔲 Not yet built
 ### Ratings & Reviews
 - 🔲 Rate shipper after delivery
 - 🔲 View own rating and feedback history
+- 🔲 View shipper public reputation profile (rating, avg payment speed, completed loads, dispute flags) before claiming
 
 ---
 

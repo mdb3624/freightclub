@@ -100,8 +100,11 @@ export interface LoadFormValues {
   commodity: string
   weightLbs: number
   lengthFt: number | ''
+  lengthIn: number | ''
   widthFt: number | ''
+  widthIn: number | ''
   heightFt: number | ''
+  heightIn: number | ''
   equipmentType: EquipmentType
   payRate: number
   payRateType: PayRateType

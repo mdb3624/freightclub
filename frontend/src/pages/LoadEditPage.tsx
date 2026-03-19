@@ -21,6 +21,16 @@ export function LoadEditPage() {
 
   if (isLoading || !load) return <p className="text-center text-gray-500 py-12">Loading...</p>
 
+  function splitDecimalFt(val: number | null): { ft: number | ''; inches: number | '' } {
+    if (val == null) return { ft: '', inches: '' }
+    const totalIn = Math.round(val * 12)
+    return { ft: Math.floor(totalIn / 12), inches: totalIn % 12 }
+  }
+
+  const length = splitDecimalFt(load.lengthFt)
+  const width = splitDecimalFt(load.widthFt)
+  const height = splitDecimalFt(load.heightFt)
+
   const defaultValues: Partial<LoadFormValues> = {
     originCity: load.originCity,
     originState: load.originState,
@@ -39,9 +49,12 @@ export function LoadEditPage() {
     deliveryTo: load.deliveryTo.slice(0, 16),
     commodity: load.commodity,
     weightLbs: load.weightLbs,
-    lengthFt: load.lengthFt ?? '',
-    widthFt: load.widthFt ?? '',
-    heightFt: load.heightFt ?? '',
+    lengthFt: length.ft,
+    lengthIn: length.inches,
+    widthFt: width.ft,
+    widthIn: width.inches,
+    heightFt: height.ft,
+    heightIn: height.inches,
     equipmentType: load.equipmentType,
     payRate: load.payRate,
     payRateType: load.payRateType,

@@ -1,13 +1,19 @@
 import apiClient from '@/lib/apiClient'
 import type { BoardFilter, Load, LoadSummary, LoadFormValues, Page } from './types'
 
+function toDecimalFt(ft: number | '', inches: number | ''): number | null {
+  if (ft === '' && inches === '') return null
+  return (ft === '' ? 0 : ft) + (inches === '' ? 0 : inches) / 12
+}
+
 function sanitize(data: LoadFormValues) {
+  const { lengthFt, lengthIn, widthFt, widthIn, heightFt, heightIn, ...rest } = data
   return {
-    ...data,
+    ...rest,
     paymentTerms: data.paymentTerms === '' ? undefined : data.paymentTerms,
-    lengthFt: data.lengthFt === '' ? null : data.lengthFt,
-    widthFt: data.widthFt === '' ? null : data.widthFt,
-    heightFt: data.heightFt === '' ? null : data.heightFt,
+    lengthFt: toDecimalFt(lengthFt, lengthIn),
+    widthFt: toDecimalFt(widthFt, widthIn),
+    heightFt: toDecimalFt(heightFt, heightIn),
   }
 }
 

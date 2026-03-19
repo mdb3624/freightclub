@@ -17,6 +17,13 @@ function formatDate(dt: string) {
   return new Date(dt).toLocaleDateString(undefined, { dateStyle: 'medium' })
 }
 
+function formatDimension(decimalFt: number): string {
+  const totalIn = Math.round(decimalFt * 12)
+  const ft = Math.floor(totalIn / 12)
+  const inches = totalIn % 12
+  return inches === 0 ? `${ft} ft` : `${ft} ft ${inches} in`
+}
+
 export function LoadDetail({ load }: LoadDetailProps) {
   return (
     <div className="space-y-6">
@@ -88,9 +95,9 @@ export function LoadDetail({ load }: LoadDetailProps) {
             <div className="col-span-3">
               <dt className="text-gray-500">Dimensions (L × W × H)</dt>
               <dd className="font-medium text-gray-900">
-                {load.lengthFt != null ? `${load.lengthFt} ft` : '—'}{' × '}
-                {load.widthFt != null ? `${load.widthFt} ft` : '—'}{' × '}
-                {load.heightFt != null ? `${load.heightFt} ft` : '—'}
+                {load.lengthFt != null ? formatDimension(load.lengthFt) : '—'}{' × '}
+                {load.widthFt != null ? formatDimension(load.widthFt) : '—'}{' × '}
+                {load.heightFt != null ? formatDimension(load.heightFt) : '—'}
               </dd>
             </div>
           )}

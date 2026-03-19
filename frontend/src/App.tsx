@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { TruckerLandingPage } from '@/pages/TruckerLandingPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { RegisterPage } from '@/pages/RegisterPage'
 import { ShipperDashboard } from '@/pages/ShipperDashboard'
@@ -80,8 +81,8 @@ export default function App() {
         }
       />
 
-      <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<TruckerLandingPage />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
     </>
   )

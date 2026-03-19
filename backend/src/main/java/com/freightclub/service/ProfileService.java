@@ -51,6 +51,12 @@ public class ProfileService {
         user.setMcNumber(request.mcNumber());
         user.setDotNumber(request.dotNumber());
         user.setEquipmentType(request.equipmentType());
+        user.setMonthlyFixedCosts(request.monthlyFixedCosts());
+        user.setFuelCostPerGallon(request.fuelCostPerGallon());
+        user.setMilesPerGallon(request.milesPerGallon());
+        user.setMaintenanceCostPerMile(request.maintenanceCostPerMile());
+        user.setMonthlyMilesTarget(request.monthlyMilesTarget());
+        user.setTargetMarginPerMile(request.targetMarginPerMile());
         User saved = userRepository.save(user);
         Tenant tenant = resolveTenant(saved.getTenantId());
         return ProfileResponse.from(saved, tenant);

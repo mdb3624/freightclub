@@ -26,6 +26,12 @@ export interface Profile {
   mcNumber: string | null
   dotNumber: string | null
   equipmentType: EquipmentType | null
+  monthlyFixedCosts: number | null
+  fuelCostPerGallon: number | null
+  milesPerGallon: number | null
+  maintenanceCostPerMile: number | null
+  monthlyMilesTarget: number | null
+  targetMarginPerMile: number | null
 }
 
 export interface UpdateProfileValues {
@@ -49,4 +55,10 @@ export interface UpdateProfileValues {
   mcNumber: string
   dotNumber: string
   equipmentType: EquipmentType | '' | undefined
+  monthlyFixedCosts: number | '' | null
+  fuelCostPerGallon: number | '' | null
+  milesPerGallon: number | '' | null
+  maintenanceCostPerMile: number | '' | null
+  monthlyMilesTarget: number | '' | null
+  targetMarginPerMile: number | '' | null
 }

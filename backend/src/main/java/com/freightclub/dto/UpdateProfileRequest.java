@@ -4,6 +4,8 @@ import com.freightclub.domain.EquipmentType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.math.BigDecimal;
+
 public record UpdateProfileRequest(
         @NotBlank String firstName,
         @NotBlank String lastName,
@@ -24,5 +26,11 @@ public record UpdateProfileRequest(
         boolean notifyInApp,
         @Size(max = 20) String mcNumber,
         @Size(max = 20) String dotNumber,
-        EquipmentType equipmentType
+        EquipmentType equipmentType,
+        BigDecimal monthlyFixedCosts,
+        BigDecimal fuelCostPerGallon,
+        BigDecimal milesPerGallon,
+        BigDecimal maintenanceCostPerMile,
+        Integer monthlyMilesTarget,
+        BigDecimal targetMarginPerMile
 ) {}

@@ -5,6 +5,8 @@ import com.freightclub.domain.Tenant;
 import com.freightclub.domain.User;
 import org.springframework.lang.Nullable;
 
+import java.math.BigDecimal;
+
 public record ProfileResponse(
         String id,
         String email,
@@ -30,7 +32,13 @@ public record ProfileResponse(
         boolean notifyInApp,
         String mcNumber,
         String dotNumber,
-        EquipmentType equipmentType
+        EquipmentType equipmentType,
+        BigDecimal monthlyFixedCosts,
+        BigDecimal fuelCostPerGallon,
+        BigDecimal milesPerGallon,
+        BigDecimal maintenanceCostPerMile,
+        Integer monthlyMilesTarget,
+        BigDecimal targetMarginPerMile
 ) {
     public static ProfileResponse from(User user, @Nullable Tenant tenant) {
         return new ProfileResponse(
@@ -58,7 +66,13 @@ public record ProfileResponse(
                 user.isNotifyInApp(),
                 user.getMcNumber(),
                 user.getDotNumber(),
-                user.getEquipmentType()
+                user.getEquipmentType(),
+                user.getMonthlyFixedCosts(),
+                user.getFuelCostPerGallon(),
+                user.getMilesPerGallon(),
+                user.getMaintenanceCostPerMile(),
+                user.getMonthlyMilesTarget(),
+                user.getTargetMarginPerMile()
         );
     }
 }

@@ -8,6 +8,8 @@ import { useMyActiveLoad } from '@/features/loads/hooks/useMyActiveLoad'
 import { useMyLoadHistory } from '@/features/loads/hooks/useMyLoadHistory'
 import { LoadBoardTable } from '@/features/loads/components/LoadBoardTable'
 import { StatusBadge } from '@/features/loads/components/StatusBadge'
+import { EarningSummaryCard } from '@/features/loads/components/EarningSummaryCard'
+import { HosWidget } from '@/features/hos/components/HosWidget'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { TableSkeleton } from '@/components/ui/Skeleton'
@@ -222,6 +224,10 @@ export function TruckerDashboard() {
 
         {tab === 'board' && (
         <section>
+          <div className="mb-6">
+            <HosWidget />
+          </div>
+
           <div className="mb-4 flex items-center justify-between">
             <p className="text-sm text-gray-600">
               {hasActiveLoad
@@ -351,6 +357,9 @@ export function TruckerDashboard() {
         {tab === 'history' && (
         <section>
           <h2 className="sr-only">History</h2>
+          {history && history.content.length > 0 && (
+            <EarningSummaryCard loads={history.content} />
+          )}
           {!history || history.totalElements === 0 ? (
             <div className="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center">
               <p className="text-gray-400 text-sm">No past loads yet.</p>

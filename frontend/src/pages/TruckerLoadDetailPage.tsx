@@ -9,6 +9,8 @@ import { useMarkPickedUp } from '@/features/loads/hooks/useMarkPickedUp'
 import { useMarkDelivered } from '@/features/loads/hooks/useMarkDelivered'
 import { LoadDetail } from '@/features/loads/components/LoadDetail'
 import { ContactCard } from '@/features/loads/components/ContactCard'
+import { ProfitabilityCard } from '@/features/loads/components/ProfitabilityCard'
+import { useProfile } from '@/features/profile/hooks/useProfile'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import type { ApiError } from '@/types'
@@ -20,6 +22,7 @@ export function TruckerLoadDetailPage() {
   const user = useAuthStore((s) => s.user)
   const logout = useLogout()
   const { data: load, isLoading, isError } = useBoardLoad(id)
+  const { data: profile } = useProfile()
   const { mutate: claimLoad, isPending: isClaiming, error: claimError } = useClaimLoad()
   const { mutate: markPickedUp, isPending: isPickingUp } = useMarkPickedUp()
   const { mutate: markDelivered, isPending: isDelivering } = useMarkDelivered()
@@ -98,8 +101,24 @@ export function TruckerLoadDetailPage() {
 
             <div className="rounded-xl border border-gray-200 bg-white p-6">
               <LoadDetail load={load} />
+            </div>
 
-              <div className="mt-6 border-t border-gray-100 pt-6 flex items-center gap-3">
+            {profile && load.status === 'OPEN' && (
+              <ProfitabilityCard
+                load={load}
+                costProfile={{
+                  monthlyFixedCosts:      profile.monthlyFixedCosts,
+                  fuelCostPerGallon:      profile.fuelCostPerGallon,
+                  milesPerGallon:         profile.milesPerGallon,
+                  maintenanceCostPerMile: profile.maintenanceCostPerMile,
+                  monthlyMilesTarget:     profile.monthlyMilesTarget,
+                  targetMarginPerMile:    profile.targetMarginPerMile,
+                }}
+              />
+            )}
+
+            <div className="rounded-xl border border-gray-200 bg-white p-6 mt-4">
+              <div className="flex items-center gap-3">
                 {load.status === 'OPEN' && (
                   <Button isLoading={isClaiming} onClick={handleClaim}>
                     Claim This Load

@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import type { LoadSummary } from '../types'
 import { PAYMENT_TERMS_LABELS } from '../types'
+import { useProfile } from '@/features/profile/hooks/useProfile'
+import { ProfitabilityBadge } from './ProfitabilityBadge'
 
 interface LoadBoardTableProps {
   loads: LoadSummary[]
@@ -8,6 +10,16 @@ interface LoadBoardTableProps {
 
 export function LoadBoardTable({ loads }: LoadBoardTableProps) {
   const navigate = useNavigate()
+  const { data: profile } = useProfile()
+
+  const costProfile = {
+    monthlyFixedCosts:      profile?.monthlyFixedCosts      ?? null,
+    fuelCostPerGallon:      profile?.fuelCostPerGallon      ?? null,
+    milesPerGallon:         profile?.milesPerGallon         ?? null,
+    maintenanceCostPerMile: profile?.maintenanceCostPerMile ?? null,
+    monthlyMilesTarget:     profile?.monthlyMilesTarget     ?? null,
+    targetMarginPerMile:    profile?.targetMarginPerMile    ?? null,
+  }
 
   if (loads.length === 0) {
     return (
@@ -22,7 +34,7 @@ export function LoadBoardTable({ loads }: LoadBoardTableProps) {
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            {['Route', 'Distance', 'Pickup', 'Equipment', 'Pay', 'Terms', ''].map((h) => (
+            {['Route', 'Distance', 'Pickup', 'Equipment', 'Pay', 'RPM', 'Terms', ''].map((h) => (
               <th
                 key={h}
                 className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide"
@@ -69,13 +81,12 @@ export function LoadBoardTable({ loads }: LoadBoardTableProps) {
                   </p>
                   {estimatedTotal != null && (
                     <p className="text-xs text-gray-400 mt-0.5">
-                      ≈ $
-                      {estimatedTotal.toLocaleString(undefined, {
-                        maximumFractionDigits: 0,
-                      })}{' '}
-                      est.
+                      ≈ ${estimatedTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })} est.
                     </p>
                   )}
+                </td>
+                <td className="px-4 py-3">
+                  <ProfitabilityBadge load={load} costProfile={costProfile} />
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-600">
                   {load.paymentTerms

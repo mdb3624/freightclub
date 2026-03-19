@@ -80,6 +80,24 @@ public class User {
     @Column(name = "equipment_type", columnDefinition = "VARCHAR(30)")
     private EquipmentType equipmentType;
 
+    @Column(name = "monthly_fixed_costs", precision = 10, scale = 2)
+    private BigDecimal monthlyFixedCosts;
+
+    @Column(name = "fuel_cost_per_gallon", precision = 6, scale = 3)
+    private BigDecimal fuelCostPerGallon;
+
+    @Column(name = "miles_per_gallon", precision = 6, scale = 2)
+    private BigDecimal milesPerGallon;
+
+    @Column(name = "maintenance_cost_per_mile", precision = 6, scale = 4)
+    private BigDecimal maintenanceCostPerMile;
+
+    @Column(name = "monthly_miles_target")
+    private Integer monthlyMilesTarget;
+
+    @Column(name = "target_margin_per_mile", precision = 6, scale = 4)
+    private BigDecimal targetMarginPerMile;
+
     @Column(name = "notify_email", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
     private boolean notifyEmail = true;
 
@@ -150,6 +168,18 @@ public class User {
     public void setDotNumber(String dotNumber) { this.dotNumber = dotNumber; }
     public EquipmentType getEquipmentType() { return equipmentType; }
     public void setEquipmentType(EquipmentType equipmentType) { this.equipmentType = equipmentType; }
+    public BigDecimal getMonthlyFixedCosts() { return monthlyFixedCosts; }
+    public void setMonthlyFixedCosts(BigDecimal monthlyFixedCosts) { this.monthlyFixedCosts = monthlyFixedCosts; }
+    public BigDecimal getFuelCostPerGallon() { return fuelCostPerGallon; }
+    public void setFuelCostPerGallon(BigDecimal fuelCostPerGallon) { this.fuelCostPerGallon = fuelCostPerGallon; }
+    public BigDecimal getMilesPerGallon() { return milesPerGallon; }
+    public void setMilesPerGallon(BigDecimal milesPerGallon) { this.milesPerGallon = milesPerGallon; }
+    public BigDecimal getMaintenanceCostPerMile() { return maintenanceCostPerMile; }
+    public void setMaintenanceCostPerMile(BigDecimal maintenanceCostPerMile) { this.maintenanceCostPerMile = maintenanceCostPerMile; }
+    public Integer getMonthlyMilesTarget() { return monthlyMilesTarget; }
+    public void setMonthlyMilesTarget(Integer monthlyMilesTarget) { this.monthlyMilesTarget = monthlyMilesTarget; }
+    public BigDecimal getTargetMarginPerMile() { return targetMarginPerMile; }
+    public void setTargetMarginPerMile(BigDecimal targetMarginPerMile) { this.targetMarginPerMile = targetMarginPerMile; }
     public boolean isNotifyEmail() { return notifyEmail; }
     public void setNotifyEmail(boolean notifyEmail) { this.notifyEmail = notifyEmail; }
     public boolean isNotifySms() { return notifySms; }

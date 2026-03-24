@@ -31,8 +31,10 @@ public class LoadBoardController {
             @RequestParam(required = false) String destinationState,
             @RequestParam(required = false) EquipmentType equipmentType,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate pickupDate,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String sortDir,
             @AuthenticationPrincipal String userId) {
-        LoadBoardFilter filter = new LoadBoardFilter(originState, destinationState, equipmentType, pickupDate);
+        LoadBoardFilter filter = new LoadBoardFilter(originState, destinationState, equipmentType, pickupDate, sortBy, sortDir);
         return loadService.listOpenLoads(userId, filter, page, size);
     }
 

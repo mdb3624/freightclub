@@ -1,6 +1,6 @@
 # FreightClub — Feature Status
 
-Legend: ✅ Built · 🔲 Not yet built
+Legend: ✅ Built · 🔲 Not yet built · ⚠️ Built with known bug · 🔴 Security issue
 
 ---
 
@@ -21,6 +21,13 @@ Legend: ✅ Built · 🔲 Not yet built
 - ✅ Edit a load while in DRAFT or OPEN status
 - ✅ Cancel a load (any pre-delivered status)
 - ✅ Dashboard shows all loads with status (draft, open, claimed, in transit, delivered, cancelled, settled)
+- 🔲 **[HF-CRITICAL]** Origin/destination state stored as validated 2-letter code (dropdown, not free text) — free text causes filter mismatch on trucker board; "Illinois" vs "IL" breaks origin-state filter
+- 🔲 **[HF-CRITICAL]** Confirmation dialog before cancel executes — destructive action on a live load must require explicit confirmation
+- 🔲 **[HF]** Address field order corrected to street → city/state/zip (currently reversed from US convention)
+- 🔲 **[HF]** Cross-field date validation: pickupTo must be after pickupFrom; deliveryFrom must be after pickupTo; deliveryTo must be after deliveryFrom
+- 🔲 **[HF]** Pickup/delivery window labels renamed to "Earliest Pickup" / "Latest Pickup" / "Earliest Delivery" / "Latest Delivery" to eliminate "from location" ambiguity
+- 🔲 **[HF]** Shipper dashboard status summary strip above the loads table: count of loads by status (open, claimed, in transit, delivered) for at-a-glance awareness
+- 🔲 **[HF]** Weight field with contextual hint ("Legal max: 80,000 lbs") to prevent data entry errors
 - 🔲 Cancel with reason (required reason field stored and shown to trucker)
 - 🔲 Trucker notified when shipper cancels a claimed load; active load slot freed immediately
 - 🔲 Duplicate a load for recurring lanes
@@ -83,6 +90,8 @@ Legend: ✅ Built · 🔲 Not yet built
 - ✅ Cost Per Mile (CPM) calculator: fixed CPM, variable CPM, total CPM displayed live on profile
 - ✅ Minimum RPM calculated from CPM + target margin
 - ✅ 30-day earnings summary on history tab: loads completed, total miles, total revenue, effective CPM
+- 🔲 **[HF]** Cost profile setup CTA elevated to a visible prompt (not a `text-xs` footnote) when no profile is configured — without a profile, RPM badges and profitability breakdowns show nothing meaningful
+- 🔲 **[HF]** RPM values displayed to 2 decimal places (currently 4dp; unnecessary precision adds cognitive noise)
 
 ### Load Discovery
 - ✅ Browse open loads on the load board
@@ -91,6 +100,12 @@ Legend: ✅ Built · 🔲 Not yet built
 - ✅ View full load details: origin, destination, distance, weight, dimensions, commodity, pay rate, equipment type, payment terms, special requirements
 - ✅ RPM column on load board with color-coded profitability badge (green / yellow / red vs minimum RPM)
 - ✅ Profitability breakdown on load detail: estimated revenue, fuel cost, maintenance, net profit, RPM vs minimum RPM
+- 🔲 **[HF-CRITICAL]** 70-hour/8-day HOS cycle entirely absent — FMCSA requires tracking cumulative on-duty hours over a rolling 8-day window; current widget only tracks the current shift (11-hr drive + 14-hr on-duty)
+- 🔲 **[HF]** Load board sortable by RPM, distance, and pickup date — truckers evaluate profitability across multiple loads; sorting is the primary tool for this
+- 🔲 **[HF]** Filter state persisted in URL query params — navigating back from a load detail resets all filters, forcing repetitive re-entry
+- 🔲 **[HF]** Equipment filter unlockable by trucker even when profile type is set — current behavior locks the filter and hides this; truckers with multiple trailers cannot browse other types
+- 🔲 **[HF]** Pickup date urgency signal on load board cards (e.g. "Picks up tomorrow", amber highlight if < 24 hr) — time pressure is invisible on current table
+- 🔲 **[HF]** Profitability breakdown card remains visible after a load is claimed (currently hidden once status leaves OPEN) — claimed load view should still show cost analysis for execution planning
 - 🔲 Shipper reputation badge on load cards (star rating, avg payment speed)
 - 🔲 Filter by weight range or minimum pay rate
 - 🔲 See view/interest count per load
@@ -100,12 +115,17 @@ Legend: ✅ Built · 🔲 Not yet built
 - ✅ Claim a load (first-come-first-served; one active load at a time)
 - ✅ View active load prominently on dashboard with shipper contact
 - ✅ View full load history (delivered, settled, cancelled)
+- 🔲 **[HF]** Toast confirmation after successful claim — no acknowledgment currently shows; trucker is left wondering if the claim registered
+- 🔲 **[HF]** Clear explanation when claim is blocked (active load exists) — current behavior grays out the entire load board silently with no message
 - 🔲 Express interest / bid on a load
 
 ### Load Execution
 - ✅ Mark load as picked up (CLAIMED → IN_TRANSIT) with confirmation dialog
 - ✅ Mark load as delivered (IN_TRANSIT → DELIVERED) with confirmation dialog
 - ✅ Hours of Service (HOS) widget: 11-hour drive rule and 14-hour on-duty window with color-coded progress bars and warnings
+- 🔲 **[HF-CRITICAL]** HOS widget: 70-hour/8-day cumulative cycle tracking — FMCSA requires a trucker to track total on-duty hours across rolling 8 days; this is a separate, additional constraint beyond the per-shift rules
+- 🔲 **[HF]** HOS widget: on-duty bar renders and displays time elapsed even before start time is entered, with a clear prompt to enter start time — current behavior shows empty bar with no explanation
+- 🔲 **[HF]** HOS proactive warnings at 4-hour and 2-hour remaining thresholds (currently only warns at <2 hr) — FMCSA requires stop planning before the 2-hour mark
 - 🔲 BOL photo upload at pickup
 - 🔲 Proof of Delivery photo upload at delivery
 - 🔲 Report issue during transit (delay, damage)
@@ -137,8 +157,69 @@ Legend: ✅ Built · 🔲 Not yet built
 - ✅ JPA Specification-based filtering with Hibernate 6 type safety
 - ✅ Global exception handling with structured error responses
 - ✅ Null-safe tenant context (fail-fast on missing tenant)
+- 🔲 **[HF]** Shared app shell / layout component (nav, page wrapper) extracted from individual page components — current pages each manage their own layout, causing inconsistent chrome and duplicated structure
+- 🔲 **[HF]** URL-based filter state for load board — enables browser back/forward, bookmarking filtered views, and sharing specific filter combinations
+
+### Database Schema Gaps
+
+- 🔲 **[DB-CRITICAL]** `origin_state` / `destination_state` resized to `CHAR(2)` with `CHECK` constraint — currently `VARCHAR(50)`, which permits "Illinois" to be stored; trucker filter for "IL" then returns zero matches
+- 🔲 **[DB-CRITICAL]** `loads.created_at` / `loads.updated_at` given `DEFAULT CURRENT_TIMESTAMP` and `ON UPDATE CURRENT_TIMESTAMP` — currently has no default; any insert without explicit timestamps fails
+- 🔲 **[DB-CRITICAL]** FK constraint added from `loads.trucker_id` → `users.id` — referential integrity currently not enforced at DB level
+- 🔲 **[DB]** `claims` table introduced — current model stores `trucker_id` directly on `loads`, losing claim history; blocks Phase 4 ratings (rater/ratee link), Phase 8 bidding (multiple claimants), and Phase 2 cancellation notification (who had the load)
+- 🔲 **[DB]** `CHECK` constraints added for `loads.status`, `loads.equipment_type`, `loads.pay_rate_type`, `loads.payment_terms` — Java enums enforce valid values at the application layer but nothing prevents a bad value from direct SQL or a future bug
+- 🔲 **[DB]** Missing indexes for trucker load board filter patterns: `(tenant_id, equipment_type, status)`, `(tenant_id, origin_state)`, `(tenant_id, pickup_from, status)`, `(trucker_id, status)` — current indexes do not cover the primary filter combinations; load board queries do full tenant-scoped scans
+- 🔲 **[DB]** `loads.payment_terms` changed to `NOT NULL` — nullable today; every published load requires payment terms
+- 🔲 **[DB]** `trucker_cost_profiles` table extracted from `users` — 6 cost profile columns currently on the `users` table pollute every SHIPPER row with NULL trucker-only fields; a separate table enables future cost history tracking required for Phase 7b reporting
+- 🔲 **[DB]** `load_events` table designed and created — needed for Phase 2 status timeline and notifications; designing it ad-hoc at Phase 2 start risks a rushed schema
+- 🔲 **[DB]** `users.email` uniqueness scoped to `(tenant_id, email)` instead of globally — current global constraint prevents the same person from having a SHIPPER and TRUCKER account or joining multiple tenants
+- 🔲 **[DB]** `billing_state` / `default_pickup_state` on `users` resized to `CHAR(2)` — currently `VARCHAR(100)`, inconsistent with the state code standard
+- 🔲 **[DB]** `origin_zip` / `destination_zip` on `loads` evaluated for removal — added in V20260312_003, not dropped in V20260318_001 restructure; likely orphaned
+- 🔲 **[DB]** `refresh_tokens.revoked_at DATETIME NULL` added — `revoked TINYINT(1)` records that a token was revoked but not when; needed for security audit trail
 - 🔲 Real-time updates (WebSocket or SSE)
 - 🔲 Email/SMS notification delivery
 - 🔲 File storage (BOL, POD documents)
 - 🔲 Payment processing integration
 - 🔲 Admin tools
+
+---
+
+## Security & Stability
+
+Findings from a post-Phase 1.1 security and architecture review. These must be resolved in Phase 1.2 before Phase 2 begins.
+
+### Critical Security
+
+- 🔴 **Race condition — load claiming** (`LoadService.claimLoad`) — two truckers can simultaneously pass the `OPEN` status check and both claim the same load; last write wins. Requires `SELECT FOR UPDATE` on the load row or a DB-level unique partial index on `(load_id) WHERE status = CLAIMED`.
+- 🔴 **Race condition — refresh token rotation** (`RefreshTokenService`) — two simultaneous refresh requests can both pass the `!isRevoked()` guard, each issuing a valid token. Requires `SELECT FOR UPDATE` on the refresh token row.
+- 🔴 **No rate limiting on `/api/v1/auth/**`** — login and register are fully open with no throttle. Brute force and credential stuffing attacks are unrestricted.
+- 🔴 **JWT missing `iss`/`aud` claims** — tokens have no issuer or audience binding. If a second service is ever added, tokens are valid in any context with no way to reject them.
+- 🔴 **JWT secret in source control** (`application-dev.yml`) — hex secret is committed to Git history. Must be moved to environment variable / secrets manager before any production deployment.
+- 🔴 **Developer Tailscale domain hardcoded** (`vite.config.ts` `allowedHosts`) — personal infrastructure exposed in the repository.
+
+### High — Known Bugs
+
+- ⚠️ **Date comparison uses string ordering** (`LoadForm.tsx`) — cross-field date validation (`pickupTo > pickupFrom`, etc.) compares `datetime-local` strings lexicographically. This is correct for ISO strings in most cases but brittle; must use `new Date()` comparison.
+- ⚠️ **URL filter params cast to enums without validation** (`TruckerDashboard.tsx`) — `searchParams.get('equip') as EquipmentType` passes any URL string directly into the filter with no guard. An invalid value like `?equip=GARBAGE` corrupts filter state silently.
+- ⚠️ **`claims` table unpopulated** — migration `V20260320_007` created the table but `LoadService.claimLoad()` never inserts a record. Claim history is not being captured. Required for Phase 4 ratings, Phase 2 cancellation notifications, and Phase 8 bidding.
+- ⚠️ **`load_events` table unpopulated** — migration `V20260320_008` created the table but no status transition in `LoadService` writes to it. The status timeline is empty. Required for Phase 2 notifications and the full status history UI.
+- ⚠️ **HOS widget state lost on page refresh** — all HOS values live in React component state with no backend persistence. Refreshing the page resets the widget. Required for meaningful FMCSA compliance tracking.
+- ⚠️ **Overweight load — backend has no validation** — `LoadForm.tsx` shows a warning and requires checkbox acknowledgment when weight > 80,000 lbs, but `LoadService` has no corresponding server-side check. The restriction is frontend-only and can be bypassed.
+- ⚠️ **CORS `allowedHeaders: ["*"]`** (`SecurityConfig.java`) — all request headers are permitted. Should be an explicit whitelist (`Authorization`, `Content-Type`, `X-Requested-With`).
+
+### Infrastructure Gaps
+
+- 🔲 No Spring Boot Actuator — `/health`, `/metrics`, `/info` endpoints absent; no way to monitor app health in production
+- 🔲 No structured logging or correlation IDs — can't trace a request across log lines or correlate frontend errors with backend entries
+- 🔲 No audit log for sensitive operations — claim, deliver, rate, document upload leave no timestamped actor record outside the HOS widget
+- 🔲 No production environment config (`application-prod.yml`) — only `application-dev.yml` exists; production overrides for DB credentials, JWT secret, CORS origins are undefined
+- 🔲 No Docker support (`Dockerfile`, `docker-compose.yml`) — no reproducible local or deployed container setup
+- 🔲 No CI/CD pipeline — no automated build, test, or deploy stages; manual deployments only
+- 🔲 React `<ErrorBoundary>` missing from `App.tsx` — any unhandled render error produces a blank white screen with no recovery
+
+### Testing Gaps
+
+- 🔲 No tests for `AuthService`, `RatingService`, `DocumentService`, `RefreshTokenService` — zero coverage on the security-critical auth flow
+- 🔲 No tests for `SecurityConfig`, `JwtAuthenticationFilter`, or any `@RestController`
+- 🔲 No integration tests (`@SpringBootTest`) or in-memory database tests — configuration issues are only caught in production
+- 🔲 No frontend tests (zero `.test.ts` or `.test.tsx` files) — breaking changes in UI go undetected
+- 🔲 JaCoCo configured but enforced only for `LoadService` — overall project coverage is unmeasured

@@ -77,6 +77,13 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- PDF generation (BOL and export) -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+
         <!-- Config Processor -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

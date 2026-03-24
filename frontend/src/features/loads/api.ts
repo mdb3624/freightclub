@@ -48,6 +48,8 @@ export const loadsApi = {
     if (filter.destinationState) params.destinationState = filter.destinationState
     if (filter.equipmentType) params.equipmentType = filter.equipmentType
     if (filter.pickupDate) params.pickupDate = filter.pickupDate
+    if (filter.sortBy && filter.sortBy !== 'rpm') params.sortBy = filter.sortBy
+    if (filter.sortDir) params.sortDir = filter.sortDir
     return apiClient.get<Page<LoadSummary>>('/board', { params }).then((r) => r.data)
   },
 

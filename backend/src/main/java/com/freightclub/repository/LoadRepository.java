@@ -32,4 +32,14 @@ public interface LoadRepository extends JpaRepository<Load, String>, JpaSpecific
 
     Page<Load> findByTruckerIdAndStatusInAndDeletedAtIsNull(
             String truckerId, java.util.List<LoadStatus> statuses, Pageable pageable);
+
+    long countByShipperIdAndStatusInAndDeletedAtIsNull(
+            String shipperId, java.util.Collection<LoadStatus> statuses);
+
+    long countByTruckerIdAndStatusInAndDeletedAtIsNull(
+            String truckerId, java.util.Collection<LoadStatus> statuses);
+
+    @org.springframework.data.jpa.repository.Query(
+            "SELECT l.status, COUNT(l) FROM Load l WHERE l.shipperId = :shipperId AND l.deletedAt IS NULL GROUP BY l.status")
+    java.util.List<Object[]> countByStatusForShipper(@org.springframework.data.repository.query.Param("shipperId") String shipperId);
 }

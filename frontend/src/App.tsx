@@ -9,6 +9,7 @@ import { LoadDetailPage } from '@/pages/LoadDetailPage'
 import { LoadEditPage } from '@/pages/LoadEditPage'
 import { TruckerLoadDetailPage } from '@/pages/TruckerLoadDetailPage'
 import { ProfilePage } from '@/pages/ProfilePage'
+import { RatingsPage } from '@/pages/RatingsPage'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Toaster } from '@/components/ui/Toaster'
 
@@ -77,6 +78,15 @@ export default function App() {
         element={
           <ProtectedRoute>
             <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/ratings"
+        element={
+          <ProtectedRoute>
+            <RatingsPage />
           </ProtectedRoute>
         }
       />

@@ -158,9 +158,20 @@ ALTER TABLE loads
 - **Character set:** Always use `ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci` on new tables
 - **Primary keys:** `CHAR(36)` UUID, not `AUTO_INCREMENT INT`
 - **tenant_id:** Every tenant-scoped table must have a `tenant_id CHAR(36) NOT NULL` column with an index
-- **Timestamps:** Every table gets `created_at`, `updated_at`, and `deleted_at` (nullable) columns
-- **Soft deletes:** Use `deleted_at` — never `DELETE` production rows
-- **Indexes:** Add indexes for all foreign keys and any column used in `WHERE` or `ORDER BY` clauses
+- **Timestamps:** Every table gets `created_at` and `updated_at` with defaults, and `deleted_at` nullable:
+  ```sql
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at DATETIME NULL,
+  ```
+- **Soft deletes:** Use `deleted_at` — never hard-delete rows from production tables
+- **Foreign keys:** Every FK column must have a named `CONSTRAINT fk_... FOREIGN KEY ... REFERENCES ...`. An index alone is not sufficient.
+- **State/province codes:** Always `CHAR(2)` — never `VARCHAR`. Free-text state storage breaks filter queries.
+- **CHECK constraints:** Add `CHECK` constraints for all columns backed by a Java enum. MySQL 8.0.16+ enforces these at the DB level:
+  ```sql
+  CONSTRAINT chk_tablename_column CHECK (column IN ('VALUE_A', 'VALUE_B', ...))
+  ```
+- **Indexes:** Add indexes for all foreign keys and any column used in `WHERE`, `ORDER BY`, or `JOIN`. For multi-column filter patterns, add composite indexes that match the query's column order.
 - **Comments:** Add a brief SQL comment at the top of each file explaining what it does and why
 
 ---
@@ -246,3 +257,7 @@ Add this step to the CI pipeline before running integration tests:
 | Use `ddl-auto=update` in staging/prod | Use `ddl-auto=validate` and let Flyway own the schema |
 | Hard-delete rows | Use `deleted_at` soft delete |
 | Skip adding `tenant_id` to a new table | Every tenant-scoped table needs `tenant_id` + index |
+| Add an index on a FK column without a named FK constraint | Add `CONSTRAINT fk_... FOREIGN KEY ... REFERENCES ...` |
+| Use `VARCHAR` for state/province codes | Use `CHAR(2)` — filter correctness depends on exact matching |
+| Add `created_at`/`updated_at` without `DEFAULT CURRENT_TIMESTAMP` | Always include the default; never rely on the application to supply timestamps |
+| Skip `CHECK` constraints on enum-backed columns | Add `CONSTRAINT chk_...` for every column whose valid values are defined by a Java enum |

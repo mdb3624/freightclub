@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { AppShell } from '@/components/AppShell'
 import { useLoad } from '@/features/loads/hooks/useLoad'
 import { useUpdateLoad } from '@/features/loads/hooks/useUpdateLoad'
 import { LoadForm } from '@/features/loads/components/LoadForm'
@@ -63,7 +64,7 @@ export function LoadEditPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-8">
+    <AppShell maxWidth="xl">
       <div className="mb-6">
         <Link to="/dashboard/shipper" className="text-sm text-primary-600 hover:underline">
           ← Back to Dashboard
@@ -80,6 +81,6 @@ export function LoadEditPage() {
           submitLabel="Save Changes"
         />
       </div>
-    </div>
+    </AppShell>
   )
 }

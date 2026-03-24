@@ -21,9 +21,19 @@ public record LoadSummaryResponse(
         PayRateType payRateType,
         PaymentTerms paymentTerms,
         LocalDateTime deliveryTo,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        BigDecimal shipperAvgStars,   // null if shipper has no ratings yet
+        long shipperRatingCount
 ) {
     public static LoadSummaryResponse from(Load load) {
+        return from(load, null, 0L);
+    }
+
+    public static LoadSummaryResponse from(Load load, Double shipperAvgStars, long shipperRatingCount) {
+        BigDecimal avg = shipperAvgStars != null
+                ? java.math.BigDecimal.valueOf(shipperAvgStars)
+                        .setScale(1, java.math.RoundingMode.HALF_UP)
+                : null;
         return new LoadSummaryResponse(
                 load.getId(),
                 load.getStatus(),
@@ -36,7 +46,9 @@ public record LoadSummaryResponse(
                 load.getPayRateType(),
                 load.getPaymentTerms(),
                 load.getDeliveryTo(),
-                load.getCreatedAt()
+                load.getCreatedAt(),
+                avg,
+                shipperRatingCount
         );
     }
 }

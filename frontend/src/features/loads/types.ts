@@ -79,6 +79,8 @@ export interface LoadSummary {
   paymentTerms: PaymentTerms | null
   deliveryTo: string
   createdAt: string
+  shipperAvgStars: number | null
+  shipperRatingCount: number
 }
 
 export interface LoadFormValues {
@@ -112,11 +114,16 @@ export interface LoadFormValues {
   specialRequirements: string
 }
 
+export type BoardSortBy = 'pickupDate' | 'distance' | 'rpm'
+export type BoardSortDir = 'asc' | 'desc'
+
 export interface BoardFilter {
   originState?: string
   destinationState?: string
   equipmentType?: EquipmentType | ''
   pickupDate?: string
+  sortBy?: BoardSortBy
+  sortDir?: BoardSortDir
 }
 
 export interface Page<T> {

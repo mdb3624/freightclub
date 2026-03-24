@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { AppShell } from '@/components/AppShell'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -8,6 +9,8 @@ import { useAuthStore } from '@/store/authStore'
 import { useProfile } from '@/features/profile/hooks/useProfile'
 import { useUpdateProfile } from '@/features/profile/hooks/useUpdateProfile'
 import type { UpdateProfileValues } from '@/features/profile/types'
+import { useMyRatingSummary } from '@/features/ratings/hooks/useRatings'
+import { StarRating } from '@/features/ratings/components/StarRating'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
@@ -56,6 +59,7 @@ export function ProfilePage() {
 
   const { data: profile, isLoading } = useProfile()
   const { mutate, isPending, error, isSuccess } = useUpdateProfile()
+  const { data: ratingSummary } = useMyRatingSummary()
   const [saved, setSaved] = useState(false)
 
   const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<UpdateProfileValues>({
@@ -112,21 +116,16 @@ export function ProfilePage() {
     ? ((error as AxiosError<ApiError>).response?.data?.message ?? 'Failed to save profile')
     : null
 
-  if (isLoading) return <p className="text-center text-gray-500 py-12">Loading...</p>
+  if (isLoading) return <AppShell maxWidth="lg"><p className="text-center text-gray-500 py-12">Loading...</p></AppShell>
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="border-b border-gray-200 bg-white px-6 py-4">
-        <h1 className="text-xl font-bold text-gray-900">FreightClub</h1>
-      </header>
-
-      <main className="mx-auto max-w-2xl px-6 py-8">
-        <div className="mb-6">
-          <Link to={dashboardPath} className="text-sm text-primary-600 hover:underline">
-            ← Back to Dashboard
-          </Link>
-          <h2 className="mt-2 text-2xl font-semibold text-gray-900">My Profile</h2>
-        </div>
+    <AppShell maxWidth="lg">
+      <div className="mb-6">
+        <Link to={dashboardPath} className="text-sm text-primary-600 hover:underline">
+          ← Back to Dashboard
+        </Link>
+        <h1 className="mt-2 text-2xl font-semibold text-gray-900">My Profile</h1>
+      </div>
 
         <form onSubmit={handleSubmit((v) => mutate(v))} className="space-y-8">
           {apiError && <ErrorBanner message={apiError} />}
@@ -134,6 +133,31 @@ export function ProfilePage() {
             <div className="rounded-md bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
               Profile saved successfully.
             </div>
+          )}
+
+          {/* Trucker: Rating Summary */}
+          {isTrucker && ratingSummary && (
+            <section className="rounded-xl border border-gray-200 bg-white p-6">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">My Rating</h3>
+                <Link to="/ratings" className="text-xs text-primary-600 hover:underline">
+                  View history →
+                </Link>
+              </div>
+              {ratingSummary.avgStars != null ? (
+                <div className="flex items-center gap-3">
+                  <StarRating value={Math.round(ratingSummary.avgStars)} readOnly size="md" />
+                  <span className="text-lg font-bold text-gray-900">
+                    {ratingSummary.avgStars.toFixed(1)}
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    ({ratingSummary.totalRatings} rating{ratingSummary.totalRatings !== 1 ? 's' : ''})
+                  </span>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-400">No ratings yet — complete your first load to start building your reputation.</p>
+              )}
+            </section>
           )}
 
           {/* Company (read-only) */}
@@ -313,8 +337,7 @@ export function ProfilePage() {
             <Button type="submit" isLoading={isPending}>Save Changes</Button>
           </div>
         </form>
-      </main>
-    </div>
+    </AppShell>
   )
 }
 

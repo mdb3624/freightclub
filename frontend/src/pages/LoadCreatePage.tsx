@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { AppShell } from '@/components/AppShell'
 import { useCreateLoad } from '@/features/loads/hooks/useCreateLoad'
 import { useCreateDraft } from '@/features/loads/hooks/useCreateDraft'
 import { useProfile } from '@/features/profile/hooks/useProfile'
@@ -21,7 +22,7 @@ export function LoadCreatePage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-8">
+    <AppShell maxWidth="xl">
       <div className="mb-6">
         <Link to="/dashboard/shipper" className="text-sm text-primary-600 hover:underline">
           ← Back to Dashboard
@@ -40,6 +41,6 @@ export function LoadCreatePage() {
           submitLabel="Post Load"
         />
       </div>
-    </div>
+    </AppShell>
   )
 }

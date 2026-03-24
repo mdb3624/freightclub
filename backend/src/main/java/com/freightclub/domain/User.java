@@ -50,7 +50,7 @@ public class User {
     @Column(name = "billing_city", length = 100)
     private String billingCity;
 
-    @Column(name = "billing_state", length = 100)
+    @Column(name = "billing_state", columnDefinition = "CHAR(2)")
     private String billingState;
 
     @Column(name = "billing_zip", length = 10)
@@ -65,7 +65,7 @@ public class User {
     @Column(name = "default_pickup_city", length = 100)
     private String defaultPickupCity;
 
-    @Column(name = "default_pickup_state", length = 100)
+    @Column(name = "default_pickup_state", columnDefinition = "CHAR(2)")
     private String defaultPickupState;
 
     @Column(name = "default_pickup_zip", length = 10)

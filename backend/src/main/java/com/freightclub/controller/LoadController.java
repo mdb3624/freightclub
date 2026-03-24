@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v1/loads")
 public class LoadController {
@@ -72,5 +74,10 @@ public class LoadController {
     public LoadResponse claim(@PathVariable String id,
                               @AuthenticationPrincipal String userId) {
         return loadService.claimLoad(id, userId);
+    }
+
+    @GetMapping("/counts")
+    public Map<String, Long> statusCounts(@AuthenticationPrincipal String userId) {
+        return loadService.getLoadStatusCounts(userId);
     }
 }

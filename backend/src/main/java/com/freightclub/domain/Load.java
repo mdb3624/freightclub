@@ -32,7 +32,7 @@ public class Load {
     @Column(name = "origin_city", nullable = false, length = 100)
     private String originCity;
 
-    @Column(name = "origin_state", nullable = false, length = 50)
+    @Column(name = "origin_state", nullable = false, columnDefinition = "CHAR(2)")
     private String originState;
 
     @Column(name = "origin_zip", nullable = false, length = 10)
@@ -47,7 +47,7 @@ public class Load {
     @Column(name = "destination_city", nullable = false, length = 100)
     private String destinationCity;
 
-    @Column(name = "destination_state", nullable = false, length = 50)
+    @Column(name = "destination_state", nullable = false, columnDefinition = "CHAR(2)")
     private String destinationState;
 
     @Column(name = "destination_zip", nullable = false, length = 10)

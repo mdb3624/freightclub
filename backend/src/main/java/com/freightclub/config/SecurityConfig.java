@@ -51,6 +51,15 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/v1/loads/*/claim").hasRole("TRUCKER")
                 .requestMatchers("/api/v1/loads/**").hasRole("SHIPPER")
                 .requestMatchers("/api/v1/board/**").hasRole("TRUCKER")
+                // Ratings: post endpoints are role-specific; reads are authenticated
+                .requestMatchers(HttpMethod.POST, "/api/v1/ratings/*/trucker").hasRole("SHIPPER")
+                .requestMatchers(HttpMethod.POST, "/api/v1/ratings/*/shipper").hasRole("TRUCKER")
+                .requestMatchers("/api/v1/ratings/**").authenticated()
+                // Document uploads are trucker-only; reads are available to both roles
+                .requestMatchers(HttpMethod.POST, "/api/v1/documents/*/bol-photo").hasRole("TRUCKER")
+                .requestMatchers(HttpMethod.POST, "/api/v1/documents/*/pod-photo").hasRole("TRUCKER")
+                .requestMatchers(HttpMethod.POST, "/api/v1/documents/*/issue").hasRole("TRUCKER")
+                .requestMatchers("/api/v1/documents/**").authenticated()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex

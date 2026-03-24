@@ -1,32 +1,44 @@
 import { Link, useParams } from 'react-router-dom'
+import { AppShell } from '@/components/AppShell'
 import { useLoad } from '@/features/loads/hooks/useLoad'
 import { useCancelLoad } from '@/features/loads/hooks/useCancelLoad'
 import { LoadDetail } from '@/features/loads/components/LoadDetail'
 import { ContactCard } from '@/features/loads/components/ContactCard'
+import { useLoadDocuments } from '@/features/documents/hooks/useDocuments'
+import { DocumentSection } from '@/features/documents/components/DocumentSection'
+import { useMyRatingForLoad, useRateTrucker } from '@/features/ratings/hooks/useRatings'
+import { RatingForm } from '@/features/ratings/components/RatingForm'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 
 const editableStatuses = new Set(['DRAFT', 'OPEN'])
+const documentStatuses = new Set(['OPEN', 'CLAIMED', 'IN_TRANSIT', 'DELIVERED', 'SETTLED'])
+const ratingStatuses = new Set(['DELIVERED', 'SETTLED'])
 
 export function LoadDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { data: load, isLoading, isError } = useLoad(id)
   const { mutate: cancelLoad, isPending: isCancelling } = useCancelLoad()
+  const { data: documents = [] } = useLoadDocuments(
+    load && documentStatuses.has(load.status) ? id : undefined,
+  )
+  const { data: myRating } = useMyRatingForLoad(
+    load && ratingStatuses.has(load.status) ? id : undefined,
+  )
+  const { mutate: rateTrucker, isPending: isRating } = useRateTrucker(id ?? '')
 
-  if (isLoading) return <p className="text-center text-gray-500 py-12">Loading...</p>
-  if (isError || !load) return <ErrorBanner message="Load not found." />
+  if (isLoading) return <AppShell maxWidth="md"><p className="text-center text-gray-500 py-12">Loading...</p></AppShell>
+  if (isError || !load) return <AppShell maxWidth="md"><ErrorBanner message="Load not found." /></AppShell>
 
   const canEdit = editableStatuses.has(load.status)
   const showTruckerContact = load.truckerContact &&
     ['CLAIMED', 'IN_TRANSIT', 'DELIVERED'].includes(load.status)
+  const showDocuments = documentStatuses.has(load.status)
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-8">
+    <AppShell maxWidth="md">
       <div className="mb-6">
-        <Link to="/dashboard/shipper" className="text-sm text-primary-600 hover:underline">
-          ← Back to Dashboard
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold text-gray-900">Load Detail</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Load Detail</h1>
       </div>
 
       {showTruckerContact && (
@@ -54,6 +66,26 @@ export function LoadDetailPage() {
           </div>
         )}
       </div>
-    </div>
+
+      {load && ratingStatuses.has(load.status) && (
+        <RatingForm
+          loadId={load.id}
+          target="TRUCKER"
+          targetName={load.truckerContact?.businessName ?? load.truckerContact?.name ?? 'the trucker'}
+          existingRating={myRating ?? undefined}
+          onSubmit={(stars, comment) => rateTrucker({ stars, comment })}
+          isPending={isRating}
+        />
+      )}
+
+      {showDocuments && (
+        <DocumentSection
+          loadId={load.id}
+          loadStatus={load.status}
+          role="SHIPPER"
+          documents={documents}
+        />
+      )}
+    </AppShell>
   )
 }

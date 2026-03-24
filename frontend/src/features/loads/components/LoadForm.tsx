@@ -9,35 +9,73 @@ import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { calculateDistanceMiles } from '../utils/distance'
 import type { LoadFormValues } from '../types'
 
+const US_STATES: [string, string][] = [
+  ['AL', 'Alabama'], ['AK', 'Alaska'], ['AZ', 'Arizona'], ['AR', 'Arkansas'],
+  ['CA', 'California'], ['CO', 'Colorado'], ['CT', 'Connecticut'], ['DE', 'Delaware'],
+  ['FL', 'Florida'], ['GA', 'Georgia'], ['HI', 'Hawaii'], ['ID', 'Idaho'],
+  ['IL', 'Illinois'], ['IN', 'Indiana'], ['IA', 'Iowa'], ['KS', 'Kansas'],
+  ['KY', 'Kentucky'], ['LA', 'Louisiana'], ['ME', 'Maine'], ['MD', 'Maryland'],
+  ['MA', 'Massachusetts'], ['MI', 'Michigan'], ['MN', 'Minnesota'], ['MS', 'Mississippi'],
+  ['MO', 'Missouri'], ['MT', 'Montana'], ['NE', 'Nebraska'], ['NV', 'Nevada'],
+  ['NH', 'New Hampshire'], ['NJ', 'New Jersey'], ['NM', 'New Mexico'], ['NY', 'New York'],
+  ['NC', 'North Carolina'], ['ND', 'North Dakota'], ['OH', 'Ohio'], ['OK', 'Oklahoma'],
+  ['OR', 'Oregon'], ['PA', 'Pennsylvania'], ['RI', 'Rhode Island'], ['SC', 'South Carolina'],
+  ['SD', 'South Dakota'], ['TN', 'Tennessee'], ['TX', 'Texas'], ['UT', 'Utah'],
+  ['VT', 'Vermont'], ['VA', 'Virginia'], ['WA', 'Washington'], ['WV', 'West Virginia'],
+  ['WI', 'Wisconsin'], ['WY', 'Wyoming'],
+]
+
 const schema = z.object({
-  originCity: z.string().min(1, 'Origin city is required'),
-  originState: z.string().min(1, 'Origin state is required'),
-  originZip: z.string().min(1, 'Origin zip code is required'),
-  originAddress1: z.string().min(1, 'Origin address is required'),
+  originAddress1: z.string().min(1, 'Origin street address is required'),
   originAddress2: z.string().optional().default(''),
-  destinationCity: z.string().min(1, 'Destination city is required'),
-  destinationState: z.string().min(1, 'Destination state is required'),
-  destinationZip: z.string().min(1, 'Destination zip code is required'),
-  destinationAddress1: z.string().min(1, 'Destination address is required'),
+  originCity: z.string().min(1, 'Origin city is required'),
+  originState: z.string().min(1, 'Select an origin state'),
+  originZip: z.string().min(1, 'Origin zip code is required'),
+  destinationAddress1: z.string().min(1, 'Destination street address is required'),
   destinationAddress2: z.string().optional().default(''),
+  destinationCity: z.string().min(1, 'Destination city is required'),
+  destinationState: z.string().min(1, 'Select a destination state'),
+  destinationZip: z.string().min(1, 'Destination zip code is required'),
   distanceMiles: z.number().nullable(),
-  pickupFrom: z.string().min(1, 'Pickup start is required'),
-  pickupTo: z.string().min(1, 'Pickup end is required'),
-  deliveryFrom: z.string().min(1, 'Delivery start is required'),
-  deliveryTo: z.string().min(1, 'Delivery end is required'),
+  pickupFrom: z.string().min(1, 'Earliest pickup is required'),
+  pickupTo: z.string().optional().default(''),
+  deliveryFrom: z.string().min(1, 'Earliest delivery is required'),
+  deliveryTo: z.string().optional().default(''),
   commodity: z.string().min(1, 'Commodity is required'),
   weightLbs: z.number({ invalid_type_error: 'Weight is required' }).min(0.01, 'Weight must be > 0'),
   lengthFt: z.union([z.number().min(0), z.literal('')]).optional(),
-  lengthIn: z.union([z.number().min(0).max(11), z.literal('')]).optional(),
+  lengthIn: z.union([z.number().min(0), z.literal('')]).optional(),
   widthFt: z.union([z.number().min(0), z.literal('')]).optional(),
-  widthIn: z.union([z.number().min(0).max(11), z.literal('')]).optional(),
+  widthIn: z.union([z.number().min(0), z.literal('')]).optional(),
   heightFt: z.union([z.number().min(0), z.literal('')]).optional(),
-  heightIn: z.union([z.number().min(0).max(11), z.literal('')]).optional(),
+  heightIn: z.union([z.number().min(0), z.literal('')]).optional(),
   equipmentType: z.enum(['DRY_VAN', 'FLATBED', 'REEFER', 'STEP_DECK']),
   payRate: z.number({ invalid_type_error: 'Pay rate is required' }).min(0.01, 'Pay rate must be > 0'),
   payRateType: z.enum(['PER_MILE', 'FLAT_RATE']),
   paymentTerms: z.enum(['QUICK_PAY', 'NET_7', 'NET_15', 'NET_30']).or(z.literal('')),
   specialRequirements: z.string().optional().default(''),
+}).superRefine((data, ctx) => {
+  if (data.pickupFrom && data.pickupTo && data.pickupTo <= data.pickupFrom) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Latest Pickup must be after Earliest Pickup',
+      path: ['pickupTo'],
+    })
+  }
+  if (data.pickupTo && data.deliveryFrom && data.deliveryFrom <= data.pickupTo) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Earliest Delivery must be after Latest Pickup',
+      path: ['deliveryFrom'],
+    })
+  }
+  if (data.deliveryFrom && data.deliveryTo && data.deliveryTo <= data.deliveryFrom) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Latest Delivery must be after Earliest Delivery',
+      path: ['deliveryTo'],
+    })
+  }
 })
 
 interface LoadFormProps {
@@ -53,6 +91,7 @@ interface LoadFormProps {
 export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, isDraftSaving, error, submitLabel }: LoadFormProps) {
   const [distanceLoading, setDistanceLoading] = useState(false)
   const [distanceError, setDistanceError] = useState<string | null>(null)
+  const [weightAcknowledged, setWeightAcknowledged] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const {
@@ -84,8 +123,14 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
   })
 
   const distanceMiles = watch('distanceMiles')
+  const weightLbs = watch('weightLbs')
+  const isOverweight = typeof weightLbs === 'number' && weightLbs > 80000
   const payRateType = watch('payRateType')
   const payRate = watch('payRate')
+  const pickupFrom = watch('pickupFrom')
+  const pickupTo = watch('pickupTo')
+  const deliveryFrom = watch('deliveryFrom')
+  const deliveryTo = watch('deliveryTo')
   const originCity = watch('originCity')
   const originState = watch('originState')
   const originZip = watch('originZip')
@@ -126,87 +171,85 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
   }, [originAddress1, originAddress2, originCity, originState, originZip,
       destinationAddress1, destinationAddress2, destinationCity, destinationState, destinationZip, setValue])
 
+  // Auto-populate Latest Pickup from Earliest Pickup when it's empty
+  useEffect(() => {
+    if (pickupFrom && !pickupTo) {
+      setValue('pickupTo', pickupFrom, { shouldValidate: false })
+    }
+  }, [pickupFrom]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-populate Latest Delivery from Earliest Delivery when it's empty
+  useEffect(() => {
+    if (deliveryFrom && !deliveryTo) {
+      setValue('deliveryTo', deliveryFrom, { shouldValidate: false })
+    }
+  }, [deliveryFrom]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const errorMessage = error
     ? ((error as AxiosError<{ message: string }>).response?.data?.message ?? 'An error occurred')
     : null
+
+  const selectClass = 'rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500'
+
+  function AddressSection({ prefix }: { prefix: 'origin' | 'destination' }) {
+    const addr1Key = `${prefix}Address1` as const
+    const addr2Key = `${prefix}Address2` as const
+    const cityKey = `${prefix}City` as const
+    const stateKey = `${prefix}State` as const
+    const zipKey = `${prefix}Zip` as const
+    const label = prefix === 'origin' ? 'Origin' : 'Destination'
+
+    return (
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">{label}</h3>
+        <Input
+          label="Street Address"
+          error={errors[addr1Key]?.message}
+          placeholder={prefix === 'origin' ? 'e.g. 123 Main St' : 'e.g. 456 Industrial Blvd'}
+          {...register(addr1Key)}
+        />
+        <Input
+          label="Suite / Unit"
+          placeholder="Suite, unit, building (optional)"
+          {...register(addr2Key)}
+        />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <Input
+            label="City"
+            error={errors[cityKey]?.message}
+            placeholder={prefix === 'origin' ? 'e.g. Chicago' : 'e.g. Detroit'}
+            {...register(cityKey)}
+          />
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">State</label>
+            <select className={selectClass} {...register(stateKey)}>
+              <option value="">Select state</option>
+              {US_STATES.map(([abbr, name]) => (
+                <option key={abbr} value={abbr}>{abbr} — {name}</option>
+              ))}
+            </select>
+            {errors[stateKey] && (
+              <p className="text-xs text-red-600">{errors[stateKey]?.message}</p>
+            )}
+          </div>
+          <Input
+            label="Zip Code"
+            error={errors[zipKey]?.message}
+            placeholder="e.g. 60601"
+            maxLength={10}
+            {...register(zipKey)}
+          />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {errorMessage && <ErrorBanner message={errorMessage} />}
 
-      {/* Origin */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Origin</h3>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Input
-            label="City"
-            error={errors.originCity?.message}
-            placeholder="e.g. Chicago"
-            {...register('originCity')}
-          />
-          <Input
-            label="State"
-            error={errors.originState?.message}
-            placeholder="e.g. IL"
-            {...register('originState')}
-          />
-          <Input
-            label="Zip Code"
-            error={errors.originZip?.message}
-            placeholder="e.g. 60601"
-            maxLength={10}
-            {...register('originZip')}
-          />
-        </div>
-        <Input
-          label="Street Address"
-          error={errors.originAddress1?.message}
-          placeholder="e.g. 123 Main St"
-          {...register('originAddress1')}
-        />
-        <Input
-          label="Suite / Unit"
-          placeholder="Suite, unit, building (optional)"
-          {...register('originAddress2')}
-        />
-      </div>
-
-      {/* Destination */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Destination</h3>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Input
-            label="City"
-            error={errors.destinationCity?.message}
-            placeholder="e.g. Detroit"
-            {...register('destinationCity')}
-          />
-          <Input
-            label="State"
-            error={errors.destinationState?.message}
-            placeholder="e.g. MI"
-            {...register('destinationState')}
-          />
-          <Input
-            label="Zip Code"
-            error={errors.destinationZip?.message}
-            placeholder="e.g. 48201"
-            maxLength={10}
-            {...register('destinationZip')}
-          />
-        </div>
-        <Input
-          label="Street Address"
-          error={errors.destinationAddress1?.message}
-          placeholder="e.g. 456 Industrial Blvd"
-          {...register('destinationAddress1')}
-        />
-        <Input
-          label="Suite / Unit"
-          placeholder="Suite, unit, building (optional)"
-          {...register('destinationAddress2')}
-        />
-      </div>
+      <AddressSection prefix="origin" />
+      <AddressSection prefix="destination" />
 
       {/* Distance (auto-calculated) */}
       <div className="rounded-lg bg-gray-50 border border-gray-200 px-4 py-3">
@@ -226,13 +269,13 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
       {/* Schedule */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Input
-          label="Pickup From"
+          label="Earliest Pickup"
           type="datetime-local"
           error={errors.pickupFrom?.message}
           {...register('pickupFrom')}
         />
         <Input
-          label="Pickup To"
+          label="Latest Pickup"
           type="datetime-local"
           error={errors.pickupTo?.message}
           {...register('pickupTo')}
@@ -241,13 +284,13 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Input
-          label="Delivery From"
+          label="Earliest Delivery"
           type="datetime-local"
           error={errors.deliveryFrom?.message}
           {...register('deliveryFrom')}
         />
         <Input
-          label="Delivery To"
+          label="Latest Delivery"
           type="datetime-local"
           error={errors.deliveryTo?.message}
           {...register('deliveryTo')}
@@ -262,14 +305,33 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
           placeholder="e.g. Steel coils"
           {...register('commodity')}
         />
-        <Input
-          label="Weight (lbs)"
-          type="number"
-          error={errors.weightLbs?.message}
-          step="0.01"
-          min="0.01"
-          {...register('weightLbs', { valueAsNumber: true })}
-        />
+        <div className="flex flex-col gap-1">
+          <Input
+            label="Weight (lbs)"
+            type="number"
+            error={errors.weightLbs?.message}
+            step="0.01"
+            min="0.01"
+            {...register('weightLbs', { valueAsNumber: true })}
+          />
+          <p className="text-xs text-gray-400">Legal max: 80,000 lbs</p>
+          {isOverweight && (
+            <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 mt-1">
+              <p className="text-xs font-medium text-amber-800">
+                Exceeds federal weight limit. Confirm this load requires a special permit.
+              </p>
+              <label className="flex items-center gap-2 mt-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={weightAcknowledged}
+                  onChange={(e) => setWeightAcknowledged(e.target.checked)}
+                  className="rounded border-amber-400 text-amber-600 focus:ring-amber-500"
+                />
+                <span className="text-xs text-amber-800">I confirm this load has or will have a special permit</span>
+              </label>
+            </div>
+          )}
+        </div>
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {(['Length', 'Width', 'Height'] as const).map((label) => {
@@ -300,7 +362,13 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
                     step="1"
                     placeholder="0"
                     className="w-full rounded-md border border-gray-300 px-3 py-2 pr-8 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    {...register(inKey, { setValueAs: v => v === '' ? '' : Number(v) })}
+                    {...register(inKey, {
+                      setValueAs: v => v === '' ? '' : Number(v),
+                      onBlur: (e) => {
+                        const n = Number(e.target.value)
+                        if (!isNaN(n) && n > 11) setValue(inKey, 0)
+                      },
+                    })}
                   />
                   <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">in</span>
                 </div>
@@ -319,7 +387,7 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
           </label>
           <select
             id="equipmentType"
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className={selectClass}
             {...register('equipmentType')}
           >
             <option value="DRY_VAN">Dry Van</option>
@@ -378,7 +446,7 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
         </label>
         <select
           id="paymentTerms"
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 max-w-xs"
+          className={`${selectClass} max-w-xs`}
           {...register('paymentTerms')}
         >
           <option value="">Not specified</option>
@@ -416,7 +484,12 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
             Save as Draft
           </Button>
         )}
-        <Button type="submit" isLoading={isSubmitting}>
+        <Button
+          type="submit"
+          isLoading={isSubmitting}
+          disabled={isOverweight && !weightAcknowledged}
+          title={isOverweight && !weightAcknowledged ? 'Acknowledge the overweight warning above to continue' : undefined}
+        >
           {submitLabel}
         </Button>
       </div>

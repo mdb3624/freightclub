@@ -1,19 +1,20 @@
-import { useState, useEffect, useRef } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/authStore'
-import { useLogout } from '@/features/auth/hooks/useLogout'
 import { useLoadBoard } from '@/features/loads/hooks/useLoadBoard'
 import { useMyActiveLoad } from '@/features/loads/hooks/useMyActiveLoad'
 import { useMyLoadHistory } from '@/features/loads/hooks/useMyLoadHistory'
+import { useProfile } from '@/features/profile/hooks/useProfile'
 import { LoadBoardTable } from '@/features/loads/components/LoadBoardTable'
 import { StatusBadge } from '@/features/loads/components/StatusBadge'
 import { EarningSummaryCard } from '@/features/loads/components/EarningSummaryCard'
 import { HosWidget } from '@/features/hos/components/HosWidget'
+import { AppShell } from '@/components/AppShell'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { TableSkeleton } from '@/components/ui/Skeleton'
-import type { BoardFilter, EquipmentType } from '@/features/loads/types'
+import type { BoardFilter, BoardSortBy, BoardSortDir, EquipmentType } from '@/features/loads/types'
 
 type Tab = 'board' | 'history'
 
@@ -55,22 +56,59 @@ const STATUS_TEXT_COLORS: Record<string, string> = {
 
 export function TruckerDashboard() {
   const user = useAuthStore((s) => s.user)
-  const logout = useLogout()
   const navigate = useNavigate()
   const location = useLocation()
   const queryClient = useQueryClient()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [tab, setTab] = useState<Tab>('board')
   const [page, setPage] = useState(0)
-  const [filter, setFilter] = useState<BoardFilter>(() => ({
-    equipmentType: user?.equipmentType as EquipmentType | undefined,
-  }))
-  const { data, isLoading, isError, isFetching } = useLoadBoard(page, filter)
+
+  // Derive filter from URL params
+  const filter: BoardFilter = {
+    originState: searchParams.get('origin') ?? undefined,
+    destinationState: searchParams.get('dest') ?? undefined,
+    equipmentType: (searchParams.get('equip') as EquipmentType) || (user?.equipmentType as EquipmentType) || undefined,
+    pickupDate: searchParams.get('pickupDate') ?? undefined,
+    sortBy: (searchParams.get('sortBy') as BoardSortBy) || 'pickupDate',
+    sortDir: (searchParams.get('sortDir') as BoardSortDir) || 'asc',
+  }
+
+  const setFilter = useCallback((updater: (prev: BoardFilter) => BoardFilter) => {
+    setSearchParams((prev) => {
+      const current: BoardFilter = {
+        originState: prev.get('origin') ?? undefined,
+        destinationState: prev.get('dest') ?? undefined,
+        equipmentType: (prev.get('equip') as EquipmentType) || undefined,
+        pickupDate: prev.get('pickupDate') ?? undefined,
+        sortBy: (prev.get('sortBy') as BoardSortBy) || 'pickupDate',
+        sortDir: (prev.get('sortDir') as BoardSortDir) || 'asc',
+      }
+      const next = updater(current)
+      const params = new URLSearchParams()
+      if (next.originState) params.set('origin', next.originState)
+      if (next.destinationState) params.set('dest', next.destinationState)
+      if (next.equipmentType) params.set('equip', next.equipmentType)
+      if (next.pickupDate) params.set('pickupDate', next.pickupDate)
+      if (next.sortBy && next.sortBy !== 'pickupDate') params.set('sortBy', next.sortBy)
+      if (next.sortDir && next.sortDir !== 'asc') params.set('sortDir', next.sortDir)
+      return params
+    }, { replace: true })
+    setPage(0)
+  }, [setSearchParams])
+  const { data, isLoading, isError } = useLoadBoard(page, filter)
   const { data: activeLoad, isLoading: isLoadingActiveLoad } = useMyActiveLoad()
+  const { data: profile } = useProfile()
   const [historyPage, setHistoryPage] = useState(0)
   const { data: history } = useMyLoadHistory(historyPage)
   const activeLoadRef = useRef<HTMLElement>(null)
 
   const hasActiveLoad = !isLoadingActiveLoad && !!activeLoad
+  const hasCostProfile = !!(
+    profile?.monthlyFixedCosts != null ||
+    profile?.fuelCostPerGallon != null ||
+    profile?.milesPerGallon != null ||
+    profile?.maintenanceCostPerMile != null
+  )
 
   // Scroll to active load section when returning from a claim action
   useEffect(() => {
@@ -85,32 +123,25 @@ export function TruckerDashboard() {
     queryClient.invalidateQueries({ queryKey: ['my-load-history'] })
   }
 
+  function handleSort(col: BoardSortBy) {
+    setFilter((f) => {
+      if (f.sortBy === col) {
+        // cycle: asc → desc → default (pickupDate asc)
+        if (f.sortDir === 'asc') return { ...f, sortDir: 'desc' }
+        return { ...f, sortBy: 'pickupDate', sortDir: 'asc' }
+      }
+      return { ...f, sortBy: col, sortDir: 'asc' }
+    })
+  }
+
   const estimatedTotal =
     activeLoad?.payRateType === 'PER_MILE' && activeLoad.distanceMiles != null
       ? activeLoad.payRate * activeLoad.distanceMiles
       : null
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="border-b border-gray-200 bg-white px-6 py-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">FreightClub</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-600">
-            {user?.firstName} {user?.lastName}
-          </span>
-          <Button variant="secondary" onClick={handleRefresh} isLoading={isFetching}>
-            Refresh
-          </Button>
-          <Link to="/profile" className="text-sm text-primary-600 hover:underline">
-            My Profile
-          </Link>
-          <Button variant="secondary" onClick={logout}>
-            Sign out
-          </Button>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-5xl px-6 py-8 space-y-8">
+    <AppShell maxWidth="5xl">
+      <div className="space-y-8">
         {activeLoad && (
           <section ref={activeLoadRef}>
             <h2 className="text-lg font-semibold text-gray-900 mb-3">Your Active Load</h2>
@@ -188,6 +219,23 @@ export function TruckerDashboard() {
           </div>
         )}
 
+        {profile !== undefined && !hasCostProfile && (
+          <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-4">
+            <p className="text-sm font-semibold text-blue-900">
+              Set up your cost profile to see profitability ratings on loads.
+            </p>
+            <p className="text-xs text-blue-700 mt-1">
+              Without a cost profile, RPM badges and profitability breakdowns will be empty.
+            </p>
+            <Link
+              to="/profile"
+              className="mt-2 inline-block text-sm font-medium text-blue-700 underline hover:text-blue-900"
+            >
+              Set up cost profile →
+            </Link>
+          </div>
+        )}
+
         {/* Tab bar */}
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex gap-6" aria-label="Dashboard tabs">
@@ -234,6 +282,7 @@ export function TruckerDashboard() {
                 ? 'Complete your active load before claiming another.'
                 : 'Browse open loads and claim one to get started.'}
             </p>
+            <Button variant="secondary" onClick={handleRefresh}>Refresh</Button>
           </div>
 
           <div className="mb-4 flex flex-wrap gap-3 items-end">
@@ -279,17 +328,23 @@ export function TruckerDashboard() {
                   setPage(0)
                 }}
               >
-                {user?.equipmentType
-                  ? <option value={user.equipmentType}>{user.equipmentType.replace(/_/g, ' ')}</option>
-                  : <>
-                      <option value="">Any</option>
-                      <option value="DRY_VAN">Dry Van</option>
-                      <option value="FLATBED">Flatbed</option>
-                      <option value="REEFER">Reefer</option>
-                      <option value="STEP_DECK">Step Deck</option>
-                    </>
-                }
+                <option value="">Any</option>
+                <option value="DRY_VAN">Dry Van</option>
+                <option value="FLATBED">Flatbed</option>
+                <option value="REEFER">Reefer</option>
+                <option value="STEP_DECK">Step Deck</option>
               </select>
+              {user?.equipmentType && filter.equipmentType !== user.equipmentType && (
+                <button
+                  type="button"
+                  className="text-xs text-primary-600 hover:underline text-left mt-0.5"
+                  onClick={() => {
+                    setFilter((f) => ({ ...f, equipmentType: user.equipmentType as EquipmentType }))
+                  }}
+                >
+                  Reset to my equipment
+                </button>
+              )}
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-gray-700">Pickup Date</label>
@@ -303,12 +358,11 @@ export function TruckerDashboard() {
                 }}
               />
             </div>
-            {(filter.originState || filter.destinationState || filter.equipmentType || filter.pickupDate) && (
+            {(filter.originState || filter.destinationState || filter.pickupDate) && (
               <Button
                 variant="secondary"
                 onClick={() => {
-                  setFilter({ equipmentType: user?.equipmentType as EquipmentType | undefined })
-                  setPage(0)
+                  setFilter(() => ({ equipmentType: user?.equipmentType as EquipmentType | undefined }))
                 }}
               >
                 Clear Filters
@@ -322,8 +376,25 @@ export function TruckerDashboard() {
             <TableSkeleton rows={5} cols={6} />
           ) : (
             <>
-              <div className={hasActiveLoad ? 'opacity-50 pointer-events-none select-none' : ''}>
-                <LoadBoardTable loads={data?.content ?? []} />
+              <div className="relative">
+                <div className={hasActiveLoad ? 'opacity-40 pointer-events-none select-none' : ''}>
+                  <LoadBoardTable
+                    loads={data?.content ?? []}
+                    sortBy={filter.sortBy}
+                    sortDir={filter.sortDir}
+                    onSort={handleSort}
+                  />
+                </div>
+                {hasActiveLoad && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="rounded-lg border border-amber-200 bg-white shadow-sm px-6 py-4 text-center max-w-sm">
+                      <p className="text-sm font-semibold text-amber-800">Active load in progress</p>
+                      <p className="text-xs text-amber-700 mt-1">
+                        Deliver your current load before claiming another.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {data && data.totalPages > 1 && !hasActiveLoad && (
@@ -465,7 +536,7 @@ export function TruckerDashboard() {
           )}
         </section>
         )}
-      </main>
-    </div>
+      </div>
+    </AppShell>
   )
 }

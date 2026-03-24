@@ -14,6 +14,7 @@ import com.freightclub.exception.LoadEditForbiddenException;
 import com.freightclub.exception.LoadNotClaimableException;
 import com.freightclub.exception.LoadNotFoundException;
 import com.freightclub.exception.LoadStatusTransitionException;
+import com.freightclub.exception.DocumentUploadRequiredException;
 import com.freightclub.repository.LoadRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
@@ -24,7 +25,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -32,10 +36,15 @@ public class LoadService {
 
     private final LoadRepository loadRepository;
     private final UserRepository userRepository;
+    private final DocumentService documentService;
+    private final RatingService ratingService;
 
-    public LoadService(LoadRepository loadRepository, UserRepository userRepository) {
+    public LoadService(LoadRepository loadRepository, UserRepository userRepository,
+                       DocumentService documentService, RatingService ratingService) {
         this.loadRepository = loadRepository;
         this.userRepository = userRepository;
+        this.documentService = documentService;
+        this.ratingService = ratingService;
     }
 
     public LoadResponse createDraft(CreateLoadRequest request, String shipperId) {
@@ -73,7 +82,17 @@ public class LoadService {
                 request.lengthFt(), request.widthFt(), request.heightFt(),
                 request.equipmentType(), request.payRate(), request.payRateType(),
                 request.paymentTerms(), request.specialRequirements());
-        return buildResponse(loadRepository.save(load));
+        Load saved = loadRepository.save(load);
+        documentService.generateBolOnPublish(saved);
+        return buildResponse(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Long> getLoadStatusCounts(String shipperId) {
+        return loadRepository.countByStatusForShipper(shipperId).stream()
+                .collect(Collectors.toMap(
+                        row -> row[0].toString(),
+                        row -> (Long) row[1]));
     }
 
     @Transactional(readOnly = true)
@@ -124,12 +143,15 @@ public class LoadService {
             throw new LoadEditForbiddenException("Only DRAFT loads can be published");
         }
         load.setStatus(LoadStatus.OPEN);
-        return LoadResponse.from(loadRepository.save(load));
+        Load saved = loadRepository.save(load);
+        documentService.generateBolOnPublish(saved);
+        return LoadResponse.from(saved);
     }
 
     @Transactional(readOnly = true)
     public Page<LoadSummaryResponse> listOpenLoads(String truckerId, LoadBoardFilter filter, int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Sort sort = resolveSort(filter.sortBy(), filter.sortDir());
+        PageRequest pageable = PageRequest.of(page, size, sort);
 
         // If no explicit equipment filter, default to trucker's equipment type
         LoadBoardFilter effective = filter;
@@ -139,12 +161,23 @@ public class LoadService {
                     .orElse(null);
             if (truckerEquipment != null) {
                 effective = new LoadBoardFilter(
-                        filter.originState(), filter.destinationState(), truckerEquipment, filter.pickupDate());
+                        filter.originState(), filter.destinationState(), truckerEquipment, filter.pickupDate(),
+                        filter.sortBy(), filter.sortDir());
             }
         }
 
-        return loadRepository.findAll(LoadSpecifications.withFilter(effective), pageable)
-                .map(LoadSummaryResponse::from);
+        org.springframework.data.domain.Page<com.freightclub.domain.Load> loadPage =
+                loadRepository.findAll(LoadSpecifications.withFilter(effective), pageable);
+
+        Set<String> shipperIds = loadPage.getContent().stream()
+                .map(com.freightclub.domain.Load::getShipperId)
+                .collect(Collectors.toSet());
+        Map<String, double[]> ratings = ratingService.getShipperRatingSummaries(shipperIds);
+
+        return loadPage.map(load -> {
+            double[] r = ratings.get(load.getShipperId());
+            return LoadSummaryResponse.from(load, r != null ? r[0] : null, r != null ? (long) r[1] : 0L);
+        });
     }
 
     @Transactional(readOnly = true)
@@ -175,6 +208,10 @@ public class LoadService {
         if (load.getStatus() != LoadStatus.CLAIMED) {
             throw new LoadStatusTransitionException("Load must be CLAIMED to mark as picked up");
         }
+        if (!documentService.hasBolPhoto(id)) {
+            throw new DocumentUploadRequiredException(
+                    "A BOL photo is required before marking the load as picked up. Upload a photo of the Bill of Lading first.");
+        }
         load.setStatus(LoadStatus.IN_TRANSIT);
         return buildResponse(loadRepository.save(load));
     }
@@ -183,6 +220,10 @@ public class LoadService {
         Load load = findAssignedLoad(id, truckerId);
         if (load.getStatus() != LoadStatus.IN_TRANSIT) {
             throw new LoadStatusTransitionException("Load must be IN_TRANSIT to mark as delivered");
+        }
+        if (!documentService.hasPodPhoto(id)) {
+            throw new DocumentUploadRequiredException(
+                    "A POD photo is required before marking the load as delivered. Upload a photo of the Proof of Delivery first.");
         }
         load.setStatus(LoadStatus.DELIVERED);
         return buildResponse(loadRepository.save(load));
@@ -279,5 +320,17 @@ public class LoadService {
         load.setPayRateType(payRateType);
         load.setPaymentTerms(paymentTerms);
         load.setSpecialRequirements(specialRequirements);
+    }
+
+    private Sort resolveSort(String sortBy, String sortDir) {
+        Sort.Direction dir = "asc".equalsIgnoreCase(sortDir) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        if ("distance".equals(sortBy)) {
+            return Sort.by(dir, "distanceMiles").and(Sort.by(Sort.Direction.ASC, "pickupFrom"));
+        }
+        if ("pickupDate".equals(sortBy)) {
+            return Sort.by(dir, "pickupFrom");
+        }
+        // Default: pickup date ascending (soonest first)
+        return Sort.by(Sort.Direction.ASC, "pickupFrom");
     }
 }

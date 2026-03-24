@@ -8,5 +8,7 @@ public record LoadBoardFilter(
         String originState,
         String destinationState,
         EquipmentType equipmentType,
-        LocalDate pickupDate
+        LocalDate pickupDate,
+        String sortBy,
+        String sortDir
 ) {}

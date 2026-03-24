@@ -51,12 +51,12 @@ export function ProfitabilityCard({ load, costProfile }: ProfitabilityCardProps)
         <span className="col-span-2 border-t border-gray-100 mt-1" />
 
         <span className="text-gray-600">Effective RPM</span>
-        <span className="font-medium text-gray-900">${bd.rpm.toFixed(4)}/mi</span>
+        <span className="font-medium text-gray-900">${bd.rpm.toFixed(2)}/mi</span>
 
         {bd.minRpm != null && (
           <>
             <span className="text-gray-600">Your Minimum RPM</span>
-            <span className="font-medium text-gray-500">${bd.minRpm.toFixed(4)}/mi</span>
+            <span className="font-medium text-gray-500">${bd.minRpm.toFixed(2)}/mi</span>
           </>
         )}
       </div>
@@ -74,9 +74,13 @@ export function ProfitabilityCard({ load, costProfile }: ProfitabilityCardProps)
       )}
 
       {bd.minRpm == null && (
-        <p className="mt-3 text-xs text-gray-400">
-          Set a cost profile on your profile page to see profitability color coding.
-        </p>
+        <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2.5">
+          <p className="text-sm font-medium text-amber-800">Cost profile not set</p>
+          <p className="text-xs text-amber-700 mt-0.5">
+            <a href="/profile" className="underline hover:text-amber-900">Set up your cost profile</a>
+            {' '}to see color-coded profitability and your minimum RPM.
+          </p>
+        </div>
       )}
     </div>
   )

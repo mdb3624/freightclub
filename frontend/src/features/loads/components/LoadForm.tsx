@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
+import type { Control, UseFormRegister, FieldErrors } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { AxiosError } from 'axios'
@@ -54,29 +55,98 @@ const schema = z.object({
   payRateType: z.enum(['PER_MILE', 'FLAT_RATE']),
   paymentTerms: z.enum(['QUICK_PAY', 'NET_7', 'NET_15', 'NET_30']).or(z.literal('')),
   specialRequirements: z.string().optional().default(''),
+  overweightAcknowledged: z.boolean().optional().default(false),
 }).superRefine((data, ctx) => {
-  if (data.pickupFrom && data.pickupTo && data.pickupTo <= data.pickupFrom) {
+  if (data.pickupFrom && data.pickupTo && new Date(data.pickupTo) <= new Date(data.pickupFrom)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Latest Pickup must be after Earliest Pickup',
       path: ['pickupTo'],
     })
   }
-  if (data.pickupTo && data.deliveryFrom && data.deliveryFrom <= data.pickupTo) {
+  if (data.pickupTo && data.deliveryFrom && new Date(data.deliveryFrom) <= new Date(data.pickupTo)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Earliest Delivery must be after Latest Pickup',
       path: ['deliveryFrom'],
     })
   }
-  if (data.deliveryFrom && data.deliveryTo && data.deliveryTo <= data.deliveryFrom) {
+  if (data.deliveryFrom && data.deliveryTo && new Date(data.deliveryTo) <= new Date(data.deliveryFrom)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Latest Delivery must be after Earliest Delivery',
       path: ['deliveryTo'],
     })
   }
+  if (typeof data.weightLbs === 'number' && data.weightLbs > 80000 && !data.overweightAcknowledged) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Confirm this load has a valid special permit before submitting',
+      path: ['overweightAcknowledged'],
+    })
+  }
 })
+
+const selectClass = 'rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500'
+
+interface AddressSectionProps {
+  prefix: 'origin' | 'destination'
+  register: UseFormRegister<LoadFormValues>
+  errors: FieldErrors<LoadFormValues>
+}
+
+function AddressSection({ prefix, register, errors }: AddressSectionProps) {
+  const addr1Key = `${prefix}Address1` as const
+  const addr2Key = `${prefix}Address2` as const
+  const cityKey = `${prefix}City` as const
+  const stateKey = `${prefix}State` as const
+  const zipKey = `${prefix}Zip` as const
+  const label = prefix === 'origin' ? 'Origin' : 'Destination'
+
+  return (
+    <div className="space-y-3">
+      <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">{label}</h3>
+      <Input
+        label="Street Address"
+        error={errors[addr1Key]?.message}
+        placeholder={prefix === 'origin' ? 'e.g. 123 Main St' : 'e.g. 456 Industrial Blvd'}
+        {...register(addr1Key)}
+      />
+      <Input
+        label="Suite / Unit"
+        placeholder="Suite, unit, building (optional)"
+        {...register(addr2Key)}
+      />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <Input
+          label="City"
+          error={errors[cityKey]?.message}
+          placeholder={prefix === 'origin' ? 'e.g. Chicago' : 'e.g. Detroit'}
+          {...register(cityKey)}
+        />
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">State</label>
+          <select className={selectClass} {...register(stateKey)}>
+            <option value="">Select state</option>
+            {US_STATES.map(([abbr, name]) => (
+              <option key={abbr} value={abbr}>{abbr} — {name}</option>
+            ))}
+          </select>
+          {errors[stateKey] && (
+            <p className="text-xs text-red-600">{errors[stateKey]?.message}</p>
+          )}
+        </div>
+        <Input
+          label="Zip Code"
+          error={errors[zipKey]?.message}
+          placeholder="e.g. 60601"
+          maxLength={10}
+          {...register(zipKey)}
+        />
+      </div>
+    </div>
+  )
+}
 
 interface LoadFormProps {
   onSubmit: (values: LoadFormValues) => void
@@ -91,13 +161,13 @@ interface LoadFormProps {
 export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, isDraftSaving, error, submitLabel }: LoadFormProps) {
   const [distanceLoading, setDistanceLoading] = useState(false)
   const [distanceError, setDistanceError] = useState<string | null>(null)
-  const [weightAcknowledged, setWeightAcknowledged] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const {
     register,
     handleSubmit,
     watch,
+    control,
     setValue,
     formState: { errors },
   } = useForm<LoadFormValues>({
@@ -131,16 +201,17 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
   const pickupTo = watch('pickupTo')
   const deliveryFrom = watch('deliveryFrom')
   const deliveryTo = watch('deliveryTo')
-  const originCity = watch('originCity')
-  const originState = watch('originState')
-  const originZip = watch('originZip')
-  const originAddress1 = watch('originAddress1')
-  const originAddress2 = watch('originAddress2')
-  const destinationCity = watch('destinationCity')
-  const destinationState = watch('destinationState')
-  const destinationZip = watch('destinationZip')
-  const destinationAddress1 = watch('destinationAddress1')
-  const destinationAddress2 = watch('destinationAddress2')
+
+  const [
+    originCity, originState, originZip, originAddress1, originAddress2,
+    destinationCity, destinationState, destinationZip, destinationAddress1, destinationAddress2,
+  ] = useWatch({
+    control,
+    name: [
+      'originCity', 'originState', 'originZip', 'originAddress1', 'originAddress2',
+      'destinationCity', 'destinationState', 'destinationZip', 'destinationAddress1', 'destinationAddress2',
+    ],
+  })
 
   useEffect(() => {
     if (!originAddress1 || !originCity || !originState || !originZip) return
@@ -189,67 +260,12 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
     ? ((error as AxiosError<{ message: string }>).response?.data?.message ?? 'An error occurred')
     : null
 
-  const selectClass = 'rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500'
-
-  function AddressSection({ prefix }: { prefix: 'origin' | 'destination' }) {
-    const addr1Key = `${prefix}Address1` as const
-    const addr2Key = `${prefix}Address2` as const
-    const cityKey = `${prefix}City` as const
-    const stateKey = `${prefix}State` as const
-    const zipKey = `${prefix}Zip` as const
-    const label = prefix === 'origin' ? 'Origin' : 'Destination'
-
-    return (
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">{label}</h3>
-        <Input
-          label="Street Address"
-          error={errors[addr1Key]?.message}
-          placeholder={prefix === 'origin' ? 'e.g. 123 Main St' : 'e.g. 456 Industrial Blvd'}
-          {...register(addr1Key)}
-        />
-        <Input
-          label="Suite / Unit"
-          placeholder="Suite, unit, building (optional)"
-          {...register(addr2Key)}
-        />
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Input
-            label="City"
-            error={errors[cityKey]?.message}
-            placeholder={prefix === 'origin' ? 'e.g. Chicago' : 'e.g. Detroit'}
-            {...register(cityKey)}
-          />
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">State</label>
-            <select className={selectClass} {...register(stateKey)}>
-              <option value="">Select state</option>
-              {US_STATES.map(([abbr, name]) => (
-                <option key={abbr} value={abbr}>{abbr} — {name}</option>
-              ))}
-            </select>
-            {errors[stateKey] && (
-              <p className="text-xs text-red-600">{errors[stateKey]?.message}</p>
-            )}
-          </div>
-          <Input
-            label="Zip Code"
-            error={errors[zipKey]?.message}
-            placeholder="e.g. 60601"
-            maxLength={10}
-            {...register(zipKey)}
-          />
-        </div>
-      </div>
-    )
-  }
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {errorMessage && <ErrorBanner message={errorMessage} />}
 
-      <AddressSection prefix="origin" />
-      <AddressSection prefix="destination" />
+      <AddressSection prefix="origin" register={register} errors={errors} />
+      <AddressSection prefix="destination" register={register} errors={errors} />
 
       {/* Distance (auto-calculated) */}
       <div className="rounded-lg bg-gray-50 border border-gray-200 px-4 py-3">
@@ -323,12 +339,14 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
               <label className="flex items-center gap-2 mt-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={weightAcknowledged}
-                  onChange={(e) => setWeightAcknowledged(e.target.checked)}
                   className="rounded border-amber-400 text-amber-600 focus:ring-amber-500"
+                  {...register('overweightAcknowledged')}
                 />
                 <span className="text-xs text-amber-800">I confirm this load has or will have a special permit</span>
               </label>
+              {errors.overweightAcknowledged && (
+                <p className="text-xs text-red-600 mt-1">{errors.overweightAcknowledged.message}</p>
+              )}
             </div>
           )}
         </div>

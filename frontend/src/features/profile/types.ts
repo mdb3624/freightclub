@@ -6,6 +6,7 @@ export interface Profile {
   firstName: string
   lastName: string
   role: string
+  tenantId: string | null
   companyName: string | null
   companyJoinCode: string | null
   businessName: string | null

@@ -1,7 +1,10 @@
 package com.freightclub.service;
 
+import com.freightclub.domain.Claim;
+import com.freightclub.domain.ClaimStatus;
 import com.freightclub.domain.EquipmentType;
 import com.freightclub.domain.Load;
+import com.freightclub.domain.LoadEvent;
 import com.freightclub.domain.LoadStatus;
 import com.freightclub.domain.User;
 import com.freightclub.dto.CreateLoadRequest;
@@ -9,6 +12,8 @@ import com.freightclub.dto.LoadBoardFilter;
 import com.freightclub.dto.LoadResponse;
 import com.freightclub.dto.LoadSummaryResponse;
 import com.freightclub.dto.UpdateLoadRequest;
+import com.freightclub.repository.ClaimRepository;
+import com.freightclub.repository.LoadEventRepository;
 import com.freightclub.repository.LoadSpecifications;
 import com.freightclub.exception.LoadEditForbiddenException;
 import com.freightclub.exception.LoadNotClaimableException;
@@ -24,6 +29,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,20 +41,28 @@ import java.util.stream.Collectors;
 @Transactional
 public class LoadService {
 
+    private static final BigDecimal MAX_LEGAL_WEIGHT = BigDecimal.valueOf(80_000);
+
     private final LoadRepository loadRepository;
     private final UserRepository userRepository;
     private final DocumentService documentService;
     private final RatingService ratingService;
+    private final ClaimRepository claimRepository;
+    private final LoadEventRepository loadEventRepository;
 
     public LoadService(LoadRepository loadRepository, UserRepository userRepository,
-                       DocumentService documentService, RatingService ratingService) {
+                       DocumentService documentService, RatingService ratingService,
+                       ClaimRepository claimRepository, LoadEventRepository loadEventRepository) {
         this.loadRepository = loadRepository;
         this.userRepository = userRepository;
         this.documentService = documentService;
         this.ratingService = ratingService;
+        this.claimRepository = claimRepository;
+        this.loadEventRepository = loadEventRepository;
     }
 
     public LoadResponse createDraft(CreateLoadRequest request, String shipperId) {
+        validateWeight(request.weightLbs(), request.overweightAcknowledged());
         Load load = new Load();
         load.setTenantId(TenantContextHolder.getTenantId());
         load.setShipperId(shipperId);
@@ -63,10 +78,13 @@ public class LoadService {
                 request.lengthFt(), request.widthFt(), request.heightFt(),
                 request.equipmentType(), request.payRate(), request.payRateType(),
                 request.paymentTerms(), request.specialRequirements());
-        return buildResponse(loadRepository.save(load));
+        Load saved = loadRepository.save(load);
+        writeEvent(saved, "CREATED", shipperId);
+        return buildResponse(saved);
     }
 
     public LoadResponse createLoad(CreateLoadRequest request, String shipperId) {
+        validateWeight(request.weightLbs(), request.overweightAcknowledged());
         Load load = new Load();
         load.setTenantId(TenantContextHolder.getTenantId());
         load.setShipperId(shipperId);
@@ -83,6 +101,7 @@ public class LoadService {
                 request.equipmentType(), request.payRate(), request.payRateType(),
                 request.paymentTerms(), request.specialRequirements());
         Load saved = loadRepository.save(load);
+        writeEvent(saved, "CREATED", shipperId);
         documentService.generateBolOnPublish(saved);
         return buildResponse(saved);
     }
@@ -110,6 +129,7 @@ public class LoadService {
     }
 
     public LoadResponse updateLoad(String id, UpdateLoadRequest request, String shipperId) {
+        validateWeight(request.weightLbs(), request.overweightAcknowledged());
         Load load = findOwnedLoad(id, shipperId);
         requireEditable(load);
         applyFields(load, request.originCity(), request.originState(), request.originZip(),
@@ -133,8 +153,14 @@ public class LoadService {
                 || load.getStatus() == LoadStatus.CANCELLED) {
             throw new LoadEditForbiddenException("Load cannot be cancelled in status: " + load.getStatus());
         }
+        String previousTruckerId = load.getTruckerId();
         load.setStatus(LoadStatus.CANCELLED);
-        return LoadResponse.from(loadRepository.save(load));
+        Load saved = loadRepository.save(load);
+        if (previousTruckerId != null) {
+            cancelActiveClaim(saved.getId());
+        }
+        writeEvent(saved, "CANCELLED", shipperId);
+        return LoadResponse.from(saved);
     }
 
     public LoadResponse publishLoad(String id, String shipperId) {
@@ -145,6 +171,7 @@ public class LoadService {
         load.setStatus(LoadStatus.OPEN);
         Load saved = loadRepository.save(load);
         documentService.generateBolOnPublish(saved);
+        writeEvent(saved, "PUBLISHED", shipperId);
         return LoadResponse.from(saved);
     }
 
@@ -193,14 +220,17 @@ public class LoadService {
         if (hasActiveLoad) {
             throw new LoadNotClaimableException("You already have an active load. Deliver it before claiming another.");
         }
-        Load load = loadRepository.findByIdAndDeletedAtIsNull(id)
+        Load load = loadRepository.findByIdAndDeletedAtIsNullForUpdate(id)
                 .orElseThrow(() -> new LoadNotFoundException(id));
         if (load.getStatus() != LoadStatus.OPEN) {
             throw new LoadNotClaimableException("Load is not available to claim");
         }
         load.setStatus(LoadStatus.CLAIMED);
         load.setTruckerId(truckerId);
-        return buildResponse(loadRepository.save(load));
+        Load saved = loadRepository.save(load);
+        recordClaim(saved, truckerId);
+        writeEvent(saved, "CLAIMED", truckerId);
+        return buildResponse(saved);
     }
 
     public LoadResponse markPickedUp(String id, String truckerId) {
@@ -213,7 +243,9 @@ public class LoadService {
                     "A BOL photo is required before marking the load as picked up. Upload a photo of the Bill of Lading first.");
         }
         load.setStatus(LoadStatus.IN_TRANSIT);
-        return buildResponse(loadRepository.save(load));
+        Load saved = loadRepository.save(load);
+        writeEvent(saved, "PICKED_UP", truckerId);
+        return buildResponse(saved);
     }
 
     public LoadResponse markDelivered(String id, String truckerId) {
@@ -226,7 +258,9 @@ public class LoadService {
                     "A POD photo is required before marking the load as delivered. Upload a photo of the Proof of Delivery first.");
         }
         load.setStatus(LoadStatus.DELIVERED);
-        return buildResponse(loadRepository.save(load));
+        Load saved = loadRepository.save(load);
+        writeEvent(saved, "DELIVERED", truckerId);
+        return buildResponse(saved);
     }
 
     @Transactional(readOnly = true)
@@ -320,6 +354,41 @@ public class LoadService {
         load.setPayRateType(payRateType);
         load.setPaymentTerms(paymentTerms);
         load.setSpecialRequirements(specialRequirements);
+    }
+
+    private void validateWeight(BigDecimal weightLbs, Boolean overweightAcknowledged) {
+        if (weightLbs != null && weightLbs.compareTo(MAX_LEGAL_WEIGHT) > 0
+                && !Boolean.TRUE.equals(overweightAcknowledged)) {
+            throw new IllegalArgumentException(
+                    "Weight exceeds the 80,000 lb federal limit. Confirm the load has a valid overweight permit.");
+        }
+    }
+
+    private void writeEvent(Load load, String eventType, String actorId) {
+        LoadEvent event = new LoadEvent();
+        event.setTenantId(load.getTenantId());
+        event.setLoadId(load.getId());
+        event.setActorId(actorId);
+        event.setEventType(eventType);
+        loadEventRepository.save(event);
+    }
+
+    private void recordClaim(Load load, String truckerId) {
+        Claim claim = new Claim();
+        claim.setTenantId(load.getTenantId());
+        claim.setLoadId(load.getId());
+        claim.setTruckerId(truckerId);
+        claim.setStatus(ClaimStatus.ACTIVE);
+        claimRepository.save(claim);
+    }
+
+    private void cancelActiveClaim(String loadId) {
+        claimRepository.findFirstByLoadIdAndStatus(loadId, ClaimStatus.ACTIVE)
+                .ifPresent(claim -> {
+                    claim.setStatus(ClaimStatus.CANCELLED);
+                    claim.setReleasedAt(LocalDateTime.now());
+                    claimRepository.save(claim);
+                });
     }
 
     private Sort resolveSort(String sortBy, String sortDir) {

@@ -42,7 +42,7 @@ public class RefreshTokenService {
     public RotationResult rotateRefreshToken(String rawToken) {
         String tokenHash = hashToken(rawToken);
 
-        RefreshToken existing = refreshTokenRepository.findByTokenHash(tokenHash)
+        RefreshToken existing = refreshTokenRepository.findByTokenHashForUpdate(tokenHash)
                 .orElseThrow(InvalidRefreshTokenException::new);
 
         if (!existing.isValid()) {
@@ -50,6 +50,7 @@ public class RefreshTokenService {
         }
 
         existing.setRevoked(true);
+        existing.setRevokedAt(LocalDateTime.now());
         refreshTokenRepository.save(existing);
 
         String newRawToken = createRefreshToken(existing.getUserId());

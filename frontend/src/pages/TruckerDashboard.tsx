@@ -16,6 +16,23 @@ import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { TableSkeleton } from '@/components/ui/Skeleton'
 import type { BoardFilter, BoardSortBy, BoardSortDir, EquipmentType } from '@/features/loads/types'
 
+const VALID_EQUIPMENT_TYPES = new Set<EquipmentType>(['DRY_VAN', 'FLATBED', 'REEFER', 'STEP_DECK'])
+const VALID_SORT_BY = new Set<BoardSortBy>(['pickupDate', 'distance', 'rpm'])
+const VALID_SORT_DIR = new Set<BoardSortDir>(['asc', 'desc'])
+
+function toEquipmentType(v: string | null): EquipmentType | undefined {
+  if (!v || !VALID_EQUIPMENT_TYPES.has(v as EquipmentType)) return undefined
+  return v as EquipmentType
+}
+function toBoardSortBy(v: string | null): BoardSortBy {
+  if (!v || !VALID_SORT_BY.has(v as BoardSortBy)) return 'pickupDate'
+  return v as BoardSortBy
+}
+function toBoardSortDir(v: string | null): BoardSortDir {
+  if (!v || !VALID_SORT_DIR.has(v as BoardSortDir)) return 'asc'
+  return v as BoardSortDir
+}
+
 type Tab = 'board' | 'history'
 
 const US_STATES: [string, string][] = [
@@ -67,10 +84,10 @@ export function TruckerDashboard() {
   const filter: BoardFilter = {
     originState: searchParams.get('origin') ?? undefined,
     destinationState: searchParams.get('dest') ?? undefined,
-    equipmentType: (searchParams.get('equip') as EquipmentType) || (user?.equipmentType as EquipmentType) || undefined,
+    equipmentType: toEquipmentType(searchParams.get('equip')) ?? (user?.equipmentType as EquipmentType) ?? undefined,
     pickupDate: searchParams.get('pickupDate') ?? undefined,
-    sortBy: (searchParams.get('sortBy') as BoardSortBy) || 'pickupDate',
-    sortDir: (searchParams.get('sortDir') as BoardSortDir) || 'asc',
+    sortBy: toBoardSortBy(searchParams.get('sortBy')),
+    sortDir: toBoardSortDir(searchParams.get('sortDir')),
   }
 
   const setFilter = useCallback((updater: (prev: BoardFilter) => BoardFilter) => {
@@ -78,10 +95,10 @@ export function TruckerDashboard() {
       const current: BoardFilter = {
         originState: prev.get('origin') ?? undefined,
         destinationState: prev.get('dest') ?? undefined,
-        equipmentType: (prev.get('equip') as EquipmentType) || undefined,
+        equipmentType: toEquipmentType(prev.get('equip')),
         pickupDate: prev.get('pickupDate') ?? undefined,
-        sortBy: (prev.get('sortBy') as BoardSortBy) || 'pickupDate',
-        sortDir: (prev.get('sortDir') as BoardSortDir) || 'asc',
+        sortBy: toBoardSortBy(prev.get('sortBy')),
+        sortDir: toBoardSortDir(prev.get('sortDir')),
       }
       const next = updater(current)
       const params = new URLSearchParams()

@@ -6,7 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import jakarta.persistence.LockModeType;
 import java.util.Optional;
 
 public interface LoadRepository extends JpaRepository<Load, String>, JpaSpecificationExecutor<Load> {
@@ -26,6 +30,10 @@ public interface LoadRepository extends JpaRepository<Load, String>, JpaSpecific
             LoadStatus status, com.freightclub.domain.EquipmentType equipmentType, Pageable pageable);
 
     Optional<Load> findByIdAndDeletedAtIsNull(String id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT l FROM Load l WHERE l.id = :id AND l.deletedAt IS NULL")
+    Optional<Load> findByIdAndDeletedAtIsNullForUpdate(@Param("id") String id);
 
     java.util.Optional<Load> findFirstByTruckerIdAndStatusInAndDeletedAtIsNull(
             String truckerId, java.util.List<LoadStatus> statuses);

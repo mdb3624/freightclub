@@ -8,13 +8,22 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
+
+server:
+  port: 9090
 
 app:
   jwt:
     # 64-char hex string — replace with your own before committing real services
     secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
   cors:
-    allowed-origins: http://localhost:5173
+    allowed-origins: http://localhost:8080,http://mikebarnes.tail67dcb4.ts.net:8080,https://mikebarnes.tail67dcb4.ts.net
+  storage:
+    local-path: ${user.home}/freightclub-uploads
 
 logging:
   level:

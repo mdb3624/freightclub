@@ -1,3 +1,7 @@
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{correlationId}] %-5level %logger{36} - %msg%n"
+
 spring:
   jackson:
     serialization:
@@ -23,9 +27,20 @@ spring:
     out-of-order: true
     validate-on-migrate: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+
 app:
   jwt:
     secret: ${JWT_SECRET}
+    issuer: freightclub
+    audience: freightclub-api
     access-token-expiry-ms: 900000       # 15 minutes
     refresh-token-expiry-ms: 604800000   # 7 days
   default-tenant-id: 00000000-0000-0000-0000-000000000001

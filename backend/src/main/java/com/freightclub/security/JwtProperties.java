@@ -13,6 +13,12 @@ public class JwtProperties {
     @NotBlank
     private String secret;
 
+    @NotBlank
+    private String issuer;
+
+    @NotBlank
+    private String audience;
+
     @Positive
     private long accessTokenExpiryMs = 900_000L;
 
@@ -21,6 +27,12 @@ public class JwtProperties {
 
     public String getSecret() { return secret; }
     public void setSecret(String secret) { this.secret = secret; }
+
+    public String getIssuer() { return issuer; }
+    public void setIssuer(String issuer) { this.issuer = issuer; }
+
+    public String getAudience() { return audience; }
+    public void setAudience(String audience) { this.audience = audience; }
 
     public long getAccessTokenExpiryMs() { return accessTokenExpiryMs; }
     public void setAccessTokenExpiryMs(long accessTokenExpiryMs) { this.accessTokenExpiryMs = accessTokenExpiryMs; }

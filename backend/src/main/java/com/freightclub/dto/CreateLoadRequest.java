@@ -35,5 +35,6 @@ public record CreateLoadRequest(
         @NotNull @DecimalMin("0.01") BigDecimal payRate,
         @NotNull PayRateType payRateType,
         PaymentTerms paymentTerms,
-        String specialRequirements
+        String specialRequirements,
+        Boolean overweightAcknowledged
 ) {}

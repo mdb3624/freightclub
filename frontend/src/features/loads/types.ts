@@ -112,6 +112,7 @@ export interface LoadFormValues {
   payRateType: PayRateType
   paymentTerms: PaymentTerms | ''
   specialRequirements: string
+  overweightAcknowledged?: boolean
 }
 
 export type BoardSortBy = 'pickupDate' | 'distance' | 'rpm'

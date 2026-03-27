@@ -38,12 +38,12 @@ public class ProfileService {
         user.setBillingAddress1(request.billingAddress1());
         user.setBillingAddress2(request.billingAddress2());
         user.setBillingCity(request.billingCity());
-        user.setBillingState(request.billingState());
+        user.setBillingState(emptyToNull(request.billingState()));
         user.setBillingZip(request.billingZip());
         user.setDefaultPickupAddress1(request.defaultPickupAddress1());
         user.setDefaultPickupAddress2(request.defaultPickupAddress2());
         user.setDefaultPickupCity(request.defaultPickupCity());
-        user.setDefaultPickupState(request.defaultPickupState());
+        user.setDefaultPickupState(emptyToNull(request.defaultPickupState()));
         user.setDefaultPickupZip(request.defaultPickupZip());
         user.setNotifyEmail(request.notifyEmail());
         user.setNotifySms(request.notifySms());
@@ -60,6 +60,10 @@ public class ProfileService {
         User saved = userRepository.save(user);
         Tenant tenant = resolveTenant(saved.getTenantId());
         return ProfileResponse.from(saved, tenant);
+    }
+
+    private static String emptyToNull(String value) {
+        return (value == null || value.isBlank()) ? null : value;
     }
 
     private User findUser(String userId) {

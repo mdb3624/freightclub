@@ -37,4 +37,4 @@ public record UpdateLoadRequest(
         PaymentTerms paymentTerms,
         String specialRequirements,
         Boolean overweightAcknowledged
-) {}
+) implements LoadFields {}

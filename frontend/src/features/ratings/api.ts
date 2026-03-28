@@ -1,16 +1,13 @@
 import apiClient from '@/lib/apiClient'
+import { apiGet, apiPost } from '@/lib/apiClient'
 import type { Rating, RatingSummary, ShipperPublicProfile, Page } from './types'
 
 export const ratingsApi = {
   rateTrucker: (loadId: string, stars: number, comment?: string) =>
-    apiClient
-      .post<Rating>(`/ratings/${loadId}/trucker`, { stars, comment })
-      .then((r) => r.data),
+    apiPost<Rating>(`/ratings/${loadId}/trucker`, { stars, comment }),
 
   rateShipper: (loadId: string, stars: number, comment?: string) =>
-    apiClient
-      .post<Rating>(`/ratings/${loadId}/shipper`, { stars, comment })
-      .then((r) => r.data),
+    apiPost<Rating>(`/ratings/${loadId}/shipper`, { stars, comment }),
 
   getMyRating: (loadId: string) =>
     apiClient
@@ -19,16 +16,13 @@ export const ratingsApi = {
       .catch(() => null),
 
   getMyReceived: (page = 0, size = 20) =>
-    apiClient
-      .get<Page<Rating>>('/ratings/my-received', { params: { page, size } })
-      .then((r) => r.data),
+    apiGet<Page<Rating>>('/ratings/my-received', { params: { page, size } }),
 
-  getMySummary: () =>
-    apiClient.get<RatingSummary>('/ratings/my-summary').then((r) => r.data),
+  getMySummary: () => apiGet<RatingSummary>('/ratings/my-summary'),
 
   getTruckerSummary: (userId: string) =>
-    apiClient.get<RatingSummary>(`/ratings/trucker/${userId}/summary`).then((r) => r.data),
+    apiGet<RatingSummary>(`/ratings/trucker/${userId}/summary`),
 
   getShipperProfile: (userId: string) =>
-    apiClient.get<ShipperPublicProfile>(`/ratings/shipper/${userId}/profile`).then((r) => r.data),
+    apiGet<ShipperPublicProfile>(`/ratings/shipper/${userId}/profile`),
 }

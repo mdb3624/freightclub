@@ -121,10 +121,7 @@ export function ProfilePage() {
   return (
     <AppShell maxWidth="lg">
       <div className="mb-6">
-        <Link to={dashboardPath} className="text-sm text-primary-600 hover:underline">
-          ← Back to Dashboard
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold text-gray-900">My Profile</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">My Profile</h1>
       </div>
 
         <form onSubmit={handleSubmit((v) => mutate(v))} className="space-y-8">

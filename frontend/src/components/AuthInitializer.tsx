@@ -4,6 +4,7 @@ import axios from 'axios'
 import apiClient from '@/lib/apiClient'
 import { useAuthStore } from '@/store/authStore'
 import type { RefreshResponse } from '@/types'
+import type { UserRole } from '@/types'
 import type { Profile } from '@/features/profile/types'
 
 interface Props {
@@ -29,7 +30,7 @@ export function AuthInitializer({ children }: Props) {
           email: profile.email,
           firstName: profile.firstName,
           lastName: profile.lastName,
-          role: profile.role,
+          role: profile.role as UserRole,
           tenantId: profile.tenantId ?? '',
           equipmentType: profile.equipmentType ?? undefined,
         })

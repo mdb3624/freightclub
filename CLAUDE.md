@@ -76,6 +76,13 @@ Keep ARCHITECTURE.md up to date as the system evolves.
 - When adding external access (Tailscale, etc.), add hostname to `allowedHosts` in `vite.config.ts`
 - **Check proxy config FIRST when login or API calls fail** — before investigating auth logic, CORS, or DB
 
+## Debugging Approach
+
+- **Login / API failures:** Check `frontend/vite.config.ts` proxy target port first (must be **9090**) — before investigating auth logic, CORS, or DB issues
+- **Blank / black screen:** Verify the backend is running (`curl -s -o /dev/null -w "%{http_code}" http://localhost:9090/actuator/health`) before investigating frontend issues
+- **401 on any endpoint:** Means the server IS running and Spring Security is active — not a connectivity failure
+- **CORS errors:** Usually caused by a proxy misconfiguration, not a backend CORS policy — fix proxy first
+
 ## Project Status
 
 Phase 1 (Core Load Lifecycle) and Phase 1.1 (UX Hardening) are complete. Phase 1.2 (Security & Stability Hardening) is complete. Phase 2 is next.
@@ -140,3 +147,21 @@ Backend runs on port 9090.
 - HTTP-only refresh cookie rotated on every `/auth/refresh` call.
 - `AuthRateLimitFilter` (Bucket4j) limits auth endpoints.
 - `JwtService` validates `iss` and `aud` claims on every request.
+
+---
+
+## Environment Status
+
+Last verified: 2026-03-28
+
+| Tool | Version | Path |
+|------|---------|------|
+| Java | OpenJDK 21.0.10 LTS (Temurin) | `C:\Program Files\Eclipse Adoptium\jdk-21.0.10.7-hotspot` |
+| Maven | 3.9.9 | `/c/tools/apache-maven-3.9.9/bin/mvn` |
+| Node | v24.4.0 | System PATH |
+| npm | 11.4.2 | System PATH |
+
+- `JAVA_HOME` is set system-wide and resolves correctly in Git Bash
+- Maven uses JDK 21 (confirmed via `mvn -version`)
+- No `engines` constraint in `frontend/package.json` — Node 24 is compatible
+- Ports 8080 and 9090 are used exclusively by the FreightClub dev stack

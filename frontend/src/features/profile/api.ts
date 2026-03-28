@@ -1,10 +1,8 @@
-import apiClient from '@/lib/apiClient'
+import { apiGet, apiPut } from '@/lib/apiClient'
 import type { Profile, UpdateProfileValues } from './types'
 
 export const profileApi = {
-  get: () =>
-    apiClient.get<Profile>('/profile').then((r) => r.data),
+  get: () => apiGet<Profile>('/profile'),
 
-  update: (data: UpdateProfileValues) =>
-    apiClient.put<Profile>('/profile', data).then((r) => r.data),
+  update: (data: UpdateProfileValues) => apiPut<Profile>('/profile', data),
 }

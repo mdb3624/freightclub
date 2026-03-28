@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
-import type { Control, UseFormRegister, FieldErrors } from 'react-hook-form'
+import type { UseFormRegister, FieldErrors } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { AxiosError } from 'axios'
@@ -195,6 +195,7 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
   const distanceMiles = watch('distanceMiles')
   const weightLbs = watch('weightLbs')
   const isOverweight = typeof weightLbs === 'number' && weightLbs > 80000
+  const overweightAcknowledged = watch('overweightAcknowledged')
   const payRateType = watch('payRateType')
   const payRate = watch('payRate')
   const pickupFrom = watch('pickupFrom')
@@ -505,8 +506,8 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
         <Button
           type="submit"
           isLoading={isSubmitting}
-          disabled={isOverweight && !weightAcknowledged}
-          title={isOverweight && !weightAcknowledged ? 'Acknowledge the overweight warning above to continue' : undefined}
+          disabled={isOverweight && !overweightAcknowledged}
+          title={isOverweight && !overweightAcknowledged ? 'Acknowledge the overweight warning above to continue' : undefined}
         >
           {submitLabel}
         </Button>

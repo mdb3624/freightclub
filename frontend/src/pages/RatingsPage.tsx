@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { useMyReceivedRatings, useMyRatingSummary } from '@/features/ratings/hooks/useRatings'
 import { StarRating } from '@/features/ratings/components/StarRating'
@@ -15,10 +14,7 @@ export function RatingsPage() {
   return (
     <AppShell maxWidth="lg">
       <div className="mb-6">
-        <Link to={dashboardPath} className="text-sm text-primary-600 hover:underline">
-          ← Back to Dashboard
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold text-gray-900">My Ratings</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">My Ratings</h1>
       </div>
 
       {summary && (

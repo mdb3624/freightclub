@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { type AxiosRequestConfig } from 'axios'
 import { useAuthStore } from '@/store/authStore'
 import type { RefreshResponse } from '@/types'
 
@@ -66,3 +66,16 @@ apiClient.interceptors.response.use(
 )
 
 export default apiClient
+
+// Typed helpers that auto-unwrap AxiosResponse.data
+export const apiGet = <T>(url: string, config?: AxiosRequestConfig): Promise<T> =>
+  apiClient.get<T>(url, config).then((r) => r.data)
+
+export const apiPost = <T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> =>
+  apiClient.post<T>(url, data, config).then((r) => r.data)
+
+export const apiPut = <T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> =>
+  apiClient.put<T>(url, data, config).then((r) => r.data)
+
+export const apiPatch = <T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> =>
+  apiClient.patch<T>(url, data, config).then((r) => r.data)

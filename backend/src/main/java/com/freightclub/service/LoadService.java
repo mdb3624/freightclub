@@ -9,6 +9,7 @@ import com.freightclub.domain.LoadStatus;
 import com.freightclub.domain.User;
 import com.freightclub.dto.CreateLoadRequest;
 import com.freightclub.dto.LoadBoardFilter;
+import com.freightclub.dto.LoadFields;
 import com.freightclub.dto.LoadResponse;
 import com.freightclub.dto.LoadSummaryResponse;
 import com.freightclub.dto.UpdateLoadRequest;
@@ -67,17 +68,7 @@ public class LoadService {
         load.setTenantId(TenantContextHolder.getTenantId());
         load.setShipperId(shipperId);
         load.setStatus(LoadStatus.DRAFT);
-        applyFields(load, request.originCity(), request.originState(), request.originZip(),
-                request.originAddress1(), request.originAddress2(),
-                request.destinationCity(), request.destinationState(), request.destinationZip(),
-                request.destinationAddress1(), request.destinationAddress2(),
-                request.distanceMiles(),
-                request.pickupFrom(), request.pickupTo(),
-                request.deliveryFrom(), request.deliveryTo(),
-                request.commodity(), request.weightLbs(),
-                request.lengthFt(), request.widthFt(), request.heightFt(),
-                request.equipmentType(), request.payRate(), request.payRateType(),
-                request.paymentTerms(), request.specialRequirements());
+        applyFields(load, request);
         Load saved = loadRepository.save(load);
         writeEvent(saved, "CREATED", shipperId);
         return buildResponse(saved);
@@ -89,17 +80,7 @@ public class LoadService {
         load.setTenantId(TenantContextHolder.getTenantId());
         load.setShipperId(shipperId);
         load.setStatus(LoadStatus.OPEN);
-        applyFields(load, request.originCity(), request.originState(), request.originZip(),
-                request.originAddress1(), request.originAddress2(),
-                request.destinationCity(), request.destinationState(), request.destinationZip(),
-                request.destinationAddress1(), request.destinationAddress2(),
-                request.distanceMiles(),
-                request.pickupFrom(), request.pickupTo(),
-                request.deliveryFrom(), request.deliveryTo(),
-                request.commodity(), request.weightLbs(),
-                request.lengthFt(), request.widthFt(), request.heightFt(),
-                request.equipmentType(), request.payRate(), request.payRateType(),
-                request.paymentTerms(), request.specialRequirements());
+        applyFields(load, request);
         Load saved = loadRepository.save(load);
         writeEvent(saved, "CREATED", shipperId);
         documentService.generateBolOnPublish(saved);
@@ -132,17 +113,7 @@ public class LoadService {
         validateWeight(request.weightLbs(), request.overweightAcknowledged());
         Load load = findOwnedLoad(id, shipperId);
         requireEditable(load);
-        applyFields(load, request.originCity(), request.originState(), request.originZip(),
-                request.originAddress1(), request.originAddress2(),
-                request.destinationCity(), request.destinationState(), request.destinationZip(),
-                request.destinationAddress1(), request.destinationAddress2(),
-                request.distanceMiles(),
-                request.pickupFrom(), request.pickupTo(),
-                request.deliveryFrom(), request.deliveryTo(),
-                request.commodity(), request.weightLbs(),
-                request.lengthFt(), request.widthFt(), request.heightFt(),
-                request.equipmentType(), request.payRate(), request.payRateType(),
-                request.paymentTerms(), request.specialRequirements());
+        applyFields(load, request);
         return LoadResponse.from(loadRepository.save(load));
     }
 
@@ -316,44 +287,32 @@ public class LoadService {
         return LoadResponse.from(load, shipper, trucker);
     }
 
-    private void applyFields(Load load, String originCity, String originState, String originZip,
-                              String originAddress1, String originAddress2,
-                              String destinationCity, String destinationState, String destinationZip,
-                              String destinationAddress1, String destinationAddress2,
-                              java.math.BigDecimal distanceMiles,
-                              java.time.LocalDateTime pickupFrom, java.time.LocalDateTime pickupTo,
-                              java.time.LocalDateTime deliveryFrom, java.time.LocalDateTime deliveryTo,
-                              String commodity, java.math.BigDecimal weightLbs,
-                              java.math.BigDecimal lengthFt, java.math.BigDecimal widthFt, java.math.BigDecimal heightFt,
-                              com.freightclub.domain.EquipmentType equipmentType,
-                              java.math.BigDecimal payRate, com.freightclub.domain.PayRateType payRateType,
-                              com.freightclub.domain.PaymentTerms paymentTerms,
-                              String specialRequirements) {
-        load.setOriginCity(originCity);
-        load.setOriginState(originState);
-        load.setOriginZip(originZip);
-        load.setOriginAddress1(originAddress1);
-        load.setOriginAddress2(originAddress2);
-        load.setDestinationCity(destinationCity);
-        load.setDestinationState(destinationState);
-        load.setDestinationZip(destinationZip);
-        load.setDestinationAddress1(destinationAddress1);
-        load.setDestinationAddress2(destinationAddress2);
-        load.setDistanceMiles(distanceMiles);
-        load.setPickupFrom(pickupFrom);
-        load.setPickupTo(pickupTo);
-        load.setDeliveryFrom(deliveryFrom);
-        load.setDeliveryTo(deliveryTo);
-        load.setCommodity(commodity);
-        load.setWeightLbs(weightLbs);
-        load.setLengthFt(lengthFt);
-        load.setWidthFt(widthFt);
-        load.setHeightFt(heightFt);
-        load.setEquipmentType(equipmentType);
-        load.setPayRate(payRate);
-        load.setPayRateType(payRateType);
-        load.setPaymentTerms(paymentTerms);
-        load.setSpecialRequirements(specialRequirements);
+    private void applyFields(Load load, LoadFields fields) {
+        load.setOriginCity(fields.originCity());
+        load.setOriginState(fields.originState());
+        load.setOriginZip(fields.originZip());
+        load.setOriginAddress1(fields.originAddress1());
+        load.setOriginAddress2(fields.originAddress2());
+        load.setDestinationCity(fields.destinationCity());
+        load.setDestinationState(fields.destinationState());
+        load.setDestinationZip(fields.destinationZip());
+        load.setDestinationAddress1(fields.destinationAddress1());
+        load.setDestinationAddress2(fields.destinationAddress2());
+        load.setDistanceMiles(fields.distanceMiles());
+        load.setPickupFrom(fields.pickupFrom());
+        load.setPickupTo(fields.pickupTo());
+        load.setDeliveryFrom(fields.deliveryFrom());
+        load.setDeliveryTo(fields.deliveryTo());
+        load.setCommodity(fields.commodity());
+        load.setWeightLbs(fields.weightLbs());
+        load.setLengthFt(fields.lengthFt());
+        load.setWidthFt(fields.widthFt());
+        load.setHeightFt(fields.heightFt());
+        load.setEquipmentType(fields.equipmentType());
+        load.setPayRate(fields.payRate());
+        load.setPayRateType(fields.payRateType());
+        load.setPaymentTerms(fields.paymentTerms());
+        load.setSpecialRequirements(fields.specialRequirements());
     }
 
     private void validateWeight(BigDecimal weightLbs, Boolean overweightAcknowledged) {

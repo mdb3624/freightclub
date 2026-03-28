@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { AppShell } from '@/components/AppShell'
 import { useLoad } from '@/features/loads/hooks/useLoad'
 import { useCancelLoad } from '@/features/loads/hooks/useCancelLoad'
@@ -52,9 +52,6 @@ export function LoadDetailPage() {
 
         {canEdit && (
           <div className="mt-6 flex gap-3 border-t border-gray-100 pt-6">
-            <Link to={`/shipper/loads/${load.id}/edit`}>
-              <Button variant="secondary">Edit Load</Button>
-            </Link>
             <Button
               variant="secondary"
               className="text-red-600 border-red-300 hover:bg-red-50"

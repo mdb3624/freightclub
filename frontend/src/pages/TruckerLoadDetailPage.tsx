@@ -66,10 +66,7 @@ export function TruckerLoadDetailPage() {
   return (
     <AppShell maxWidth="md">
       <div className="mb-6">
-        <Link to="/dashboard/trucker" className="text-sm text-primary-600 hover:underline">
-          ← Back to Dashboard
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold text-gray-900">Load Detail</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Load Detail</h1>
       </div>
 
         {isLoading && (

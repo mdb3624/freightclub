@@ -49,6 +49,8 @@ public class RatingService {
         this.userRepository = userRepository;
     }
 
+    private record RatingContext(String reviewerId, String reviewedId, UserRole role, CreateRatingRequest req) {}
+
     /** Shipper rates the trucker who delivered their load. */
     public RatingResponse rateTrucker(String loadId, String shipperId, CreateRatingRequest req) {
         Load load = requireRatableLoad(loadId, TenantContextHolder.getTenantId());
@@ -61,7 +63,7 @@ public class RatingService {
         if (ratingRepository.existsByLoadIdAndReviewerId(loadId, shipperId)) {
             throw new RatingAlreadyExistsException();
         }
-        return save(load, shipperId, load.getTruckerId(), UserRole.SHIPPER, req);
+        return save(load, new RatingContext(shipperId, load.getTruckerId(), UserRole.SHIPPER, req));
     }
 
     /** Trucker rates the shipper whose load they delivered. */
@@ -73,7 +75,7 @@ public class RatingService {
         if (ratingRepository.existsByLoadIdAndReviewerId(loadId, truckerId)) {
             throw new RatingAlreadyExistsException();
         }
-        return save(load, truckerId, load.getShipperId(), UserRole.TRUCKER, req);
+        return save(load, new RatingContext(truckerId, load.getShipperId(), UserRole.TRUCKER, req));
     }
 
     @Transactional(readOnly = true)
@@ -91,37 +93,32 @@ public class RatingService {
 
     @Transactional(readOnly = true)
     public RatingSummaryResponse getTruckerSummary(String truckerId) {
-        Double avg = ratingRepository.findAvgStars(truckerId, UserRole.SHIPPER);
-        long count = ratingRepository.countRatings(truckerId, UserRole.SHIPPER);
         long completed = loadRepository.countByTruckerIdAndStatusInAndDeletedAtIsNull(
                 truckerId, RATABLE_STATUSES);
-        return new RatingSummaryResponse(toBd(avg), count, completed);
+        return buildSummary(truckerId, UserRole.SHIPPER, completed);
     }
 
     @Transactional(readOnly = true)
     public RatingSummaryResponse getShipperSummary(String shipperId) {
-        Double avg = ratingRepository.findAvgStars(shipperId, UserRole.TRUCKER);
-        long count = ratingRepository.countRatings(shipperId, UserRole.TRUCKER);
         long completed = loadRepository.countByShipperIdAndStatusInAndDeletedAtIsNull(
                 shipperId, RATABLE_STATUSES);
-        return new RatingSummaryResponse(toBd(avg), count, completed);
+        return buildSummary(shipperId, UserRole.TRUCKER, completed);
     }
 
     @Transactional(readOnly = true)
     public ShipperPublicProfileResponse getShipperPublicProfile(String shipperId) {
         User shipper = userRepository.findById(shipperId)
                 .orElseThrow(() -> new LoadNotFoundException(shipperId));
-        Double avg = ratingRepository.findAvgStars(shipperId, UserRole.TRUCKER);
-        long count = ratingRepository.countRatings(shipperId, UserRole.TRUCKER);
         long completed = loadRepository.countByShipperIdAndStatusInAndDeletedAtIsNull(
                 shipperId, RATABLE_STATUSES);
         long cancelled = loadRepository.countByShipperIdAndStatusInAndDeletedAtIsNull(
                 shipperId, List.of(LoadStatus.CANCELLED));
+        RatingSummaryResponse summary = buildSummary(shipperId, UserRole.TRUCKER, completed);
         String displayName = shipper.getBusinessName() != null && !shipper.getBusinessName().isBlank()
                 ? shipper.getBusinessName()
                 : shipper.getFirstName() + " " + shipper.getLastName();
         return new ShipperPublicProfileResponse(
-                shipperId, displayName, toBd(avg), count, completed, cancelled, null);
+                shipperId, displayName, summary.avgStars(), summary.totalRatings(), completed, cancelled, null);
     }
 
     /** Batch fetch shipper avg-stars for the load board (keyed by shipperId). */
@@ -141,16 +138,21 @@ public class RatingService {
 
     // ── helpers ──
 
-    private RatingResponse save(Load load, String reviewerId, String reviewedId,
-                                 UserRole role, CreateRatingRequest req) {
+    private RatingSummaryResponse buildSummary(String userId, UserRole raterRole, long completed) {
+        Double avg = ratingRepository.findAvgStars(userId, raterRole);
+        long count = ratingRepository.countRatings(userId, raterRole);
+        return new RatingSummaryResponse(toBd(avg), count, completed);
+    }
+
+    private RatingResponse save(Load load, RatingContext ctx) {
         Rating r = new Rating();
         r.setTenantId(load.getTenantId());
         r.setLoadId(load.getId());
-        r.setReviewerId(reviewerId);
-        r.setReviewedId(reviewedId);
-        r.setReviewerRole(role);
-        r.setStars(req.stars());
-        r.setComment(req.comment() != null && !req.comment().isBlank() ? req.comment().trim() : null);
+        r.setReviewerId(ctx.reviewerId());
+        r.setReviewedId(ctx.reviewedId());
+        r.setReviewerRole(ctx.role());
+        r.setStars(ctx.req().stars());
+        r.setComment(ctx.req().comment() != null && !ctx.req().comment().isBlank() ? ctx.req().comment().trim() : null);
         return RatingResponse.from(ratingRepository.save(r));
     }
 

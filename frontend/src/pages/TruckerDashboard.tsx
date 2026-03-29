@@ -6,24 +6,19 @@ import { useLoadBoard } from '@/features/loads/hooks/useLoadBoard'
 import { useMyActiveLoad } from '@/features/loads/hooks/useMyActiveLoad'
 import { useMyLoadHistory } from '@/features/loads/hooks/useMyLoadHistory'
 import { useProfile } from '@/features/profile/hooks/useProfile'
+import { useAvailableStates } from '@/features/loads/hooks/useAvailableStates'
 import { LoadBoardTable } from '@/features/loads/components/LoadBoardTable'
 import { StatusBadge } from '@/features/loads/components/StatusBadge'
 import { EarningSummaryCard } from '@/features/loads/components/EarningSummaryCard'
-import { HosWidget } from '@/features/hos/components/HosWidget'
 import { AppShell } from '@/components/AppShell'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { TableSkeleton } from '@/components/ui/Skeleton'
 import type { BoardFilter, BoardSortBy, BoardSortDir, EquipmentType } from '@/features/loads/types'
 
-const VALID_EQUIPMENT_TYPES = new Set<EquipmentType>(['DRY_VAN', 'FLATBED', 'REEFER', 'STEP_DECK'])
 const VALID_SORT_BY = new Set<BoardSortBy>(['pickupDate', 'distance', 'rpm'])
 const VALID_SORT_DIR = new Set<BoardSortDir>(['asc', 'desc'])
 
-function toEquipmentType(v: string | null): EquipmentType | undefined {
-  if (!v || !VALID_EQUIPMENT_TYPES.has(v as EquipmentType)) return undefined
-  return v as EquipmentType
-}
 function toBoardSortBy(v: string | null): BoardSortBy {
   if (!v || !VALID_SORT_BY.has(v as BoardSortBy)) return 'pickupDate'
   return v as BoardSortBy
@@ -35,21 +30,6 @@ function toBoardSortDir(v: string | null): BoardSortDir {
 
 type Tab = 'board' | 'history'
 
-const US_STATES: [string, string][] = [
-  ['AL', 'Alabama'], ['AK', 'Alaska'], ['AZ', 'Arizona'], ['AR', 'Arkansas'],
-  ['CA', 'California'], ['CO', 'Colorado'], ['CT', 'Connecticut'], ['DE', 'Delaware'],
-  ['FL', 'Florida'], ['GA', 'Georgia'], ['HI', 'Hawaii'], ['ID', 'Idaho'],
-  ['IL', 'Illinois'], ['IN', 'Indiana'], ['IA', 'Iowa'], ['KS', 'Kansas'],
-  ['KY', 'Kentucky'], ['LA', 'Louisiana'], ['ME', 'Maine'], ['MD', 'Maryland'],
-  ['MA', 'Massachusetts'], ['MI', 'Michigan'], ['MN', 'Minnesota'], ['MS', 'Mississippi'],
-  ['MO', 'Missouri'], ['MT', 'Montana'], ['NE', 'Nebraska'], ['NV', 'Nevada'],
-  ['NH', 'New Hampshire'], ['NJ', 'New Jersey'], ['NM', 'New Mexico'], ['NY', 'New York'],
-  ['NC', 'North Carolina'], ['ND', 'North Dakota'], ['OH', 'Ohio'], ['OK', 'Oklahoma'],
-  ['OR', 'Oregon'], ['PA', 'Pennsylvania'], ['RI', 'Rhode Island'], ['SC', 'South Carolina'],
-  ['SD', 'South Dakota'], ['TN', 'Tennessee'], ['TX', 'Texas'], ['UT', 'Utah'],
-  ['VT', 'Vermont'], ['VA', 'Virginia'], ['WA', 'Washington'], ['WV', 'West Virginia'],
-  ['WI', 'Wisconsin'], ['WY', 'Wyoming'],
-]
 
 const STATUS_LABELS: Record<string, string> = {
   CLAIMED: 'Claimed — Ready for Pickup',
@@ -80,12 +60,13 @@ export function TruckerDashboard() {
   const [tab, setTab] = useState<Tab>('board')
   const [page, setPage] = useState(0)
 
-  // Derive filter from URL params
+  // Derive filter from URL params — equipment type is always the trucker's own, never user-selectable
   const filter: BoardFilter = {
     originState: searchParams.get('origin') ?? undefined,
     destinationState: searchParams.get('dest') ?? undefined,
-    equipmentType: toEquipmentType(searchParams.get('equip')) ?? (user?.equipmentType as EquipmentType) ?? undefined,
+    equipmentType: (user?.equipmentType as EquipmentType) ?? undefined,
     pickupDate: searchParams.get('pickupDate') ?? undefined,
+    deliveryDate: searchParams.get('deliveryDate') ?? undefined,
     sortBy: toBoardSortBy(searchParams.get('sortBy')),
     sortDir: toBoardSortDir(searchParams.get('sortDir')),
   }
@@ -95,8 +76,9 @@ export function TruckerDashboard() {
       const current: BoardFilter = {
         originState: prev.get('origin') ?? undefined,
         destinationState: prev.get('dest') ?? undefined,
-        equipmentType: toEquipmentType(prev.get('equip')),
+        equipmentType: (user?.equipmentType as EquipmentType) ?? undefined,
         pickupDate: prev.get('pickupDate') ?? undefined,
+        deliveryDate: prev.get('deliveryDate') ?? undefined,
         sortBy: toBoardSortBy(prev.get('sortBy')),
         sortDir: toBoardSortDir(prev.get('sortDir')),
       }
@@ -104,17 +86,18 @@ export function TruckerDashboard() {
       const params = new URLSearchParams()
       if (next.originState) params.set('origin', next.originState)
       if (next.destinationState) params.set('dest', next.destinationState)
-      if (next.equipmentType) params.set('equip', next.equipmentType)
       if (next.pickupDate) params.set('pickupDate', next.pickupDate)
+      if (next.deliveryDate) params.set('deliveryDate', next.deliveryDate)
       if (next.sortBy && next.sortBy !== 'pickupDate') params.set('sortBy', next.sortBy)
       if (next.sortDir && next.sortDir !== 'asc') params.set('sortDir', next.sortDir)
       return params
     }, { replace: true })
     setPage(0)
-  }, [setSearchParams])
+  }, [setSearchParams, user?.equipmentType])
   const { data, isLoading, isError } = useLoadBoard(page, filter)
   const { data: activeLoad, isLoading: isLoadingActiveLoad } = useMyActiveLoad()
   const { data: profile } = useProfile()
+  const { data: availableStates } = useAvailableStates()
   const [historyPage, setHistoryPage] = useState(0)
   const { data: history } = useMyLoadHistory(historyPage)
   const activeLoadRef = useRef<HTMLElement>(null)
@@ -289,11 +272,7 @@ export function TruckerDashboard() {
 
         {tab === 'board' && (
         <section>
-          <div className="mb-6">
-            <HosWidget />
-          </div>
-
-          <div className="mb-4 flex items-center justify-between">
+<div className="mb-4 flex items-center justify-between">
             <p className="text-sm text-gray-600">
               {hasActiveLoad
                 ? 'Complete your active load before claiming another.'
@@ -314,8 +293,8 @@ export function TruckerDashboard() {
                 }}
               >
                 <option value="">Any</option>
-                {US_STATES.map(([abbr, name]) => (
-                  <option key={abbr} value={abbr}>{abbr} — {name}</option>
+                {(availableStates?.originStates ?? []).map((abbr) => (
+                  <option key={abbr} value={abbr}>{abbr}</option>
                 ))}
               </select>
             </div>
@@ -330,38 +309,10 @@ export function TruckerDashboard() {
                 }}
               >
                 <option value="">Any</option>
-                {US_STATES.map(([abbr, name]) => (
-                  <option key={abbr} value={abbr}>{abbr} — {name}</option>
+                {(availableStates?.destinationStates ?? []).map((abbr) => (
+                  <option key={abbr} value={abbr}>{abbr}</option>
                 ))}
               </select>
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Equipment</label>
-              <select
-                className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                value={filter.equipmentType ?? ''}
-                onChange={(e) => {
-                  setFilter((f) => ({ ...f, equipmentType: (e.target.value as EquipmentType) || undefined }))
-                  setPage(0)
-                }}
-              >
-                <option value="">Any</option>
-                <option value="DRY_VAN">Dry Van</option>
-                <option value="FLATBED">Flatbed</option>
-                <option value="REEFER">Reefer</option>
-                <option value="STEP_DECK">Step Deck</option>
-              </select>
-              {user?.equipmentType && filter.equipmentType !== user.equipmentType && (
-                <button
-                  type="button"
-                  className="text-xs text-primary-600 hover:underline text-left mt-0.5"
-                  onClick={() => {
-                    setFilter((f) => ({ ...f, equipmentType: user.equipmentType as EquipmentType }))
-                  }}
-                >
-                  Reset to my equipment
-                </button>
-              )}
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-gray-700">Pickup Date</label>
@@ -375,7 +326,19 @@ export function TruckerDashboard() {
                 }}
               />
             </div>
-            {(filter.originState || filter.destinationState || filter.pickupDate) && (
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Delivery Date</label>
+              <input
+                type="date"
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                value={filter.deliveryDate ?? ''}
+                onChange={(e) => {
+                  setFilter((f) => ({ ...f, deliveryDate: e.target.value || undefined }))
+                  setPage(0)
+                }}
+              />
+            </div>
+            {(filter.originState || filter.destinationState || filter.pickupDate || filter.deliveryDate) && (
               <Button
                 variant="secondary"
                 onClick={() => {

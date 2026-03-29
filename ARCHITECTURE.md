@@ -313,19 +313,13 @@ Every `WHERE` or `ORDER BY` column used by the application must have an index. K
 
 ## Known Technical Debt
 
-Issues identified in the post-Phase 1.1 architecture review that are scheduled for resolution in Phase 1.2. Documented here so they are visible to any engineer working in the affected areas.
+Remaining issues deferred to future phases.
 
 ### Backend
 
 | Issue | Location | Severity | Phase |
 |-------|----------|----------|-------|
-| Race condition on `claimLoad` — check-then-act without lock | `LoadService.claimLoad` | **Critical** | 1.2 |
-| Race condition on refresh token rotation | `RefreshTokenService.rotate` | **Critical** | 1.2 |
-| `claims` table never written by service layer | `LoadService.claimLoad` | **High** | 1.2 |
-| `load_events` table never written by service layer | `LoadService` (all transitions) | **High** | 1.2 |
-| N+1 user queries in `buildResponse` — two `userRepository.findById` calls per load | `LoadService.buildResponse` | **High** | 1.2 |
 | No load state machine — valid transitions are ad-hoc inline checks | `LoadService` | Medium | 2 |
-| `DocumentService.readBytes` throws generic `RuntimeException` not caught by global handler | `DocumentService` | Medium | 1.2 |
 | Settlement flow (`DELIVERED → SETTLED`) has no service method or endpoint | `LoadService` | Medium | 5 |
 | `trucker_cost_profiles` columns pollute every `users` row | `User.java` | Low | 7b |
 
@@ -333,29 +327,5 @@ Issues identified in the post-Phase 1.1 architecture review that are scheduled f
 
 | Issue | Location | Severity | Phase |
 |-------|----------|----------|-------|
-| No `<ErrorBoundary>` — any render error shows blank screen | `App.tsx` | **High** | 1.2 |
-| Date comparison uses string ordering, not `Date` objects | `LoadForm.tsx` | **High** | 1.2 |
-| URL filter params cast to enum without validation | `TruckerDashboard.tsx` | **High** | 1.2 |
-| HOS widget state lost on page refresh — React-only state, no persistence | `HosWidget.tsx` | Medium | 2 |
-| Overweight load — backend has no matching validation | `LoadService` | Medium | 1.2 |
-
-### Security
-
-| Issue | Location | Severity | Phase |
-|-------|----------|----------|-------|
-| JWT secret committed in `application-dev.yml` | `application-dev.yml` | **Critical** | 1.2 |
-| Developer Tailscale domain hardcoded | `vite.config.ts` | **High** | 1.2 |
-| CORS `allowedHeaders: ["*"]` — replace with explicit whitelist | `SecurityConfig` | **High** | 1.2 |
-| No rate limiting on `/api/v1/auth/**` | `SecurityConfig` | **Critical** | 1.2 |
-| JWT missing `iss`/`aud` claims | `JwtService` | **High** | 1.2 |
-
-### Testing
-
-| Gap | Severity | Phase |
-|-----|----------|-------|
-| `AuthService`, `RefreshTokenService` — zero coverage | **Critical** | 1.2 |
-| `JwtAuthenticationFilter`, `SecurityConfig` — zero coverage | **Critical** | 1.2 |
-| All controllers — no API contract tests | **High** | 1.2 |
-| No `@SpringBootTest` integration tests | **High** | 1.2 |
-| No frontend tests (`.test.tsx`) | **High** | 1.2 |
-| JaCoCo only enforced for `LoadService` | Medium | 1.2 |
+| HOS widget — 70-hr/8-day cumulative cycle not tracked | `HosWidget.tsx` | **High** | 2 |
+| HOS widget state not persisted to backend | `HosWidget.tsx` | Medium | 2 |

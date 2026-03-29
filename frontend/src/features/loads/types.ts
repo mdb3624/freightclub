@@ -123,8 +123,14 @@ export interface BoardFilter {
   destinationState?: string
   equipmentType?: EquipmentType | ''
   pickupDate?: string
+  deliveryDate?: string
   sortBy?: BoardSortBy
   sortDir?: BoardSortDir
+}
+
+export interface AvailableStates {
+  originStates: string[]
+  destinationStates: string[]
 }
 
 export interface Page<T> {

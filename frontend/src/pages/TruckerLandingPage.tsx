@@ -58,16 +58,6 @@ interface CpmResult {
   misc: number
 }
 
-interface HosResult {
-  driveRemain: number
-  ondutyRemain: number
-  cycleRemain: number
-  drive: number
-  onduty: number
-  cycle: number
-  alertMsg: string
-  breakWarning: boolean
-}
 
 interface CommField {
   id: string
@@ -484,12 +474,6 @@ export function TruckerLandingPage() {
   })
   const [cpmResult, setCpmResult] = useState<CpmResult | null>(null)
 
-  // HOS Tracker — controlled
-  const [hosForm, setHosForm] = useState({
-    drive: '', onduty: '', cycle: '', lastbreak: '', milesLeft: '', speed: '55',
-  })
-  const [hosResult, setHosResult] = useState<HosResult | null>(null)
-
   // Broker Comms
   const [commType, setCommType] = useState('rate-confirm')
   const [commFields, setCommFields] = useState<Record<string, string>>({})
@@ -540,38 +524,6 @@ export function TruckerLandingPage() {
     const minRPM = cpm + margin
     setCpmResult({ cpm, minRPM, fuelCPM, maint, fixedTotal, fuelMonthly, maintMonthly, totalExpenses, miles, perdiem, truck, ins, permits, misc })
   }, [cpmForm])
-
-  // HOS auto-calc
-  useEffect(() => {
-    const drive = parseFloat(hosForm.drive) || 0
-    const onduty = parseFloat(hosForm.onduty) || 0
-    const cycle = parseFloat(hosForm.cycle) || 0
-    if (!drive && !onduty && !cycle) { setHosResult(null); return }
-    const lastbreak = parseFloat(hosForm.lastbreak) || 0
-    const milesLeft = parseFloat(hosForm.milesLeft) || 0
-    const speed = parseFloat(hosForm.speed) || 55
-    const driveRemain = Math.max(11 - drive, 0)
-    const ondutyRemain = Math.max(14 - onduty, 0)
-    const cycleRemain = Math.max(70 - cycle, 0)
-    const effectiveDrive = Math.min(driveRemain, ondutyRemain)
-    const hoursNeeded = milesLeft > 0 ? milesLeft / speed : 0
-
-    let alertMsg = ''
-    if (drive >= 11)
-      alertMsg = `🚨 VIOLATION: Driver has reached 11-hr drive limit. MUST take 10-hr consecutive off-duty break.`
-    else if (onduty >= 14)
-      alertMsg = `🚨 VIOLATION: 14-hour window expired. No more driving allowed until 10-hr reset.`
-    else if (milesLeft && hoursNeeded > effectiveDrive)
-      alertMsg = `⚠️ CLOCK WARNING: Load needs ~${hoursNeeded.toFixed(1)} hrs at ${speed} mph but only ${effectiveDrive.toFixed(1)} hrs remain. Driver will be ~${(hoursNeeded - effectiveDrive).toFixed(1)} hrs short. Plan a 10-hr reset or split sleeper.`
-    else if (effectiveDrive <= 2)
-      alertMsg = `⚠️ LOW ON TIME: Only ${effectiveDrive.toFixed(1)} hrs of effective drive time remain. Dispatch with caution.`
-    else if (cycle >= 70)
-      alertMsg = `🚨 CYCLE VIOLATION: 70-hr limit reached. Requires 34-hr restart before driving.`
-    else
-      alertMsg = `✅ COMPLIANT: Driver has ${driveRemain.toFixed(1)} drive hrs and ${ondutyRemain.toFixed(1)} on-duty hrs remaining.${milesLeft ? ` Est. ${hoursNeeded.toFixed(1)} hrs needed for remaining ${milesLeft} miles.` : ''}`
-
-    setHosResult({ driveRemain, ondutyRemain, cycleRemain, drive, onduty, cycle, alertMsg, breakWarning: drive >= 8 && lastbreak < 0.5 })
-  }, [hosForm])
 
   // Reset comm fields when type changes
   useEffect(() => { setCommFields({}); setCommOutput('') }, [commType])
@@ -660,14 +612,6 @@ export function TruckerLandingPage() {
   const cpmRingColor = cpmResult ? (cpmResult.cpm < 1.50 ? 'var(--green)' : cpmResult.cpm < 2.20 ? 'var(--yellow)' : 'var(--red)') : 'var(--accent)'
   const cpmRingOffset = cpmResult ? 2 * Math.PI * 68 * (1 - Math.min(cpmResult.cpm / 3.50, 1)) : 2 * Math.PI * 68
 
-  // ── HOS bar helpers ──
-  const driveVal = parseFloat(hosForm.drive) || 0
-  const ondutyVal = parseFloat(hosForm.onduty) || 0
-  const cycleVal = parseFloat(hosForm.cycle) || 0
-  const driveColor = driveVal > 9 ? 'var(--red)' : driveVal > 7 ? 'var(--yellow)' : 'var(--green)'
-  const ondutyColor = ondutyVal > 12 ? 'var(--red)' : ondutyVal > 10 ? 'var(--yellow)' : 'var(--green)'
-  const cycleColor = cycleVal > 60 ? 'var(--red)' : cycleVal > 50 ? 'var(--yellow)' : 'var(--accent2)'
-
   // ── Render ──────────────────────────────────────────────────────────────
 
   return (
@@ -699,8 +643,7 @@ export function TruckerLandingPage() {
         {[
           { id: 'load-analyzer', label: '📦 Load Analyzer' },
           { id: 'cpm-calc', label: '💰 CPM Calculator' },
-          { id: 'hos-tracker', label: '⏱ HOS Tracker' },
-          { id: 'broker-comm', label: '📋 Broker Comms' },
+{ id: 'broker-comm', label: '📋 Broker Comms' },
           { id: 'load-log', label: '📊 Load Log' },
         ].map(tab => (
           <div key={tab.id} className={`nav-tab${activePage === tab.id ? ' active' : ''}`} onClick={() => setActivePage(tab.id)}>
@@ -990,110 +933,6 @@ export function TruckerLandingPage() {
                     <div style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>Fill in expenses above to see breakdown</div>
                   )}
                 </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ═══════════════ PAGE 3: HOS TRACKER ═══════════════ */}
-        {activePage === 'hos-tracker' && (
-          <div className="animate-in">
-            <div className="section-title">Hours of Service Tracker</div>
-            <div className="section-sub">FMCSA compliant HOS tracking — 11-hr drive, 14-hr on-duty, 70-hr/8-day cycle</div>
-
-            <div className="grid-2 mb-16">
-              <div className="card">
-                <div className="card-title">Current Driver Status</div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Drive Hours Used Today</label>
-                    <input className="form-input" type="number" step="0.25" max="11" placeholder="e.g. 4.5" value={hosForm.drive} onChange={e => setHosForm(f => ({ ...f, drive: e.target.value }))} />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">On-Duty Hours Used Today</label>
-                    <input className="form-input" type="number" step="0.25" max="14" placeholder="e.g. 6" value={hosForm.onduty} onChange={e => setHosForm(f => ({ ...f, onduty: e.target.value }))} />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">70-Hour Cycle Used (Hrs)</label>
-                    <input className="form-input" type="number" step="0.5" max="70" placeholder="e.g. 52" value={hosForm.cycle} onChange={e => setHosForm(f => ({ ...f, cycle: e.target.value }))} />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Last Rest Break (Hrs Ago)</label>
-                    <input className="form-input" type="number" step="0.25" placeholder="e.g. 3" value={hosForm.lastbreak} onChange={e => setHosForm(f => ({ ...f, lastbreak: e.target.value }))} />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Estimated Miles Remaining on Load</label>
-                  <input className="form-input" type="number" placeholder="e.g. 280" value={hosForm.milesLeft} onChange={e => setHosForm(f => ({ ...f, milesLeft: e.target.value }))} />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Average Speed (MPH)</label>
-                  <input className="form-input" type="number" value={hosForm.speed} onChange={e => setHosForm(f => ({ ...f, speed: e.target.value }))} />
-                </div>
-              </div>
-
-              <div>
-                <div className="card mb-16">
-                  <div className="card-title">Drive Time Remaining (11-Hr Rule)</div>
-                  <div className="hos-bar-wrap">
-                    <div className="hos-label-row">
-                      <span>{driveVal} hrs used</span>
-                      <span style={{ color: driveColor }}>{(hosResult?.driveRemain ?? 11).toFixed(2)} hrs remaining</span>
-                    </div>
-                    <div className="hos-bar">
-                      <div className="hos-fill" style={{ width: Math.min((driveVal / 11) * 100, 100) + '%', background: driveColor }} />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="card mb-16">
-                  <div className="card-title">On-Duty Window (14-Hr Rule)</div>
-                  <div className="hos-bar-wrap">
-                    <div className="hos-label-row">
-                      <span>{ondutyVal} hrs used</span>
-                      <span style={{ color: ondutyColor }}>{(hosResult?.ondutyRemain ?? 14).toFixed(2)} hrs remaining</span>
-                    </div>
-                    <div className="hos-bar">
-                      <div className="hos-fill" style={{ width: Math.min((ondutyVal / 14) * 100, 100) + '%', background: ondutyColor }} />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="card mb-16">
-                  <div className="card-title">70-Hour / 8-Day Cycle</div>
-                  <div className="hos-bar-wrap">
-                    <div className="hos-label-row">
-                      <span>{cycleVal} hrs used</span>
-                      <span style={{ color: cycleColor }}>{(hosResult?.cycleRemain ?? 70).toFixed(2)} hrs remaining</span>
-                    </div>
-                    <div className="hos-bar">
-                      <div className="hos-fill" style={{ width: Math.min((cycleVal / 70) * 100, 100) + '%', background: cycleColor }} />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="card">
-                  <div className="card-title">Dispatcher Alert</div>
-                  {hosResult ? (
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: hosResult.alertMsg.startsWith('🚨') ? 'var(--red)' : hosResult.alertMsg.startsWith('⚠️') ? 'var(--yellow)' : 'var(--green)' }}>
-                      {hosResult.alertMsg}
-                    </span>
-                  ) : (
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--muted)' }}>Enter driver hours to see status</span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="card">
-              <div className="card-title">30-Minute Break Rule (§395.3)</div>
-              <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--muted)', lineHeight: 1.8 }}>
-                A 30-minute break is required after <strong style={{ color: 'var(--text)' }}>8 cumulative hours</strong> of driving since last off-duty or sleeper period of ≥ 30 minutes.{' '}
-                <span style={{ marginLeft: 10, color: hosResult?.breakWarning ? 'var(--yellow)' : 'var(--green)' }}>
-                  {hosResult?.breakWarning ? '⚠️ 30-Min break REQUIRED (8+ drive hrs, no recent break)' : '✓ Compliant based on input'}
-                </span>
               </div>
             </div>
           </div>

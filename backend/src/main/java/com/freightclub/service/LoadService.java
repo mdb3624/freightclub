@@ -160,7 +160,7 @@ public class LoadService {
             if (truckerEquipment != null) {
                 effective = new LoadBoardFilter(
                         filter.originState(), filter.destinationState(), truckerEquipment, filter.pickupDate(),
-                        filter.sortBy(), filter.sortDir());
+                        filter.deliveryDate(), filter.sortBy(), filter.sortDir());
             }
         }
 
@@ -243,6 +243,20 @@ public class LoadService {
                         List.of(LoadStatus.DELIVERED, LoadStatus.SETTLED, LoadStatus.CANCELLED),
                         pageable)
                 .map(LoadSummaryResponse::from);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, List<String>> getAvailableStates(String truckerId) {
+        EquipmentType equipment = userRepository.findById(truckerId)
+                .map(User::getEquipmentType)
+                .orElse(null);
+        if (equipment == null) {
+            return Map.of("originStates", List.of(), "destinationStates", List.of());
+        }
+        return Map.of(
+                "originStates", loadRepository.findDistinctOriginStatesByEquipmentType(equipment),
+                "destinationStates", loadRepository.findDistinctDestinationStatesByEquipmentType(equipment)
+        );
     }
 
     @Transactional(readOnly = true)

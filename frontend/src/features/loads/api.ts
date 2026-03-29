@@ -1,6 +1,6 @@
 import apiClient from '@/lib/apiClient'
 import { apiGet, apiPost, apiPut, apiPatch } from '@/lib/apiClient'
-import type { BoardFilter, Load, LoadSummary, LoadFormValues, Page } from './types'
+import type { AvailableStates, BoardFilter, Load, LoadSummary, LoadFormValues, Page } from './types'
 
 function toDecimalFt(ft: number | '', inches: number | ''): number | null {
   if (ft === '' && inches === '') return null
@@ -49,6 +49,7 @@ export const loadsApi = {
     if (filter.destinationState) params.destinationState = filter.destinationState
     if (filter.equipmentType) params.equipmentType = filter.equipmentType
     if (filter.pickupDate) params.pickupDate = filter.pickupDate
+    if (filter.deliveryDate) params.deliveryDate = filter.deliveryDate
     if (filter.sortBy && filter.sortBy !== 'rpm') params.sortBy = filter.sortBy
     if (filter.sortDir) params.sortDir = filter.sortDir
     return apiGet<Page<LoadSummary>>('/board', { params })
@@ -68,4 +69,7 @@ export const loadsApi = {
 
   deliver: (id: string) =>
     apiPost<Load>(`/board/${id}/deliver`),
+
+  getAvailableStates: () =>
+    apiGet<AvailableStates>('/board/available-states'),
 }

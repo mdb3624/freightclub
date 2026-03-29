@@ -63,12 +63,12 @@ An owner/operator is an independent truck driver who owns their own vehicle and 
   - Red — significantly below minimum RPM
 - [x] Profitability breakdown on load detail: estimated revenue, fuel cost, maintenance, net profit, effective RPM vs minimum RPM
 - [ ] Load board sortable by RPM, distance, and pickup date (truckers compare multiple loads; sorting is the primary evaluation tool)
-- [ ] Filter state persisted in URL query params (back-navigation from load detail must not reset filters)
-- [ ] Equipment filter remains unlockable by the trucker even when a default type is set (support owner/operators with multiple trailer types)
+- [x] Filter state persisted in URL query params (back-navigation from load detail must not reset filters)
+- [x] Equipment filter remains unlockable by the trucker even when a default type is set (support owner/operators with multiple trailer types)
 - [ ] Pickup date urgency signal on load board cards (e.g. "Picks up tomorrow"; amber highlight if < 24 hr)
-- [ ] Profitability breakdown visible on load detail after claiming (currently hidden once status leaves OPEN; needed for execution planning)
-- [ ] Cost profile setup CTA displayed prominently when no profile is configured (RPM badges and profitability cards are meaningless without it)
-- [ ] RPM values shown to 2 decimal places (not 4)
+- [x] Profitability breakdown visible on load detail after claiming (currently hidden once status leaves OPEN; needed for execution planning)
+- [x] Cost profile setup CTA displayed prominently when no profile is configured (RPM badges and profitability cards are meaningless without it)
+- [x] RPM values shown to 2 decimal places (not 4)
 - [ ] Filter by weight range or minimum pay rate
 - [ ] See view/interest count per load
 - [ ] Suggested loads based on current location and preferred lanes
@@ -80,8 +80,8 @@ An owner/operator is an independent truck driver who owns their own vehicle and 
 - [x] View active load prominently on dashboard with shipper contact info
 - [x] Scroll automatically to active load after claiming
 - [x] View full load history (delivered, settled, cancelled)
-- [ ] Toast confirmation after successful claim (no feedback currently shown)
-- [ ] Clear inline message when claim is blocked due to active load (current behavior silently grays the load board)
+- [x] Toast confirmation after successful claim (no feedback currently shown)
+- [x] Clear inline message when claim is blocked due to active load (current behavior silently grays the load board)
 - [ ] Express interest / bid on a load
 - [ ] Receive push/email confirmation when a load is assigned
 
@@ -95,8 +95,8 @@ An owner/operator is an independent truck driver who owns their own vehicle and 
   - "Under 2 hours" alert prompting stop planning
   - Persisted across sessions via localStorage
 - [ ] **[CRITICAL]** HOS widget: 70-hour/8-day cumulative on-duty cycle — FMCSA requires tracking total on-duty hours across a rolling 8-day window (separate from and in addition to the per-shift 11-hr/14-hr rules)
-- [ ] HOS widget: display elapsed time and prompt to enter start time before shift begins (current bar is invisible until start time is entered)
-- [ ] HOS proactive warnings at 4-hour and 2-hour remaining thresholds (current widget only warns at < 2 hr)
+- [x] HOS widget: display elapsed time and prompt to enter start time before shift begins (current bar is invisible until start time is entered)
+- [x] HOS proactive warnings at 4-hour and 2-hour remaining thresholds (current widget only warns at < 2 hr)
 - [ ] BOL photo upload at pickup
 - [ ] Proof of Delivery (POD) photo upload at delivery
 - [ ] Report issue during transit (delay, damage, etc.)

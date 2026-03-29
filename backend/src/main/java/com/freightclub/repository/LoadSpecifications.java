@@ -48,6 +48,16 @@ public class LoadSpecifications {
                     ));
         }
 
+        if (filter.deliveryDate() != null) {
+            LocalDateTime dayStart = filter.deliveryDate().atStartOfDay();
+            LocalDateTime dayEnd = dayStart.plusDays(1);
+            spec = spec.and((root, query, cb) ->
+                    cb.and(
+                            cb.lessThanOrEqualTo(root.<LocalDateTime>get("deliveryFrom"), dayEnd),
+                            cb.greaterThanOrEqualTo(root.<LocalDateTime>get("deliveryTo"), dayStart)
+                    ));
+        }
+
         return spec;
     }
 }

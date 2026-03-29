@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import type { AxiosError } from 'axios'
 import { useToastStore } from '@/store/toastStore'
 import { AppShell } from '@/components/AppShell'
@@ -179,9 +179,6 @@ export function TruckerLoadDetailPage() {
                     {hasPodPhoto ? 'Mark as Delivered' : 'Upload POD Photo to Continue'}
                   </Button>
                 )}
-                <Link to="/dashboard/trucker">
-                  <Button variant="secondary">Back to Board</Button>
-                </Link>
               </div>
 
               {pendingAction && (

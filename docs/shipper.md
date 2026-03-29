@@ -56,13 +56,13 @@ A shipper is a business or individual that needs freight transported from one lo
 - [x] Edit a load while in DRAFT or OPEN status
 - [x] Cancel a load (any pre-delivered status)
 - [x] Dashboard shows all loads with status (draft, open, claimed, in transit, delivered, cancelled, settled)
-- [ ] **[CRITICAL]** Origin and destination state stored as a validated 2-letter code selected from a dropdown — free-text entry (e.g. "Illinois" vs "IL") breaks trucker load board filters and makes loads invisible to truckers filtering by state
-- [ ] **[CRITICAL]** Confirmation dialog required before cancelling a load — cancellation is destructive (notifies trucker, frees their active slot); must require explicit confirmation
-- [ ] Address fields ordered street → city → state → zip (currently reversed from US postal convention)
-- [ ] Cross-field date validation: "Latest Pickup" must be after "Earliest Pickup"; "Earliest Delivery" must be after "Latest Pickup"; "Latest Delivery" must be after "Earliest Delivery"
-- [ ] Pickup/delivery window fields labeled "Earliest Pickup" / "Latest Pickup" / "Earliest Delivery" / "Latest Delivery" (current "Pickup From / To" reads as origin location, not a time window)
-- [ ] Status summary strip above loads table: count of active loads by status (open, claimed, in transit, delivered) for at-a-glance awareness
-- [ ] Weight field contextual hint: "Legal max: 80,000 lbs" to reduce accidental overweight loads
+- [x] **[CRITICAL]** Origin and destination state stored as a validated 2-letter code selected from a dropdown — free-text entry (e.g. "Illinois" vs "IL") breaks trucker load board filters and makes loads invisible to truckers filtering by state
+- [x] **[CRITICAL]** Confirmation dialog required before cancelling a load — cancellation is destructive (notifies trucker, frees their active slot); must require explicit confirmation
+- [x] Address fields ordered street → city → state → zip (currently reversed from US postal convention)
+- [x] Cross-field date validation: "Latest Pickup" must be after "Earliest Pickup"; "Earliest Delivery" must be after "Latest Pickup"; "Latest Delivery" must be after "Earliest Delivery"
+- [x] Pickup/delivery window fields labeled "Earliest Pickup" / "Latest Pickup" / "Earliest Delivery" / "Latest Delivery" (current "Pickup From / To" reads as origin location, not a time window)
+- [x] Status summary strip above loads table: count of active loads by status (open, claimed, in transit, delivered) for at-a-glance awareness
+- [x] Weight field contextual hint: "Legal max: 80,000 lbs" to reduce accidental overweight loads
 - [ ] Cancel with reason (required reason field; shown to affected trucker)
 - [ ] Trucker notified when shipper cancels a claimed load; active load slot freed immediately
 - [ ] Post a load as first-come-first-served or open to bids

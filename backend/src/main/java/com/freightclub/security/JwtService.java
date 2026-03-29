@@ -15,11 +15,15 @@ public class JwtService {
 
     private final SecretKey signingKey;
     private final long accessTokenExpiryMs;
+    private final String issuer;
+    private final String audience;
 
     public JwtService(JwtProperties props) {
         byte[] keyBytes = Base64.getDecoder().decode(props.getSecret());
         this.signingKey = Keys.hmacShaKeyFor(keyBytes);
         this.accessTokenExpiryMs = props.getAccessTokenExpiryMs();
+        this.issuer = props.getIssuer();
+        this.audience = props.getAudience();
     }
 
     public String generateAccessToken(User user) {
@@ -31,6 +35,8 @@ public class JwtService {
                 .claim("email", user.getEmail())
                 .claim("role", user.getRole().name())
                 .claim("tenantId", user.getTenantId())
+                .issuer(issuer)
+                .audience().add(audience).and()
                 .issuedAt(now)
                 .expiration(expiry)
                 .signWith(signingKey)
@@ -40,6 +46,8 @@ public class JwtService {
     public Claims validateAndGetClaims(String token) {
         return Jwts.parser()
                 .verifyWith(signingKey)
+                .requireIssuer(issuer)
+                .requireAudience(audience)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

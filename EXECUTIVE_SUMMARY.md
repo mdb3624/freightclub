@@ -1,6 +1,6 @@
 # FreightClub — Executive Summary
 
-**March 2026**
+**Last updated: 2026-03-29**
 
 ---
 
@@ -20,9 +20,7 @@ FreightClub is purpose-built for the owner/operator. Every feature is designed a
 
 ## Current Build Status
 
-**Phase 1 (Core Load Lifecycle) and Phase 1.1 (UX Hardening) are complete.** The platform supports a working end-to-end freight transaction today.
-
-**44 of 63 planned user stories are complete.** The remaining 19 are in Phase 2–9 features (notifications, documents, payments, ratings, messaging).
+**Phases 1, 1.1, and 1.2 are complete.** The platform supports a working, hardened end-to-end freight transaction. Phase 2 (Notifications & Status Timeline) is next.
 
 ### What's Live
 
@@ -31,15 +29,17 @@ FreightClub is purpose-built for the owner/operator. Every feature is designed a
 | Register / profile | ✅ | ✅ |
 | Post, edit, cancel loads | ✅ | — |
 | Browse load board with filters | — | ✅ |
-| Claim a load | — | ✅ |
+| Claim a load (race-condition safe) | — | ✅ |
 | Mark pickup / delivery | — | ✅ |
 | Dashboard with load status | ✅ | ✅ |
 | Cost profile + CPM calculator | — | ✅ |
 | RPM profitability badge (per load) | — | ✅ |
 | Per-load profitability breakdown | — | ✅ |
 | 30-day earnings summary | — | ✅ |
-| Hours of Service (HOS) widget | — | ✅ |
+| Hours of Service widget (11-hr, 14-hr, 70-hr/8-day) | — | ✅ |
 | Multi-tenant / company join code | ✅ | ✅ |
+| Auth rate limiting + JWT hardening | ✅ | ✅ |
+| Claim + load event audit trail | ✅ | ✅ |
 
 ---
 
@@ -79,8 +79,8 @@ The platform is designed as a 9-phase build. Each phase ships a usable, testable
 |-------|-------------|--------|---------|
 | 1 | Core load lifecycle + financial intelligence | ✅ Complete | Everything |
 | 1.1 | UX hardening — data integrity, regulatory compliance | ✅ Complete | 1.2 |
-| 1.2 | Security hardening + race condition fixes + minimum test coverage | **Next** | 2, 3, 6 |
-| 2 | Notifications & status timeline | Planned | 3, 4 |
+| 1.2 | Security hardening + race condition fixes + test coverage | ✅ Complete | 2, 3, 6 |
+| 2 | Notifications & status timeline + EIA fuel prices | 🔜 Next | 3, 4 |
 | 3 | Document management (BOL / POD upload) | Planned | 4, 5, 7b |
 | 4 | Ratings & reviews (shipper reputation model) | Planned | 5, 7, 8 |
 | 5 | Payments & invoicing | Planned | 7b, 9 |
@@ -93,45 +93,65 @@ The platform is designed as a 9-phase build. Each phase ships a usable, testable
 ### Critical Path to Monetization
 
 ```
-Phase 1.2 (Security) → Phase 2 (Notifications) → Phase 3 (Documents) → Phase 4 (Ratings) → Phase 5 (Payments)
+Phase 2 (Notifications) → Phase 3 (Documents) → Phase 4 (Ratings) → Phase 5 (Payments)
 ```
 
-Phase 5 closes the financial loop: POD triggers an invoice, shipper pays through the platform, trucker receives direct deposit. Everything before Phase 5 is pre-revenue infrastructure.
-
-Phase 6 (messaging) is independent and can be built in parallel with the critical path.
+Phase 5 closes the financial loop: POD triggers an invoice, shipper pays through the platform, trucker receives direct deposit. Everything before Phase 5 is pre-revenue infrastructure. Phase 6 (messaging) is independent and can be built in parallel.
 
 ---
 
-## Known Risks & Technical Debt
+## What Phase 1.2 Delivered
 
-A post-Phase 1.1 security and architecture review identified the following issues, all scheduled for Phase 1.2.
+Phase 1.2 hardened the platform for real users without adding user-visible features.
 
-### Critical (Must fix before real users)
+| Area | What Was Done |
+|------|--------------|
+| **Race conditions** | `SELECT FOR UPDATE` on load rows during claim; same on refresh token rotation — both double-processing bugs eliminated |
+| **Auth security** | Rate limiting (10 req/min/IP on login + register via Bucket4j); JWT `iss`/`aud` claims issued and validated on every request |
+| **Secrets** | JWT secret moved to environment variable; hardcoded developer infrastructure removed from `vite.config.ts` |
+| **CORS** | `allowedHeaders: ["*"]` replaced with explicit whitelist |
+| **Data integrity** | `LoadService` now writes to `claims` table on every claim/release and to `load_events` on every status transition |
+| **Frontend stability** | React `<ErrorBoundary>` added to `App.tsx`; URL filter params now validated before enum cast; date comparisons use `new Date()` |
+| **Backend validation** | Server-side overweight load check added (weight > 80,000 lbs requires explicit acknowledgment) |
+| **Infrastructure** | Spring Boot Actuator (`/health`, `/info`); `application-prod.yml` with env-var placeholders; structured logging with correlation IDs |
+| **Test coverage** | `AuthService`, `RefreshTokenService`, `JwtAuthenticationFilter` unit tests; claim concurrency integration test; frontend claim flow smoke tests |
 
-| Risk | Detail |
-|------|--------|
-| **Race condition — double claim** | Two truckers can simultaneously claim the same load. The check-then-act in `LoadService.claimLoad` has no database-level lock. A `SELECT FOR UPDATE` and a unique partial index are required. |
-| **Race condition — duplicate refresh tokens** | Two simultaneous refresh requests can each receive a valid token for the same session. `SELECT FOR UPDATE` required on the refresh token row. |
-| **No rate limiting on auth endpoints** | Login and register accept unlimited requests. Open to brute force and credential stuffing attacks. |
-| **JWT secret in source control** | The hex JWT secret in `application-dev.yml` is committed to Git history. Must be rotated and moved to a secrets manager before any production deployment. |
+---
 
-### High (Structural gaps)
+## What Phase 2 Will Deliver
 
-| Risk | Detail |
-|------|--------|
-| **`claims` and `load_events` tables are empty** | Both Flyway migrations ran successfully, but the service layer never writes to either table. Claim history and status timeline are absent — both are required by Phases 2, 4, and 8. |
-| **No error boundary in the React app** | Any unhandled render error produces a blank white screen. An `<ErrorBoundary>` at `App.tsx` is missing. |
-| **Near-zero test coverage** | Only `LoadService` has unit tests. Auth, ratings, documents, and all controllers are untested. No integration or frontend tests exist. A bug in the auth flow or the claim flow could ship undetected. |
-| **N+1 queries in load list responses** | `buildResponse` makes two `userRepository.findById` calls per load. A 20-load page fires 40 extra queries. Requires JOIN FETCH or batch user loading before the platform handles meaningful traffic. |
+Phase 2 is the immediate next priority. It makes the platform feel live and trustworthy by closing the communication loop.
 
-### Accepted / Scheduled
+**Notifications:**
+- Email on all load status changes — claimed, picked up, delivered, cancelled
+- In-app notification bell with unread count (stored in DB, cleared on read)
+- Cancel-with-reason workflow — required reason shown to the affected trucker
+- Trucker's active load slot freed immediately on shipper cancellation
+
+**Status Timeline:**
+- Full per-load event history (status, timestamp, actor) powered by the `load_events` table built in Phase 1.2
+- Visible to both shipper and trucker on the load detail page
+
+**EIA Fuel Price Integration:**
+- Live regional diesel prices (Diesel West, Diesel South) in the market ticker — sourced from the U.S. EIA Open Data API
+- Week-over-week delta indicator (color-coded: rising / falling)
+- Auto-populated fuel surcharge in the Load Profitability Analyzer
+- API key server-side only; 6-hour cache with stale-data indicator
+
+Once Phase 2 ships, Phase 3 (documents) and Phase 4 (ratings) follow in sequence, completing the trust and compliance layer required to support real freight moves.
+
+---
+
+## Technical Debt (Remaining)
+
+All critical and high-severity issues from the Phase 1.2 review are resolved. Remaining scheduled items:
 
 | Item | Scheduled For |
 |------|--------------|
-| `trucker_cost_profiles` extraction from `users` table | Phase 7b |
-| HOS widget backend persistence | Phase 2 |
-| Load state machine (replace ad-hoc inline checks) | Phase 2 |
-| Settlement flow (`DELIVERED → SETTLED`) | Phase 5 |
+| Load state machine (replace ad-hoc inline transition checks) | Phase 2 |
+| HOS 70-hr/8-day widget — backend persistence | Phase 2 |
+| Settlement flow (`DELIVERED → SETTLED`) service method + endpoint | Phase 5 |
+| Extract `trucker_cost_profiles` out of `users` table | Phase 7b |
 
 ---
 
@@ -151,29 +171,16 @@ Companies onboard entire teams under a shared tenant with a join code. A shipper
 
 ---
 
-## What Phase 1.2 Delivers
+## Documentation Index
 
-Phase 1.2 is the immediate next gate. It does not add user-visible features — it makes the platform safe to put in front of real users.
-
-- **Fix double-claim race condition** — `SELECT FOR UPDATE` on load rows during claim
-- **Fix refresh token race** — `SELECT FOR UPDATE` on token rows during rotation
-- **Rate limiting on auth** — 10 requests/minute per IP on login and register
-- **JWT hardening** — add `iss`/`aud` claims; validate on every request
-- **Wire up `claims` writes** — `LoadService.claimLoad` inserts into `claims` table
-- **Wire up `load_events` writes** — all status transitions log an event record
-- **Minimum auth/claim test coverage** — `AuthService`, `RefreshTokenService`, claim concurrency integration test
-- **Secrets out of source control** — JWT secret and allowed hosts moved to environment variables
-- **React ErrorBoundary** — prevent blank-screen crashes
-- **Production environment config** — `application-prod.yml` with env-var placeholders
-
-## What Phase 2 Delivers
-
-Phase 2 follows immediately after Phase 1.2 and unblocks the remainder of the roadmap:
-
-- **Email notifications** on all load status changes (claimed, picked up, delivered, cancelled)
-- **In-app notification bell** with unread count, stored in the database
-- **Full status history and timeline** per load (`load_events` table — actor, status, timestamp)
-- **Cancel with reason** — required reason field stored and shown to the affected trucker
-- **Trucker cancellation notification** — if a shipper cancels a claimed load, the trucker is notified immediately and their active load slot is freed
-
-Once Phase 2 ships, Phase 3 (documents) and Phase 4 (ratings) can follow in sequence, completing the trust and compliance layer required to support real freight moves.
+| Document | Purpose |
+|----------|---------|
+| [CLAUDE.md](./CLAUDE.md) | Developer onboarding, conventions, environment setup |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | System design, ADRs, remaining tech debt |
+| [PROJECT_PLAN.md](./PROJECT_PLAN.md) | Phase roadmap with links to per-phase detail |
+| [docs/phases/](./docs/phases/) | Per-phase feature detail |
+| [docs/user-stories/](./docs/user-stories/README.md) | User stories by phase and persona |
+| [docs/owner_operator.md](./docs/owner_operator.md) | Owner/operator persona requirements |
+| [docs/shipper.md](./docs/shipper.md) | Shipper persona requirements |
+| [docs/database-migrations.md](./docs/database-migrations.md) | Migration conventions and workflow |
+| [docs/eia-requirements.md](./docs/eia-requirements.md) | EIA fuel price API integration spec |

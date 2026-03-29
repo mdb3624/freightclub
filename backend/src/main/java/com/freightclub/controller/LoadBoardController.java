@@ -12,6 +12,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/board")
@@ -31,11 +33,17 @@ public class LoadBoardController {
             @RequestParam(required = false) String destinationState,
             @RequestParam(required = false) EquipmentType equipmentType,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate pickupDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate deliveryDate,
             @RequestParam(required = false) String sortBy,
             @RequestParam(required = false) String sortDir,
             @AuthenticationPrincipal String userId) {
-        LoadBoardFilter filter = new LoadBoardFilter(originState, destinationState, equipmentType, pickupDate, sortBy, sortDir);
+        LoadBoardFilter filter = new LoadBoardFilter(originState, destinationState, equipmentType, pickupDate, deliveryDate, sortBy, sortDir);
         return loadService.listOpenLoads(userId, filter, page, size);
+    }
+
+    @GetMapping("/available-states")
+    public Map<String, List<String>> getAvailableStates(@AuthenticationPrincipal String userId) {
+        return loadService.getAvailableStates(userId);
     }
 
     @GetMapping("/{id}")

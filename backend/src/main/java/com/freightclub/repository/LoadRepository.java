@@ -6,7 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import jakarta.persistence.LockModeType;
 import java.util.Optional;
 
 public interface LoadRepository extends JpaRepository<Load, String>, JpaSpecificationExecutor<Load> {
@@ -27,6 +31,10 @@ public interface LoadRepository extends JpaRepository<Load, String>, JpaSpecific
 
     Optional<Load> findByIdAndDeletedAtIsNull(String id);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT l FROM Load l WHERE l.id = :id AND l.deletedAt IS NULL")
+    Optional<Load> findByIdAndDeletedAtIsNullForUpdate(@Param("id") String id);
+
     java.util.Optional<Load> findFirstByTruckerIdAndStatusInAndDeletedAtIsNull(
             String truckerId, java.util.List<LoadStatus> statuses);
 
@@ -42,4 +50,10 @@ public interface LoadRepository extends JpaRepository<Load, String>, JpaSpecific
     @org.springframework.data.jpa.repository.Query(
             "SELECT l.status, COUNT(l) FROM Load l WHERE l.shipperId = :shipperId AND l.deletedAt IS NULL GROUP BY l.status")
     java.util.List<Object[]> countByStatusForShipper(@org.springframework.data.repository.query.Param("shipperId") String shipperId);
+
+    @Query("SELECT DISTINCT l.originState FROM Load l WHERE l.status = 'OPEN' AND l.deletedAt IS NULL AND l.equipmentType = :equipmentType ORDER BY l.originState")
+    java.util.List<String> findDistinctOriginStatesByEquipmentType(@Param("equipmentType") com.freightclub.domain.EquipmentType equipmentType);
+
+    @Query("SELECT DISTINCT l.destinationState FROM Load l WHERE l.status = 'OPEN' AND l.deletedAt IS NULL AND l.equipmentType = :equipmentType ORDER BY l.destinationState")
+    java.util.List<String> findDistinctDestinationStatesByEquipmentType(@Param("equipmentType") com.freightclub.domain.EquipmentType equipmentType);
 }

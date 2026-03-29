@@ -1,5 +1,6 @@
 import apiClient from '@/lib/apiClient'
-import type { BoardFilter, Load, LoadSummary, LoadFormValues, Page } from './types'
+import { apiGet, apiPost, apiPut, apiPatch } from '@/lib/apiClient'
+import type { AvailableStates, BoardFilter, Load, LoadSummary, LoadFormValues, Page } from './types'
 
 function toDecimalFt(ft: number | '', inches: number | ''): number | null {
   if (ft === '' && inches === '') return null
@@ -19,28 +20,28 @@ function sanitize(data: LoadFormValues) {
 
 export const loadsApi = {
   create: (data: LoadFormValues) =>
-    apiClient.post<Load>('/loads', sanitize(data)).then((r) => r.data),
+    apiPost<Load>('/loads', sanitize(data)),
 
   createDraft: (data: LoadFormValues) =>
-    apiClient.post<Load>('/loads/draft', sanitize(data)).then((r) => r.data),
+    apiPost<Load>('/loads/draft', sanitize(data)),
 
   publish: (id: string) =>
-    apiClient.post<Load>(`/loads/${id}/publish`).then((r) => r.data),
+    apiPost<Load>(`/loads/${id}/publish`),
 
   list: (page = 0, size = 20) =>
-    apiClient.get<Page<LoadSummary>>('/loads', { params: { page, size } }).then((r) => r.data),
+    apiGet<Page<LoadSummary>>('/loads', { params: { page, size } }),
 
   getById: (id: string) =>
-    apiClient.get<Load>(`/loads/${id}`).then((r) => r.data),
+    apiGet<Load>(`/loads/${id}`),
 
   update: (id: string, data: LoadFormValues) =>
-    apiClient.put<Load>(`/loads/${id}`, sanitize(data)).then((r) => r.data),
+    apiPut<Load>(`/loads/${id}`, sanitize(data)),
 
   cancel: (id: string) =>
-    apiClient.patch<Load>(`/loads/${id}/cancel`).then((r) => r.data),
+    apiPatch<Load>(`/loads/${id}/cancel`),
 
   claim: (id: string) =>
-    apiClient.post<Load>(`/loads/${id}/claim`).then((r) => r.data),
+    apiPost<Load>(`/loads/${id}/claim`),
 
   listOpen: (page = 0, size = 20, filter: BoardFilter = {}) => {
     const params: Record<string, unknown> = { page, size }
@@ -48,23 +49,27 @@ export const loadsApi = {
     if (filter.destinationState) params.destinationState = filter.destinationState
     if (filter.equipmentType) params.equipmentType = filter.equipmentType
     if (filter.pickupDate) params.pickupDate = filter.pickupDate
+    if (filter.deliveryDate) params.deliveryDate = filter.deliveryDate
     if (filter.sortBy && filter.sortBy !== 'rpm') params.sortBy = filter.sortBy
     if (filter.sortDir) params.sortDir = filter.sortDir
-    return apiClient.get<Page<LoadSummary>>('/board', { params }).then((r) => r.data)
+    return apiGet<Page<LoadSummary>>('/board', { params })
   },
 
   getBoardLoad: (id: string) =>
-    apiClient.get<Load>(`/board/${id}`).then((r) => r.data),
+    apiGet<Load>(`/board/${id}`),
 
   getMyActiveLoad: () =>
     apiClient.get<Load>('/board/my-load').then((r) => r.data || null),
 
   getMyLoadHistory: (page = 0, size = 20) =>
-    apiClient.get<Page<LoadSummary>>('/board/my-history', { params: { page, size } }).then((r) => r.data),
+    apiGet<Page<LoadSummary>>('/board/my-history', { params: { page, size } }),
 
   pickup: (id: string) =>
-    apiClient.post<Load>(`/board/${id}/pickup`).then((r) => r.data),
+    apiPost<Load>(`/board/${id}/pickup`),
 
   deliver: (id: string) =>
-    apiClient.post<Load>(`/board/${id}/deliver`).then((r) => r.data),
+    apiPost<Load>(`/board/${id}/deliver`),
+
+  getAvailableStates: () =>
+    apiGet<AvailableStates>('/board/available-states'),
 }

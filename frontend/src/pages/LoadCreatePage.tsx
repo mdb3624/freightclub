@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { AppShell } from '@/components/AppShell'
 import { useCreateLoad } from '@/features/loads/hooks/useCreateLoad'
 import { useCreateDraft } from '@/features/loads/hooks/useCreateDraft'
@@ -24,10 +23,7 @@ export function LoadCreatePage() {
   return (
     <AppShell maxWidth="xl">
       <div className="mb-6">
-        <Link to="/dashboard/shipper" className="text-sm text-primary-600 hover:underline">
-          ← Back to Dashboard
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold text-gray-900">Post a Load</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Post a Load</h1>
       </div>
 
       <div className="rounded-xl border border-gray-200 bg-white p-6">

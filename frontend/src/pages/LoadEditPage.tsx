@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { AppShell } from '@/components/AppShell'
 import { useLoad } from '@/features/loads/hooks/useLoad'
 import { useUpdateLoad } from '@/features/loads/hooks/useUpdateLoad'
@@ -66,10 +66,7 @@ export function LoadEditPage() {
   return (
     <AppShell maxWidth="xl">
       <div className="mb-6">
-        <Link to="/dashboard/shipper" className="text-sm text-primary-600 hover:underline">
-          ← Back to Dashboard
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold text-gray-900">Edit Load</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Edit Load</h1>
       </div>
 
       <div className="rounded-xl border border-gray-200 bg-white p-6">

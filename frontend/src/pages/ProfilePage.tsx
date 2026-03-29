@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AppShell } from '@/components/AppShell'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch, type Control } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { AxiosError } from 'axios'
@@ -62,7 +62,7 @@ export function ProfilePage() {
   const { data: ratingSummary } = useMyRatingSummary()
   const [saved, setSaved] = useState(false)
 
-  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<UpdateProfileValues>({
+  const { register, handleSubmit, reset, control, formState: { errors } } = useForm<UpdateProfileValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       notifyEmail: true,
@@ -121,10 +121,7 @@ export function ProfilePage() {
   return (
     <AppShell maxWidth="lg">
       <div className="mb-6">
-        <Link to={dashboardPath} className="text-sm text-primary-600 hover:underline">
-          ← Back to Dashboard
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold text-gray-900">My Profile</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">My Profile</h1>
       </div>
 
         <form onSubmit={handleSubmit((v) => mutate(v))} className="space-y-8">
@@ -283,7 +280,7 @@ export function ProfilePage() {
                   {...register('targetMarginPerMile')}
                 />
               </div>
-              <CostProfileSummary values={watch()} />
+              <CostProfileSummary control={control} />
             </section>
           )}
 
@@ -341,7 +338,8 @@ export function ProfilePage() {
   )
 }
 
-function CostProfileSummary({ values }: { values: UpdateProfileValues }) {
+function CostProfileSummary({ control }: { control: Control<UpdateProfileValues> }) {
+  const values = useWatch({ control })
   const monthly = Number(values.monthlyFixedCosts) || 0
   const milesTarget = Number(values.monthlyMilesTarget) || 0
   const fuelPerGallon = Number(values.fuelCostPerGallon) || 0

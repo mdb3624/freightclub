@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import type { AxiosError } from 'axios'
 import { useToastStore } from '@/store/toastStore'
 import { AppShell } from '@/components/AppShell'
@@ -66,10 +66,7 @@ export function TruckerLoadDetailPage() {
   return (
     <AppShell maxWidth="md">
       <div className="mb-6">
-        <Link to="/dashboard/trucker" className="text-sm text-primary-600 hover:underline">
-          ← Back to Dashboard
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold text-gray-900">Load Detail</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Load Detail</h1>
       </div>
 
         {isLoading && (
@@ -182,9 +179,6 @@ export function TruckerLoadDetailPage() {
                     {hasPodPhoto ? 'Mark as Delivered' : 'Upload POD Photo to Continue'}
                   </Button>
                 )}
-                <Link to="/dashboard/trucker">
-                  <Button variant="secondary">Back to Board</Button>
-                </Link>
               </div>
 
               {pendingAction && (

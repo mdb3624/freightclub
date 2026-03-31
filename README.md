@@ -9,7 +9,7 @@ A multi-tenant SaaS load board platform for the trucking industry. Shippers post
 | 1 | Core Load Lifecycle | ✅ Complete |
 | 1.1 | UX Hardening | ✅ Complete |
 | 1.2 | Security & Stability Hardening | ✅ Complete |
-| 2 | Notifications & Status Timeline | 🔜 Next |
+| 2 | Notifications & Status Timeline | 🏗️ In Progress |
 | 3 | Document Management (BOL & POD) | Planned |
 | 4 | Ratings & Reviews | Planned |
 | 5 | Payments & Invoicing | Planned |

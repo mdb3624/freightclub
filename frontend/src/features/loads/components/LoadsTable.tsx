@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { LoadSummary } from '../types'
 import { StatusBadge } from './StatusBadge'
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
+import { CancelLoadModal } from './CancelLoadModal'
 
 interface LoadsTableProps {
   loads: LoadSummary[]
-  onCancel: (id: string) => void
+  onCancel: (id: string, reason: string) => void
   isCancelling: boolean
   onPublish: (id: string) => void
   isPublishing: boolean
@@ -30,27 +30,14 @@ export function LoadsTable({ loads, onCancel, isCancelling, onPublish, isPublish
   return (
     <>
       {cancellingLoad && (
-        <ConfirmDialog
-          title="Cancel load"
-          body={
-            <>
-              Cancel <strong>{cancellingLoad.origin} → {cancellingLoad.destination}</strong>?
-              {cancellingLoad.status === 'CLAIMED' && (
-                <span className="block mt-1 text-amber-700">
-                  This load has an assigned trucker who will be notified.
-                </span>
-              )}
-              <span className="block mt-1">This action cannot be undone.</span>
-            </>
-          }
-          confirmLabel="Yes, cancel this load"
-          cancelLabel="Keep load"
-          onConfirm={() => {
-            onCancel(cancellingLoad.id)
+        <CancelLoadModal
+          loadId={cancellingLoad.id}
+          onConfirm={(reason) => {
+            onCancel(cancellingLoad.id, reason)
             setCancellingLoad(null)
           }}
           onCancel={() => setCancellingLoad(null)}
-          isConfirming={isCancelling}
+          isLoading={isCancelling}
         />
       )}
 

@@ -1,6 +1,8 @@
 package com.freightclub.controller;
 
+import com.freightclub.dto.CancelLoadRequest;
 import com.freightclub.dto.CreateLoadRequest;
+import com.freightclub.dto.LoadEventResponse;
 import com.freightclub.dto.LoadResponse;
 import com.freightclub.dto.LoadSummaryResponse;
 import com.freightclub.dto.UpdateLoadRequest;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -66,8 +69,15 @@ public class LoadController {
 
     @PatchMapping("/{id}/cancel")
     public LoadResponse cancel(@PathVariable String id,
+                               @Valid @RequestBody CancelLoadRequest request,
                                @AuthenticationPrincipal String userId) {
-        return loadService.cancelLoad(id, userId);
+        return loadService.cancelLoad(id, userId, request.reason());
+    }
+
+    @GetMapping("/{id}/events")
+    public List<LoadEventResponse> getEvents(@PathVariable String id,
+                                             @AuthenticationPrincipal String userId) {
+        return loadService.getLoadEvents(id, userId);
     }
 
     @PostMapping("/{id}/claim")

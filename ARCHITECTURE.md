@@ -4,6 +4,19 @@ This document describes the architecture for FreightClub. Keep it up to date as 
 
 ---
 
+## Documentation Quick Links
+
+| Document | Purpose |
+|----------|---------|
+| [EXECUTIVE_SUMMARY.md](./EXECUTIVE_SUMMARY.md) | Product vision, current status, roadmap |
+| [PROJECT_PLAN.md](./PROJECT_PLAN.md) | Phase breakdown with dependencies |
+| [docs/features/README.md](./docs/features/README.md) | Feature inventory by phase |
+| [docs/phases/](./docs/phases/) | Detailed specification per phase |
+| [docs/owner_operator.md](./docs/owner_operator.md) | Trucker persona requirements |
+| [docs/shipper.md](./docs/shipper.md) | Shipper persona requirements |
+
+---
+
 ## Overview
 
 FreightClub is a multi-tenant SaaS load board platform connecting two types of users:
@@ -308,6 +321,19 @@ Every `WHERE` or `ORDER BY` column used by the application must have an index. K
 **Decision:** Apply a token-bucket rate limiter to `POST /api/v1/auth/login` and `POST /api/v1/auth/register` — maximum 10 requests per IP per minute with a 429 response on breach.
 **Reason:** These endpoints accept credentials in the request body and have no cost beyond a BCrypt hash comparison. Without rate limiting they are open to brute force and credential stuffing with no friction.
 **Consequences:** Legitimate users on shared IPs (corporate NAT, mobile carrier NAT) could hit limits. Tune threshold after observing real traffic patterns. Consider CAPTCHA for repeated failures in a future iteration.
+
+---
+
+## Current Phase
+
+**Phase 2: Notifications & Status Timeline** — In Progress (started 2026-03-29)
+
+Key work underway:
+- Email notifications on load status changes (claimed, picked up, delivered, cancelled)
+- In-app notification bell with unread count and read/unread tracking
+- Cancel-with-reason workflow with reason visibility to affected trucker
+- Immutable per-load event timeline powered by `load_events` table (built in Phase 1.2)
+- EIA fuel price integration (diesel prices, week-over-week delta)
 
 ---
 

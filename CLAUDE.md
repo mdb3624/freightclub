@@ -131,7 +131,7 @@ Backend runs on port 9090.
 ### Backend
 - Services enforce `tenant_id` isolation on every query.
 - Constructor injection only — no `@Autowired` on fields.
-- `LoadService` takes 6 constructor parameters: `LoadRepository`, `DocumentService`, `RatingService`, `ClaimRepository`, `LoadEventRepository`, and one more (see source). When writing tests, all deps must be `@Mock`.
+- `LoadService` takes 7 constructor parameters: `LoadRepository`, `UserRepository`, `DocumentService`, `RatingService`, `ClaimRepository`, `LoadEventRepository`, `NotificationService`. When writing tests, all deps must be `@Mock`.
 - Every load status transition writes a `LoadEvent` row (CREATED, PUBLISHED, CLAIMED, PICKED_UP, DELIVERED, CANCELLED).
 - `Claim` rows track which trucker holds a load; cancelled loads release the active claim.
 - Weight > 80,000 lb requires `overweightAcknowledged=true` on create and update.

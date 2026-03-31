@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AppShell } from '@/components/AppShell'
 import { useLoad } from '@/features/loads/hooks/useLoad'
 import { useCancelLoad } from '@/features/loads/hooks/useCancelLoad'
 import { LoadDetail } from '@/features/loads/components/LoadDetail'
 import { ContactCard } from '@/features/loads/components/ContactCard'
+import { CancelLoadModal } from '@/features/loads/components/CancelLoadModal'
 import { useLoadDocuments } from '@/features/documents/hooks/useDocuments'
 import { DocumentSection } from '@/features/documents/components/DocumentSection'
 import { useMyRatingForLoad, useRateTrucker } from '@/features/ratings/hooks/useRatings'
@@ -17,6 +19,7 @@ const ratingStatuses = new Set(['DELIVERED', 'SETTLED'])
 
 export function LoadDetailPage() {
   const { id } = useParams<{ id: string }>()
+  const [showCancelModal, setShowCancelModal] = useState(false)
   const { data: load, isLoading, isError } = useLoad(id)
   const { mutate: cancelLoad, isPending: isCancelling } = useCancelLoad()
   const { data: documents = [] } = useLoadDocuments(
@@ -55,12 +58,23 @@ export function LoadDetailPage() {
             <Button
               variant="secondary"
               className="text-red-600 border-red-300 hover:bg-red-50"
-              isLoading={isCancelling}
-              onClick={() => cancelLoad(load.id)}
+              onClick={() => setShowCancelModal(true)}
             >
               Cancel Load
             </Button>
           </div>
+        )}
+
+        {showCancelModal && (
+          <CancelLoadModal
+            loadId={load.id}
+            onConfirm={(reason) => {
+              setShowCancelModal(false)
+              cancelLoad({ id: load.id, reason })
+            }}
+            onCancel={() => setShowCancelModal(false)}
+            isLoading={isCancelling}
+          />
         )}
       </div>
 

@@ -37,6 +37,9 @@ management:
       show-details: never
 
 app:
+  email:
+    enabled: ${EMAIL_ENABLED:false}
+    from: ${EMAIL_FROM:noreply@freightclub.app}
   jwt:
     secret: ${JWT_SECRET}
     issuer: freightclub

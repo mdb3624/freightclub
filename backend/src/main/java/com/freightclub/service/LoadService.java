@@ -9,6 +9,7 @@ import com.freightclub.domain.LoadStatus;
 import com.freightclub.domain.User;
 import com.freightclub.dto.CreateLoadRequest;
 import com.freightclub.dto.LoadBoardFilter;
+import com.freightclub.dto.LoadEventResponse;
 import com.freightclub.dto.LoadFields;
 import com.freightclub.dto.LoadResponse;
 import com.freightclub.dto.LoadSummaryResponse;
@@ -50,16 +51,19 @@ public class LoadService {
     private final RatingService ratingService;
     private final ClaimRepository claimRepository;
     private final LoadEventRepository loadEventRepository;
+    private final NotificationService notificationService;
 
     public LoadService(LoadRepository loadRepository, UserRepository userRepository,
                        DocumentService documentService, RatingService ratingService,
-                       ClaimRepository claimRepository, LoadEventRepository loadEventRepository) {
+                       ClaimRepository claimRepository, LoadEventRepository loadEventRepository,
+                       NotificationService notificationService) {
         this.loadRepository = loadRepository;
         this.userRepository = userRepository;
         this.documentService = documentService;
         this.ratingService = ratingService;
         this.claimRepository = claimRepository;
         this.loadEventRepository = loadEventRepository;
+        this.notificationService = notificationService;
     }
 
     public LoadResponse createDraft(CreateLoadRequest request, String shipperId) {
@@ -117,7 +121,7 @@ public class LoadService {
         return LoadResponse.from(loadRepository.save(load));
     }
 
-    public LoadResponse cancelLoad(String id, String shipperId) {
+    public LoadResponse cancelLoad(String id, String shipperId, String reason) {
         Load load = findOwnedLoad(id, shipperId);
         if (load.getStatus() == LoadStatus.DELIVERED
                 || load.getStatus() == LoadStatus.SETTLED
@@ -126,12 +130,14 @@ public class LoadService {
         }
         String previousTruckerId = load.getTruckerId();
         load.setStatus(LoadStatus.CANCELLED);
+        load.setCancelReason(reason);
         Load saved = loadRepository.save(load);
         if (previousTruckerId != null) {
             cancelActiveClaim(saved.getId());
+            notificationService.notifyLoadCancelledToTrucker(saved, previousTruckerId, reason);
         }
         writeEvent(saved, "CANCELLED", shipperId);
-        return LoadResponse.from(saved);
+        return buildResponse(saved);
     }
 
     public LoadResponse publishLoad(String id, String shipperId) {
@@ -201,6 +207,7 @@ public class LoadService {
         Load saved = loadRepository.save(load);
         recordClaim(saved, truckerId);
         writeEvent(saved, "CLAIMED", truckerId);
+        notificationService.notifyLoadClaimed(saved, truckerId);
         return buildResponse(saved);
     }
 
@@ -216,6 +223,7 @@ public class LoadService {
         load.setStatus(LoadStatus.IN_TRANSIT);
         Load saved = loadRepository.save(load);
         writeEvent(saved, "PICKED_UP", truckerId);
+        notificationService.notifyLoadPickedUp(saved);
         return buildResponse(saved);
     }
 
@@ -231,6 +239,7 @@ public class LoadService {
         load.setStatus(LoadStatus.DELIVERED);
         Load saved = loadRepository.save(load);
         writeEvent(saved, "DELIVERED", truckerId);
+        notificationService.notifyLoadDelivered(saved);
         return buildResponse(saved);
     }
 
@@ -257,6 +266,20 @@ public class LoadService {
                 "originStates", loadRepository.findDistinctOriginStatesByEquipmentType(equipment),
                 "destinationStates", loadRepository.findDistinctDestinationStatesByEquipmentType(equipment)
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<LoadEventResponse> getLoadEvents(String loadId, String requesterId) {
+        // Verify the load exists and requester has access (shipper or assigned trucker)
+        Load load = loadRepository.findByIdAndDeletedAtIsNull(loadId)
+                .orElseThrow(() -> new LoadNotFoundException(loadId));
+        boolean isShipper = load.getShipperId().equals(requesterId);
+        boolean isTrucker = requesterId.equals(load.getTruckerId());
+        if (!isShipper && !isTrucker) {
+            throw new LoadNotFoundException(loadId); // 404 to prevent enumeration
+        }
+        return loadEventRepository.findByLoadIdOrderByCreatedAtAsc(loadId)
+                .stream().map(LoadEventResponse::from).toList();
     }
 
     @Transactional(readOnly = true)

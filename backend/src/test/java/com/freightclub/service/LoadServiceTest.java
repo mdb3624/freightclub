@@ -48,6 +48,7 @@ class LoadServiceTest {
     @Mock private RatingService ratingService;
     @Mock private ClaimRepository claimRepository;
     @Mock private LoadEventRepository loadEventRepository;
+    @Mock private NotificationService notificationService;
 
     @InjectMocks
     private LoadService loadService;
@@ -385,7 +386,7 @@ class LoadServiceTest {
             when(loadRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
             when(loadEventRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            LoadResponse response = loadService.cancelLoad(LOAD_ID, SHIPPER_ID);
+            LoadResponse response = loadService.cancelLoad(LOAD_ID, SHIPPER_ID, "No longer needed");
 
             assertThat(response.status()).isEqualTo(LoadStatus.CANCELLED);
             verify(loadEventRepository).save(argThat(e -> "CANCELLED".equals(e.getEventType())));
@@ -399,7 +400,7 @@ class LoadServiceTest {
             when(loadRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
             when(loadEventRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            LoadResponse response = loadService.cancelLoad(LOAD_ID, SHIPPER_ID);
+            LoadResponse response = loadService.cancelLoad(LOAD_ID, SHIPPER_ID, "No longer needed");
 
             assertThat(response.status()).isEqualTo(LoadStatus.CANCELLED);
         }
@@ -415,7 +416,7 @@ class LoadServiceTest {
             when(claimRepository.findFirstByLoadIdAndStatus(LOAD_ID, ClaimStatus.ACTIVE))
                     .thenReturn(Optional.empty()); // no active claim in this test
 
-            LoadResponse response = loadService.cancelLoad(LOAD_ID, SHIPPER_ID);
+            LoadResponse response = loadService.cancelLoad(LOAD_ID, SHIPPER_ID, "No longer needed");
 
             assertThat(response.status()).isEqualTo(LoadStatus.CANCELLED);
         }
@@ -426,7 +427,7 @@ class LoadServiceTest {
             when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
                     .thenReturn(Optional.of(load));
 
-            assertThatThrownBy(() -> loadService.cancelLoad(LOAD_ID, SHIPPER_ID))
+            assertThatThrownBy(() -> loadService.cancelLoad(LOAD_ID, SHIPPER_ID, "No longer needed"))
                     .isInstanceOf(LoadEditForbiddenException.class);
         }
 
@@ -436,7 +437,7 @@ class LoadServiceTest {
             when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
                     .thenReturn(Optional.of(load));
 
-            assertThatThrownBy(() -> loadService.cancelLoad(LOAD_ID, SHIPPER_ID))
+            assertThatThrownBy(() -> loadService.cancelLoad(LOAD_ID, SHIPPER_ID, "No longer needed"))
                     .isInstanceOf(LoadEditForbiddenException.class);
         }
 
@@ -446,7 +447,7 @@ class LoadServiceTest {
             when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
                     .thenReturn(Optional.of(load));
 
-            assertThatThrownBy(() -> loadService.cancelLoad(LOAD_ID, SHIPPER_ID))
+            assertThatThrownBy(() -> loadService.cancelLoad(LOAD_ID, SHIPPER_ID, "No longer needed"))
                     .isInstanceOf(LoadEditForbiddenException.class);
         }
 
@@ -456,7 +457,7 @@ class LoadServiceTest {
             when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
                     .thenReturn(Optional.of(load));
 
-            assertThatThrownBy(() -> loadService.cancelLoad(LOAD_ID, "other-shipper"))
+            assertThatThrownBy(() -> loadService.cancelLoad(LOAD_ID, "other-shipper", "No longer needed"))
                     .isInstanceOf(LoadNotFoundException.class);
         }
     }

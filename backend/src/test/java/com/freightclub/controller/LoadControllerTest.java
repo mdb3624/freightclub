@@ -31,6 +31,7 @@ import java.util.Map;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -173,10 +174,12 @@ class LoadControllerTest {
 
     @Test
     void cancel_returns200() throws Exception {
-        when(loadService.cancelLoad("load-1", USER_ID)).thenReturn(stubLoad());
+        when(loadService.cancelLoad(eq("load-1"), eq(USER_ID), any())).thenReturn(stubLoad());
 
         mockMvc.perform(patch("/api/v1/loads/load-1/cancel")
-                        .with(authentication(shipperAuth())))
+                        .with(authentication(shipperAuth()))
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"reason\":\"No longer needed\"}"))
                 .andExpect(status().isOk());
     }
 

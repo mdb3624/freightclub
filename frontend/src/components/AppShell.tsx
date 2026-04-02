@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { useLogout } from '@/features/auth/hooks/useLogout'
+import { NotificationBell } from '@/features/notifications/components/NotificationBell'
 import { Button } from '@/components/ui/Button'
 
 interface AppShellProps {
@@ -59,6 +60,7 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
             </nav>
           </div>
           <div className="flex items-center gap-3">
+            <NotificationBell />
             <span className="text-sm text-gray-600 hidden sm:inline">
               {user?.firstName} {user?.lastName}
             </span>

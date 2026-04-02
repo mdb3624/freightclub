@@ -9,8 +9,9 @@ export function useCancelLoad() {
   const toast = useToastStore((s) => s.show)
 
   return useMutation({
-    mutationFn: (id: string) => loadsApi.cancel(id),
-    onSuccess: (_load, id) => {
+    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+      loadsApi.cancel(id, reason),
+    onSuccess: (_load, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['loads'] })
       queryClient.invalidateQueries({ queryKey: ['loads', id] })
       toast('Load cancelled.', 'info')

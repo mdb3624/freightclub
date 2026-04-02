@@ -2,6 +2,7 @@ package com.freightclub.controller;
 
 import com.freightclub.domain.EquipmentType;
 import com.freightclub.dto.LoadBoardFilter;
+import com.freightclub.dto.LoadEventResponse;
 import com.freightclub.dto.LoadResponse;
 import com.freightclub.dto.LoadSummaryResponse;
 import com.freightclub.service.LoadService;
@@ -77,5 +78,11 @@ public class LoadBoardController {
     public LoadResponse markDelivered(@PathVariable String id,
                                       @AuthenticationPrincipal String userId) {
         return loadService.markDelivered(id, userId);
+    }
+
+    @GetMapping("/{id}/events")
+    public List<LoadEventResponse> getEvents(@PathVariable String id,
+                                             @AuthenticationPrincipal String userId) {
+        return loadService.getLoadEvents(id, userId);
     }
 }

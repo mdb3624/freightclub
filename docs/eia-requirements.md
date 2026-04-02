@@ -6,8 +6,8 @@
 | Field | Detail |
 |---|---|
 | **Document ID** | FREIGHTCLUB-URD-EIA-001 |
-| **Version** | 1.0 |
-| **Date** | March 25, 2026 |
+| **Version** | 1.1 |
+| **Date** | April 2, 2026 |
 | **Status** | Draft — For Review |
 | **Author** | Product Team |
 | **Reviewer** | Engineering Lead |
@@ -20,12 +20,15 @@
 
 This User Requirements Document defines the functional and non-functional requirements for integrating real-time and weekly diesel fuel price data from the U.S. Energy Information Administration (EIA) Open Data API (v2) into the FreightClub trucking analytics platform.
 
-The EIA integration will power the live market ticker displayed at the top of every screen in FreightClub, specifically supplying the following two data fields:
+The EIA integration will power the live market ticker displayed at the top of every screen in FreightClub, supplying on-highway diesel prices for all five EIA PADD regions:
 
-- **Diesel West** — national average on-highway diesel price for the West Coast region
-- **Diesel South** — national average on-highway diesel price for the South region
+- **Diesel East** — East Coast (New England, Central Atlantic, Lower Atlantic)
+- **Diesel Midwest** — Midwest
+- **Diesel South** — Gulf Coast / South
+- **Diesel Rockies** — Rocky Mountain
+- **Diesel West** — West Coast
 
-Fuel cost is a primary variable in trucking profitability. Having accurate, up-to-date regional diesel prices directly within the platform eliminates the need for drivers and owner-operators to consult external sources before making load acceptance decisions.
+Fuel cost is a primary variable in trucking profitability. Having accurate, up-to-date regional diesel prices for every major U.S. region directly within the platform eliminates the need for drivers and owner-operators to consult external sources before making load acceptance decisions.
 
 ---
 
@@ -58,20 +61,20 @@ Key characteristics of the EIA diesel price data:
 The relevant EIA v2 endpoint for on-highway diesel prices by region is:
 
 ```
-https://api.eia.gov/v2/petroleum/pri/gnd/data/?api_key={KEY}&frequency=weekly&data[0]=value&facets[product][]=EPD2D&facets[duoarea][]=R50&facets[duoarea][]=R4&sort[0][column]=period&sort[0][direction]=desc&length=2
+https://api.eia.gov/v2/petroleum/pri/gnd/data/?api_key={KEY}&frequency=weekly&data[0]=value&facets[product][]=EPD2D&facets[duoarea][]=R1X&facets[duoarea][]=R3&facets[duoarea][]=R4&facets[duoarea][]=R5&facets[duoarea][]=R50&sort[0][column]=period&sort[0][direction]=desc&length=10
 ```
 
 The `duoarea` facet codes map to:
 
-| Code | Region |
-|---|---|
-| R1X | New England, Central Atlantic, Lower Atlantic |
-| R3 | Midwest |
-| R4 | Gulf Coast (South) |
-| R5 | Rocky Mountain |
-| R50 | West Coast (West) |
+| Code | Region | FreightClub Label |
+|---|---|---|
+| R1X | East Coast (New England + Central Atlantic + Lower Atlantic) | DIESEL EAST |
+| R3 | Midwest | DIESEL MIDWEST |
+| R4 | Gulf Coast (South) | DIESEL SOUTH |
+| R5 | Rocky Mountain | DIESEL ROCKIES |
+| R50 | West Coast | DIESEL WEST |
 
-For FreightClub's ticker, the two primary target regions are **R4 (South)** and **R50 (West Coast)**.
+All five regions are in scope. The `length=10` parameter returns two weekly observations per region (current + prior week) in a single API call.
 
 ---
 
@@ -80,8 +83,8 @@ For FreightClub's ticker, the two primary target regions are **R4 (South)** and 
 | ID | As a... | I want to... | So that... |
 |---|---|---|---|
 | US-EIA-01 | Driver / owner-operator | See the current diesel price for my region in the ticker bar | I can factor accurate fuel cost into my load decision without leaving the app |
-| US-EIA-02 | Driver | See West and South diesel prices separately | I know what fuel will cost depending on where my lane takes me |
-| US-EIA-03 | Driver | See how diesel price compares to last week | I can tell if fuel costs are rising or falling and plan accordingly |
+| US-EIA-02 | Driver | See diesel prices for all five U.S. regions (East, Midwest, South, Rockies, West) separately | I know what fuel will cost no matter which lane or region my load runs through |
+| US-EIA-03 | Driver | See how diesel price compares to last week for each region | I can tell if fuel costs are rising or falling in a specific region and plan accordingly |
 | US-EIA-04 | Driver | Trust the data is current | I don't make load decisions based on stale or incorrect fuel prices |
 | US-EIA-05 | Product team | Monitor API health and receive alerts if the feed fails | The ticker never shows outdated data silently |
 
@@ -93,7 +96,7 @@ For FreightClub's ticker, the two primary target regions are **R4 (South)** and 
 
 | ID | Requirement | Priority | Acceptance Criteria |
 |---|---|---|---|
-| FR-01 | The system shall retrieve on-highway diesel prices for the West Coast (R50) and South/Gulf Coast (R4) PADD regions from the EIA v2 API on application startup. | Must Have | Ticker shows both price values within 3 seconds of app load |
+| FR-01 | The system shall retrieve on-highway diesel prices for all five PADD regions — East (R1X), Midwest (R3), South/Gulf Coast (R4), Rocky Mountain (R5), and West Coast (R50) — from the EIA v2 API on application startup via a single API call. | Must Have | Ticker shows all five price values within 3 seconds of app load |
 | FR-02 | The system shall refresh diesel price data on a scheduled basis not less frequently than once every 24 hours. | Must Have | Data timestamp is visible; values do not grow stale beyond 24hrs |
 | FR-03 | The system shall display the most recently available EIA weekly price even when the API has not yet published the current week's update. | Must Have | No blank or zero values appear in the ticker at any time |
 | FR-04 | The system shall display the EIA data period (e.g. "Week of Mar 17") alongside each diesel price in a tooltip or secondary label. | Should Have | Hovering or tapping the diesel price shows the reporting week |
@@ -103,7 +106,7 @@ For FreightClub's ticker, the two primary target regions are **R4 (South)** and 
 
 | ID | Requirement | Priority | Acceptance Criteria |
 |---|---|---|---|
-| FR-06 | The system shall display diesel prices in the format: `DIESEL WEST: $X.XX/gal` and `DIESEL SOUTH: $X.XX/gal` in the market live ticker bar. | Must Have | Text matches format shown in FreightClub design spec |
+| FR-06 | The system shall display diesel prices for all five regions in the market live ticker bar using the format: `DIESEL EAST: $X.XX/gal`, `DIESEL MIDWEST: $X.XX/gal`, `DIESEL SOUTH: $X.XX/gal`, `DIESEL ROCKIES: $X.XX/gal`, `DIESEL WEST: $X.XX/gal`. | Must Have | Text matches format shown in FreightClub design spec; all five regions scroll in the ticker |
 | FR-07 | The diesel price values in the ticker shall be displayed in USD per gallon, rounded to two decimal places. | Must Have | Value shown as `$3.72` not `$3.7215` |
 | FR-08 | Rising prices shall be visually distinguished from falling prices using color (e.g. red for rise, green for fall) consistent with FreightClub's existing design system. | Should Have | Color coding renders correctly in both light and dark mode |
 | FR-09 | The ticker shall continue displaying the last known diesel prices during temporary API unavailability, with a visual indicator that the data may be stale. | Must Have | Stale indicator appears if data is older than 48 hours |
@@ -132,7 +135,7 @@ For FreightClub's ticker, the two primary target regions are **R4 (South)** and 
 | ID | Requirement | Priority | Acceptance Criteria |
 |---|---|---|---|
 | NFR-04 | The system shall implement exponential backoff retry logic for failed EIA API requests, with a maximum of 3 retry attempts. | Must Have | 3 retries observed in logs before fallback to cached data |
-| NFR-05 | If the EIA API is unavailable and no cached data exists, the system shall display `DIESEL WEST: --` and `DIESEL SOUTH: --` rather than showing an error or blank field. | Must Have | Graceful degradation confirmed via API mock test |
+| NFR-05 | If the EIA API is unavailable and no cached data exists, the system shall display `--` for each of the five regional price fields rather than showing an error or blank field (e.g. `DIESEL WEST: --`). | Must Have | Graceful degradation confirmed via API mock test for all five regions |
 | NFR-06 | API errors shall be logged with full request context (endpoint, response code, timestamp) for diagnostic purposes. | Must Have | Error log entry visible in monitoring system within 60s |
 
 ### 6.3 Security
@@ -156,12 +159,15 @@ For FreightClub's ticker, the two primary target regions are **R4 (South)** and 
 
 | EIA Field | EIA Code / Value | FreightClub Display Element | Format |
 |---|---|---|---|
-| Product | EPD2D (On-Highway Diesel) | Both ticker fields | Filter only |
-| duoarea (West) | R50 — West Coast | `DIESEL WEST: $X.XX/gal` | $/gal, 2 decimal |
+| Product | EPD2D (On-Highway Diesel) | All ticker fields | Filter only |
+| duoarea (East) | R1X — East Coast | `DIESEL EAST: $X.XX/gal` | $/gal, 2 decimal |
+| duoarea (Midwest) | R3 — Midwest | `DIESEL MIDWEST: $X.XX/gal` | $/gal, 2 decimal |
 | duoarea (South) | R4 — Gulf Coast | `DIESEL SOUTH: $X.XX/gal` | $/gal, 2 decimal |
+| duoarea (Rockies) | R5 — Rocky Mountain | `DIESEL ROCKIES: $X.XX/gal` | $/gal, 2 decimal |
+| duoarea (West) | R50 — West Coast | `DIESEL WEST: $X.XX/gal` | $/gal, 2 decimal |
 | period | YYYY-MM-DD (week start) | Tooltip: "Week of [date]" | Human-readable date |
 | value | Numeric price in USD | Price display | Float → $X.XX |
-| Previous value | Derived (prior week fetch) | Change indicator +/- | Delta in $0.00 |
+| Previous value | Derived (prior week row per region) | Change indicator +/- | Delta in $0.00 |
 
 ---
 
@@ -181,11 +187,14 @@ https://api.eia.gov/v2/petroleum/pri/gnd/data/
 | `frequency` | `weekly` | Return weekly price observations |
 | `data[0]` | `value` | Include the price value field in response |
 | `facets[product][]` | `EPD2D` | Filter to on-highway diesel only |
-| `facets[duoarea][]` | `R50` | West Coast region price |
+| `facets[duoarea][]` | `R1X` | East Coast region price |
+| `facets[duoarea][]` | `R3` | Midwest region price |
 | `facets[duoarea][]` | `R4` | Gulf Coast / South region price |
+| `facets[duoarea][]` | `R5` | Rocky Mountain region price |
+| `facets[duoarea][]` | `R50` | West Coast region price |
 | `sort[0][column]` | `period` | Sort by date |
 | `sort[0][direction]` | `desc` | Most recent first |
-| `length` | `2` | Return 2 records (current + prior week for delta) |
+| `length` | `10` | Return 2 records per region × 5 regions (current + prior week per region for delta) |
 
 ### 8.3 Expected Response Structure
 
@@ -193,22 +202,22 @@ https://api.eia.gov/v2/petroleum/pri/gnd/data/
 {
   "response": {
     "data": [
-      {
-        "period": "2026-03-17",
-        "duoarea": "R50",
-        "value": "4.21",
-        "product": "EPD2D"
-      },
-      {
-        "period": "2026-03-17",
-        "duoarea": "R4",
-        "value": "3.72",
-        "product": "EPD2D"
-      }
+      { "period": "2026-03-17", "duoarea": "R1X", "value": "3.85", "product": "EPD2D" },
+      { "period": "2026-03-10", "duoarea": "R1X", "value": "3.78", "product": "EPD2D" },
+      { "period": "2026-03-17", "duoarea": "R3",  "value": "3.61", "product": "EPD2D" },
+      { "period": "2026-03-10", "duoarea": "R3",  "value": "3.55", "product": "EPD2D" },
+      { "period": "2026-03-17", "duoarea": "R4",  "value": "3.72", "product": "EPD2D" },
+      { "period": "2026-03-10", "duoarea": "R4",  "value": "3.68", "product": "EPD2D" },
+      { "period": "2026-03-17", "duoarea": "R5",  "value": "3.54", "product": "EPD2D" },
+      { "period": "2026-03-10", "duoarea": "R5",  "value": "3.49", "product": "EPD2D" },
+      { "period": "2026-03-17", "duoarea": "R50", "value": "4.21", "product": "EPD2D" },
+      { "period": "2026-03-10", "duoarea": "R50", "value": "4.15", "product": "EPD2D" }
     ]
   }
 }
 ```
+
+The response is sorted by period descending. For each region, the first row is the current week's price and the second row is the prior week's price, used to calculate the week-over-week delta.
 
 ---
 
@@ -238,8 +247,8 @@ The following are explicitly excluded from this requirement document:
 
 The EIA API integration will be considered complete and accepted when all of the following conditions are verified:
 
-- The ticker displays accurate `DIESEL WEST` and `DIESEL SOUTH` values within 3 seconds of app load on a standard broadband connection
-  - Values match the most recent EIA weekly publication
+- The ticker displays accurate values for all five regions (`DIESEL EAST`, `DIESEL MIDWEST`, `DIESEL SOUTH`, `DIESEL ROCKIES`, `DIESEL WEST`) within 3 seconds of app load on a standard broadband connection
+  - All five values match the most recent EIA weekly publication
 - Diesel prices update automatically without user action at least once every 24 hours
 - API key is not exposed in any client-side request or version-controlled file
 - Graceful fallback displays `--` values (not errors or blanks) when EIA API is unreachable
@@ -254,3 +263,4 @@ The EIA API integration will be considered complete and accepted when all of the
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 1.0 | Mar 25, 2026 | Product Team | Initial draft |
+| 1.1 | Apr 2, 2026 | Product Team | Expanded scope to all five PADD regions (R1X, R3, R4, R5, R50); updated endpoint, query params, response schema, display requirements, and acceptance criteria |

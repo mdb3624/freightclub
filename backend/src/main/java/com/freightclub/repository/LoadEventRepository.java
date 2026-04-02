@@ -4,4 +4,6 @@ import com.freightclub.domain.LoadEvent;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LoadEventRepository extends JpaRepository<LoadEvent, String> {
+
+    java.util.List<LoadEvent> findByLoadIdOrderByCreatedAtAsc(String loadId);
 }

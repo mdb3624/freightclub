@@ -1,6 +1,6 @@
 # FreightClub — Executive Summary
 
-**Last updated: 2026-03-29**
+**Last updated: 2026-03-30**
 
 ---
 
@@ -20,7 +20,7 @@ FreightClub is purpose-built for the owner/operator. Every feature is designed a
 
 ## Current Build Status
 
-**Phases 1, 1.1, and 1.2 are complete.** The platform supports a working, hardened end-to-end freight transaction. Phase 2 (Notifications & Status Timeline) is next.
+**Phases 1, 1.1, and 1.2 are complete.** The platform supports a working, hardened end-to-end freight transaction. **Phase 2 (Notifications & Status Timeline) is in active development** (started 2026-03-29).
 
 ### What's Live
 
@@ -80,7 +80,7 @@ The platform is designed as a 9-phase build. Each phase ships a usable, testable
 | 1 | Core load lifecycle + financial intelligence | ✅ Complete | Everything |
 | 1.1 | UX hardening — data integrity, regulatory compliance | ✅ Complete | 1.2 |
 | 1.2 | Security hardening + race condition fixes + test coverage | ✅ Complete | 2, 3, 6 |
-| 2 | Notifications & status timeline + EIA fuel prices | 🔜 Next | 3, 4 |
+| 2 | Notifications & status timeline + EIA fuel prices | 🏗️ In Progress | 3, 4 |
 | 3 | Document management (BOL / POD upload) | Planned | 4, 5, 7b |
 | 4 | Ratings & reviews (shipper reputation model) | Planned | 5, 7, 8 |
 | 5 | Payments & invoicing | Planned | 7b, 9 |

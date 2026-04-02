@@ -29,6 +29,14 @@ export interface LoadContactInfo {
   dotNumber: string | null
 }
 
+export interface LoadEvent {
+  id: string
+  eventType: string
+  actorId: string
+  note: string | null
+  createdAt: string
+}
+
 export interface Load {
   id: string
   tenantId: string
@@ -60,6 +68,7 @@ export interface Load {
   payRateType: PayRateType
   paymentTerms: PaymentTerms | null
   specialRequirements: string | null
+  cancelReason: string | null
   shipperContact: LoadContactInfo | null
   truckerContact: LoadContactInfo | null
   createdAt: string

@@ -13,7 +13,7 @@ Features are grouped into phases by dependency order and user value. Each phase 
 | 1 | Core Load Lifecycle | ✅ Complete | [phase-1-core-load-lifecycle.md](./docs/phases/phase-1-core-load-lifecycle.md) |
 | 1.1 | UX Hardening | ✅ Complete | [phase-1.1-ux-hardening.md](./docs/phases/phase-1.1-ux-hardening.md) |
 | 1.2 | Security & Stability Hardening | ✅ Complete | [phase-1.2-security-hardening.md](./docs/phases/phase-1.2-security-hardening.md) |
-| 2 | Notifications & Status Timeline | 🔜 Next | [phase-2-notifications.md](./docs/phases/phase-2-notifications.md) |
+| 2 | Notifications & Status Timeline | 🏗️ In Progress | [phase-2-notifications.md](./docs/phases/phase-2-notifications.md) |
 | 3 | Document Management (BOL & POD) | Planned | [phase-3-documents.md](./docs/phases/phase-3-documents.md) |
 | 4 | Ratings & Reviews | Planned | [phase-4-ratings.md](./docs/phases/phase-4-ratings.md) |
 | 5 | Payments & Invoicing | Planned | [phase-5-payments.md](./docs/phases/phase-5-payments.md) |

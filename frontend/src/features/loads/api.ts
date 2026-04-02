@@ -1,6 +1,6 @@
 import apiClient from '@/lib/apiClient'
 import { apiGet, apiPost, apiPut, apiPatch } from '@/lib/apiClient'
-import type { AvailableStates, BoardFilter, Load, LoadSummary, LoadFormValues, Page } from './types'
+import type { AvailableStates, BoardFilter, Load, LoadEvent, LoadSummary, LoadFormValues, Page } from './types'
 
 function toDecimalFt(ft: number | '', inches: number | ''): number | null {
   if (ft === '' && inches === '') return null
@@ -37,8 +37,14 @@ export const loadsApi = {
   update: (id: string, data: LoadFormValues) =>
     apiPut<Load>(`/loads/${id}`, sanitize(data)),
 
-  cancel: (id: string) =>
-    apiPatch<Load>(`/loads/${id}/cancel`),
+  cancel: (id: string, reason: string) =>
+    apiPatch<Load>(`/loads/${id}/cancel`, { reason }),
+
+  getEvents: (id: string) =>
+    apiGet<LoadEvent[]>(`/loads/${id}/events`),
+
+  getBoardEvents: (id: string) =>
+    apiGet<LoadEvent[]>(`/board/${id}/events`),
 
   claim: (id: string) =>
     apiPost<Load>(`/loads/${id}/claim`),

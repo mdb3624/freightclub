@@ -78,7 +78,7 @@ export function ShipperDashboard() {
         <>
           <LoadsTable
             loads={statusFilter ? data.content.filter((l) => l.status === statusFilter) : data.content}
-            onCancel={cancelLoad}
+            onCancel={(id, reason) => cancelLoad({ id, reason })}
             isCancelling={isCancelling}
             onPublish={publishLoad}
             isPublishing={isPublishing}

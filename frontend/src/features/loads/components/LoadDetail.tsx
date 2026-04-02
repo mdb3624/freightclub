@@ -1,6 +1,7 @@
 import type { Load } from '../types'
 import { PAYMENT_TERMS_LABELS } from '../types'
 import { StatusBadge } from './StatusBadge'
+import { useLoadEvents } from '../hooks/useLoadEvents'
 
 interface LoadDetailProps {
   load: Load
@@ -22,6 +23,43 @@ function formatDimension(decimalFt: number): string {
   const ft = Math.floor(totalIn / 12)
   const inches = totalIn % 12
   return inches === 0 ? `${ft} ft` : `${ft} ft ${inches} in`
+}
+
+const EVENT_LABELS: Record<string, string> = {
+  CREATED: 'Load created',
+  PUBLISHED: 'Published to load board',
+  CLAIMED: 'Claimed by trucker',
+  PICKED_UP: 'Picked up',
+  DELIVERED: 'Delivered',
+  CANCELLED: 'Cancelled',
+  SETTLED: 'Settled',
+}
+
+function LoadTimeline({ loadId }: { loadId: string }) {
+  const { data: events, isLoading } = useLoadEvents(loadId)
+
+  if (isLoading) return <p className="text-sm text-gray-400">Loading timeline…</p>
+  if (!events || events.length === 0) return null
+
+  return (
+    <section>
+      <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Status Timeline</h3>
+      <ol className="relative border-l border-gray-200 space-y-4 ml-3">
+        {events.map((event) => (
+          <li key={event.id} className="ml-4">
+            <div className="absolute -left-1.5 w-3 h-3 rounded-full bg-primary-500 border-2 border-white" />
+            <p className="text-sm font-medium text-gray-900">
+              {EVENT_LABELS[event.eventType] ?? event.eventType}
+            </p>
+            {event.note && (
+              <p className="text-xs text-gray-500 mt-0.5">{event.note}</p>
+            )}
+            <p className="text-xs text-gray-400 mt-0.5">{formatDateTime(event.createdAt)}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
 }
 
 export function LoadDetail({ load }: LoadDetailProps) {
@@ -133,6 +171,15 @@ export function LoadDetail({ load }: LoadDetailProps) {
           <p className="text-sm text-gray-700 whitespace-pre-line">{load.specialRequirements}</p>
         </section>
       )}
+
+      {load.cancelReason && (
+        <section className="rounded-lg bg-red-50 border border-red-100 px-4 py-3">
+          <h3 className="text-sm font-semibold text-red-700 mb-1">Cancellation Reason</h3>
+          <p className="text-sm text-red-600">{load.cancelReason}</p>
+        </section>
+      )}
+
+      <LoadTimeline loadId={load.id} />
     </div>
   )
 }

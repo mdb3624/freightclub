@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/authStore'
@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { TableSkeleton } from '@/components/ui/Skeleton'
 import type { BoardFilter, BoardSortBy, BoardSortDir, EquipmentType } from '@/features/loads/types'
+import { useDieselPrices } from '@/features/market/hooks/useDieselPrices'
 
 const VALID_SORT_BY = new Set<BoardSortBy>(['pickupDate', 'distance', 'rpm'])
 const VALID_SORT_DIR = new Set<BoardSortDir>(['asc', 'desc'])
@@ -53,6 +54,7 @@ const STATUS_TEXT_COLORS: Record<string, string> = {
 
 export function TruckerDashboard() {
   const user = useAuthStore((s) => s.user)
+  const { data: dieselData } = useDieselPrices()
   const navigate = useNavigate()
   const location = useLocation()
   const queryClient = useQueryClient()
@@ -139,8 +141,34 @@ export function TruckerDashboard() {
       ? activeLoad.payRate * activeLoad.distanceMiles
       : null
 
+  const dieselRegions = useMemo(() => {
+    if (!dieselData?.available) return []
+    const fmt = (p: number) => `$${p.toFixed(2)}`
+    const delta = (d: number | null | undefined) => d != null ? `${d >= 0 ? '+' : ''}$${Math.abs(d).toFixed(2)}` : null
+    return [
+      { label: 'East', price: dieselData.eastPrice,    d: dieselData.eastDelta },
+      { label: 'Midwest', price: dieselData.midwestPrice, d: dieselData.midwestDelta },
+      { label: 'Gulf Coast', price: dieselData.southPrice,   d: dieselData.southDelta },
+      { label: 'Rocky Mtn', price: dieselData.rockyPrice,   d: dieselData.rockyDelta },
+      { label: 'West', price: dieselData.westPrice,    d: dieselData.westDelta },
+    ].filter(r => r.price != null).map(r => ({ ...r, fmt: fmt(r.price!), delta: delta(r.d), up: (r.d ?? 0) > 0 }))
+  }, [dieselData])
+
   return (
     <AppShell maxWidth="5xl">
+      {dieselRegions.length > 0 && (
+        <div className="mb-4 flex flex-wrap items-center gap-x-6 gap-y-1 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-xs">
+          <span className="font-semibold uppercase tracking-wide text-gray-500">Diesel Prices</span>
+          {dieselRegions.map(r => (
+            <span key={r.label} className="flex items-center gap-1">
+              <span className="text-gray-500">{r.label}</span>
+              <span className="font-semibold text-gray-900">{r.fmt}</span>
+              {r.delta && <span className={r.up ? 'text-red-500' : 'text-green-600'}>{r.delta}</span>}
+            </span>
+          ))}
+          {dieselData?.period && <span className="ml-auto text-gray-400">Week of {dieselData.period}</span>}
+        </div>
+      )}
       <div className="space-y-8">
         {activeLoad && (
           <section ref={activeLoadRef}>

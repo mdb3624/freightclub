@@ -1,357 +1,299 @@
-# Architecture
+# FreightClub Architecture
 
-This document describes the architecture for FreightClub. Keep it up to date as the system evolves.
+## System Overview
 
----
+FreightClub is a SaaS load management platform connecting shippers and truckers. The system consists of a React 18 frontend (Vite + TypeScript + Tailwind CSS), a Spring Boot 3 backend (Java 21), and a MySQL 8 database. The frontend runs on port 8080 with Vite proxying `/api` requests to the backend on port 9090. Authentication is stateless and JWT-based with HTTP-only refresh token rotation. The architecture employs multi-tenancy with shared database schema and tenant_id isolation at the query level. Each request passes through Spring Security filters that extract and validate JWT tokens, populate tenant context via ThreadLocal, and enforce role-based access control (SHIPPER, TRUCKER).
 
-## Documentation Quick Links
-
-| Document | Purpose |
-|----------|---------|
-| [EXECUTIVE_SUMMARY.md](./EXECUTIVE_SUMMARY.md) | Product vision, current status, roadmap |
-| [PROJECT_PLAN.md](./PROJECT_PLAN.md) | Phase breakdown with dependencies |
-| [docs/features/README.md](./docs/features/README.md) | Feature inventory by phase |
-| [docs/phases/](./docs/phases/) | Detailed specification per phase |
-| [docs/owner_operator.md](./docs/owner_operator.md) | Trucker persona requirements |
-| [docs/shipper.md](./docs/shipper.md) | Shipper persona requirements |
-
----
-
-## Overview
-
-FreightClub is a multi-tenant SaaS load board platform connecting two types of users:
-- **Shippers** — post loads (freight needing transport)
-- **Truckers (Owner/Operators)** — browse, claim, and deliver loads
-
-The platform follows a **shared database, single schema** multi-tenancy model with `tenant_id` row-level isolation enforced at the application layer via Spring Security.
-
----
-
-## Tech Stack
-
-| Layer | Technology | Rationale |
-|-------|-----------|-----------|
-| Frontend | React 18 + TypeScript + Vite | Industry standard for SaaS UIs; type safety, fast dev server |
-| Styling | Tailwind CSS | Utility-first, consistent design system without custom CSS bloat |
-| State Management | Zustand + React Query | Zustand for UI state; React Query for server state, caching, and background refresh |
-| Backend | Spring Boot 3.x (Java 21) | Battle-tested, strong ecosystem, excellent security primitives |
-| API Style | REST (JSON) | Simple, widely understood; GraphQL considered for v2 if query complexity grows |
-| Auth | Spring Security + JWT | Stateless, scalable; short-lived access tokens + HTTP-only refresh token cookies |
-| Database | MySQL 8.x | Reliable relational store; strong Spring Data JPA support |
-| ORM | Spring Data JPA + Hibernate | Standard persistence layer for Spring Boot |
-| Migrations | Flyway | Version-controlled, repeatable database migrations |
-| Hosting | TBD | Cloud-native deployment (AWS / GCP / Railway) |
-
----
-
-## System Design
-
-### High-Level Components
+## Component Diagram
 
 ```
-┌─────────────────────────────────────┐
-│           React Frontend            │
-│  (Vite + TypeScript + Tailwind)     │
-└────────────────┬────────────────────┘
-                 │ HTTPS / REST API
-┌────────────────▼────────────────────┐
-│         Spring Boot API             │
-│  Controller → Service → Repository  │
-│  Spring Security (JWT)              │
-└────────────────┬────────────────────┘
-                 │ JPA / JDBC
-┌────────────────▼────────────────────┐
-│           MySQL 8.x                 │
-│  Shared schema, tenant_id isolation │
-└─────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                    Frontend (React 18)                       │
+│  Port 8080 | Vite Dev Server + Tailwind CSS + TypeScript    │
+│  State: Zustand (UI) + React Query (server state)           │
+└────────────────────┬────────────────────────────────────────┘
+                     │ /api proxy
+                     ↓
+┌─────────────────────────────────────────────────────────────┐
+│            Spring Boot Backend (Java 21)                     │
+│              Port 9090 | Spring Security                     │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │ Controllers (REST endpoints)                         │   │
+│  │ - AuthController, LoadController, ProfileController │   │
+│  │ - DocumentController, RatingController, etc.        │   │
+│  └─────────────────┬──────────────────────────────────┘   │
+│                    ↓                                         │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │ Services (business logic)                            │   │
+│  │ - LoadService, AuthService, ProfileService          │   │
+│  │ - DocumentService, RatingService, etc.              │   │
+│  └─────────────────┬──────────────────────────────────┘   │
+│                    ↓                                         │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │ Repositories (Spring Data JPA)                       │   │
+│  │ - LoadRepository, UserRepository, ClaimRepository   │   │
+│  │ - RatingRepository, DocumentRepository, etc.        │   │
+│  └─────────────────┬──────────────────────────────────┘   │
+│                    ↓                                         │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │ Security Layer                                       │   │
+│  │ - JwtAuthenticationFilter (token validation)         │   │
+│  │ - JwtService (RS256 signing)                         │   │
+│  │ - RefreshTokenService (rotation with SHA-256 hash)  │   │
+│  │ - AuthRateLimitFilter (Bucket4j rate limiting)       │   │
+│  │ - TenantContextHolder (ThreadLocal tenant_id)       │   │
+│  └──────────────────────────────────────────────────────┘   │
+└────────────────────┬────────────────────────────────────────┘
+                     │ JDBC + Hibernate ORM
+                     ↓
+┌─────────────────────────────────────────────────────────────┐
+│           MySQL 8 Database (Flyway Migrations)              │
+│  Shared Schema with tenant_id isolation                     │
+│  - tenants, users, loads, claims, load_events              │
+│  - load_documents, load_ratings, refresh_tokens            │
+│  - notifications                                             │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-### User Roles
+## Backend Layer Breakdown
 
-| Role | Description |
-|------|-------------|
-| `SHIPPER` | Posts and manages loads |
-| `TRUCKER` | Browses and claims loads |
-| `ADMIN` | Platform management and oversight |
+### Controller Layer
 
----
+Controllers handle HTTP request routing and parameter validation. All endpoints are under `/api/v1/`:
+
+- **AuthController**: `/api/v1/auth/**` - Login, register, refresh token, logout (public + authenticated)
+- **LoadController**: `/api/v1/loads/**` - CRUD for loads, publish, claim, pickup, deliver (role-based)
+- **LoadBoardController**: `/api/v1/board/**` - Trucker-only board view with equipment/state filters
+- **ProfileController**: `/api/v1/profile/**` - User profile management
+- **DocumentController**: `/api/v1/documents/**` - BOL and POD photo uploads
+- **RatingController**: `/api/v1/ratings/**` - Shipper rates trucker; trucker rates shipper
+- **NotificationController**: `/api/v1/notifications/**` - Notification retrieval
+- **MarketController**: `/api/v1/market/**` - Public market data (origin/destination availability)
+
+Controllers extract user ID via `@AuthenticationPrincipal String userId` from the JWT. They delegate to services for business logic and return DTOs.
+
+### Service Layer
+
+Services encapsulate business logic and enforce invariants. Key services:
+
+- **LoadService**: Creates, publishes, claims, and transitions loads through lifecycle. Enforces max legal weight (80,000 lbs), requires BOL/POD photos. Uses `SELECT FOR UPDATE` for claim operations.
+- **AuthService**: Registers users, logs in, refreshes tokens, logs out. Generates random join codes.
+- **RefreshTokenService**: Creates refresh tokens (32-byte secure random, SHA-256 hashed), rotates them on refresh, validates expiry.
+- **DocumentService**: Manages BOL and POD photo uploads, generates BOL documents.
+- **RatingService**: Records shipper→trucker and trucker→shipper ratings.
+- **NotificationService**: Publishes notifications on load state transitions.
+- **ProfileService**: Updates user profile fields.
+
+Services use `TenantContextHolder.getTenantId()` to retrieve tenant context.
+
+### Repository Layer
+
+Repositories extend Spring Data JPA with custom queries filtered by tenant_id:
+
+- **LoadRepository**: findByIdAndDeletedAtIsNull, findByTenantIdAndShipperId, findByIdAndDeletedAtIsNullForUpdate (claim locking)
+- **UserRepository**: findByEmailAndDeletedAtIsNull, findById, existsByEmail
+- **ClaimRepository**: Records claim history (ACTIVE, RELEASED, CANCELLED)
+- **RefreshTokenRepository**: findByTokenHashForUpdate, deleteAllByUserId
+- **RatingRepository, DocumentRepository, LoadEventRepository**: Filtered by tenant_id
+
+All queries include `tenant_id` filter for isolation.
+
+### Domain Entities
+
+Core JPA entities with tenant isolation:
+
+- **User**: id, tenant_id, email, password_hash, role (SHIPPER/TRUCKER), first_name, last_name, trucker-specific fields, soft delete
+- **Load**: id, tenant_id, shipper_id, trucker_id (denormalized cache), status, origin/destination, times, commodity, weight, equipment, pay_rate, dimensions, special_requirements, cancel_reason, soft delete
+- **Claim**: id, tenant_id, load_id, trucker_id, status (ACTIVE/RELEASED/CANCELLED), claimed_at, released_at. Authoritative claim record.
+- **LoadEvent**: Audit trail (CREATED, CLAIMED, PICKED_UP, DELIVERED, CANCELLED with actor_id)
+- **RefreshToken**: user_id, token_hash (SHA-256), expires_at, revoked, revoked_at
+- **LoadDocument**: load_id, document_type (BOL/POD), file_url, uploaded_by, uploaded_at
+- **LoadRating**: load_id, claim_id, rater_id, ratee_id, rating (1-5), comment
+- **Notification**: tenant_id, recipient_id, event_type, load_id, read_at
+
+## Frontend Folder Structure
+
+```
+frontend/src/
+├── pages/
+│   ├── LoginPage.tsx, RegisterPage.tsx
+│   ├── ProfilePage.tsx, RatingsPage.tsx
+│   ├── ShipperDashboard.tsx, TruckerDashboard.tsx
+│   ├── LoadCreatePage.tsx, LoadEditPage.tsx, LoadDetailPage.tsx
+│   ├── LoadsListPage.tsx, TruckerLoadDetailPage.tsx
+│   └── TruckerLandingPage.tsx (market board, 58KB)
+│
+├── features/ (feature-sliced)
+│   ├── auth/hooks/useLogin.ts, useRegister.ts, useLogout.ts
+│   ├── loads/hooks/useCreateLoad.ts, useClaimLoad.ts, useMarkPickedUp.ts, 
+│   │                useMarkDelivered.ts, useCancelLoad.ts, useLoadBoard.ts, etc.
+│   ├── documents/hooks/useDocuments.ts
+│   ├── ratings/hooks/useRatings.ts
+│   ├── profile/hooks/, notifications/hooks/, market/hooks/, hos/hooks/
+│   └── components/ (per feature)
+│
+├── store/
+│   ├── authStore.ts (Zustand: user, accessToken, setUser, logout)
+│   ├── toastStore.ts (Zustand: toast notifications)
+│   └── authStore.test.ts
+│
+├── components/, hooks/, utils/
+└── App.tsx (Router, Protected routes)
+```
+
+**Pattern**: Feature-sliced design. Each feature (auth, loads, documents) is self-contained with hooks, components, types. Pages compose features. Server state via React Query; UI state via Zustand.
+
+## Auth Flow
+
+1. **Registration**: User submits email, password, role, companyName (create tenant) or joinCode (join existing). Backend hashes password (BCrypt), creates Tenant/User, generates JWT + refresh token.
+
+2. **JWT Creation** (15 minutes expiry):
+   - Subject: user.id
+   - Claims: email, role, tenantId, issuer, audience
+   - Signed with HMAC-SHA256
+   - Stored in Zustand store (volatile memory)
+
+3. **Refresh Token Creation** (7 days expiry):
+   - Generate: 32-byte SecureRandom, Base64-urlencoded
+   - Hash: SHA-256, stored in DB
+   - Sent as HTTP-only cookie (secure, same-site)
+
+4. **Request Handling**:
+   - Frontend sends `Authorization: Bearer {accessToken}` header
+   - `JwtAuthenticationFilter` validates token, extracts userId/role/tenantId
+   - Sets `TenantContextHolder` for request duration
+   - Creates authentication with ROLE_SHIPPER or ROLE_TRUCKER
+   - Clears context in finally block
+
+5. **Token Refresh**:
+   - Frontend calls POST `/api/v1/auth/refresh` with refresh cookie
+   - `RefreshTokenService` validates hash, marks old as revoked, generates new
+   - Returns new access token + rotated refresh cookie
+
+6. **Logout**: Revokes all refresh tokens for user.
+
+**Security**: Access token in memory (XSS safe via same-origin); refresh token in HTTP-only cookie (CSRF-protected); rotation prevents reuse attacks.
 
 ## Multi-Tenancy Strategy
 
-**Pattern:** Shared database, shared schema with `tenant_id` column on all tenant-scoped tables.
+**Model**: Shared database schema with tenant_id isolation at query level.
 
-**Why:** Best balance of cost, simplicity, and scalability at early stage. Schema-per-tenant adds complexity without benefit until significantly larger scale.
+1. **Tenant Context Per Request**:
+   - JWT includes tenantId claim
+   - `JwtAuthenticationFilter` calls `TenantContextHolder.setTenantId(tenantId)`
+   - `TenantContextHolder` uses ThreadLocal to store tenant_id per request
+   - Services retrieve via `getTenantId()` and pass to repositories
+   - Filter clears ThreadLocal in finally block
 
-**How tenant context flows:**
+2. **Query Isolation**:
+   - Every table has tenant_id FK
+   - All repository queries include `WHERE tenant_id = ?`
+   - Example: `LoadRepository.findByIdAndDeletedAtIsNull(id)` filters by user's tenant
 
-1. User authenticates → JWT issued containing `tenantId` and `role` claims
-2. Every request passes through a `TenantContextHolder` (ThreadLocal) populated by a JWT filter
-3. All repository queries are scoped by `tenant_id` automatically via a base entity or JPA filter
-4. No query is ever executed without tenant context — enforced via Spring AOP or Hibernate filters
+3. **User Registration**:
+   - New user with companyName → backend creates Tenant with random 6-char join code
+   - New user with joinCode → backend joins existing Tenant
+   - All data scoped to tenant_id
 
-**Tables requiring `tenant_id`:** `users`, `loads`, `claims`, `documents`, `payments`, `ratings`
+4. **Role-Based Access**:
+   - SHIPPER: Create, publish, update, view own loads
+   - TRUCKER: Claim, pickup, deliver, view board
+   - Controllers enforce via SecurityConfig: `.requestMatchers(...).hasRole("SHIPPER")`
 
----
-
-## Backend Architecture (Spring Boot)
-
-### Layered Structure
-
-```
-com.freightclub
-├── config/          # Spring Security, CORS, beans
-├── controller/      # REST endpoints (@RestController)
-├── service/         # Business logic (@Service)
-├── repository/      # Data access (@Repository, JPA)
-├── domain/          # JPA entities
-├── dto/             # Request/response objects (never expose entities directly)
-├── security/        # JWT filter, UserDetailsService, TenantContextHolder
-├── exception/       # Global exception handler (@ControllerAdvice)
-└── util/            # Shared helpers
-```
-
-### Key Backend Conventions
-
-- **DTOs only over the wire** — never expose JPA entities directly in API responses
-- **Service layer owns transactions** — `@Transactional` on service methods, not controllers
-- **Global exception handling** — `@ControllerAdvice` returns consistent error envelopes
-- **Validation** — use `@Valid` + Bean Validation (`@NotNull`, `@Size`, etc.) on request DTOs
-- **Pagination** — all list endpoints use `Pageable` and return `Page<T>`
-- **Soft deletes** — use `deleted_at` timestamp instead of hard deletes for audit trails
-
-### Authentication Flow
-
-```
-POST /api/auth/login
-  → validate credentials
-  → issue short-lived JWT (15 min) + refresh token (7 days, HTTP-only cookie)
-
-POST /api/auth/refresh
-  → validate refresh token cookie
-  → issue new access JWT
-
-POST /api/auth/logout
-  → invalidate refresh token (store in revocation table or use Redis)
-```
-
-- Passwords hashed with **BCrypt** (strength 12)
-- JWT signed with **RS256** (asymmetric) or **HS256** with a strong secret
-- Refresh tokens stored in DB and revocable
-
-### REST API Conventions
-
-- Base path: `/api/v1/`
-- Resource naming: plural nouns (`/loads`, `/users`, `/claims`)
-- HTTP methods: `GET` read, `POST` create, `PUT` full update, `PATCH` partial update, `DELETE` remove
-- Error response shape:
-  ```json
-  {
-    "status": 400,
-    "error": "Bad Request",
-    "message": "Weight is required",
-    "path": "/api/v1/loads",
-    "timestamp": "2026-03-11T10:00:00Z"
-  }
-  ```
-
----
-
-## Frontend Architecture (React + TypeScript)
-
-### Project Structure
-
-```
-src/
-├── assets/          # Static images, icons
-├── components/      # Reusable UI components (Button, Modal, Table, etc.)
-├── features/        # Feature modules (loads, auth, profile, payments)
-│   └── loads/
-│       ├── components/   # Feature-specific components
-│       ├── hooks/        # useLoads, useClaimLoad, etc.
-│       ├── api.ts        # API calls for this feature
-│       └── types.ts      # TypeScript types for this feature
-├── hooks/           # Shared custom hooks
-├── lib/             # Axios instance, React Query client config
-├── pages/           # Route-level page components
-├── store/           # Zustand stores (UI state only)
-├── types/           # Shared global types
-└── utils/           # Shared helpers
-```
-
-### Key Frontend Conventions
-
-- **Feature-based folder structure** — co-locate components, hooks, and types by domain
-- **React Query for all server state** — no manual fetch/loading/error state in components
-- **Zustand for UI state only** — modals open/closed, sidebar state, etc.
-- **No raw `fetch`** — all API calls go through a typed Axios instance with interceptors for JWT injection and 401 handling
-- **TypeScript strict mode** — `strict: true` in `tsconfig.json`; no `any` without justification
-- **Component size limit** — if a component exceeds ~150 lines, split it
-- **Accessibility** — semantic HTML, ARIA labels on interactive elements, keyboard navigation
-
-### UX Conventions
-
-These conventions apply platform-wide and were established after a human factors review of Phase 1.
-
-**State fields as validated dropdowns:** Origin and destination state must always be stored and transmitted as a validated 2-letter code selected from a `<select>` element — never a free-text input. Free text breaks trucker load board filters (e.g. "Illinois" vs "IL" causes filter mismatch).
-
-**URL-based filter state:** Load board filters (origin state, destination state, equipment type, pickup date) are stored as URL query parameters so that: (1) browser back/forward preserves filter context, (2) filtered views are bookmarkable, (3) users can share specific load board views.
-
-**Confirmation before destructive actions:** Any action that modifies a live load in a way that affects another user (cancel, reassign) must show a modal confirmation dialog before executing. Destructive actions must never be a single click away.
-
-**Feedback for every state-changing action:** All mutations must produce visible feedback — a toast on success, an inline error on failure. Silent success or silent failure are not acceptable.
-
-**Shared app shell:** Navigation, page wrapper, and chrome are defined in a shared layout component, not duplicated per page. Role-specific nav variants (SHIPPER vs TRUCKER) are rendered by the shared layout based on auth context.
-
-**Skeleton loading states:** Data-dependent views show skeleton placeholders while loading, not raw text ("Loading...") or blank space. This applies to dashboards, load detail, and profile pages.
-
-### Auth Flow (Frontend)
-
-1. On login, store access token in **memory** (not localStorage) to prevent XSS
-2. Refresh token stored in HTTP-only cookie (handled by browser automatically)
-3. Axios interceptor calls `/auth/refresh` silently when a 401 is received
-4. On logout, clear in-memory token and call `/auth/logout`
-
-### Role-Based UI
-
-- Route guards implemented via a `<ProtectedRoute role="SHIPPER" />` wrapper component
-- Navigation and UI elements conditionally rendered based on `user.role` from auth context
-- Never rely on frontend role checks for security — backend enforces all permissions
-
----
-
-## Database Design Principles
-
-- Every tenant-scoped table has a `tenant_id` column (indexed)
-- Use `UUID` (`CHAR(36)`) for primary keys — not `AUTO_INCREMENT INT`; safer for multi-tenant, no sequential guessing
-- Use `created_at` and `updated_at` timestamps on all tables with `DEFAULT CURRENT_TIMESTAMP` and `ON UPDATE CURRENT_TIMESTAMP`
-- Use `deleted_at` for soft deletes — never hard-delete production rows
-- All foreign keys enforced at DB level (`CONSTRAINT fk_... FOREIGN KEY ... REFERENCES ...`)
-- State/province codes stored as `CHAR(2)` — never `VARCHAR` with free text. Load board filters depend on exact code matching (`IL` ≠ `Illinois`)
-- `CHECK` constraints on all enum-backed columns (`status`, `equipment_type`, `pay_rate_type`, `payment_terms`) — Java enums enforce validity at the app layer but do not protect against direct SQL or migration bugs
-- All migrations managed via **Flyway** — see [docs/database-migrations.md](./docs/database-migrations.md) for the full team guide
-
-### Index Strategy
-
-Every `WHERE` or `ORDER BY` column used by the application must have an index. Key patterns:
-
-| Query Pattern | Required Index |
-|--------------|----------------|
-| Shipper dashboard — loads by tenant + shipper | `(tenant_id, shipper_id)` ✅ |
-| Shipper dashboard — loads by status | `(tenant_id, status)` ✅ |
-| Trucker load board — filter by equipment type + status | `(tenant_id, equipment_type, status)` |
-| Trucker load board — filter by origin state | `(tenant_id, origin_state)` |
-| Trucker load board — filter by pickup date | `(tenant_id, pickup_from, status)` |
-| Trucker active load lookup | `(trucker_id, status)` |
+## Database Design
 
 ### Core Tables
 
-| Table | Key Columns | Notes |
-|-------|------------|-------|
-| `tenants` | `id`, `name`, `join_code`, `plan`, `created_at` | Top-level SaaS account |
-| `users` | `id`, `tenant_id`, `email`, `password_hash`, `role`, `created_at` | SHIPPER and TRUCKER; email unique per tenant |
-| `loads` | `id`, `tenant_id`, `shipper_id`, `trucker_id`, `status`, `origin_*`, `destination_*`, `weight_lbs`, `pay_rate`, `pickup_from/to`, `delivery_from/to`, `created_at` | `trucker_id` is the active claimant cache |
-| `claims` | `id`, `tenant_id`, `load_id`, `trucker_id`, `status`, `claimed_at`, `released_at` | Authoritative claim audit trail; needed for ratings, cancellation, bidding |
-| `load_events` | `id`, `tenant_id`, `load_id`, `actor_id`, `event_type`, `note`, `created_at` | Immutable event log; source of truth for Phase 2 notifications and status timeline |
-| `trucker_cost_profiles` | `id`, `user_id`, `monthly_fixed_costs`, `fuel_cost_per_gallon`, `mpg`, `maintenance_cost_per_mile`, `monthly_miles_target`, `target_margin_per_mile`, `created_at` | Extracted from `users`; enables cost history for Phase 7b |
-| `refresh_tokens` | `id`, `user_id`, `token_hash`, `expires_at`, `revoked`, `revoked_at`, `created_at` | SHA-256 hashed; never store raw token |
-| `documents` | `id`, `tenant_id`, `load_id`, `type` (BOL/POD), `storage_key`, `uploaded_at` | Phase 3 |
-| `payments` | `id`, `tenant_id`, `load_id`, `amount`, `status`, `terms`, `paid_at` | Phase 5 |
-| `ratings` | `id`, `tenant_id`, `claim_id`, `load_id`, `rater_id`, `ratee_id`, `score`, `comment` | Phase 4; linked to `claims`, not just `loads` |
+**tenants**: id, name, plan, join_code, created_at, updated_at, deleted_at (soft delete)
+
+**users**: id, tenant_id (FK), email (UNIQUE globally), password_hash, role, first_name, last_name, trucker fields (mc_number, dot_number, equipment_type), cost_profile, created_at, updated_at, deleted_at
+- Indexes: (tenant_id), (tenant_id, role), (email)
+
+**loads**: id, tenant_id (FK), shipper_id (FK), trucker_id (FK, nullable cache), status, origin, destination, origin_zip, destination_zip, origin_state, destination_state, distance_miles, pickup_from/to, delivery_from/to, commodity, weight_lbs, overweight_acknowledged, equipment_type, dimensions, pay_rate, pay_rate_type, payment_terms, special_requirements, cancel_reason, created_at, updated_at, deleted_at
+- Indexes: (tenant_id, shipper_id), (tenant_id, status), (tenant_id, created_at), (tenant_id, equipment_type, destination_state)
+
+**claims**: id, tenant_id (FK), load_id (FK), trucker_id (FK), status (ACTIVE/RELEASED/CANCELLED), claimed_at, released_at, created_at, updated_at
+- Indexes: (tenant_id, load_id), (tenant_id, trucker_id), (load_id, status)
+- Purpose: Authoritative claim history; loads.trucker_id is convenience cache
+
+**load_events**: id, tenant_id, load_id, actor_id, event_type (CREATED/CLAIMED/PICKED_UP/DELIVERED/CANCELLED), created_at
+
+**load_documents**: id, tenant_id, load_id, uploaded_by, document_type (BOL/POD), file_url, uploaded_at
+
+**load_ratings**: id, tenant_id, load_id, claim_id, rater_id, ratee_id, rating (1-5), comment, created_at
+
+**refresh_tokens**: id, user_id, token_hash (SHA-256), expires_at, revoked, revoked_at
+
+**notifications**: id, tenant_id, recipient_id, load_id, event_type, read_at, created_at
+
+### Design Patterns
+
+- **Soft Delete**: All entities have optional deleted_at. Queries use `WHERE deleted_at IS NULL`.
+- **Migration Naming**: Flyway convention `V{YYYYMMDD}_{number}__{description}.sql`
+- **Denormalization**: loads.trucker_id caches active claim from claims table for performance
+
+## Key Architectural Decisions
+
+### ADR-1: SELECT FOR UPDATE for Claim Locking
+
+**Problem**: Race condition if two truckers claim same load simultaneously.
+
+**Solution**: `findByIdAndDeletedAtIsNullForUpdate` uses SQL `SELECT ... FOR UPDATE` to acquire pessimistic row lock until transaction commits.
+
+### ADR-2: In-Memory Access Token Storage
+
+**Problem**: Refresh tokens survive page refresh; access tokens can be ephemeral.
+
+**Solution**: Access token in Zustand store (volatile). Refresh token in HTTP-only cookie (survives refresh). On app load, call `/api/v1/auth/refresh` if no access token but cookie exists.
+
+### ADR-3: Refresh Token Rotation with Hash Storage
+
+**Problem**: Long-lived refresh tokens; if leaked, attacker forges new access tokens indefinitely.
+
+**Solution**: Store token hash (SHA-256), not raw token. Rotate on every refresh: mark old hash revoked, generate new, return new to frontend. Reuse of old token rejected.
+
+### ADR-4: ThreadLocal Tenant Context
+
+**Problem**: Tenant ID needed throughout request processing.
+
+**Solution**: `TenantContextHolder` stores tenant_id in ThreadLocal. `JwtAuthenticationFilter` populates; services retrieve via static method. Cleared in filter finally block. Trade-off: thread-safe for servlet-per-thread; requires manual clearing.
+
+### ADR-5: Shared Database Schema with Tenant_id FK
+
+**Problem**: Multi-tenancy options: isolated schema, row-level security, or shared schema with app-level isolation.
+
+**Solution**: Shared schema. Every table has tenant_id FK. All queries filter by tenant_id. Simpler operations; easier migrations; but queries must always include tenant_id filter (human error risk).
+
+### ADR-6: Bucket4j Rate Limiting on Auth Endpoints
+
+**Problem**: Brute-force attacks on login/refresh.
+
+**Solution**: `AuthRateLimitFilter` applies Bucket4j rate limiting: 5 requests per 10 seconds per IP. Returns 429 Too Many Requests if exceeded.
+
+### ADR-7: Vite Proxy for API Requests
+
+**Problem**: Frontend on 8080, backend on 9090; CORS adds complexity.
+
+**Solution**: Vite proxies `/api/**` to backend. Frontend calls relative paths `/api/v1/...` which Vite rewrites to `http://localhost:9090/api/v1/...`. Eliminates CORS in dev; production uses reverse proxy (Nginx).
+
+### ADR-8: EIA Proxy with Server-Side Cache
+
+**Problem**: Real-time fuel prices from U.S. EIA API; client-side calls expose API key; repeated calls expensive.
+
+**Solution**: Backend `EiaFuelPriceService` calls EIA API server-side, caches response (Redis/in-memory TTL), returns to frontend. API key in server environment, not exposed to client.
+
+### ADR-9: Load Status State Machine with Event Sourcing Baseline
+
+**Problem**: Complex load lifecycle (DRAFT → OPEN → CLAIMED → IN_TRANSIT → DELIVERED) with notifications and audit trail.
+
+**Solution**: Services enforce state transitions via explicit checks. All transitions write to `load_events` table. Services publish notifications via `NotificationService`.
+
+### ADR-10: Denormalized Trucker_id Cache in Loads Table
+
+**Problem**: Claim history in claims table; queries need to find "active trucker for load" frequently.
+
+**Solution**: Maintain `loads.trucker_id` as denormalized cache of active claim. Claims table is source of truth; trucker_id is for convenience.
 
 ---
 
-## Key Design Decisions
-
-### ADR-001: Shared Schema Multi-Tenancy
-**Date:** 2026-03-11
-**Decision:** Use a shared database, shared schema with `tenant_id` row isolation.
-**Reason:** Lowest operational complexity at early stage. Avoids per-tenant DB provisioning overhead. Can migrate to schema-per-tenant later if an enterprise tier demands stronger isolation.
-**Consequences:** Requires disciplined `tenant_id` filtering at every query. Risk of data leak if a query misses the filter — mitigated by Hibernate filters and AOP enforcement.
-
-### ADR-002: JWT with HTTP-only Refresh Tokens
-**Date:** 2026-03-11
-**Decision:** Short-lived JWT access tokens (15 min) stored in memory; refresh tokens (7 days) in HTTP-only cookies.
-**Reason:** Balances security and UX. Prevents XSS token theft (no localStorage). Refresh cookie is inaccessible to JavaScript.
-**Consequences:** Silent refresh logic required on frontend. Requires CSRF protection on the refresh endpoint.
-
-### ADR-003: React + Spring Boot over Full-Stack Framework
-**Date:** 2026-03-11
-**Decision:** Separate React SPA frontend and Spring Boot REST API backend.
-**Reason:** Clear separation of concerns; allows independent scaling and deployment; team flexibility (frontend/backend can be worked on independently).
-**Consequences:** CORS configuration required. Two separate deployments to manage.
-
-### ADR-004: MySQL over PostgreSQL
-**Date:** 2026-03-11
-**Decision:** Use MySQL 8.x as the primary database.
-**Reason:** Familiar to the team, excellent Spring Data JPA support, wide hosting availability.
-**Consequences:** Row-level security is not natively supported in MySQL (unlike PostgreSQL). Tenant isolation must be enforced entirely at the application layer.
-
-### ADR-005: `claims` table as authoritative claim record
-**Date:** 2026-03-20
-**Decision:** Maintain a `claims` table as the authoritative record of who claimed which load and when. `loads.trucker_id` remains as a denormalized convenience cache of the active claimant.
-**Reason:** Storing only `trucker_id` on `loads` loses the claim event. When a claimed load is cancelled and re-claimed, the first claimant leaves no trace. Phase 2 cancellation notifications, Phase 4 ratings (rater/ratee must be linked to a specific claim), and Phase 8 bidding (multiple claimants per load) all require a `claims` table.
-**Consequences:** All claim/release operations must write to `claims` in addition to updating `loads.trucker_id`. The `claims.status` field (`ACTIVE`, `RELEASED`, `CANCELLED`) tracks the lifecycle of each claim independently.
-
-### ADR-006: State codes as `CHAR(2)` everywhere
-**Date:** 2026-03-20
-**Decision:** All US state/province fields (`origin_state`, `destination_state`, `billing_state`, `default_pickup_state`) are stored as `CHAR(2)` validated codes. The frontend enforces this via `<select>` dropdowns, never free-text inputs.
-**Reason:** The trucker load board filters by state code. Storing `"Illinois"` when the filter expects `"IL"` silently returns zero matches — the load becomes invisible to truckers filtering by state. This is a data integrity issue, not a UX preference.
-**Consequences:** Any existing rows with long-form state names must be backfilled before the column type constraint is applied. All future forms that capture state must use a dropdown, not a text input.
-
-### ADR-007: Email uniqueness scoped to tenant
-**Date:** 2026-03-20
-**Decision:** The unique constraint on `users.email` will be changed from a global unique key to a per-tenant unique key: `UNIQUE KEY uq_users_tenant_email (tenant_id, email)`.
-**Reason:** Global email uniqueness prevents the same person from having a SHIPPER account and a TRUCKER account, or from joining multiple tenants. These are legitimate scenarios as the platform grows.
-**Consequences:** The application layer must validate that a user is not already registered with the same email *and* role in the same tenant to prevent duplicate accounts within a tenant. Breaking migration required; must be applied before real user data accumulates.
-
-### ADR-008: Idempotent claim via SELECT FOR UPDATE
-**Date:** 2026-03-24
-**Decision:** `LoadService.claimLoad()` must acquire a row-level lock (`SELECT FOR UPDATE` via JPA `LockModeType.PESSIMISTIC_WRITE`) on the `loads` row before checking status and writing `trucker_id`. A unique partial index on `(load_id)` filtered to `status = 'CLAIMED'` is added as a secondary safety net at the database layer.
-**Reason:** Under concurrent load, two truckers can both read `status = OPEN` before either write completes. Both writes succeed; both truckers believe they own the load. This is a data integrity failure in the core transaction of the platform.
-**Consequences:** Slightly higher latency on claim (locked row read). Acceptable given claim frequency and the correctness requirement.
-
-### ADR-009: JWT must include issuer and audience claims
-**Date:** 2026-03-24
-**Decision:** All issued JWTs must include `iss` (issuer, set to `freightclub`) and `aud` (audience, set to `freightclub-api`) claims. The JWT filter must validate both claims on every request.
-**Reason:** Without these claims, a token issued by FreightClub is technically valid against any other service that uses the same key material. As the platform grows to include additional services (notifications, document storage), unbound tokens become a lateral-movement risk.
-**Consequences:** Existing tokens in circulation at deployment time will fail `aud` validation and force a re-login. Acceptable for a pre-production system.
-
-### ADR-010: Rate limiting on authentication endpoints
-**Date:** 2026-03-24
-**Decision:** Apply a token-bucket rate limiter to `POST /api/v1/auth/login` and `POST /api/v1/auth/register` — maximum 10 requests per IP per minute with a 429 response on breach.
-**Reason:** These endpoints accept credentials in the request body and have no cost beyond a BCrypt hash comparison. Without rate limiting they are open to brute force and credential stuffing with no friction.
-**Consequences:** Legitimate users on shared IPs (corporate NAT, mobile carrier NAT) could hit limits. Tune threshold after observing real traffic patterns. Consider CAPTCHA for repeated failures in a future iteration.
-
----
-
-## Current Phase
-
-**Phase 2: Notifications & Status Timeline** — In Progress (started 2026-03-29)
-
-Key work underway:
-- Email notifications on load status changes (claimed, picked up, delivered, cancelled)
-- In-app notification bell with unread count and read/unread tracking
-- Cancel-with-reason workflow with reason visibility to affected trucker
-- Immutable per-load event timeline powered by `load_events` table (built in Phase 1.2)
-- EIA fuel price integration (diesel prices, week-over-week delta)
-
----
-
-## Known Technical Debt
-
-Remaining issues deferred to future phases.
-
-### Backend
-
-| Issue | Location | Severity | Phase |
-|-------|----------|----------|-------|
-| No load state machine — valid transitions are ad-hoc inline checks | `LoadService` | Medium | 2 |
-| Settlement flow (`DELIVERED → SETTLED`) has no service method or endpoint | `LoadService` | Medium | 5 |
-| `trucker_cost_profiles` columns pollute every `users` row | `User.java` | Low | 7b |
-
-### Frontend
-
-| Issue | Location | Severity | Phase |
-|-------|----------|----------|-------|
-| HOS widget — 70-hr/8-day cumulative cycle not tracked | `HosWidget.tsx` | **High** | 2 |
-| HOS widget state not persisted to backend | `HosWidget.tsx` | Medium | 2 |
+**Last Updated**: 2026-04-02 | Phase 1 (Core Load Lifecycle) and Phase 1.1 (UX Hardening) complete. Phase 1.2 (Security & Stability) complete. Phase 2 in progress.

@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
+import { useDieselPrices } from '@/features/market/hooks/useDieselPrices'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -76,20 +77,26 @@ interface CommTemplate {
 const DIESEL = 3.89
 const MAINT_CPM = 0.17
 
-const TICKER_DATA: [string, string][] = [
-  ['DIESEL NATL AVG', '$3.89/gal'],
-  ['DRY VAN SPOT', '$2.14 RPM'],
-  ['REEFER SPOT', '$2.76 RPM'],
-  ['FLATBED SPOT', '$2.38 RPM'],
-  ['DIESEL WEST', '$4.21/gal'],
-  ['DIESEL SOUTH', '$3.72/gal'],
-  ['LOAD-TO-TRUCK RATIO', '3.2:1'],
-  ['CA→TX CORRIDOR', 'HIGH VOLUME'],
-  ['MIDWEST REEFER', 'SEASONAL +12%'],
-  ['FMCSA HOS', '11HR DRIVE / 14HR DUTY'],
-]
+interface TickerItem {
+  label: string
+  value: string
+  delta?: string
+  deltaUp?: boolean
+  stale?: boolean
+  period?: string
+}
 
-const TICKER_DOUBLED = [...TICKER_DATA, ...TICKER_DATA]
+const STATIC_TICKER_ITEMS: TickerItem[] = [
+  { label: 'DIESEL NATL AVG', value: '$3.89/gal' },
+  { label: 'DRY VAN SPOT', value: '$2.14 RPM' },
+  { label: 'REEFER SPOT', value: '$2.76 RPM' },
+  { label: 'FLATBED SPOT', value: '$2.38 RPM' },
+  { label: 'LOAD-TO-TRUCK RATIO', value: '3.2:1' },
+  { label: 'CA→TX CORRIDOR', value: 'HIGH VOLUME' },
+  { label: 'MIDWEST REEFER', value: 'SEASONAL +12%' },
+  { label: 'FMCSA HOS', value: '11HR DRIVE / 14HR DUTY' },
+  { label: 'DATA', value: 'U.S. EIA' },
+]
 
 const COMM_TEMPLATES: Record<string, CommTemplate> = {
   'rate-confirm': {
@@ -474,6 +481,8 @@ export function TruckerLandingPage() {
   })
   const [cpmResult, setCpmResult] = useState<CpmResult | null>(null)
 
+  const { data: dieselData } = useDieselPrices()
+
   // Broker Comms
   const [commType, setCommType] = useState('rate-confirm')
   const [commFields, setCommFields] = useState<Record<string, string>>({})
@@ -528,6 +537,13 @@ export function TruckerLandingPage() {
   // Reset comm fields when type changes
   useEffect(() => { setCommFields({}); setCommOutput('') }, [commType])
 
+  // Sync CPM calculator diesel price with live EIA data
+  useEffect(() => {
+    if (dieselData?.available && dieselData.westPrice != null) {
+      setCpmForm(f => ({ ...f, diesel: dieselData.westPrice!.toFixed(2) }))
+    }
+  }, [dieselData])
+
   // ── Handlers ──
 
   function analyzeLoad() {
@@ -547,7 +563,8 @@ export function TruckerLandingPage() {
 
     const totalRevenue = rate + fsc + access
     const totalMiles = miles + dh
-    const fuelCPM = DIESEL / 6.5
+    const dieselPrice = dieselData?.available && dieselData.westPrice != null ? dieselData.westPrice : DIESEL
+    const fuelCPM = dieselPrice / 6.5
     const fuelCost = totalMiles * fuelCPM
     const maintCost = totalMiles * MAINT_CPM
     const perDiemCost = days * 40
@@ -612,6 +629,27 @@ export function TruckerLandingPage() {
   const cpmRingColor = cpmResult ? (cpmResult.cpm < 1.50 ? 'var(--green)' : cpmResult.cpm < 2.20 ? 'var(--yellow)' : 'var(--red)') : 'var(--accent)'
   const cpmRingOffset = cpmResult ? 2 * Math.PI * 68 * (1 - Math.min(cpmResult.cpm / 3.50, 1)) : 2 * Math.PI * 68
 
+  // ── Ticker items (diesel entries are live from EIA) ──────────────────────
+  const tickerItems = useMemo<TickerItem[]>(() => {
+    const fmtPrice = (p: number) => `$${p.toFixed(2)}/gal`
+    const fmtDelta = (d: number) => `${d >= 0 ? '+' : ''}$${d.toFixed(2)}`
+
+    const mkDiesel = (label: string, price: number | null | undefined, d: number | null | undefined): TickerItem =>
+      dieselData?.available && price != null
+        ? { label, value: fmtPrice(price), delta: d != null ? fmtDelta(d) : undefined, deltaUp: (d ?? 0) > 0, stale: dieselData.stale, period: dieselData.period ?? undefined }
+        : { label, value: '--' }
+
+    const dieselEast    = mkDiesel('DIESEL EAST',    dieselData?.eastPrice,    dieselData?.eastDelta)
+    const dieselMidwest = mkDiesel('DIESEL MIDWEST', dieselData?.midwestPrice, dieselData?.midwestDelta)
+    const dieselSouth   = mkDiesel('DIESEL SOUTH',   dieselData?.southPrice,   dieselData?.southDelta)
+    const dieselRocky   = mkDiesel('DIESEL ROCKY',   dieselData?.rockyPrice,   dieselData?.rockyDelta)
+    const dieselWest    = mkDiesel('DIESEL WEST',    dieselData?.westPrice,    dieselData?.westDelta)
+
+    return [...STATIC_TICKER_ITEMS.slice(0, 4), dieselEast, dieselMidwest, dieselSouth, dieselRocky, dieselWest, ...STATIC_TICKER_ITEMS.slice(4)]
+  }, [dieselData])
+
+  const tickerItemsDoubled = useMemo(() => [...tickerItems, ...tickerItems], [tickerItems])
+
   // ── Render ──────────────────────────────────────────────────────────────
 
   return (
@@ -622,8 +660,13 @@ export function TruckerLandingPage() {
         <div className="ticker-label">MARKET LIVE</div>
         <div style={{ overflow: 'hidden', flex: 1 }}>
           <div className="ticker-scroll">
-            {TICKER_DOUBLED.map(([k, v], i) => (
-              <span key={i} className="ticker-item">{k}: <span>{v}</span></span>
+            {tickerItemsDoubled.map((item, i) => (
+              <span key={i} className="ticker-item">
+                {item.label}: <span title={item.period ? `Week of ${item.period}` : undefined}>{item.stale ? '⚠ ' : ''}{item.value}</span>
+                {item.delta && (
+                  <span style={{ color: item.deltaUp ? 'var(--red)' : 'var(--green)', marginLeft: '4px' }}>{item.delta}</span>
+                )}
+              </span>
             ))}
           </div>
         </div>
@@ -678,7 +721,15 @@ export function TruckerLandingPage() {
                 <div className="form-row">
                   <div className="form-group">
                     <label className="form-label">Loaded Miles</label>
-                    <input ref={laMiles} className="form-input" type="number" placeholder="e.g. 920" />
+                    <input ref={laMiles} className="form-input" type="number" placeholder="e.g. 920"
+                      onChange={() => {
+                        const miles = parseFloat(laMiles.current?.value || '') || 0
+                        const price = dieselData?.available && dieselData.westPrice != null ? dieselData.westPrice : DIESEL
+                        if (miles > 0 && laFsc.current) {
+                          laFsc.current.value = Math.round(miles / 6.5 * price).toString()
+                        }
+                      }}
+                    />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Deadhead (DH) Miles</label>

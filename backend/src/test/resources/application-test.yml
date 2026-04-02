@@ -26,6 +26,8 @@ app:
   default-tenant-id: 00000000-0000-0000-0000-000000000001
   cors:
     allowed-origins: http://localhost
+  eia:
+    enabled: false
   storage:
     path: ${java.io.tmpdir}/freightclub-test-uploads
 

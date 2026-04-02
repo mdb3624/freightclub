@@ -20,6 +20,9 @@ app:
   jwt:
     # 64-char hex string — replace with your own before committing real services
     secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  eia:
+    enabled: true
+    api-key: dnLA3lqSTpjXMf3H5yJHCgkAqftPVUjYkPFI78Mv
   cors:
     allowed-origins: http://localhost:8080,http://mikebarnes.tail67dcb4.ts.net:8080,https://mikebarnes.tail67dcb4.ts.net
   storage:

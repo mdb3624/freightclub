@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Component
 @Transactional
@@ -34,9 +33,8 @@ public class JpaLoadAdapter implements LoadRepositoryPort {
     @Transactional(readOnly = true)
     public Optional<LoadAggregate> findById(String tenantId, String loadId) {
         setTenant(tenantId);
-        return repo.findByIdAndTenantIdAndDeletedAtIsNull(
-                UUID.fromString(loadId), UUID.fromString(tenantId)
-        ).map(this::toDomain);
+        return repo.findByIdAndTenantIdAndDeletedAtIsNull(loadId, tenantId)
+                .map(this::toDomain);
     }
 
     // ── RLS propagation ───────────────────────────────────────────────────────
@@ -56,9 +54,9 @@ public class JpaLoadAdapter implements LoadRepositoryPort {
 
     private LoadEntity toEntity(LoadAggregate a) {
         LoadEntity e = new LoadEntity();
-        e.setId(UUID.fromString(a.getId()));
-        e.setTenantId(UUID.fromString(a.getTenantId()));
-        e.setShipperId(UUID.fromString(a.getShipperId()));
+        e.setId(a.getId());
+        e.setTenantId(a.getTenantId());
+        e.setShipperId(a.getShipperId());
         e.setStatus(a.getStatus());
         e.setWeightLbs(a.getWeight().lbs());
         e.setOriginCity(a.getOriginCity());
@@ -67,7 +65,7 @@ public class JpaLoadAdapter implements LoadRepositoryPort {
         e.setPayRate(a.getPayRate() != null ? a.getPayRate().amount() : null);
         e.setPayRateType(a.getPayRateType());
         e.setDistanceMiles(a.getDistanceMiles());
-        e.setCarrierId(a.getCarrierId() != null ? UUID.fromString(a.getCarrierId().value()) : null);
+        e.setTruckerId(a.getCarrierId() != null ? a.getCarrierId().value() : null);
         e.setPodUrl(a.getPodUrl());
         e.setCancelReason(a.getCancelReason());
         return e;
@@ -75,12 +73,12 @@ public class JpaLoadAdapter implements LoadRepositoryPort {
 
     private LoadAggregate toDomain(LoadEntity e) {
         return LoadAggregate.reconstitute(
-                e.getId().toString(),
-                e.getTenantId().toString(),
-                e.getShipperId().toString(),
+                e.getId(),
+                e.getTenantId(),
+                e.getShipperId(),
                 Weight.of(e.getWeightLbs()),
                 e.getStatus(),
-                e.getCarrierId() != null ? CarrierId.of(e.getCarrierId().toString()) : null,
+                e.getTruckerId() != null ? CarrierId.of(e.getTruckerId()) : null,
                 e.getPodUrl(),
                 e.getCancelReason(),
                 e.getEquipmentType() != null ? e.getEquipmentType().name() : null,

@@ -7,24 +7,23 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.UUID;
 
 @Entity
-@Table(name = "load_aggregates")
+@Table(name = "loads")
 public class LoadEntity {
 
     @Id
-    @Column(columnDefinition = "uuid", nullable = false, updatable = false)
-    private UUID id;
+    @Column(columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    private String id;
 
-    @Column(name = "tenant_id", columnDefinition = "uuid", nullable = false, updatable = false)
-    private UUID tenantId;
+    @Column(name = "tenant_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    private String tenantId;
 
-    @Column(name = "shipper_id", columnDefinition = "uuid", nullable = false, updatable = false)
-    private UUID shipperId;
+    @Column(name = "shipper_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    private String shipperId;
 
-    @Column(name = "carrier_id", columnDefinition = "uuid")
-    private UUID carrierId;
+    @Column(name = "trucker_id", columnDefinition = "CHAR(36)")
+    private String truckerId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -83,17 +82,17 @@ public class LoadEntity {
         updatedAt = OffsetDateTime.now();
     }
 
-    public UUID getId()                        { return id; }
-    public void setId(UUID id)                 { this.id = id; }
+    public String getId()                      { return id; }
+    public void setId(String id)               { this.id = id; }
 
-    public UUID getTenantId()                  { return tenantId; }
-    public void setTenantId(UUID v)            { this.tenantId = v; }
+    public String getTenantId()                { return tenantId; }
+    public void setTenantId(String v)          { this.tenantId = v; }
 
-    public UUID getShipperId()                 { return shipperId; }
-    public void setShipperId(UUID v)           { this.shipperId = v; }
+    public String getShipperId()               { return shipperId; }
+    public void setShipperId(String v)         { this.shipperId = v; }
 
-    public UUID getCarrierId()                 { return carrierId; }
-    public void setCarrierId(UUID v)           { this.carrierId = v; }
+    public String getTruckerId()               { return truckerId; }
+    public void setTruckerId(String v)         { this.truckerId = v; }
 
     public LoadStatus getStatus()              { return status; }
     public void setStatus(LoadStatus v)        { this.status = v; }

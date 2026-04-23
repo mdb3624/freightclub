@@ -4,12 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
-import java.util.UUID;
 
-public interface SpringDataLoadRepository extends JpaRepository<LoadEntity, UUID>,
+public interface SpringDataLoadRepository extends JpaRepository<LoadEntity, String>,
         JpaSpecificationExecutor<LoadEntity> {
 
-    Optional<LoadEntity> findByIdAndDeletedAtIsNull(UUID id);
+    Optional<LoadEntity> findByIdAndDeletedAtIsNull(String id);
 
-    Optional<LoadEntity> findByIdAndTenantIdAndDeletedAtIsNull(UUID id, UUID tenantId);
+    Optional<LoadEntity> findByIdAndTenantIdAndDeletedAtIsNull(String id, String tenantId);
 }

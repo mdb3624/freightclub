@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<ruleset name="FreightClub Quality Gates"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+                             https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        FreightClub mandatory quality gate: Cyclomatic Complexity ceiling of 10 per method.
+        Methods exceeding this limit must be decomposed into focused private helpers.
+    </description>
+
+    <rule ref="category/java/design.xml/CyclomaticComplexity">
+        <properties>
+            <!-- Report (and fail) any method with complexity > 10 -->
+            <property name="methodReportLevel" value="10"/>
+            <!-- Class-level aggregate ceiling — generous to avoid false positives on large aggregates -->
+            <property name="classReportLevel" value="80"/>
+        </properties>
+    </rule>
+
+</ruleset>

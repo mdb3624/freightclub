@@ -1,0 +1,34 @@
+{
+  "resources": {
+    "includes": [
+      {"comment": "Flyway SQL migrations — Flyway uses classpath scanning to discover migration files at startup"},
+      {"pattern": "db/migration/.*\\.sql$"},
+
+      {"comment": "Spring Boot config files — loaded by the application context before AOT processing completes"},
+      {"pattern": "application\\.yml$"},
+      {"pattern": "application-dev\\.yml$"},
+      {"pattern": "application-prod\\.yml$"},
+
+      {"comment": "PDFBox Standard 14 font AFM files — PDType1Font reads these via getResourceAsStream for glyph metrics"},
+      {"pattern": "org/apache/pdfbox/resources/afm/.*\\.afm$"},
+      {"pattern": "org/apache/pdfbox/resources/glyphlist/.*\\.txt$"},
+      {"pattern": "org/apache/pdfbox/resources/icc/.*\\.icc$"},
+      {"pattern": "org/apache/pdfbox/resources/version\\.properties$"},
+
+      {"comment": "Hibernate ORM internal mapping files — HHH-17396: hibernate.properties and type registrations"},
+      {"pattern": "org/hibernate/.*\\.properties$"},
+      {"pattern": "org/hibernate/.*\\.xml$"},
+
+      {"comment": "JJWT service loader — jjwt-impl registers JwtBuilder/JwtParser via META-INF/services"},
+      {"pattern": "META-INF/services/io\\.jsonwebtoken\\..*"},
+
+      {"comment": "PostgreSQL JDBC driver service loader registration"},
+      {"pattern": "META-INF/services/java\\.sql\\.Driver"},
+
+      {"comment": "Bean Validation (Hibernate Validator) message interpolation"},
+      {"pattern": "org/hibernate/validator/.*\\.properties$"},
+      {"pattern": "ValidationMessages\\.properties$"}
+    ]
+  },
+  "bundles": []
+}

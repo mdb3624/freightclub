@@ -1,8 +1,5 @@
 # Local development overrides — never commit real secrets
 spring:
-  datasource:
-    username: root
-    password: N1kk101!
   jpa:
     properties:
       hibernate:
@@ -12,6 +9,36 @@ spring:
     multipart:
       max-file-size: 25MB
       max-request-size: 30MB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/freightclub?currentSchema=freightclub,public
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: FreightClubPool
+      maximum-pool-size: 10
+      connection-init-sql: SET row_security = on;
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: freightclub
+        show_sql: true
+        format_sql: true
+        session_factory:
+          statement_inspector: com.freightclub.security.TenantInterceptor
+
+  flyway:
+    enabled: true
+    schemas: freightclub
+    create-schemas: true
+    locations: classpath:db/migration
+    url: jdbc:postgresql://localhost:5432/freightclub?currentSchema=freightclub,public
+    user: ${FLYWAY_USER:postgres}
+    password: ${FLYWAY_PASSWORD:postgres}
 
 server:
   port: 9090

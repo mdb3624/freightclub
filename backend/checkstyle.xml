@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+          "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+          "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+    <property name="severity" value="error"/>
+    <property name="fileExtensions" value="java, properties, xml"/>
+
+    <module name="TreeWalker">
+        <module name="CyclomaticComplexity">
+            <property name="max" value="10"/>
+            <message key="cyclomaticComplexity"
+                     value="Cyclomatic Complexity is {0,number,integer} (max allowed is {1,number,integer}). Refactor this method!"/>
+        </module>
+
+        <module name="NPathComplexity">
+            <property name="max" value="200"/>
+        </module>
+    </module>
+</module>

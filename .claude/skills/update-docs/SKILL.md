@@ -156,7 +156,8 @@ Replace `YYYY-MM-DD` with today's date.
 
 ## Notes
 
-- Use `subagent_type: Explore` for all three doc agents (read-only codebase scanning)
+- Use `subagent_type: general-purpose` for all doc agents — they must scan the codebase AND write files to disk (Explore is read-only and cannot use the Write tool)
+- Use `model: "haiku"` on every Agent call — these are read-only doc scans that do not require a large model
 - Each agent must **write its file to disk** using the Write tool — not return content inline
 - If an agent returns content instead of writing to disk, write the file yourself from the returned content
 - The CHANGELOG entry should be prepended (or appended if the file is new) — do not delete existing entries

@@ -1,0 +1,14 @@
+[
+  {
+    "comment": "Spring Data JPA repositories — Spring Boot 3.x AOT generates concrete implementations at build time, so these JDK interface proxies are NOT needed at runtime. Listed here as documentation only; remove this file if it causes conflicts with AOT-generated classes.",
+    "interfaces": []
+  },
+  {
+    "comment": "Spring Security filter chain — @EnableWebSecurity uses CGLIB (not JDK proxies) for SecurityFilterChain beans. AOT processes these at build time. No JDK proxy registration required.",
+    "interfaces": []
+  },
+  {
+    "comment": "Spring AOP — no @EnableAspectJAutoProxy is present in this codebase. If AOP is added later, register interface proxies here.",
+    "interfaces": []
+  }
+]

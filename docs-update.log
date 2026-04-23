@@ -1,0 +1,13 @@
+The Edit tool needs your permission for the 3 existing files. Once you approve, those 3 edits are ready to retry. Here's a summary of what's been completed:
+
+**Written successfully (new/overwritten):**
+- `README.md` ΓÇö updated phase table, test commands, links to all 6 docs
+- `API.md` ΓÇö **new file**, full endpoint reference for all 8 controllers with request/response shapes
+- `ROADMAP.md` ΓÇö **new file**, phase 1ΓÇô1.2 history, Phase 2 status breakdown, Phases 3ΓÇô9 planned
+
+**Pending your permission (Edit on existing files):**
+- `CHANGELOG.md` ΓÇö add 2026-04-04 entry documenting this regeneration
+- `FEATURES.md` ΓÇö date bump to 2026-04-04 (content already accurate)
+- `ARCHITECTURE.md` ΓÇö date bump to 2026-04-04 (content already accurate)
+
+Approve the Edit tool when prompted and I'll apply all 3 immediately.

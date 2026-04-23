@@ -1,0 +1,243 @@
+[
+  {"comment": "=== JPA Entities — Hibernate needs full reflection for proxy generation, field access, and lifecycle callbacks ==="},
+  {
+    "name": "com.freightclub.domain.Claim",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.domain.Load",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.domain.LoadDocument",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.domain.LoadEvent",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.domain.Notification",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.domain.Rating",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.domain.RefreshToken",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.domain.Tenant",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.domain.User",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true, "allDeclaredFields": true
+  },
+
+  {"comment": "=== Enums — Jackson @JsonValue/@JsonCreator and Hibernate @Enumerated both use name()/valueOf() via reflection ==="},
+  {
+    "name": "com.freightclub.domain.ClaimStatus",
+    "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.domain.DocumentType",
+    "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.domain.EquipmentType",
+    "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.domain.LoadStatus",
+    "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.domain.PaymentTerms",
+    "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.domain.PayRateType",
+    "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.domain.UserRole",
+    "allPublicMethods": true, "allDeclaredFields": true
+  },
+
+  {"comment": "=== DTOs — Jackson ObjectMapper uses reflection for serialization/deserialization of request and response bodies ==="},
+  {
+    "name": "com.freightclub.dto.AuthResponse",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.CancelLoadRequest",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.CreateLoadRequest",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.CreateRatingRequest",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.DieselPriceResponse",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.DocumentResponse",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.ErrorResponse",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.LoadBoardFilter",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.LoadContactInfo",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.LoadEventResponse",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.LoadFields",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.LoadResponse",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.LoadSummaryResponse",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.LoginRequest",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.NotificationResponse",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.ProfileResponse",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.RatingResponse",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.RatingSummaryResponse",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.RefreshResponse",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.RegisterRequest",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.ShipperPublicProfileResponse",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.UpdateLoadRequest",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.UpdateProfileRequest",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "com.freightclub.dto.UserResponse",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+
+  {"comment": "=== @ConfigurationProperties binding — Spring binds app.jwt.* via setters at startup ==="},
+  {
+    "name": "com.freightclub.security.JwtProperties",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true, "allDeclaredFields": true
+  },
+
+  {"comment": "=== JJWT 0.12.6 internals — jjwt-impl and jjwt-jackson are runtime-scoped; their classes are loaded by name at JWT parse time ==="},
+  {
+    "name": "io.jsonwebtoken.impl.DefaultClaims",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "io.jsonwebtoken.impl.DefaultJwt",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "io.jsonwebtoken.impl.DefaultJws",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "io.jsonwebtoken.impl.DefaultJwtBuilder",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true
+  },
+  {
+    "name": "io.jsonwebtoken.impl.DefaultJwtParser",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true
+  },
+  {
+    "name": "io.jsonwebtoken.impl.DefaultJwtParserBuilder",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true
+  },
+  {
+    "name": "io.jsonwebtoken.jackson.io.JacksonDeserializer",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true
+  },
+  {
+    "name": "io.jsonwebtoken.jackson.io.JacksonSerializer",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true
+  },
+
+  {"comment": "=== PostgreSQL JDBC — driver loaded via DriverManager.getConnection() which uses ServiceLoader; class must be reachable ==="},
+  {
+    "name": "org.postgresql.Driver",
+    "allDeclaredConstructors": true, "allPublicMethods": true
+  },
+  {
+    "name": "org.postgresql.ds.PGSimpleDataSource",
+    "allDeclaredConstructors": true, "allPublicMethods": true
+  },
+
+  {"comment": "=== Hibernate dialect — loaded by class name from application.yml spring.jpa.properties.hibernate.dialect ==="},
+  {
+    "name": "org.hibernate.dialect.PostgreSQLDialect",
+    "allDeclaredConstructors": true, "allPublicMethods": true
+  },
+
+  {"comment": "=== PDFBox Standard 14 fonts — PDType1Font constructor loads AFM data via Class.getResourceAsStream internally ==="},
+  {
+    "name": "org.apache.pdfbox.pdmodel.font.PDType1Font",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true
+  },
+  {
+    "name": "org.apache.pdfbox.pdmodel.font.Standard14Fonts",
+    "allDeclaredConstructors": true, "allPublicMethods": true, "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.pdfbox.pdmodel.font.Standard14Fonts$FontName",
+    "allPublicMethods": true, "allDeclaredFields": true
+  },
+
+  {"comment": "=== Spring Mail / JavaMail — loaded by class name in spring-boot-starter-mail; disable at runtime via EMAIL_ENABLED=false but class must exist ==="},
+  {
+    "name": "org.springframework.mail.javamail.JavaMailSenderImpl",
+    "allDeclaredConstructors": true, "allDeclaredMethods": true
+  }
+]

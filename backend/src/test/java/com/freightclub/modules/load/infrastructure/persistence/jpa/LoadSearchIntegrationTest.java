@@ -1,56 +1,126 @@
 package com.freightclub.modules.load.infrastructure.persistence.jpa;
 
 import com.freightclub.domain.EquipmentType;
+import com.freightclub.domain.Tenant;
+import com.freightclub.domain.User;
+import com.freightclub.domain.UserRole;
 import com.freightclub.modules.load.application.LoadSearchCriteria;
 import com.freightclub.modules.load.domain.LoadStatus;
-import com.freightclub.test.DataJpaSliceTest;
+import com.freightclub.repository.TenantRepository;
+import com.freightclub.repository.UserRepository;
+import com.freightclub.security.TenantContextHolder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaSliceTest
+@SpringBootTest
+@ActiveProfiles("test")
+@Transactional
 class LoadSearchIntegrationTest {
 
-    @Autowired TestEntityManager em;
     @Autowired SpringDataLoadRepository repo;
+    @Autowired UserRepository userRepository;
+    @Autowired TenantRepository tenantRepository;
 
-    private static final String TENANT_A = "tenant-aaa";
-    private static final String TENANT_B = "tenant-bbb";
+    private static final String TENANT_A = "tenant-load-search-a";
+    private static final String TENANT_B = "tenant-load-search-b";
+    private static final String SHIPPER_A = "shipper-load-search-a";
+    private static final String SHIPPER_B = "shipper-load-search-b";
 
-    private LoadEntity makeLoad(String tenantId, LoadStatus status,
+    private LoadEntity makeLoad(String tenantId, String shipperId, LoadStatus status,
                                 EquipmentType type, String city, BigDecimal rate) {
         LoadEntity e = new LoadEntity();
         e.setId(java.util.UUID.randomUUID().toString());
         e.setTenantId(tenantId);
-        e.setShipperId("shipper-1");
+        e.setShipperId(shipperId);
         e.setStatus(status);
         e.setWeightLbs(BigDecimal.valueOf(1000));
         e.setOriginCity(city);
+        e.setOriginState("TX");
+        e.setOriginZip("75001");
+        e.setOriginAddress1("123 Main St");
+        e.setDestinationCity("Houston");
+        e.setDestState("TX");
+        e.setDestinationZip("77001");
+        e.setDestinationAddress1("456 Main St");
         e.setEquipmentType(type);
         e.setPayRate(rate);
+        e.setPayRateType(com.freightclub.modules.load.domain.PayRateType.PER_MILE);
+        e.setCommodity("General Freight");
+        java.time.OffsetDateTime now = java.time.OffsetDateTime.now();
+        e.setPickupFrom(now);
+        e.setPickupTo(now.plusHours(2));
+        e.setDeliveryFrom(now.plusDays(1));
+        e.setDeliveryTo(now.plusDays(2));
         return e;
     }
 
     @BeforeEach
+    void setUp() {
+        TenantContextHolder.setTenantId(TENANT_A);
+        ensureTenantsAndShippersExist();
+        seed();
+    }
+
+    private void ensureTenantsAndShippersExist() {
+        // Create tenants first
+        createTenantIfMissing(TENANT_A, "Load Search Test Tenant A");
+        createTenantIfMissing(TENANT_B, "Load Search Test Tenant B");
+
+        // Then create shippers
+        createUserIfMissing(SHIPPER_A, "shippera@test.com", UserRole.SHIPPER, TENANT_A);
+        createUserIfMissing(SHIPPER_B, "shipperb@test.com", UserRole.SHIPPER, TENANT_B);
+    }
+
+    private void createTenantIfMissing(String tenantId, String name) {
+        if (!tenantRepository.findById(tenantId).isPresent()) {
+            Tenant tenant = new Tenant();
+            tenant.setId(tenantId);
+            tenant.setName(name);
+            tenantRepository.save(tenant);
+        }
+    }
+
+    private void createUserIfMissing(String userId, String email, UserRole role, String tenantId) {
+        if (!userRepository.findById(userId).isPresent()) {
+            User user = new User(userId);
+            user.setTenantId(tenantId);
+            user.setEmail(email);
+            user.setPasswordHash("$2a$10$testpassword");
+            user.setRole(role);
+            user.setFirstName("Test");
+            user.setLastName("Shipper");
+            userRepository.save(user);
+        }
+    }
+
+    @AfterEach
+    void tearDown() {
+        TenantContextHolder.clear();
+    }
+
     void seed() {
         // Tenant A — two PUBLISHED loads, different equipment types
-        em.persistAndFlush(makeLoad(TENANT_A, LoadStatus.PUBLISHED, EquipmentType.FLATBED, "Dallas", BigDecimal.valueOf(2500)));
-        em.persistAndFlush(makeLoad(TENANT_A, LoadStatus.PUBLISHED, EquipmentType.DRY_VAN, "Houston", BigDecimal.valueOf(1800)));
+        repo.save(makeLoad(TENANT_A, SHIPPER_A, LoadStatus.PUBLISHED, EquipmentType.FLATBED, "Dallas", BigDecimal.valueOf(2500)));
+        repo.save(makeLoad(TENANT_A, SHIPPER_A, LoadStatus.PUBLISHED, EquipmentType.DRY_VAN, "Houston", BigDecimal.valueOf(1800)));
         // Tenant A — one DRAFT (must never appear in search results)
-        em.persistAndFlush(makeLoad(TENANT_A, LoadStatus.DRAFT, EquipmentType.FLATBED, "Austin", BigDecimal.valueOf(2000)));
+        repo.save(makeLoad(TENANT_A, SHIPPER_A, LoadStatus.DRAFT, EquipmentType.FLATBED, "Austin", BigDecimal.valueOf(2000)));
         // Tenant B — FLATBED that matches Tenant A's equipment criteria
-        em.persistAndFlush(makeLoad(TENANT_B, LoadStatus.PUBLISHED, EquipmentType.FLATBED, "Dallas", BigDecimal.valueOf(2500)));
+        repo.save(makeLoad(TENANT_B, SHIPPER_B, LoadStatus.PUBLISHED, EquipmentType.FLATBED, "Dallas", BigDecimal.valueOf(2500)));
     }
 
     @Test

@@ -1,7 +1,8 @@
-# Claude Code Insights
+# FreightClub Project Insights & Status Report
 
-**27 sessions total · 23 analyzed · 218 messages · 73h · 3 commits**
-2026-03-10 to 2026-03-28
+**Generated:** 2026-04-22  
+**Codebase Scan:** Complete analysis of docs, phases, migrations, backend services, and frontend components  
+**Overall Status:** Phase 1, 1.1, 1.2, and Phase 2 complete (76/130 requirements = 58.5%)
 
 ---
 

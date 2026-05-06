@@ -5,7 +5,6 @@ import com.freightclub.modules.load.application.ports.in.LoadUseCase;
 import com.freightclub.modules.load.infrastructure.rest.dto.ClaimLoadRequest;
 import com.freightclub.modules.load.infrastructure.rest.dto.CreateLoadRequest;
 import com.freightclub.modules.load.infrastructure.rest.dto.LoadResponse;
-import com.freightclub.security.TenantContextHolder;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,46 +22,40 @@ public class LoadController {
 
     @PostMapping
     public ResponseEntity<LoadResponse> createDraft(@Valid @RequestBody CreateLoadRequest request) {
-        String tenantId = TenantContextHolder.getTenantId();
         LoadResponse body = LoadResponse.from(
-                useCase.createDraft(tenantId, request.shipperId(), request.weightLbs()));
+                useCase.createDraft(request.shipperId(), request.weightLbs()));
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 
     @PutMapping("/{id}/publish")
     public ResponseEntity<LoadResponse> publish(@PathVariable("id") String loadId) {
-        String tenantId = TenantContextHolder.getTenantId();
-        return ResponseEntity.ok(LoadResponse.from(useCase.publish(tenantId, loadId)));
+        return ResponseEntity.ok(LoadResponse.from(useCase.publish(loadId)));
     }
 
     @PutMapping("/{id}/claim")
     public ResponseEntity<LoadResponse> claim(
             @PathVariable("id") String loadId,
             @Valid @RequestBody ClaimLoadRequest request) {
-        String tenantId = TenantContextHolder.getTenantId();
-        return ResponseEntity.ok(LoadResponse.from(useCase.claim(tenantId, loadId, request.carrierId())));
+        return ResponseEntity.ok(LoadResponse.from(useCase.claim(loadId, request.carrierId())));
     }
 
     @PutMapping("/{id}/cancel")
     public ResponseEntity<LoadResponse> cancel(
             @PathVariable("id") String loadId,
             @RequestBody(required = false) String reason) {
-        String tenantId = TenantContextHolder.getTenantId();
-        return ResponseEntity.ok(LoadResponse.from(useCase.cancelLoad(tenantId, loadId, reason)));
+        return ResponseEntity.ok(LoadResponse.from(useCase.cancelLoad(loadId, reason)));
     }
 
     @PutMapping("/{id}/start-trip")
     public ResponseEntity<LoadResponse> startTrip(@PathVariable("id") String loadId) {
-        String tenantId = TenantContextHolder.getTenantId();
-        return ResponseEntity.ok(LoadResponse.from(useCase.startTrip(tenantId, loadId)));
+        return ResponseEntity.ok(LoadResponse.from(useCase.startTrip(loadId)));
     }
 
     @PutMapping("/{id}/deliver")
     public ResponseEntity<LoadResponse> deliver(
             @PathVariable("id") String loadId,
             @RequestBody String podUrl) {
-        String tenantId = TenantContextHolder.getTenantId();
-        return ResponseEntity.ok(LoadResponse.from(useCase.completeDelivery(tenantId, loadId, podUrl)));
+        return ResponseEntity.ok(LoadResponse.from(useCase.completeDelivery(loadId, podUrl)));
     }
 
     @ExceptionHandler(LoadNotFoundException.class)

@@ -45,7 +45,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidJoinCodeException.class)
     public ResponseEntity<ErrorResponse> handleInvalidJoinCode(InvalidJoinCodeException ex, HttpServletRequest req) {
-        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req);
+        // Changed from HttpStatus.BAD_REQUEST to CONFLICT to fix test invalidJoinCode_409
+        return build(HttpStatus.CONFLICT, ex.getMessage(), req);
     }
 
     @ExceptionHandler(LoadNotFoundException.class)
@@ -90,7 +91,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DocumentUploadRequiredException.class)
     public ResponseEntity<ErrorResponse> handleDocumentUploadRequired(DocumentUploadRequiredException ex, HttpServletRequest req) {
-        return build(HttpStatus.CONFLICT, ex.getMessage(), req);
+        // Changed from HttpStatus.CONFLICT to UNPROCESSABLE_ENTITY to fix test documentRequired_422[cite: 2]
+        return build(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), req);
     }
 
     @ExceptionHandler(AccessDeniedException.class)

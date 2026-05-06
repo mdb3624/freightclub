@@ -38,8 +38,59 @@ public class LoadEntity {
     @Column(name = "origin_state", length = 2)
     private String originState;
 
-    @Column(name = "dest_state", length = 2)
+    @Column(name = "origin_zip", length = 10)
+    private String originZip;
+
+    @Column(name = "origin_address_1", length = 500)
+    private String originAddress1;
+
+    @Column(name = "origin_address_2", length = 500)
+    private String originAddress2;
+
+    @Column(name = "destination_city", length = 100)
+    private String destinationCity;
+
+    @Column(name = "destination_state", length = 2)
     private String destState;
+
+    @Column(name = "destination_zip", length = 10)
+    private String destinationZip;
+
+    @Column(name = "destination_address_1", length = 500)
+    private String destinationAddress1;
+
+    @Column(name = "destination_address_2", length = 500)
+    private String destinationAddress2;
+
+    @Column(name = "pickup_from")
+    private OffsetDateTime pickupFrom;
+
+    @Column(name = "pickup_to")
+    private OffsetDateTime pickupTo;
+
+    @Column(name = "delivery_from")
+    private OffsetDateTime deliveryFrom;
+
+    @Column(name = "delivery_to")
+    private OffsetDateTime deliveryTo;
+
+    @Column(length = 255)
+    private String commodity;
+
+    @Column(name = "length_ft", precision = 8, scale = 2)
+    private BigDecimal lengthFt;
+
+    @Column(name = "width_ft", precision = 8, scale = 2)
+    private BigDecimal widthFt;
+
+    @Column(name = "height_ft", precision = 8, scale = 2)
+    private BigDecimal heightFt;
+
+    @Column(name = "payment_terms", length = 20)
+    private String paymentTerms;
+
+    @Column(name = "special_requirements", columnDefinition = "TEXT")
+    private String specialRequirements;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "equipment_type", length = 30)
@@ -54,9 +105,6 @@ public class LoadEntity {
 
     @Column(name = "distance_miles", precision = 8, scale = 2)
     private BigDecimal distanceMiles;
-
-    @Column(name = "pod_url", columnDefinition = "TEXT")
-    private String podUrl;
 
     @Column(name = "cancel_reason", columnDefinition = "TEXT")
     private String cancelReason;
@@ -106,8 +154,59 @@ public class LoadEntity {
     public String getOriginState()             { return originState; }
     public void setOriginState(String v)       { this.originState = v; }
 
+    public String getOriginZip()               { return originZip; }
+    public void setOriginZip(String v)         { this.originZip = v; }
+
+    public String getOriginAddress1()          { return originAddress1; }
+    public void setOriginAddress1(String v)    { this.originAddress1 = v; }
+
+    public String getOriginAddress2()          { return originAddress2; }
+    public void setOriginAddress2(String v)    { this.originAddress2 = v; }
+
+    public String getDestinationCity()         { return destinationCity; }
+    public void setDestinationCity(String v)   { this.destinationCity = v; }
+
     public String getDestState()               { return destState; }
     public void setDestState(String v)         { this.destState = v; }
+
+    public String getDestinationZip()          { return destinationZip; }
+    public void setDestinationZip(String v)    { this.destinationZip = v; }
+
+    public String getDestinationAddress1()     { return destinationAddress1; }
+    public void setDestinationAddress1(String v) { this.destinationAddress1 = v; }
+
+    public String getDestinationAddress2()     { return destinationAddress2; }
+    public void setDestinationAddress2(String v) { this.destinationAddress2 = v; }
+
+    public OffsetDateTime getPickupFrom()      { return pickupFrom; }
+    public void setPickupFrom(OffsetDateTime v) { this.pickupFrom = v; }
+
+    public OffsetDateTime getPickupTo()        { return pickupTo; }
+    public void setPickupTo(OffsetDateTime v)  { this.pickupTo = v; }
+
+    public OffsetDateTime getDeliveryFrom()    { return deliveryFrom; }
+    public void setDeliveryFrom(OffsetDateTime v) { this.deliveryFrom = v; }
+
+    public OffsetDateTime getDeliveryTo()      { return deliveryTo; }
+    public void setDeliveryTo(OffsetDateTime v) { this.deliveryTo = v; }
+
+    public String getCommodity()               { return commodity; }
+    public void setCommodity(String v)         { this.commodity = v; }
+
+    public BigDecimal getLengthFt()            { return lengthFt; }
+    public void setLengthFt(BigDecimal v)      { this.lengthFt = v; }
+
+    public BigDecimal getWidthFt()             { return widthFt; }
+    public void setWidthFt(BigDecimal v)       { this.widthFt = v; }
+
+    public BigDecimal getHeightFt()            { return heightFt; }
+    public void setHeightFt(BigDecimal v)      { this.heightFt = v; }
+
+    public String getPaymentTerms()            { return paymentTerms; }
+    public void setPaymentTerms(String v)      { this.paymentTerms = v; }
+
+    public String getSpecialRequirements()     { return specialRequirements; }
+    public void setSpecialRequirements(String v) { this.specialRequirements = v; }
 
     public EquipmentType getEquipmentType()    { return equipmentType; }
     public void setEquipmentType(EquipmentType v) { this.equipmentType = v; }
@@ -120,9 +219,6 @@ public class LoadEntity {
 
     public BigDecimal getDistanceMiles()       { return distanceMiles; }
     public void setDistanceMiles(BigDecimal v) { this.distanceMiles = v; }
-
-    public String getPodUrl()                  { return podUrl; }
-    public void setPodUrl(String v)            { this.podUrl = v; }
 
     public String getCancelReason()            { return cancelReason; }
     public void setCancelReason(String v)      { this.cancelReason = v; }

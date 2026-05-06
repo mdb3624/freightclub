@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/freightclub_test?currentSchema=freightclub}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  flyway:
+    enabled: true
+    schemas: freightclub
+    baseline-on-migrate: true
+    validate-on-migrate: false
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+server:
+  port: ${PORT:9091}
+
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8081,http://localhost:3000}
+  jwt:
+    secret: ${APP_JWT_SECRET:test-secret-32-chars-minimum-here}
+    issuer: ${JWT_ISSUER:freightclub}
+    audience: ${JWT_AUDIENCE:freightclub-api}
+    access-token-expiry-ms: ${JWT_ACCESS_EXPIRY_MS:900000}
+    refresh-token-expiry-ms: ${JWT_REFRESH_EXPIRY_MS:604800000}

@@ -17,11 +17,12 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProperties jwtProperties;
-    private final SecureRandom secureRandom = new SecureRandom();
+    private final SecureRandom secureRandom;
 
     public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, JwtProperties jwtProperties) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtProperties = jwtProperties;
+        this.secureRandom = new SecureRandom();
     }
 
     @Transactional

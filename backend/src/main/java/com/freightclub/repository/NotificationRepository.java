@@ -14,7 +14,16 @@ public interface NotificationRepository extends JpaRepository<Notification, Stri
 
     long countByUserIdAndReadFalse(String userId);
 
+    // Tenant-aware methods
+    Page<Notification> findByUserIdAndTenantIdOrderByCreatedAtDesc(String userId, String tenantId, Pageable pageable);
+
+    long countByUserIdAndTenantIdAndReadFalse(String userId, String tenantId);
+
     @Modifying
     @Query("UPDATE Notification n SET n.read = true WHERE n.userId = :userId AND n.read = false")
     int markAllReadByUserId(@Param("userId") String userId);
+
+    @Modifying
+    @Query("UPDATE Notification n SET n.read = true WHERE n.userId = :userId AND n.tenantId = :tenantId AND n.read = false")
+    int markAllReadByUserIdAndTenantId(@Param("userId") String userId, @Param("tenantId") String tenantId);
 }

@@ -38,11 +38,12 @@ class JwtAuthenticationFilterTest {
     }
 
     private Claims makeClaims(String subject, String role, String tenantId) {
-        Map<String, Object> data = Map.of(
-                "sub", subject,
-                "role", role,
-                "tenantId", tenantId
-        );
+        Map<String, Object> data = new java.util.HashMap<>();
+        data.put("sub", subject);
+        data.put("role", role);
+        if (tenantId != null) {
+            data.put("tenantId", tenantId);
+        }
         return new DefaultClaims(data);
     }
 
@@ -110,7 +111,7 @@ class JwtAuthenticationFilterTest {
         }
 
         @Test
-        void continuesChain_withNoAuthentication_whenTokenInvalid() throws Exception {
+        void rejectsWithUnauthorized_whenTokenInvalid() throws Exception {
             when(request.getHeader("Authorization")).thenReturn("Bearer bad-token");
             when(jwtService.validateAndGetClaims("bad-token"))
                     .thenThrow(new io.jsonwebtoken.security.SignatureException("bad sig"));
@@ -118,7 +119,35 @@ class JwtAuthenticationFilterTest {
             filter.doFilter(request, response, filterChain);
 
             assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
-            verify(filterChain).doFilter(request, response);
+            verify(response).setHeader("WWW-Authenticate", "Bearer error=\"invalid_token\"");
+            verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired JWT");
+            verify(filterChain, never()).doFilter(request, response);
+        }
+
+        @Test
+        void rejectsWithForbidden_whenTenantIdMissing() throws Exception {
+            when(request.getHeader("Authorization")).thenReturn("Bearer valid-token");
+            Claims claims = makeClaims("user-1", "SHIPPER", null);
+            when(jwtService.validateAndGetClaims("valid-token")).thenReturn(claims);
+
+            filter.doFilter(request, response, filterChain);
+
+            verify(response).setHeader("WWW-Authenticate", "Bearer");
+            verify(response).sendError(HttpServletResponse.SC_FORBIDDEN, "Missing or invalid tenant_id claim in JWT");
+            verify(filterChain, never()).doFilter(request, response);
+        }
+
+        @Test
+        void rejectsWithForbidden_whenTenantIdBlank() throws Exception {
+            when(request.getHeader("Authorization")).thenReturn("Bearer valid-token");
+            Claims claims = makeClaims("user-1", "SHIPPER", "   ");
+            when(jwtService.validateAndGetClaims("valid-token")).thenReturn(claims);
+
+            filter.doFilter(request, response, filterChain);
+
+            verify(response).setHeader("WWW-Authenticate", "Bearer");
+            verify(response).sendError(HttpServletResponse.SC_FORBIDDEN, "Missing or invalid tenant_id claim in JWT");
+            verify(filterChain, never()).doFilter(request, response);
         }
     }
 }

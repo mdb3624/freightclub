@@ -3,6 +3,7 @@ package com.freightclub.controller;
 import com.freightclub.dto.*;
 import com.freightclub.service.AuthService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -19,9 +20,12 @@ public class AuthController {
     private static final String REFRESH_COOKIE_NAME = "refreshToken";
 
     private final AuthService authService;
+    private final boolean cookieSecure;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService,
+                          @Value("${app.cookie.secure:true}") boolean cookieSecure) {
         this.authService = authService;
+        this.cookieSecure = cookieSecure;
     }
 
     @PostMapping("/register")
@@ -77,8 +81,8 @@ public class AuthController {
     private ResponseCookie buildRefreshCookie(String value, long maxAgeSeconds) {
         return ResponseCookie.from(REFRESH_COOKIE_NAME, value)
                 .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
+                .secure(cookieSecure)
+                .sameSite(cookieSecure ? "Strict" : "Lax")
                 .path("/api/v1/auth")
                 .maxAge(Duration.ofSeconds(maxAgeSeconds))
                 .build();

@@ -1,45 +1,25 @@
+# DEV environment: PostgreSQL database only.
+# The Spring Boot app runs natively via: mvn spring-boot:run
+# Usage: docker compose up -d db
+
 services:
 
   db:
-    image: mysql:8.0
+    image: postgres:15-alpine
     environment:
-      MYSQL_DATABASE: freightclub
-      MYSQL_USER: ${DB_USERNAME:-freightclub}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-freightclub}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      POSTGRES_DB: freightclub
+      POSTGRES_USER: ${DB_RUNTIME_USER:-freightclub_runtime}
+      POSTGRES_PASSWORD: ${DB_RUNTIME_PASSWORD:-freightclub}
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     ports:
-      - "3306:3306"
+      - "5432:5432"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-rootpassword}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_RUNTIME_USER:-freightclub_runtime} -d freightclub"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "9090:9090"
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_NAME: freightclub
-      DB_USERNAME: ${DB_USERNAME:-freightclub}
-      DB_PASSWORD: ${DB_PASSWORD:-freightclub}
-      JWT_SECRET: ${JWT_SECRET}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:8080}
-      STORAGE_PATH: /app/uploads
-    volumes:
-      - uploads_data:/app/uploads
-
 volumes:
-  mysql_data:
-  uploads_data:
+  postgres_data:

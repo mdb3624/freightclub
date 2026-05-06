@@ -30,10 +30,13 @@ public class LoadDocument {
     @Column(name = "storage_key", nullable = false, length = 500)
     private String storageKey;
 
+    @Column(name = "file_url", nullable = false, length = 500)
+    private String fileUrl;
+
     @Column(name = "original_filename", nullable = false, length = 255)
     private String originalFilename;
 
-    @Column(name = "content_type", nullable = false, length = 100)
+    @Transient
     private String contentType;
 
     @Column(name = "file_size_bytes", nullable = false)
@@ -57,6 +60,7 @@ public class LoadDocument {
     }
 
     public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
     public String getTenantId() { return tenantId; }
     public void setTenantId(String tenantId) { this.tenantId = tenantId; }
     public String getLoadId() { return loadId; }
@@ -67,6 +71,8 @@ public class LoadDocument {
     public void setDocumentType(DocumentType documentType) { this.documentType = documentType; }
     public String getStorageKey() { return storageKey; }
     public void setStorageKey(String storageKey) { this.storageKey = storageKey; }
+    public String getFileUrl() { return fileUrl; }
+    public void setFileUrl(String fileUrl) { this.fileUrl = fileUrl; }
     public String getOriginalFilename() { return originalFilename; }
     public void setOriginalFilename(String originalFilename) { this.originalFilename = originalFilename; }
     public String getContentType() { return contentType; }

@@ -49,5 +49,5 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for system design, multi-tenancy strate
 
 | Persona | Requirements |
 |---------|-------------|
-| Owner/Operator (trucker) | [docs/owner_operator.md](./docs/owner_operator.md) |
-| Shipper | [docs/shipper.md](./docs/shipper.md) |
+| Owner/Operator (trucker) | [docs/owner_operator.md](docs/archive/owner_operator.md) |
+| Shipper | [docs/shipper.md](docs/archive/shipper.md) |

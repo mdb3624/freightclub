@@ -1,105 +1,90 @@
-# FreightClub — Executive Summary
+# FreightClub Executive Summary
 
-**Last Updated:** April 2, 2026
+**Last Updated:** April 22, 2026
 
 ---
 
 ## What FreightClub Is
 
-FreightClub is a multi-tenant SaaS load board platform that connects shippers with owner/operator truckers. Shippers post freight loads requiring transportation; truckers browse available loads and claim them to pick up and deliver. The platform addresses the fragmented trucking market by providing transparency, trust through ratings, and financial intelligence tools that help truckers optimize profitability on every mile.
+FreightClub is a multi-tenant SaaS load board platform connecting shippers (freight owners) with independent owner/operator truckers. Shippers post freight loads with pickup/delivery locations, weight, dimensions, and pay rate; truckers browse available loads, claim them, and deliver. The platform solves fragmented trucking market opacity by providing financial transparency (real-time profitability analysis) and trust mechanisms (shipper/trucker ratings).
+
+**Problem Solved:** Independent truckers lack visibility into load profitability; shippers lack carrier reliability data.  
+**Target Users:** Shippers, owner/operator truckers, freight brokers.
 
 ---
 
 ## Current State
 
-**Phase 1 (Core Load Lifecycle)**, **Phase 1.1 (UX Hardening)**, and **Phase 1.2 (Security & Stability Hardening)** are complete and fully operational.
+**Phases 1, 1.1, and 1.2 Complete (110 backend tests passing):**
 
-### What's Live Today
-- Complete shipper and trucker workflows: load creation, publishing, claiming, pickup, and delivery
-- Real-time load board with filtering and status tracking
-- Trucker financial intelligence: CPM calculator, profitability analysis, and EIA fuel price integration
-- Authentication & authorization: JWT-based with role isolation (shipper vs. trucker)
-- Multi-tenant isolation with data integrity safeguards
-- Load status timeline and event tracking (`load_events` table)
+**Live Today:**
+- Full shipper workflow: create loads (draft or publish), edit, cancel with reason, view status timeline
+- Full trucker workflow: browse load board, filter by state/equipment/date, claim, mark pickup, mark delivered
+- Real-time profitability analysis: CPM calculator, per-load earnings breakdown, 30-day earnings summary
+- Authentication: JWT (short-lived access token in memory, HTTP-only refresh cookie), rate-limited auth endpoints
+- Multi-tenancy: Shared schema with `tenant_id` isolation, company join codes
+- Diesel prices: EIA API integration with 6-hour cache; displayed on landing page and dashboards
+- Notifications: Email on load status changes (claimed, picked up, delivered, cancelled); in-app notification bell with unread count
+- Documents: Auto-generated BOL at publish; document storage backend (S3) ready
 
-### Technology
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React 18 + TypeScript + Vite + Tailwind CSS |
-| State Management | Zustand (UI), React Query (server state) |
-| Backend | Spring Boot 3.x with Java 21 |
-| Authentication | Spring Security + JWT (RS256, HTTP-only refresh cookie) |
-| Database | MySQL 8.x with Flyway migrations |
-| Deployment | Port 9090 (backend), 8080 (frontend) |
+**Database:** PostgreSQL (migrated from MySQL April 22, 2026); Flyway migrations with soft-delete pattern, UUIDs, multi-tenant constraints.
 
 ---
 
 ## What's Next
 
-**Phase 2 (Notifications & Status Timeline)** is currently **~76% complete** and actively in development.
+**Phase 2 Completion (Q2 2026):** Populate `load_events` table on status transitions; build timeline UI; make BOL/POD uploads mandatory before pickup/delivery.
 
-### Phase 2 Highlights (Next 2–4 Weeks)
-- **Email & in-app notifications** on all load status changes (claimed, picked up, delivered, cancelled)
-- **In-app notification bell** with unread count and read/clear states
-- **EIA diesel price API integration:** Live regional fuel prices in market ticker with week-over-week delta indicators
-- **Auto-calculated fuel surcharge** in the Profitability Analyzer (based on live diesel prices)
-- **Cancellation with reason:** Shippers can cancel loads with a required reason; truckers receive immediate notification
+**Phase 4 (Ratings):** Post-delivery 5-star ratings, shipper reputation profiles, rating badges on load board. **Blocked by:** `claims` table not written (Phase 1.2 bug).
 
-### Future Roadmap
-- **Phase 3:** Document management (BOL & POD)
-- **Phase 4:** Ratings & reviews system
-- **Phase 5:** Payments & invoicing
-- **Phases 6–9:** In-app messaging, carrier management, advanced analytics, bidding, admin operations
+**Phase 5+:** Payments/invoicing, in-app messaging, bidding, advanced carrier management, admin console.
 
 ---
 
-## Key Risks
+## Key Risks (Top 5)
 
-### 1. **Test Coverage Gaps** (High Priority)
-- **6 of 8 backend controllers** lack unit tests
-- **5 of 9 backend services** partially tested
-- **Frontend:** ~95% untested (reliant on manual QA)
-- *Impact:* Regression bugs in production, slow feature velocity
+### 1. Three Critical Phase 1.2 Bugs Unresolved
+- `claims` table created but never written to (no record when trucker claims load)
+- `load_events` table created but never populated (timeline empty; blocks notifications)
+- Date validation uses string comparison, not Date objects (false date range failures possible)
+- **Impact:** Cannot track delivered loads; Phase 4 ratings blocked; timeline display broken.
 
-### 2. **Missing Error Handling** (Security & Stability)
-- **Zero try-catch blocks** in backend controllers; unhandled exceptions propagate to users
-- Incomplete error handling in services; edge cases not logged
-- *Impact:* Silent failures, hard-to-debug production issues
+### 2. Insufficient Test Coverage
+- 6 backend services untested: ProfileService, NotificationService, EmailService, BolGeneratorService, EiaFuelPriceService, DocumentService
+- 6 backend controllers untested: Profile, Document, Notification, Market, LoadBoard, Rating
+- Only 3 frontend test files for 100+ components/hooks (~3% coverage)
+- **Impact:** Silent null pointer exceptions (NotificationService); undetected regressions.
 
-### 3. **Data Integrity Constraints** (Critical Before Production)
-- Missing foreign key constraints on `load_documents` and `load_ratings` tables (can insert orphaned records)
-- Missing unique constraints on profiles and loads
-- Missing CHECK constraints on weight validation
-- *Impact:* Data corruption, violated business logic
+### 3. Missing Authorization Checks
+- LoadBoardController.getLoad() doesn't validate userId (any trucker can view any shipper's load)
+- ProfileController lacks user/tenant verification (User A can update User B's profile)
+- Rating endpoints unauthenticated and unrate-limited (attacker can enumerate all users)
+- **Impact:** Cross-tenant data leakage; potential data breach.
 
-### 4. **Input Validation Gaps** (Security)
-- Incomplete request validation on POST/PUT endpoints
-- Potential for injection attacks if not hardened before public launch
-- *Impact:* Data corruption, security vulnerabilities
+### 4. Database Integrity Gaps
+- No CHECK constraints on status enums (invalid statuses insertable)
+- Missing foreign keys on ratings/notifications tables (orphaned records possible)
+- Soft-delete filtering inconsistent across queries (deleted records may reappear)
+- **Impact:** Data corruption; regulatory audit failures.
 
-### 5. **Incomplete Phase 2 Features** (Schedule Risk)
-- SMS notifications still pending
-- Notification read/clear states partially implemented
-- *Impact:* Phase 2 may extend 1–2 weeks beyond current estimate
-
----
-
-## Recommended Action Items
-
-| Category | Item | Effort | Owner |
-|----------|------|--------|-------|
-| CRITICAL | Add missing FK constraints (load_documents, load_ratings) | 2 hrs | Backend |
-| CRITICAL | Add try-catch blocks + error logging to all controllers | 4 hrs | Backend |
-| HIGH | Write controller unit tests (6 missing) | 12 hrs | QA/Backend |
-| HIGH | Write service integration tests (5 incomplete) | 6 hrs | QA/Backend |
-| MEDIUM | Add input validation to all POST/PUT endpoints | 8 hrs | Backend |
-| MEDIUM | Complete Phase 2 notification features | 12 hrs | Full Team |
+### 5. Incomplete Feature Wiring
+- Cancellation notification to truckers not triggered in LoadService
+- HOS widget frontend-only, no backend storage
+- Document export endpoint stubbed but not implemented
+- **Impact:** Truckers unaware of load cancellations; non-functional HOS.
 
 ---
 
-## Stakeholder Readiness Assessment
+## Tech Stack Snapshot
 
-**Go-Live Readiness:** Phase 1 is production-ready for beta testing with a limited user base. Phase 2 (2–4 weeks) must complete before public launch to ensure users have visibility into load status and notifications—critical for trust and adoption.
-
-**Known Blockers:** Test coverage and error handling must be addressed before production deployment to reduce outage risk and support costs.
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18 + TypeScript + Vite + Tailwind CSS |
+| State | Zustand (UI) + React Query (server state) |
+| Backend | Spring Boot 3.x (Java 21) |
+| Auth | Spring Security + JWT (RS256) + HTTP-only refresh cookie |
+| Database | PostgreSQL + Spring Data JPA + Hibernate |
+| Migrations | Flyway (versioned SQL) |
+| Storage | AWS S3 (documents) |
+| APIs | EIA Open Data (diesel prices) |
 

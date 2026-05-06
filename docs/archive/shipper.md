@@ -1,0 +1,195 @@
+# Shipper Persona
+
+This document defines all requirements for the Shipper persona in FreightClub, informed by industry best practices.
+
+---
+
+## Who They Are
+
+A shipper is a business or individual that needs freight transported from one location to another. They may be manufacturers, wholesalers, retailers, or independent businesses. Shippers are responsible for accurately describing their loads, coordinating pickup/delivery, and paying carriers on time.
+
+---
+
+## Goals
+
+- Post loads quickly and get them claimed by reliable, qualified carriers
+- Ensure freight arrives on time and undamaged
+- Build a preferred network of trusted owner/operators for repeat lanes
+- Minimize administrative overhead (paperwork, disputes, tracking)
+- Pay and get receipts easily without chasing documentation
+
+---
+
+## Pain Points
+
+- Loads sitting unclaimed due to poor descriptions or uncompetitive rates
+- Carriers who are unresponsive, late, or don't have the right equipment
+- Disputes over weight, dimensions, or special requirements not communicated upfront
+- Late or missing documentation (signed BOL, POD) that delays their own billing
+- Managing too many tools — load board, messaging, payments, document storage
+
+---
+
+## Functional Requirements
+
+### Account & Profile
+- [ ] Register with business name, contact info, and billing details
+- [ ] Set default pickup location (pre-fills origin on load creation)
+- [ ] View and edit profile at any time
+- [ ] Manage notification preferences (email, SMS, in-app toggles)
+- [ ] Company/tenant system with shareable join code for colleagues
+
+### Load Posting
+- [ ] Create a new load with the following required fields:
+  - Pickup address and date/time window
+  - Delivery address and date/time window
+  - Freight description (commodity type)
+  - Weight (lbs)
+  - Dimensions (L x W x H)
+  - Equipment type required (dry van, flatbed, reefer, step deck, etc.)
+  - Special requirements (tarps, straps, hazmat, liftgate, team drivers, etc.)
+  - Pay rate (flat or per-mile)
+  - Payment terms (quick pay, Net 15, Net 30, Net 45)
+- [ ] Auto-calculated road distance from addresses
+- [ ] Save loads as drafts before publishing
+- [ ] Publish draft → open
+- [ ] Edit a load while in DRAFT or OPEN status
+- [ ] Cancel a load (any pre-delivered status)
+- [ ] Dashboard shows all loads with status (draft, open, claimed, in transit, delivered, cancelled, settled)
+- [ ] **[CRITICAL]** Origin and destination state stored as a validated 2-letter code selected from a dropdown — free-text entry (e.g. "Illinois" vs "IL") breaks trucker load board filters and makes loads invisible to truckers filtering by state
+- [ ] **[CRITICAL]** Confirmation dialog required before cancelling a load — cancellation is destructive (notifies trucker, frees their active slot); must require explicit confirmation
+- [ ] Address fields ordered street → city → state → zip (currently reversed from US postal convention)
+- [ ] Cross-field date validation: "Latest Pickup" must be after "Earliest Pickup"; "Earliest Delivery" must be after "Latest Pickup"; "Latest Delivery" must be after "Earliest Delivery"
+- [ ] Pickup/delivery window fields labeled "Earliest Pickup" / "Latest Pickup" / "Earliest Delivery" / "Latest Delivery" (current "Pickup From / To" reads as origin location, not a time window)
+- [ ] Status summary strip above loads table: count of active loads by status (open, claimed, in transit, delivered) for at-a-glance awareness
+- [ ] Weight field contextual hint: "Legal max: 80,000 lbs" to reduce accidental overweight loads
+- [ ] Cancel with reason (required reason field; shown to affected trucker)
+- [ ] Trucker notified when shipper cancels a claimed load; active load slot freed immediately
+- [ ] Post a load as first-come-first-served or open to bids
+- [ ] Duplicate a load to re-post quickly
+- [ ] Recurring load scheduling (post same lane on weekly/monthly cadence)
+- [ ] Freight class field (LTL)
+- [ ] Load posting validation prompts: in-form tips for accurate weight, special requirements, competitive rates, and realistic pickup/delivery windows
+
+### Carrier Selection
+- [ ] View trucker contact info (name, phone, email, MC/DOT) after load is claimed
+- [ ] View trucker public profile: rating, reviews, equipment, completed load history
+- [ ] Accept or reject bids from truckers (if posted as open to bids)
+- [ ] Assign a load directly to a preferred/trusted trucker
+- [ ] Maintain a preferred carrier list for repeat lanes
+- [ ] Block carriers who have performed poorly
+
+### Load Tracking
+- [ ] Real-time load status visible on dashboard (OPEN → CLAIMED → IN_TRANSIT → DELIVERED)
+- [ ] Receive notification when a trucker claims the load
+- [ ] Receive notification when trucker marks pickup (with timestamp)
+- [ ] Receive notification when trucker marks delivery (with timestamp and POD photo)
+- [ ] Full status history and timeline per load
+
+### Documentation
+- [ ] Platform-generated digital BOL from load data at publish time (addresses, commodity, weight, equipment)
+- [ ] View signed BOL photo uploaded by trucker at pickup
+- [ ] View Proof of Delivery (POD) photo uploaded by trucker at delivery
+- [ ] View and download all documents per load as PDF
+- [ ] Document history per load for auditing (timestamped log of uploads/downloads)
+
+### Payments
+- [ ] Pay rate and payment terms visible on load (quick pay, Net 7/15/30)
+- [ ] Automatic invoice generated on delivery confirmation
+- [ ] Pay carrier directly through the platform
+- [ ] View full payment history by load, carrier, and date range
+- [ ] Receipts per transaction
+- [ ] Payment dispute: flag delivery as incomplete; payment held pending resolution
+
+### Communication
+- [ ] In-app messaging with assigned trucker (per-load thread)
+- [ ] Push/email/SMS notifications for load status changes and messages
+- [ ] Notified immediately of any delay or issue reported by the trucker
+
+### Ratings & Reviews
+- [ ] Rate and review the trucker after load completion
+- [ ] Shipper public profile visible to truckers before claiming: overall rating, avg payment speed, completed load count, dispute/cancellation flags
+- [ ] View own shipper rating and feedback history
+- [ ] View trucker ratings before assigning a load
+
+---
+
+## Non-Functional Requirements
+
+- Load posting must be fast — a shipper should be able to post a load in under 2 minutes
+- Load information must be validated before publishing (required fields enforced)
+- State fields must be stored and transmitted as validated 2-letter codes — this is a data integrity requirement, not a UX preference; filter correctness on the trucker side depends on it
+- All destructive actions (cancel a live load) must require explicit confirmation before executing
+- Documents (BOL, POD) must be stored securely and accessible at any time
+- Payment processing must be reliable and auditable
+- The platform must make shipper reputation visible — truckers decide which loads to claim partly based on shipper rating and payment history
+
+---
+
+## Load Posting Best Practices (enforced or prompted by the platform)
+
+These are surfaced as tips or validation warnings to shippers during load creation:
+
+1. **Be accurate** — incorrect weight or dimensions cause disputes at pickup and damage trust with carriers
+2. **State all special requirements upfront** — tarps, straps, hazmat certs, liftgate, inside delivery, etc.
+3. **Set competitive rates** — loads with below-market rates sit unclaimed; the platform can show market rate benchmarks
+4. **Use realistic pickup/delivery windows** — overly tight windows deter experienced carriers
+5. **Choose appropriate payment terms** — quick pay options attract more and better carriers
+6. **Communicate proactively** — notify truckers immediately if pickup details change
+
+---
+
+## Permissions / Role Constraints
+
+| Action | Shipper |
+|--------|---------|
+| Post a load | Yes |
+| Browse loads | No |
+| Claim a load | No |
+| Update load status | No (read-only; trucker updates status) |
+| View trucker contact info | Yes (after assigning load) |
+| Rate a trucker | Yes (after delivery) |
+| Access admin tools | No |
+
+---
+
+## Load Status Transitions (Shipper Visibility)
+
+```
+draft → open          (shipper publishes the load)
+open → claimed        (trucker claims; shipper notified)
+claimed → in_transit  (trucker marks pickup; shipper notified)
+in_transit → delivered  (trucker marks delivery; shipper notified + POD received)
+delivered → settled   (shipper pays invoice; load closed)
+```
+
+Shippers can cancel a load while in `open` or `claimed` status (before pickup).
+
+---
+
+## Shipper Reputation
+
+A shipper's public profile visible to truckers before claiming includes:
+
+| Signal | Source | Display |
+|--------|--------|---------|
+| Overall rating | Trucker reviews (1–5 stars) | Star badge on load cards and shipper profile |
+| Average payment speed | Time from delivery confirmation to payment | e.g., "Typically pays in 7 days" |
+| Completed load count | Load history | Builds credibility for new shippers with no rating yet |
+| Dispute / cancellation flags | Flagged payments, cancelled CLAIMED loads | Warning indicator visible to truckers |
+
+Truckers use this to decide whether to claim. Shippers with poor ratings or slow payment histories will see lower claim rates and may lose bids to shippers with stronger reputations. The platform should surface this data prominently on load cards, not just on the shipper's full profile page.
+
+**Average payment speed** is calculated from: `payment_confirmed_at − delivered_at` across the last 90 days of completed loads.
+
+---
+
+## Future Considerations
+
+- Recurring load scheduling (post the same lane on a weekly/monthly cadence) — Phase 9
+- Rate benchmarking tool (show market rate for a lane at time of posting) — Phase 9
+- Carrier scorecards (detailed performance metrics per trucker) — Phase 9
+- Freight insurance integration (optional per-load cargo insurance at booking) — Phase 9
+- TMS API access (REST API for shippers with their own Transportation Management System) — Phase 9
+- Volume shipper accounts with role-based permissions (e.g., dispatcher vs billing)
+- Load posting templates for frequent commodity/equipment combinations

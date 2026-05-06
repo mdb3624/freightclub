@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [Unreleased] — 2026-04-22
+
+### Documentation
+- Regenerated FEATURES.md from live codebase scan
+- Regenerated REQUIREMENTS.md with phase-by-phase completion status
+- Regenerated GAP-ANALYSIS.md with confirmed gaps and priority recommendations
+- Regenerated ARCHITECTURE.md with system design, ADRs, and DB schema
+- Regenerated EXECUTIVE-SUMMARY.md with stakeholder view of current state and risks
+- Regenerated PROJECT-PLAN.md with phase delivery plan and immediate next priorities
+
+---
+
 ## [Unreleased] — 2026-04-02
 
 ### Documentation

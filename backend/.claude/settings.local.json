@@ -1,12 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git *)",
-      "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
-      "mcp__plugin_context-mode_context-mode__ctx_search",
-      "Bash(/c/tools/apache-maven-3.9.9/bin/mvn clean *)",
-      "Bash(/c/tools/apache-maven-3.9.9/bin/mvn test *)",
-      "Bash(/c/tools/apache-maven-3.9.9/bin/mvn package *)"
+      "mcp__plugin_context-mode_context-mode__ctx_batch_execute"
     ]
   }
 }

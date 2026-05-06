@@ -1,25 +1,32 @@
 # 🛡️ Resilience Logistics Platform: System Instructions
 
-You are an expert AI software engineering team (Librarian, Architect, Coder, and Reviewer). You must adhere to the following project governance rules without exception.
-
 ## 1. The Story-First Gate (Mandatory)
-- **Zero-Story, Zero-Code:** You are STRICTLY PROHIBITED from generating production code unless a corresponding User Story exists in `docs/business/stories/`.
-- **Pre-Flight Check:** Before starting any task, you must search the `docs/business/stories/` directory for the relevant Story ID. 
-- **Missing Stories:** If no story exists, you must pause and ask the user to provide a Story ID or use the "Story-Generator Prompt" to create one.
-- **Traceability:** Every code block generated must cite which "Acceptance Criterion" from the story it is satisfying.
+- **Zero-Story, Zero-Code:** STRICTLY PROHIBITED from generating production code without a corresponding User Story in `docs/business/stories/`.
+- **Traceability:** Every code block must cite the specific "Acceptance Criterion" it satisfies.
+- **Legacy Promotion:** Every new story must cite its legacy source path from `docs-old/archive/phasesx` until that directory is deleted.
 
-## 2. Structural & Quality Gates
-- **Complexity Limit (NFR-501):** No method shall exceed a Cyclomatic Complexity of 10. If a proposed solution is too complex, you must refactor using the Strategy or Specification patterns before presenting it.
-- **Coverage Requirement (NFR-502):** All domain logic must be accompanied by unit tests achieving at least 80% branch coverage.
-- **Markdown Format:** All artifacts (Code, Docs, SQL) must be presented in copy-ready Markdown blocks.
+## 2. Architectural Integrity & NFRs
+- **RLS Mandatory:** No tables without RLS enabled and tenant isolation policies.
+- **No-Lombok Rule:** Refactor Lombok to standard Java patterns (Manual Getters/Setters or Records).
+- **RULE [ARCH-001]:** Service-layer methods MUST NOT accept `tenantId` as a parameter. All tenant context MUST be resolved via `TenantContextHolder`. Any violation is a breaking change.
+- **NFR-504 (Caching):** ALL GET endpoints must implement caching.
+    - **Strategy:** "Cache until underlying domain data changes."
+    - **Invalidation:** Must trigger immediately on PUT/POST/PATCH for the associated domain entity.
+- **Data Standards:** Enforce `VARCHAR(36)` primary keys and Java 21 syntax.
 
-## 3. Directory & Referencing Standards
-- **One Story Per File:** Each user story must reside in its own file named `[STORY_ID].md`.
-- **Context Injection:** Always use the `` syntax when referencing requirements, stories, or the project plan to ensure alignment.
-- **Enon Integrity:** Ensure all SQL migrations include Row Level Security (RLS) triggers and reference the `tenant_id` for multi-tenant isolation.
+## 3. Advanced Research Protocol (BA Role)
+- **Wholistic Research:** The BA must proactively research FMCSA (HOS), IRS (IFTA), and EIA regulatory standards for all logistics features.
+- **Gap Prevention:** Every feature must be cross-referenced against the `HOLISTIC_ROADMAP_AUDIT_PHASES_1_TO_7b.md` to ensure no "Missing Middle" requirements are lost.
 
-## 4. Persona Responsibilities
-- **[LIBRARIAN]:** Maintains documentation, verifies Story IDs, and ensures the Glossary is used correctly.
-- **[ARCHITECT]:** Designs the Hexagonal structure and enforces the Complexity Gate.
-- **[CODER]:** Writes the implementation and the corresponding test suite.
-- **[REVIEWER]:** Audits the final output against the `reviewer-checklist.md` before concluding the task.
+## 4. Output & Squelch Protocols (STRICT BREVITY)
+- **Squelch Diffs:** Strictly squelch line-by-line diff logs (+/- markers) and line numbers during file updates.
+- **Execution Summary:** Replace diffs with a "Commit Message" style summary:
+    - **[Action]**: Component name.
+    - **[Logic]**: Brief description of the change/implementation.
+    - **[Guardrails]**: Confirmation of RLS, Caching, and No-Lombok compliance.
+    - **[Status]**: Done/Pending.
+- **No Explanations:** Do not explain logic, justifications, or reasoning unless explicitly requested with "Why?".
+
+## 5. Librarian & Traceability
+- **Librarian Gate:** Only update `Story_Map.md` upon completion of a story (Status = DONE).
+- **Safe Deletion Path:** Maintain a "Legacy Mapping" field in all features until `docs-old` is verified as 100% migrated and deleted.

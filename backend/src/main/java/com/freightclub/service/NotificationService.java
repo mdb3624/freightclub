@@ -6,6 +6,9 @@ import com.freightclub.domain.User;
 import com.freightclub.dto.NotificationResponse;
 import com.freightclub.repository.NotificationRepository;
 import com.freightclub.repository.UserRepository;
+import com.freightclub.security.TenantContextHolder;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -71,28 +74,36 @@ public class NotificationService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "notifications", key = "#userId + ':' + #page + ':' + #size + ':' + T(com.freightclub.security.TenantContextHolder).getTenantId()")
     public Page<NotificationResponse> getNotifications(String userId, int page, int size) {
+        String tenantId = TenantContextHolder.getTenantId();
         return notificationRepository
-                .findByUserIdOrderByCreatedAtDesc(userId, PageRequest.of(page, size))
+                .findByUserIdAndTenantIdOrderByCreatedAtDesc(userId, tenantId, PageRequest.of(page, size))
                 .map(NotificationResponse::from);
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "notificationCount", key = "#userId + ':' + T(com.freightclub.security.TenantContextHolder).getTenantId()")
     public long getUnreadCount(String userId) {
-        return notificationRepository.countByUserIdAndReadFalse(userId);
+        String tenantId = TenantContextHolder.getTenantId();
+        return notificationRepository.countByUserIdAndTenantIdAndReadFalse(userId, tenantId);
     }
 
+    @CacheEvict(value = {"notifications", "notificationCount"}, allEntries = true)
     public void markRead(String notificationId, String userId) {
+        String tenantId = TenantContextHolder.getTenantId();
         notificationRepository.findById(notificationId).ifPresent(n -> {
-            if (n.getUserId().equals(userId)) {
+            if (n.getUserId().equals(userId) && n.getTenantId().equals(tenantId)) {
                 n.setRead(true);
                 notificationRepository.save(n);
             }
         });
     }
 
+    @CacheEvict(value = {"notifications", "notificationCount"}, allEntries = true)
     public int markAllRead(String userId) {
-        return notificationRepository.markAllReadByUserId(userId);
+        String tenantId = TenantContextHolder.getTenantId();
+        return notificationRepository.markAllReadByUserIdAndTenantId(userId, tenantId);
     }
 
     // --- helpers ---

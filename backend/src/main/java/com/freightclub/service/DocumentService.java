@@ -14,6 +14,8 @@ import com.freightclub.repository.LoadRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
 import com.freightclub.storage.StorageService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +52,7 @@ public class DocumentService {
         this.bolGeneratorService = bolGeneratorService;
     }
 
+    @CacheEvict(value = "documents", allEntries = true)
     public void generateBolOnPublish(Load load) {
         User shipper = userRepository.findById(load.getShipperId())
                 .orElseThrow(() -> new IllegalStateException("Shipper not found: " + load.getShipperId()));
@@ -70,6 +73,7 @@ public class DocumentService {
         documentRepository.save(doc);
     }
 
+    @CacheEvict(value = "documents", allEntries = true)
     public DocumentResponse uploadBolPhoto(String loadId, String truckerId, MultipartFile file) {
         Load load = requireAssignedLoad(loadId, truckerId);
         if (load.getStatus() != LoadStatus.CLAIMED) {
@@ -78,6 +82,7 @@ public class DocumentService {
         return storePhoto(load, truckerId, DocumentType.BOL_PHOTO, file);
     }
 
+    @CacheEvict(value = "documents", allEntries = true)
     public DocumentResponse uploadPodPhoto(String loadId, String truckerId, MultipartFile file) {
         Load load = requireAssignedLoad(loadId, truckerId);
         if (load.getStatus() != LoadStatus.IN_TRANSIT) {
@@ -86,6 +91,7 @@ public class DocumentService {
         return storePhoto(load, truckerId, DocumentType.POD_PHOTO, file);
     }
 
+    @CacheEvict(value = "documents", allEntries = true)
     public void reportIssue(String loadId, String truckerId, String description, MultipartFile photo) {
         Load load = requireAssignedLoad(loadId, truckerId);
         if (load.getStatus() != LoadStatus.IN_TRANSIT) {
@@ -123,6 +129,7 @@ public class DocumentService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "documents", key = "#loadId + ':' + T(com.freightclub.security.TenantContextHolder).getTenantId()")
     public List<DocumentResponse> getLoadDocuments(String loadId, String requesterId) {
         requireAccessToLoad(loadId, requesterId);
         return documentRepository.findByLoadIdAndDeletedAtIsNull(loadId)

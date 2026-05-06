@@ -14,6 +14,7 @@ import com.freightclub.dto.LoadFields;
 import com.freightclub.dto.LoadResponse;
 import com.freightclub.dto.LoadSummaryResponse;
 import com.freightclub.dto.UpdateLoadRequest;
+import com.freightclub.modules.carrier.application.CarrierCostProfileService;
 import com.freightclub.repository.ClaimRepository;
 import com.freightclub.repository.LoadEventRepository;
 import com.freightclub.repository.LoadSpecifications;
@@ -52,11 +53,13 @@ public class LoadService {
     private final ClaimRepository claimRepository;
     private final LoadEventRepository loadEventRepository;
     private final NotificationService notificationService;
+    private final CarrierCostProfileService carrierCostProfileService;
 
     public LoadService(LoadRepository loadRepository, UserRepository userRepository,
                        DocumentService documentService, RatingService ratingService,
                        ClaimRepository claimRepository, LoadEventRepository loadEventRepository,
-                       NotificationService notificationService) {
+                       NotificationService notificationService,
+                       CarrierCostProfileService carrierCostProfileService) {
         this.loadRepository = loadRepository;
         this.userRepository = userRepository;
         this.documentService = documentService;
@@ -64,6 +67,7 @@ public class LoadService {
         this.claimRepository = claimRepository;
         this.loadEventRepository = loadEventRepository;
         this.notificationService = notificationService;
+        this.carrierCostProfileService = carrierCostProfileService;
     }
 
     public LoadResponse createDraft(CreateLoadRequest request, String shipperId) {
@@ -173,15 +177,27 @@ public class LoadService {
         org.springframework.data.domain.Page<com.freightclub.domain.Load> loadPage =
                 loadRepository.findAll(LoadSpecifications.withFilter(effective), pageable);
 
-        Set<String> shipperIds = loadPage.getContent().stream()
+        // [US-705] Filter loads by trucker's minimum RPM requirement
+        BigDecimal minRpm = carrierCostProfileService.calculateMinimumRPM(truckerId);
+        java.util.List<com.freightclub.domain.Load> filteredLoads = loadPage.getContent().stream()
+                .filter(load -> load.getPayRate() != null && load.getPayRate().compareTo(minRpm) >= 0)
+                .collect(Collectors.toList());
+
+        Set<String> shipperIds = filteredLoads.stream()
                 .map(com.freightclub.domain.Load::getShipperId)
                 .collect(Collectors.toSet());
         Map<String, double[]> ratings = ratingService.getShipperRatingSummaries(shipperIds);
 
-        return loadPage.map(load -> {
-            double[] r = ratings.get(load.getShipperId());
-            return LoadSummaryResponse.from(load, r != null ? r[0] : null, r != null ? (long) r[1] : 0L);
-        });
+        return new org.springframework.data.domain.PageImpl<>(
+                filteredLoads.stream()
+                        .map(load -> {
+                            double[] r = ratings.get(load.getShipperId());
+                            return LoadSummaryResponse.from(load, r != null ? r[0] : null, r != null ? (long) r[1] : 0L);
+                        })
+                        .collect(Collectors.toList()),
+                pageable,
+                loadPage.getTotalElements()
+        );
     }
 
     @Transactional(readOnly = true)

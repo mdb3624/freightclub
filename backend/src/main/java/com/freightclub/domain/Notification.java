@@ -23,7 +23,7 @@ public class Notification {
     @Column(name = "load_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
     private String loadId;
 
-    @Column(nullable = false, length = 30)
+    @Column(name = "notification_type", nullable = false, length = 50)
     private String type;
 
     @Column(nullable = false, columnDefinition = "TEXT")

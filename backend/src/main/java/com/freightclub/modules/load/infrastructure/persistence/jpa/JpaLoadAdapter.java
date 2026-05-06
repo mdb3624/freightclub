@@ -3,8 +3,10 @@ package com.freightclub.modules.load.infrastructure.persistence.jpa;
 import com.freightclub.modules.load.application.ports.out.LoadRepositoryPort;
 import com.freightclub.modules.load.domain.CarrierId;
 import com.freightclub.modules.load.domain.LoadAggregate;
+import com.freightclub.modules.load.domain.LoadStatus;
 import com.freightclub.modules.load.domain.Money;
 import com.freightclub.modules.load.domain.Weight;
+import com.freightclub.security.TenantContextHolder;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,10 +33,20 @@ public class JpaLoadAdapter implements LoadRepositoryPort {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<LoadAggregate> findById(String tenantId, String loadId) {
+    public Optional<LoadAggregate> findById(String loadId) {
+        String tenantId = TenantContextHolder.getTenantId();
         setTenant(tenantId);
         return repo.findByIdAndTenantIdAndDeletedAtIsNull(loadId, tenantId)
                 .map(this::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countActiveLoadsByCarrier(String carrierId) {
+        String tenantId = TenantContextHolder.getTenantId();
+        setTenant(tenantId);
+        return repo.countByTenantIdAndTruckerIdAndStatusAndDeletedAtIsNull(
+                tenantId, carrierId, LoadStatus.CLAIMED);
     }
 
     // ── RLS propagation ───────────────────────────────────────────────────────
@@ -66,7 +78,6 @@ public class JpaLoadAdapter implements LoadRepositoryPort {
         e.setPayRateType(a.getPayRateType());
         e.setDistanceMiles(a.getDistanceMiles());
         e.setTruckerId(a.getCarrierId() != null ? a.getCarrierId().value() : null);
-        e.setPodUrl(a.getPodUrl());
         e.setCancelReason(a.getCancelReason());
         return e;
     }
@@ -79,7 +90,7 @@ public class JpaLoadAdapter implements LoadRepositoryPort {
                 Weight.of(e.getWeightLbs()),
                 e.getStatus(),
                 e.getTruckerId() != null ? CarrierId.of(e.getTruckerId()) : null,
-                e.getPodUrl(),
+                null,
                 e.getCancelReason(),
                 e.getEquipmentType() != null ? e.getEquipmentType().name() : null,
                 e.getOriginCity(),

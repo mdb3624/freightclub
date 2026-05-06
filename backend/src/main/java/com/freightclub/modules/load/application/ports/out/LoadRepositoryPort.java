@@ -8,5 +8,7 @@ public interface LoadRepositoryPort {
 
     LoadAggregate save(LoadAggregate aggregate);
 
-    Optional<LoadAggregate> findById(String tenantId, String loadId);
+    Optional<LoadAggregate> findById(String loadId);
+
+    long countActiveLoadsByCarrier(String carrierId);
 }

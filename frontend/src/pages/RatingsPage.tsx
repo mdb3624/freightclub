@@ -1,13 +1,8 @@
-import { useAuthStore } from '@/store/authStore'
 import { useMyReceivedRatings, useMyRatingSummary } from '@/features/ratings/hooks/useRatings'
 import { StarRating } from '@/features/ratings/components/StarRating'
 import { AppShell } from '@/components/AppShell'
 
 export function RatingsPage() {
-  const user = useAuthStore((s) => s.user)
-  const isTrucker = user?.role === 'TRUCKER'
-  const dashboardPath = isTrucker ? '/dashboard/trucker' : '/dashboard/shipper'
-
   const { data: summary } = useMyRatingSummary()
   const { data: page, isLoading } = useMyReceivedRatings()
 

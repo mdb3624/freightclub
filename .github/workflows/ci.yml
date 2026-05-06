@@ -21,6 +21,12 @@ jobs:
           distribution: temurin
           cache: maven
 
+      - name: Start PostgreSQL and create test database
+        run: |
+          sudo systemctl start postgresql.service
+          sudo -u postgres psql -c "CREATE USER freightclub_runtime WITH PASSWORD 'freightclub' SUPERUSER;"
+          sudo -u postgres psql -c "CREATE DATABASE freightclub_test OWNER freightclub_runtime;"
+
       - name: Run tests
         working-directory: backend
         run: mvn test

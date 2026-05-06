@@ -1,12 +1,17 @@
 package com.freightclub.infrastructure.security;
 
+import com.freightclub.domain.Tenant;
 import com.freightclub.domain.User;
 import com.freightclub.domain.UserRole;
 import com.freightclub.modules.load.application.ports.in.LoadUseCase;
 import com.freightclub.modules.load.domain.LoadAggregate;
 import com.freightclub.modules.load.domain.LoadStatus;
 import com.freightclub.modules.load.domain.Weight;
+import com.freightclub.repository.TenantRepository;
+import com.freightclub.repository.UserRepository;
 import com.freightclub.security.JwtService;
+import com.freightclub.security.TenantContextHolder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +19,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -32,13 +42,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Transactional
 class SecurityIntegrationTest {
 
-    private static final String TENANT_ID = UUID.randomUUID().toString();
-    private static final String USER_ID   = UUID.randomUUID().toString();
+    private static final String TENANT_ID = "test-tenant-security";
+    private static final String USER_ID   = "security-test-user";
 
     @Autowired MockMvc mockMvc;
     @Autowired JwtService jwtService;
+    @Autowired UserRepository userRepository;
+    @Autowired TenantRepository tenantRepository;
 
     // Mock service layer so no database is touched
     @MockBean LoadUseCase loadUseCase;
@@ -49,6 +62,9 @@ class SecurityIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        TenantContextHolder.setTenantId(TENANT_ID);
+        ensureUserExists();
+
         User user = mock(User.class);
         when(user.getId()).thenReturn(USER_ID);
         when(user.getEmail()).thenReturn("shipper@test.com");
@@ -64,8 +80,44 @@ class SecurityIntegrationTest {
         when(stubLoad.getStatus()).thenReturn(LoadStatus.DRAFT);
         when(stubLoad.getWeight()).thenReturn(Weight.of(BigDecimal.valueOf(1000)));
 
-        when(loadUseCase.createDraft(anyString(), anyString(), any(BigDecimal.class)))
+        when(loadUseCase.createDraft(anyString(), any(BigDecimal.class)))
                 .thenReturn(stubLoad);
+    }
+
+    private void ensureUserExists() {
+        // Create tenant if not exists
+        if (!tenantRepository.findById(TENANT_ID).isPresent()) {
+            Tenant tenant = new Tenant();
+            tenant.setId(TENANT_ID);
+            tenant.setName("Security Test Tenant");
+            tenantRepository.save(tenant);
+        }
+
+        // Create user if not exists
+        User persistedUser = null;
+        if (!userRepository.findById(USER_ID).isPresent()) {
+            User user = new User(USER_ID);
+            user.setTenantId(TENANT_ID);
+            user.setEmail("shipper@test.com");
+            user.setPasswordHash("$2a$10$testpassword");
+            user.setRole(UserRole.SHIPPER);
+            user.setFirstName("Test");
+            user.setLastName("Shipper");
+            persistedUser = userRepository.save(user);
+        } else {
+            persistedUser = userRepository.findById(USER_ID).get();
+        }
+
+        // Populate SecurityContextHolder
+        var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + persistedUser.getRole().name()));
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                persistedUser, null, authorities);
+        SecurityContextHolder.getContext().setAuthentication(token);
+    }
+
+    @AfterEach
+    void tearDown() {
+        TenantContextHolder.clear();
     }
 
     @Test
@@ -76,7 +128,7 @@ class SecurityIntegrationTest {
                         .content("{\"shipperId\":\"shipper-1\",\"weightLbs\":1000}"))
                 .andExpect(status().isCreated());
 
-        verify(loadUseCase).createDraft(eq(TENANT_ID), anyString(), any(BigDecimal.class));
+        verify(loadUseCase).createDraft(anyString(), any(BigDecimal.class));
     }
 
     @Test

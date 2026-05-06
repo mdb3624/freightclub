@@ -1,8 +1,14 @@
 # Restart Application
 
-Kill all running FreightClub processes and restart the full stack.
+Kill all running FreightClub processes for the specified environment and restart it.
 
-## Steps
+**Usage:** `/restart dev` | `/restart test` | `/restart prod`
+
+---
+
+## DEV Environment
+
+**Usage:** `/restart dev`
 
 1. **Kill all Java processes** (backend):
    ```
@@ -25,4 +31,31 @@ Kill all running FreightClub processes and restart the full stack.
    ```
    If any PIDs remain, kill them: `taskkill //F //PID <pid>`
 
-5. **Follow the `/start` skill** to rebuild and restart both services.
+5. **Follow the `/start dev` skill** to rebuild and restart.
+
+---
+
+## TEST Environment
+
+**Usage:** `/restart test`
+
+1. **Stop and remove test containers**:
+   ```
+   docker compose -f /c/projects/freightclub/docker-compose.test.yml down -v
+   ```
+   The `-v` flag removes volumes to ensure a clean state.
+
+2. **Follow the `/start test` skill** to restart the QA environment.
+
+---
+
+## PROD Environment
+
+**Usage:** `/restart prod`
+
+1. **Stop and remove production containers** (keep volumes to preserve uploads):
+   ```
+   docker compose -f /c/projects/freightclub/docker-compose.prod.yml down
+   ```
+
+2. **Follow the `/start prod` skill** to restart the production environment.

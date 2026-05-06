@@ -8,6 +8,7 @@ import com.freightclub.modules.load.domain.DomainEvent;
 import com.freightclub.modules.load.domain.LoadAggregate;
 import com.freightclub.modules.load.domain.LoadDomainException;
 import com.freightclub.modules.load.domain.Weight;
+import com.freightclub.security.TenantContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,20 +31,22 @@ public class LoadApplicationService implements LoadUseCase {
     }
 
     @Override
-    public LoadAggregate createLoad(String tenantId, String shipperId, CreateLoadCommand cmd) {
+    public LoadAggregate createLoad(String shipperId, CreateLoadCommand cmd) {
         validateStateCode(cmd.originState(), "origin_state");
         validateStateCode(cmd.destState(), "dest_state");
+        String tenantId = TenantContextHolder.getTenantId();
         return repository.save(LoadAggregate.create(tenantId, shipperId, cmd));
     }
 
     @Override
-    public LoadAggregate createDraft(String tenantId, String shipperId, BigDecimal weightLbs) {
+    public LoadAggregate createDraft(String shipperId, BigDecimal weightLbs) {
+        String tenantId = TenantContextHolder.getTenantId();
         return repository.save(LoadAggregate.create(tenantId, shipperId, Weight.of(weightLbs)));
     }
 
     @Override
-    public LoadAggregate publish(String tenantId, String loadId) {
-        LoadAggregate load = findOrThrow(tenantId, loadId);
+    public LoadAggregate publish(String loadId) {
+        LoadAggregate load = findOrThrow(loadId);
         load.publish();
         List<DomainEvent> events = load.pullDomainEvents();
         LoadAggregate saved = repository.save(load);
@@ -52,8 +55,15 @@ public class LoadApplicationService implements LoadUseCase {
     }
 
     @Override
-    public LoadAggregate claim(String tenantId, String loadId, String carrierId) {
-        LoadAggregate load = findOrThrow(tenantId, loadId);
+    public LoadAggregate claim(String loadId, String carrierId) {
+        // [OO-CRIT-6] One Active Load constraint: owner/operator can only claim 1 load at a time
+        long activeLoadCount = repository.countActiveLoadsByCarrier(carrierId);
+        if (activeLoadCount > 0) {
+            throw new OneActiveLoadException(
+                    "Owner/operator can only have 1 active load. Deliver your current load to claim a new one.");
+        }
+
+        LoadAggregate load = findOrThrow(loadId);
         load.claim(CarrierId.of(carrierId));
         List<DomainEvent> events = load.pullDomainEvents();
         LoadAggregate saved = repository.save(load);
@@ -62,22 +72,22 @@ public class LoadApplicationService implements LoadUseCase {
     }
 
     @Override
-    public LoadAggregate cancelLoad(String tenantId, String loadId, String reason) {
-        LoadAggregate load = findOrThrow(tenantId, loadId);
+    public LoadAggregate cancelLoad(String loadId, String reason) {
+        LoadAggregate load = findOrThrow(loadId);
         load.cancel(reason);
         return repository.save(load);
     }
 
     @Override
-    public LoadAggregate startTrip(String tenantId, String loadId) {
-        LoadAggregate load = findOrThrow(tenantId, loadId);
+    public LoadAggregate startTrip(String loadId) {
+        LoadAggregate load = findOrThrow(loadId);
         load.startTrip();
         return repository.save(load);
     }
 
     @Override
-    public LoadAggregate completeDelivery(String tenantId, String loadId, String podUrl) {
-        LoadAggregate load = findOrThrow(tenantId, loadId);
+    public LoadAggregate completeDelivery(String loadId, String podUrl) {
+        LoadAggregate load = findOrThrow(loadId);
         load.completeDelivery(podUrl);
         List<DomainEvent> events = load.pullDomainEvents();
         LoadAggregate saved = repository.save(load);
@@ -93,8 +103,8 @@ public class LoadApplicationService implements LoadUseCase {
         }
     }
 
-    private LoadAggregate findOrThrow(String tenantId, String loadId) {
-        return repository.findById(tenantId, loadId)
+    private LoadAggregate findOrThrow(String loadId) {
+        return repository.findById(loadId)
                 .orElseThrow(() -> new LoadNotFoundException(loadId));
     }
 }

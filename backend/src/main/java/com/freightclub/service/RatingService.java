@@ -16,6 +16,8 @@ import com.freightclub.repository.LoadRepository;
 import com.freightclub.repository.RatingRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -51,7 +53,7 @@ public class RatingService {
 
     private record RatingContext(String reviewerId, String reviewedId, UserRole role, CreateRatingRequest req) {}
 
-    /** Shipper rates the trucker who delivered their load. */
+    @CacheEvict(value = {"ratingSummary", "ratingList"}, allEntries = true)
     public RatingResponse rateTrucker(String loadId, String shipperId, CreateRatingRequest req) {
         Load load = requireRatableLoad(loadId, TenantContextHolder.getTenantId());
         if (!shipperId.equals(load.getShipperId())) {
@@ -66,7 +68,7 @@ public class RatingService {
         return save(load, new RatingContext(shipperId, load.getTruckerId(), UserRole.SHIPPER, req));
     }
 
-    /** Trucker rates the shipper whose load they delivered. */
+    @CacheEvict(value = {"ratingSummary", "ratingList"}, allEntries = true)
     public RatingResponse rateShipper(String loadId, String truckerId, CreateRatingRequest req) {
         Load load = requireRatableLoad(loadId, TenantContextHolder.getTenantId());
         if (!truckerId.equals(load.getTruckerId())) {
@@ -79,12 +81,14 @@ public class RatingService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "ratingList", key = "#loadId + ':' + #reviewerId + ':' + T(com.freightclub.security.TenantContextHolder).getTenantId()")
     public Optional<RatingResponse> getMyRatingForLoad(String loadId, String reviewerId) {
         return ratingRepository.findByLoadIdAndReviewerId(loadId, reviewerId)
                 .map(RatingResponse::from);
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "ratingList", key = "#userId + ':' + #page + ':' + #size + ':' + T(com.freightclub.security.TenantContextHolder).getTenantId()")
     public Page<RatingResponse> getMyRatingsReceived(String userId, int page, int size) {
         PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return ratingRepository.findByReviewedIdOrderByCreatedAtDesc(userId, pageable)
@@ -92,6 +96,7 @@ public class RatingService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "ratingSummary", key = "#truckerId + ':trucker:' + T(com.freightclub.security.TenantContextHolder).getTenantId()")
     public RatingSummaryResponse getTruckerSummary(String truckerId) {
         long completed = loadRepository.countByTruckerIdAndStatusInAndDeletedAtIsNull(
                 truckerId, RATABLE_STATUSES);
@@ -99,6 +104,7 @@ public class RatingService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "ratingSummary", key = "#shipperId + ':shipper:' + T(com.freightclub.security.TenantContextHolder).getTenantId()")
     public RatingSummaryResponse getShipperSummary(String shipperId) {
         long completed = loadRepository.countByShipperIdAndStatusInAndDeletedAtIsNull(
                 shipperId, RATABLE_STATUSES);
@@ -106,6 +112,7 @@ public class RatingService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "ratingSummary", key = "#shipperId + ':profile:' + T(com.freightclub.security.TenantContextHolder).getTenantId()")
     public ShipperPublicProfileResponse getShipperPublicProfile(String shipperId) {
         User shipper = userRepository.findById(shipperId)
                 .orElseThrow(() -> new LoadNotFoundException(shipperId));
@@ -123,6 +130,7 @@ public class RatingService {
 
     /** Batch fetch shipper avg-stars for the load board (keyed by shipperId). */
     @Transactional(readOnly = true)
+    @Cacheable(value = "shipperRatings", key = "#shipperIds.hashCode() + ':' + T(com.freightclub.security.TenantContextHolder).getTenantId()")
     public Map<String, double[]> getShipperRatingSummaries(Set<String> shipperIds) {
         if (shipperIds.isEmpty()) return Map.of();
         List<Object[]> rows = ratingRepository.findSummariesForIds(shipperIds, UserRole.TRUCKER);

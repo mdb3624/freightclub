@@ -55,7 +55,6 @@ const schema = z.object({
 export function ProfilePage() {
   const user = useAuthStore((s) => s.user)
   const isTrucker = user?.role === 'TRUCKER'
-  const dashboardPath = isTrucker ? '/dashboard/trucker' : '/dashboard/shipper'
 
   const { data: profile, isLoading } = useProfile()
   const { mutate, isPending, error, isSuccess } = useUpdateProfile()

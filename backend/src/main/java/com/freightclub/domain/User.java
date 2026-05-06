@@ -12,6 +12,15 @@ import java.util.UUID;
 @Table(name = "users")
 public class User {
 
+    // 1. Add this back for JPA and AuthService
+    public User() {
+    }
+
+    // 2. Keep this one for your MinRpmFilteringTest
+    public User(String id) {
+        this.id = id;
+    }
+
     @Id
     @Column(columnDefinition = "CHAR(36)", nullable = false, updatable = false)
     private String id;

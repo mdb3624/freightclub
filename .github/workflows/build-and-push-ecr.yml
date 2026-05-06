@@ -1,0 +1,75 @@
+name: Build and Push to Google Artifact Registry
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+env:
+  REGISTRY_REGION: us-central1
+  REGISTRY: us-central1-docker.pkg.dev
+  BACKEND_IMAGE: freightclub-backend
+  FRONTEND_IMAGE: freightclub-frontend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ env.REGISTRY_REGION }}-docker.pkg.dev
+
+      - name: Determine image tag
+        id: tags
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            TAG=${GITHUB_REF#refs/tags/}
+          else
+            TAG=latest
+          fi
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+          echo "registry=${{ env.REGISTRY }}/${{ secrets.GCP_PROJECT_ID }}" >> $GITHUB_OUTPUT
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ steps.tags.outputs.registry }}/${{ env.BACKEND_IMAGE }}:${{ steps.tags.outputs.tag }}
+            ${{ steps.tags.outputs.registry }}/${{ env.BACKEND_IMAGE }}:${{ steps.tags.outputs.sha }}
+            ${{ steps.tags.outputs.registry }}/${{ env.BACKEND_IMAGE }}:latest
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ${{ steps.tags.outputs.registry }}/${{ env.FRONTEND_IMAGE }}:${{ steps.tags.outputs.tag }}
+            ${{ steps.tags.outputs.registry }}/${{ env.FRONTEND_IMAGE }}:${{ steps.tags.outputs.sha }}
+            ${{ steps.tags.outputs.registry }}/${{ env.FRONTEND_IMAGE }}:latest
+
+      - name: Output image URIs
+        run: |
+          echo "Backend: ${{ steps.tags.outputs.registry }}/${{ env.BACKEND_IMAGE }}:${{ steps.tags.outputs.tag }}"
+          echo "Frontend: ${{ steps.tags.outputs.registry }}/${{ env.FRONTEND_IMAGE }}:${{ steps.tags.outputs.tag }}"

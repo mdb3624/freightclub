@@ -20,17 +20,17 @@ public class Rating {
     @Column(name = "load_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
     private String loadId;
 
-    @Column(name = "reviewer_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(name = "rater_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
     private String reviewerId;
 
-    @Column(name = "reviewed_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(name = "ratee_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
     private String reviewedId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "reviewer_role", nullable = false, columnDefinition = "VARCHAR(10)")
     private UserRole reviewerRole;
 
-    @Column(nullable = false, columnDefinition = "TINYINT")
+    @Column(name = "rating", nullable = false)
     private int stars;
 
     @Column(columnDefinition = "TEXT")

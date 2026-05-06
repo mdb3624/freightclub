@@ -193,4 +193,27 @@ public class Load {
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public LocalDateTime getDeletedAt() { return deletedAt; }
     public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
+
+    public String getOriginRegion() {
+        return stateToRegion(originState);
+    }
+
+    public String getDestRegion() {
+        return stateToRegion(destinationState);
+    }
+
+    private static String stateToRegion(String stateCode) {
+        if (stateCode == null) return null;
+        return switch (stateCode.toUpperCase()) {
+            case "AL", "GA", "FL", "SC", "NC", "VA", "WV", "TN", "KY", "AR", "LA", "MS", "TX", "OK" -> "Southeast";
+            case "CA", "NV", "HI" -> "California";
+            case "CO", "WY", "MT", "UT" -> "Southwest";
+            case "AZ", "NM" -> "Southwest";
+            case "OH", "IN", "IL", "MI", "WI", "MN", "IA", "MO" -> "Midwest";
+            case "NE", "KS", "SD", "ND" -> "Great Plains";
+            case "NY", "NJ", "CT", "MA", "VT", "NH", "ME", "PA" -> "Northeast";
+            case "DC" -> "Northeast";
+            default -> stateCode;
+        };
+    }
 }

@@ -27,6 +27,18 @@ This checklist defines the mandatory "Hard Gates" for any code merge. Failure to
 * [ ] **Outbox Pattern**: Does the logic correctly use the `message_outbox` for asynchronous event propagation?
 * [ ] **Idempotency**: Is the system resilient to duplicate events or messages?
 
+## 5. API Contract Gate (Integration Gate)
+* [ ] **Version Consistency**: If a new backend controller is added, its `@RequestMapping` version prefix matches `apiClient.ts` baseURL — or the mismatch is explicitly justified and all callers are updated.
+* [ ] **Full Endpoint Audit**: If `apiClient.ts` baseURL is changed, ALL frontend `api.ts` files and hooks using direct `axios` calls have been checked for breakage — not just the feature under review.
+* [ ] **Golden Path Smoke Test**: The reviewer has confirmed (or the PR author has documented) that login → primary feature → adjacent flows (load board, profile, notifications) → logout all work without network errors in a running dev environment.
+
+---
+
+## 6. Spring Security Filter Safety (Security Chain Gate)
+* [ ] **No double registration**: Any filter that is both `@Component` AND added via `addFilterBefore`/`addFilterAfter` in `SecurityConfig` MUST have a `FilterRegistrationBean` with `setEnabled(false)` to prevent it running outside the security chain. Without this, `SecurityContextHolderFilter` clears the auth set by the pre-chain run, causing 401 on all protected endpoints.
+* [ ] **Cache names registered**: Every `@Cacheable("name")` annotation references a cache name declared in `CacheConfig`. Missing names cause 500 errors at runtime.
+* [ ] **JJWT audience validation**: Do not use `requireAudience(String)` on the JJWT parser builder (0.12.x bug — compares String against Set). Validate audience manually after `parseSignedClaims`.
+
 ---
 
 ## ⚖️ Review Verdicts

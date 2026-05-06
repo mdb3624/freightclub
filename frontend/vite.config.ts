@@ -3,6 +3,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
+// Determine API target based on environment
+const apiTarget = process.env.VITE_API_URL || 'http://localhost:8080'
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -16,12 +19,12 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
   },
   server: {
-    port: 8080,
+    port: parseInt(process.env.VITE_PORT || '9090'),
     host: true,
     allowedHosts: ['mikebarnes.tail67dcb4.ts.net', ...(process.env.VITE_ALLOWED_HOST ? [process.env.VITE_ALLOWED_HOST] : [])],
     proxy: {
       '/api': {
-        target: 'http://localhost:9090',
+        target: apiTarget,
         changeOrigin: true,
       },
     },

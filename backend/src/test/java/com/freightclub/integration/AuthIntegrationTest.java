@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -83,6 +84,31 @@ class AuthIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(shipperRequest("duplicate@example.com"))))
                 .andExpect(status().isConflict());
+    }
+
+    /**
+     * Regression: JwtAuthenticationFilter was registered both as @Component (servlet chain)
+     * AND via addFilterBefore (security chain). SecurityContextHolderFilter cleared the auth
+     * set by the pre-chain filter, causing all protected endpoints to return 401 even with a
+     * valid token. This test catches that regression by performing a real login and then
+     * accessing a protected endpoint with the returned token.
+     */
+    @Test
+    void login_withValidCredentials_canAccessProtectedEndpoint() throws Exception {
+        // Register and capture access token
+        MvcResult loginResult = mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(shipperRequest("protected@example.com"))))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        String accessToken = objectMapper.readTree(loginResult.getResponse().getContentAsString())
+                .get("accessToken").asText();
+
+        // A valid token MUST be able to access a ROLE_SHIPPER protected endpoint (not 401/403)
+        mockMvc.perform(get("/api/v1/loads")
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk());
     }
 
     @Test

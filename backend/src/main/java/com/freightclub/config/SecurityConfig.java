@@ -23,6 +23,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+
 import java.util.List;
 
 @Configuration
@@ -45,13 +47,21 @@ public class SecurityConfig {
     }
 
     @Bean
+    public FilterRegistrationBean<JwtAuthenticationFilter> jwtFilterRegistration() {
+        FilterRegistrationBean<JwtAuthenticationFilter> registration = new FilterRegistrationBean<>(jwtAuthenticationFilter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/**", "/api/v1/market/**", "/error").permitAll()
+                .requestMatchers("/api/v1/auth/**", "/api/v1/market/**", "/error", "/actuator/health").permitAll()
+                .requestMatchers("/api/v1/shippers/*/public-reputation").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/loads/*/claim").hasRole("TRUCKER")
                 .requestMatchers("/api/v1/loads/**").hasRole("SHIPPER")
                 .requestMatchers("/api/v1/board/**").hasRole("TRUCKER")

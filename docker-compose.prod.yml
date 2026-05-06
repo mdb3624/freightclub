@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: ${GCP_REGISTRY}/freightclub-frontend:${IMAGE_TAG:-latest}
+    ports:
+      - "80:80"
+    environment:
+      - VITE_API_URL=${API_URL:-https://api.freightclub.app}
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  backend:
+    image: ${GCP_REGISTRY}/freightclub-backend:${IMAGE_TAG:-latest}
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      PORT: 8080
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      APP_JWT_SECRET: ${JWT_SECRET}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://freightclub.app}
+      STORAGE_PATH: /app/uploads
+    volumes:
+      - uploads_data:/app/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  uploads_data:

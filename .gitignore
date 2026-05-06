@@ -22,3 +22,12 @@ Thumbs.db
 # ---- Env files ----
 .env
 .env.local
+.env.prod
+.cloudrun-env.yaml
+
+# ---- Logs ----
+*.log
+logs/
+backend/logs/
+backend/build.log
+nul

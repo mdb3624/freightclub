@@ -7,7 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.util.Base64;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Service
@@ -19,7 +19,7 @@ public class JwtService {
     private final String audience;
 
     public JwtService(JwtProperties props) {
-        byte[] keyBytes = Base64.getDecoder().decode(props.getSecret());
+        byte[] keyBytes = props.getSecret().getBytes(StandardCharsets.UTF_8);
         this.signingKey = Keys.hmacShaKeyFor(keyBytes);
         this.accessTokenExpiryMs = props.getAccessTokenExpiryMs();
         this.issuer = props.getIssuer();
@@ -44,13 +44,20 @@ public class JwtService {
     }
 
     public Claims validateAndGetClaims(String token) {
-        return Jwts.parser()
+        Claims claims = Jwts.parser()
                 .verifyWith(signingKey)
-                .requireIssuer(issuer)
-                .requireAudience(audience)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+        // JJWT 0.12.x parses aud as Set<String>; requireAudience(String) uses equality not membership
+        if (!issuer.equals(claims.getIssuer())) {
+            throw new io.jsonwebtoken.MalformedJwtException("Invalid issuer");
+        }
+        java.util.Set<String> aud = claims.getAudience();
+        if (aud == null || !aud.contains(audience)) {
+            throw new io.jsonwebtoken.MalformedJwtException("Invalid audience");
+        }
+        return claims;
     }
 
     public long getAccessTokenExpiryMs() {

@@ -20,7 +20,8 @@ public class CacheConfig {
         "carrierLanes",        // AC-702: Carrier lane preferences (1h TTL)
         "carrierAvailability", // AC-703: Carrier availability windows (30m TTL)
         "shipperReputation",   // US-712: Shipper payment speed metrics (1h TTL)
-        "carrierCostProfile"   // US-702/730: Cost profile calculations (1h TTL)
+        "carrierCostProfile",  // US-702/730: Cost profile calculations (1h TTL)
+        "documents"            // DocumentService: BOL/document lookup by loadId+tenant
     );
   }
 }

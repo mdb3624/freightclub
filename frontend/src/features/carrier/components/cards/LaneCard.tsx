@@ -27,7 +27,13 @@ export default function LaneCard({ lane, onEdit }: LaneCardProps) {
     return `$${(cents / 100).toFixed(2)}/mi`;
   };
 
-  const frequencyLabel = lane.frequencyPreference === 'ANY' ? 'Any frequency' : `${lane.frequencyPreference.toLowerCase()} loads`;
+  const formatRegion = (r: string) =>
+    r.charAt(0).toUpperCase() + r.slice(1).toLowerCase().replace(/_/g, ' ');
+
+  const frequencyLabel =
+    lane.frequencyPreference === 'ANY'
+      ? 'Any frequency'
+      : `${lane.frequencyPreference.charAt(0).toUpperCase()}${lane.frequencyPreference.slice(1).toLowerCase()} loads`;
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 hover:border-slate-600 transition-colors">
@@ -35,7 +41,7 @@ export default function LaneCard({ lane, onEdit }: LaneCardProps) {
       <div className="flex items-center justify-between mb-3">
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-white">
-            {lane.originRegion} → {lane.destinationRegion}
+            {formatRegion(lane.originRegion)} → {formatRegion(lane.destinationRegion)}
           </h3>
           <p className="text-sm text-slate-400 mt-1">
             {formatRate(lane.minRateCents)} • {frequencyLabel}
@@ -55,16 +61,16 @@ export default function LaneCard({ lane, onEdit }: LaneCardProps) {
         <button
           onClick={() => onEdit(lane)}
           className="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded transition-colors text-sm font-medium"
-          aria-label={`Edit lane from ${lane.originRegion} to ${lane.destinationRegion}`}
+          aria-label={`Edit lane from ${formatRegion(lane.originRegion)} to ${formatRegion(lane.destinationRegion)}`}
         >
           Edit
         </button>
         <button
           onClick={() => setShowConfirm(true)}
-          className="flex-1 px-3 py-2 bg-red-900/30 hover:bg-red-900/50 text-red-300 rounded transition-colors text-sm font-medium"
-          aria-label={`Delete lane from ${lane.originRegion} to ${lane.destinationRegion}`}
+          className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-400 rounded transition-colors"
+          aria-label={`Delete lane from ${formatRegion(lane.originRegion)} to ${formatRegion(lane.destinationRegion)}`}
         >
-          Delete
+          🗑
         </button>
       </div>
 

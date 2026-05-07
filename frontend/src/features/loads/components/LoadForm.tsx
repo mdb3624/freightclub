@@ -57,24 +57,24 @@ const schema = z.object({
   specialRequirements: z.string().optional().default(''),
   overweightAcknowledged: z.boolean().optional().default(false),
 }).superRefine((data, ctx) => {
-  if (data.pickupFrom && data.pickupTo && new Date(data.pickupTo) <= new Date(data.pickupFrom)) {
+  if (data.pickupFrom && data.pickupTo && new Date(data.pickupTo) < new Date(data.pickupFrom)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: 'Latest Pickup must be after Earliest Pickup',
+      message: 'Latest Pickup cannot be before Earliest Pickup',
       path: ['pickupTo'],
     })
   }
-  if (data.pickupTo && data.deliveryFrom && new Date(data.deliveryFrom) <= new Date(data.pickupTo)) {
+  if (data.pickupTo && data.deliveryFrom && new Date(data.deliveryFrom) < new Date(data.pickupTo)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: 'Earliest Delivery must be after Latest Pickup',
+      message: 'Earliest Delivery cannot be before Latest Pickup',
       path: ['deliveryFrom'],
     })
   }
-  if (data.deliveryFrom && data.deliveryTo && new Date(data.deliveryTo) <= new Date(data.deliveryFrom)) {
+  if (data.deliveryFrom && data.deliveryTo && new Date(data.deliveryTo) < new Date(data.deliveryFrom)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: 'Latest Delivery must be after Earliest Delivery',
+      message: 'Latest Delivery cannot be before Earliest Delivery',
       path: ['deliveryTo'],
     })
   }

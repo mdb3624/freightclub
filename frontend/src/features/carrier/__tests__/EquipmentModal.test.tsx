@@ -1,12 +1,13 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import EquipmentModal from '../components/modals/EquipmentModal';
 import * as hooks from '../hooks/useCarrierProfile';
+import { vi } from 'vitest';
 
-jest.mock('../hooks/useCarrierProfile');
-const mockedHooks = hooks as jest.Mocked<typeof hooks>;
+vi.mock('../hooks/useCarrierProfile');
+const mockedHooks = hooks as unknown as Record<string, ReturnType<typeof vi.fn>>;
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,25 +23,25 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 describe('EquipmentModal', () => {
-  const mockOnClose = jest.fn();
+  const mockOnClose = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockedHooks.useAddEquipment.mockReturnValue({
-      mutateAsync: jest.fn().mockResolvedValue({}),
+      mutateAsync: vi.fn().mockResolvedValue({}),
       isPending: false,
       isSuccess: false,
       isError: false,
       error: null,
-    } as any);
+    });
 
     mockedHooks.useUpdateEquipment.mockReturnValue({
-      mutateAsync: jest.fn().mockResolvedValue({}),
+      mutateAsync: vi.fn().mockResolvedValue({}),
       isPending: false,
       isSuccess: false,
       isError: false,
       error: null,
-    } as any);
+    });
   });
 
   describe('Add Equipment Mode', () => {
@@ -50,7 +51,7 @@ describe('EquipmentModal', () => {
         { wrapper }
       );
 
-      expect(screen.getByText('Add Equipment')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Add Equipment' })).toBeInTheDocument();
       expect(screen.getByLabelText('Equipment Type *')).toBeInTheDocument();
       expect(screen.getByPlaceholderText('48')).toHaveValue(null);
     });
@@ -63,11 +64,9 @@ describe('EquipmentModal', () => {
         { wrapper }
       );
 
-      // Try to submit empty form
       const submitButton = screen.getByRole('button', { name: /Add Equipment/i });
       await user.click(submitButton);
 
-      // Should show validation errors
       await waitFor(() => {
         expect(screen.getByText(/Equipment type required/i)).toBeInTheDocument();
       });
@@ -75,19 +74,18 @@ describe('EquipmentModal', () => {
 
     it('should submit form with valid data', async () => {
       const user = userEvent.setup();
-      const mockMutate = jest.fn().mockResolvedValue({});
+      const mockMutate = vi.fn().mockResolvedValue({});
 
       mockedHooks.useAddEquipment.mockReturnValue({
         mutateAsync: mockMutate,
         isPending: false,
-      } as any);
+      });
 
       render(
         <EquipmentModal equipment={null} onClose={mockOnClose} />,
         { wrapper }
       );
 
-      // Fill form
       const typeSelect = screen.getByLabelText('Equipment Type *');
       await user.selectOptions(typeSelect, 'FLATBED');
 
@@ -106,7 +104,6 @@ describe('EquipmentModal', () => {
       const goodRadio = screen.getByLabelText('GOOD');
       await user.click(goodRadio);
 
-      // Submit
       const submitButton = screen.getByRole('button', { name: /Add Equipment/i });
       await user.click(submitButton);
 
@@ -152,23 +149,21 @@ describe('EquipmentModal', () => {
 
     it('should submit update with modified data', async () => {
       const user = userEvent.setup();
-      const mockMutate = jest.fn().mockResolvedValue({});
+      const mockMutate = vi.fn().mockResolvedValue({});
 
       mockedHooks.useUpdateEquipment.mockReturnValue({
         mutateAsync: mockMutate,
         isPending: false,
-      } as any);
+      });
 
       render(
         <EquipmentModal equipment={mockEquipment} onClose={mockOnClose} />,
         { wrapper }
       );
 
-      // Modify condition
       const fairRadio = screen.getByLabelText('FAIR');
       await user.click(fairRadio);
 
-      // Submit
       const submitButton = screen.getByRole('button', { name: /Update Equipment/i });
       await user.click(submitButton);
 
@@ -195,8 +190,6 @@ describe('EquipmentModal', () => {
     });
 
     it('should close on Escape key (TODO: implement)', () => {
-      // This tests that the modal can be closed via keyboard
-      // Implementation: add onKeyDown handler
       render(
         <EquipmentModal equipment={null} onClose={mockOnClose} />,
         { wrapper }

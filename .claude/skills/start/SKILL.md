@@ -15,60 +15,61 @@ Start FreightClub for the specified environment: `dev`, `test`, or `prod`.
 
 **Usage:** `/start dev`
 
-1. **Kill port 8080** (frontend/Vite):
+1. **Kill port 8080** (backend/Spring Boot):
    ```
    netstat -ano | findstr :8080
    ```
    For each PID found, run: `taskkill /PID <pid> /F`
 
-2. **Kill port 9090** (backend/Spring Boot):
+2. **Kill port 9090** (frontend/Vite):
    ```
    netstat -ano | findstr :9090
    ```
    For each PID found, run: `taskkill /PID <pid> /F`
 
-3. **Load environment variables** from `.env.local`:
+3. **Remove VITE_API_URL from `.env.local`** if present — dev proxies to localhost, not Cloud Run.
+
+4. **Load environment variables** from `.env.local`:
    ```
    set -a && source /c/projects/freightclub/.env.local && set +a
    ```
-   If `DB_URL` still contains `<your-neon-host>`, stop and tell the user to fill in their Neon credentials in `.env.local` before proceeding.
 
-4. **Verify PostgreSQL is running** on `localhost:5432`:
+5. **Verify native PostgreSQL is running** on `localhost:5432` (dev uses native PostgreSQL — NO Docker):
    ```
-   docker compose -f /c/projects/freightclub/docker-compose.yml ps db
+   powershell -command "try { $c = New-Object System.Net.Sockets.TcpClient('localhost', 5432); $c.Close(); 'PostgreSQL UP' } catch { 'PostgreSQL NOT running' }"
    ```
-   If not running, start it: `docker compose -f /c/projects/freightclub/docker-compose.yml up -d db`
+   If not running, ask the user to start their native PostgreSQL service.
 
-5. **Build the backend** (skip tests for speed):
+6. **Build the backend** (skip tests for speed):
    ```
-   /c/tools/apache-maven-3.9.9/bin/mvn package -Dmaven.test.skip=true -q -f /c/projects/freightclub/backend/pom.xml
+   /c/tools/apache-maven-3.9.9/bin/mvn package -Dmaven.test.skip=true -Djacoco.skip=true -q -f /c/projects/freightclub/backend/pom.xml
    ```
 
-6. **Start the backend** in the background:
+7. **Start the backend** in the background:
    ```
    "$JAVA_HOME/bin/java" -jar /c/projects/freightclub/backend/target/freightclub-backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev &
    ```
 
-7. **Wait for backend to be ready** — poll using PowerShell until port 9090 responds:
+8. **Wait for backend to be ready** — poll until port 8080 responds:
    ```
    for i in 1 2 3 4 5 6 7 8 9 10; do
-     STATUS=$(powershell -command "try { (Invoke-WebRequest -Uri 'http://localhost:9090/actuator/health' -UseBasicParsing -ErrorAction Stop).StatusCode } catch { \$_.Exception.Response.StatusCode.Value__ }" 2>/dev/null)
+     STATUS=$(powershell -command "try { (Invoke-WebRequest -Uri 'http://localhost:8080/actuator/health' -UseBasicParsing -ErrorAction Stop).StatusCode } catch { \$_.Exception.Response.StatusCode.Value__ }" 2>/dev/null)
      [ -n "$STATUS" ] && echo "Backend ready (HTTP $STATUS)" && break
      sleep 5
    done
    ```
-   Expect **401** (Spring Security active = alive). Connection refused means still starting.
+   Expect **200** (actuator/health is public). Connection refused means still starting.
 
-8. **Start the frontend** in the background:
+9. **Start the frontend** in the background:
    ```
    cd /c/projects/freightclub/frontend && npm run dev &
    ```
 
-9. **Verify both services** are responding:
-   - Backend: `powershell -command "try { (Invoke-WebRequest -Uri 'http://localhost:9090/actuator/health' -UseBasicParsing).StatusCode } catch { \$_.Exception.Response.StatusCode.Value__ }"` — expect **401**
-   - Frontend: `powershell -command "(Invoke-WebRequest -Uri 'http://localhost:8080' -UseBasicParsing).StatusCode"` — expect **200**
+10. **Verify both services** are responding:
+    - Backend: `powershell -command "(Invoke-WebRequest -Uri 'http://localhost:8080/actuator/health' -UseBasicParsing).StatusCode"` — expect **200**
+    - Frontend: `powershell -command "(Invoke-WebRequest -Uri 'http://localhost:9090' -UseBasicParsing).StatusCode"` — expect **200**
 
-10. **Report status** — confirm both are up. For backend, 401 is the expected success status (Spring Security is active).
+11. **Report status** — confirm both are up.
 
 ---
 

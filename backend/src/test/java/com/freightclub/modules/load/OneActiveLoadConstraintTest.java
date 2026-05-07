@@ -54,6 +54,8 @@ class OneActiveLoadConstraintTest {
     // Create shipper and trucker users
     createUserIfMissing(SHIPPER_ID, "shipper@test.com", UserRole.SHIPPER, TENANT_ID);
     createUserIfMissing(TRUCKER_ID, "trucker@test.com", UserRole.TRUCKER, TENANT_ID);
+    createUserIfMissing("trucker-1", "trucker1@test.com", UserRole.TRUCKER, TENANT_ID);
+    createUserIfMissing("trucker-2", "trucker2@test.com", UserRole.TRUCKER, TENANT_ID);
   }
 
   private void createTenantIfMissing(String tenantId, String name) {

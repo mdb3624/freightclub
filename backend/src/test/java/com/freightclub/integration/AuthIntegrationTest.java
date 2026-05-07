@@ -5,6 +5,7 @@ import com.freightclub.domain.UserRole;
 import com.freightclub.dto.LoginRequest;
 import com.freightclub.dto.RegisterRequest;
 import org.junit.jupiter.api.Test;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,13 +39,14 @@ class AuthIntegrationTest {
 
     @Test
     void register_login_refresh_logout_fullRoundTrip() throws Exception {
+        String email = "roundtrip-" + UUID.randomUUID() + "@example.com";
         // 1. Register
         MvcResult registerResult = mockMvc.perform(post("/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(shipperRequest("roundtrip@example.com"))))
+                        .content(objectMapper.writeValueAsString(shipperRequest(email))))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.user.email").value("roundtrip@example.com"))
+                .andExpect(jsonPath("$.user.email").value(email))
                 .andExpect(header().exists("Set-Cookie"))
                 .andReturn();
 
@@ -55,7 +57,7 @@ class AuthIntegrationTest {
         mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new LoginRequest("roundtrip@example.com", "Password1!"))))
+                                new LoginRequest(email, "Password1!"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
                 .andExpect(header().exists("Set-Cookie"));
@@ -75,14 +77,15 @@ class AuthIntegrationTest {
 
     @Test
     void register_duplicateEmail_returns409() throws Exception {
+        String email = "duplicate-" + UUID.randomUUID() + "@example.com";
         mockMvc.perform(post("/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(shipperRequest("duplicate@example.com"))))
+                        .content(objectMapper.writeValueAsString(shipperRequest(email))))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(post("/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(shipperRequest("duplicate@example.com"))))
+                        .content(objectMapper.writeValueAsString(shipperRequest(email))))
                 .andExpect(status().isConflict());
     }
 
@@ -95,10 +98,11 @@ class AuthIntegrationTest {
      */
     @Test
     void login_withValidCredentials_canAccessProtectedEndpoint() throws Exception {
+        String email = "protected-" + UUID.randomUUID() + "@example.com";
         // Register and capture access token
         MvcResult loginResult = mockMvc.perform(post("/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(shipperRequest("protected@example.com"))))
+                        .content(objectMapper.writeValueAsString(shipperRequest(email))))
                 .andExpect(status().isCreated())
                 .andReturn();
 

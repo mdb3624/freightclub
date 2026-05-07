@@ -65,7 +65,8 @@ public class JpaLoadAdapter implements LoadRepositoryPort {
     // ── Mapping ───────────────────────────────────────────────────────────────
 
     private LoadEntity toEntity(LoadAggregate a) {
-        LoadEntity e = new LoadEntity();
+        // Load existing entity to preserve NOT NULL fields not tracked by the aggregate
+        LoadEntity e = repo.findById(a.getId()).orElse(new LoadEntity());
         e.setId(a.getId());
         e.setTenantId(a.getTenantId());
         e.setShipperId(a.getShipperId());

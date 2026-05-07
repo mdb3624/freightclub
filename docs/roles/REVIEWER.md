@@ -7,6 +7,8 @@
 - ❌ Any table without an RLS policy.
 - ❌ Any method with cyclomatic complexity > 10.
 - ❌ Test coverage < 80% branch coverage (JaCoCo).
+- ❌ Any UI feature shipped without a passing Playwright e2e test for the golden path.
+- ❌ `npm run test` or `npm run test:e2e` has failures at time of review.
 - ❌ *(Phase 7+)* GET endpoint without `@Cacheable` annotation (NFR-504).
 - ❌ *(Phase 7+)* Cache key without `TenantContextHolder.getTenantId()` (multi-tenant isolation).
 - ❌ *(Phase 7+)* Mutation endpoint (POST/PUT/DELETE) without `@CacheEvict` or event-driven invalidation.
@@ -42,7 +44,10 @@
 - [ ] Related cache entries also evicted on mutation
 
 ### Testing
-- [ ] Branch coverage ≥ 80% (JaCoCo enforced)
+- [ ] Backend: `mvn test` passes with 0 failures, JaCoCo ≥ 80% branch coverage
+- [ ] Frontend unit tests: `npm run test` passes with 0 failures
+- [ ] Frontend e2e tests: `npm run test:e2e` passes with 0 failures
+- [ ] Any UI feature touched by the story has a Playwright test covering the golden path
 - [ ] *(Phase 7+)* Cache hit test: repeated GET returns same cached data
 - [ ] *(Phase 7+)* Cache eviction test: POST/PUT/DELETE triggers `@CacheEvict`
 - [ ] *(Phase 7+)* Multi-tenant isolation test: Tenant A ≠ Tenant B on same entity ID

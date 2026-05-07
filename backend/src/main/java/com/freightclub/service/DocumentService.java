@@ -67,6 +67,7 @@ public class DocumentService {
         doc.setUploadedBy(load.getShipperId());
         doc.setDocumentType(DocumentType.BOL_GENERATED);
         doc.setStorageKey(key);
+        doc.setFileUrl(key);
         doc.setOriginalFilename("bill-of-lading.pdf");
         doc.setContentType("application/pdf");
         doc.setFileSizeBytes(pdf.length);
@@ -115,6 +116,7 @@ public class DocumentService {
             String key = storageService.store(load.getTenantId(), loadId, DocumentType.ISSUE_PHOTO,
                     safeFilename(photo.getOriginalFilename(), "issue.jpg"), contentType, bytes);
             doc.setStorageKey(key);
+            doc.setFileUrl(key);
             doc.setOriginalFilename(safeFilename(photo.getOriginalFilename(), "issue.jpg"));
             doc.setContentType(contentType);
             doc.setFileSizeBytes(bytes.length);
@@ -204,6 +206,7 @@ public class DocumentService {
         doc.setUploadedBy(uploaderId);
         doc.setDocumentType(type);
         doc.setStorageKey(key);
+        doc.setFileUrl(key);
         doc.setOriginalFilename(safeFilename(file.getOriginalFilename(), "photo.jpg"));
         doc.setContentType(contentType);
         doc.setFileSizeBytes(bytes.length);

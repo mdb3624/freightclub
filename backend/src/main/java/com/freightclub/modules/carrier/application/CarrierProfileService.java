@@ -1,5 +1,7 @@
 package com.freightclub.modules.carrier.application;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freightclub.modules.carrier.domain.*;
 import com.freightclub.modules.carrier.infrastructure.*;
 import com.freightclub.security.TenantContextHolder;
@@ -22,16 +24,19 @@ public class CarrierProfileService {
   private final CarrierLaneRepository laneRepository;
   private final CarrierAvailabilityRepository availabilityRepository;
   private final CarrierProfileAuditLogRepository auditLogRepository;
+  private final ObjectMapper objectMapper;
 
   public CarrierProfileService(
       CarrierEquipmentRepository equipmentRepository,
       CarrierLaneRepository laneRepository,
       CarrierAvailabilityRepository availabilityRepository,
-      CarrierProfileAuditLogRepository auditLogRepository) {
+      CarrierProfileAuditLogRepository auditLogRepository,
+      ObjectMapper objectMapper) {
     this.equipmentRepository = equipmentRepository;
     this.laneRepository = laneRepository;
     this.availabilityRepository = availabilityRepository;
     this.auditLogRepository = auditLogRepository;
+    this.objectMapper = objectMapper;
   }
 
   // AC-1: Add equipment (validates type/dimensions, creates ACTIVE record)
@@ -157,7 +162,7 @@ public class CarrierProfileService {
 
     CarrierLaneEntity entity = CarrierLaneEntity.fromDomain(domain);
     CarrierLaneEntity saved = laneRepository.save(entity);
-    appendAuditLog(tenantId, truckerId, "ADD_LANE", null, dto.toString(), "SUCCESS");
+    appendAuditLog(tenantId, truckerId, "ADD_LANE", null, dto, "SUCCESS");
 
     return toLaneDTO(saved.toDomain());
   }
@@ -197,7 +202,7 @@ public class CarrierProfileService {
     CarrierLaneEntity updated = CarrierLaneEntity.fromDomain(domain);
     updated.setId(dto.id());
     CarrierLaneEntity saved = laneRepository.save(updated);
-    appendAuditLog(tenantId, truckerId, "UPDATE_LANES", null, dto.toString(), "SUCCESS");
+    appendAuditLog(tenantId, truckerId, "UPDATE_LANES", null, dto, "SUCCESS");
 
     return toLaneDTO(saved.toDomain());
   }
@@ -249,7 +254,7 @@ public class CarrierProfileService {
 
     CarrierAvailabilityEntity entity = CarrierAvailabilityEntity.fromDomain(domain);
     CarrierAvailabilityEntity saved = availabilityRepository.save(entity);
-    appendAuditLog(tenantId, truckerId, "SET_AVAILABILITY", null, dto.toString(), "SUCCESS");
+    appendAuditLog(tenantId, truckerId, "SET_AVAILABILITY", null, dto, "SUCCESS");
 
     return toAvailabilityDTO(saved.toDomain());
   }
@@ -297,12 +302,21 @@ public class CarrierProfileService {
     return new PublicCarrierProfileDTO(truckerId, equipment, lanes, availability);
   }
 
-  private void appendAuditLog(String tenantId, String truckerId, String action, String dataBefore, String dataAfter, String statusCode) {
+  private void appendAuditLog(String tenantId, String truckerId, String action, Object dataBefore, Object dataAfter, String statusCode) {
     CarrierProfileAuditLog log = CarrierProfileAuditLog.createNew(
-        tenantId, truckerId, action, dataBefore, dataAfter, statusCode, "0.0.0.0", "CLI"
+        tenantId, truckerId, action, toJson(dataBefore), toJson(dataAfter), statusCode, "0.0.0.0", "CLI"
     );
     CarrierProfileAuditLogEntity entity = CarrierProfileAuditLogEntity.fromDomain(log);
     auditLogRepository.save(entity);
+  }
+
+  private String toJson(Object value) {
+    if (value == null) return null;
+    try {
+      return objectMapper.writeValueAsString(value);
+    } catch (JsonProcessingException e) {
+      return null;
+    }
   }
 
   private CarrierEquipmentDTO toDTO(CarrierEquipment domain) {

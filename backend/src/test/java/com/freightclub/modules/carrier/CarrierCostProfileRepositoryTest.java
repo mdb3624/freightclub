@@ -2,8 +2,10 @@ package com.freightclub.modules.carrier;
 
 import static org.assertj.core.api.Assertions.*;
 
+import com.freightclub.domain.Tenant;
 import com.freightclub.domain.User;
 import com.freightclub.domain.UserRole;
+import com.freightclub.repository.TenantRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.modules.carrier.domain.CarrierCostProfile;
 import com.freightclub.modules.carrier.infrastructure.CarrierCostProfileEntity;
@@ -32,11 +34,28 @@ class CarrierCostProfileRepositoryTest {
 
   @Autowired private CarrierCostProfileRepository repository;
   @Autowired private UserRepository userRepository;
+  @Autowired private TenantRepository tenantRepository;
 
   @BeforeEach
   void setup() {
     TenantContextHolder.setTenantId(TENANT_ID);
+    ensureTenantsExist();
     ensureUsersExist();
+  }
+
+  private void ensureTenantsExist() {
+    createTenantIfMissing(TENANT_ID, "Test Tenant 123");
+    createTenantIfMissing("tenant-1", "Tenant One");
+    createTenantIfMissing("tenant-2", "Tenant Two");
+  }
+
+  private void createTenantIfMissing(String tenantId, String name) {
+    if (!tenantRepository.findById(tenantId).isPresent()) {
+      Tenant tenant = new Tenant();
+      tenant.setId(tenantId);
+      tenant.setName(name);
+      tenantRepository.save(tenant);
+    }
   }
 
   private void ensureUsersExist() {

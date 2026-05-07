@@ -99,11 +99,15 @@ public class PaymentAccountEntity {
 
     // Mapper: Entity → Domain
     public PaymentAccount toDomain() {
-        return new PaymentAccount(
+        PaymentAccount domain = new PaymentAccount(
             id, tenantId, truckerId, accountHolderName, routingNumber,
             new String(accountNumber), accountType, accountNickname, lastFourDigits,
             status, isPrimary, createdAt, verifiedAt, deletedAt
         );
+        domain.setCurrentVerificationCode(currentVerificationCode);
+        domain.setExpectedDeposit1Cents(expectedDeposit1Cents);
+        domain.setExpectedDeposit2Cents(expectedDeposit2Cents);
+        return domain;
     }
 
     // Mapper: Domain → Entity

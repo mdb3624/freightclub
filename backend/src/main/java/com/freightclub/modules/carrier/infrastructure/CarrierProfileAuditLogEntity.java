@@ -2,6 +2,8 @@ package com.freightclub.modules.carrier.infrastructure;
 
 import com.freightclub.modules.carrier.domain.CarrierProfileAuditLog;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -27,9 +29,11 @@ public class CarrierProfileAuditLogEntity {
     @Column(name = "action", nullable = false, length = 50)
     private String action;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "data_before", columnDefinition = "JSONB")
     private String dataBefore;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "data_after", columnDefinition = "JSONB")
     private String dataAfter;
 

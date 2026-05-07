@@ -1,10 +1,8 @@
 package com.freightclub.modules.payment.infrastructure;
 
-import com.freightclub.domain.Tenant;
 import com.freightclub.domain.User;
 import com.freightclub.domain.UserRole;
 import com.freightclub.modules.payment.domain.*;
-import com.freightclub.repository.TenantRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
 import org.junit.jupiter.api.AfterEach;
@@ -20,6 +18,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,7 +35,7 @@ class PaymentAccountRepositoryTest {
     private UserRepository userRepository;
 
     @Autowired
-    private TenantRepository tenantRepository;
+    private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
     private String testTenantId = "test-tenant-payment";
     private String testTruckerId = "trucker-payment-1";
@@ -44,8 +43,8 @@ class PaymentAccountRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        paymentAccountRepository.deleteAll();
         TenantContextHolder.setTenantId(testTenantId);
+        jdbcTemplate.update("DELETE FROM payment_accounts WHERE tenant_id = ?", testTenantId);
         ensureTenantsAndTruckersExist();
         PaymentAccount testDomain = PaymentAccount.createNew(
             "John Doe",
@@ -72,12 +71,9 @@ class PaymentAccountRepositoryTest {
     }
 
     private void createTenantIfMissing(String tenantId, String name) {
-        if (!tenantRepository.findById(tenantId).isPresent()) {
-            Tenant tenant = new Tenant();
-            tenant.setId(tenantId);
-            tenant.setName(name);
-            tenantRepository.save(tenant);
-        }
+        jdbcTemplate.update(
+            "INSERT INTO tenants (id, name) VALUES (?, ?) ON CONFLICT (id) DO NOTHING",
+            tenantId, name);
     }
 
     private void createUserIfMissing(String userId, String email, UserRole role, String tenantId) {
@@ -137,7 +133,11 @@ class PaymentAccountRepositoryTest {
     @DisplayName("AC-4: Should find all active accounts for trucker")
     void testFindByTenantAndTrucker_ReturnsActiveOnly() {
         // Arrange: Create 2 accounts for the same trucker (only one can be primary)
-        String trucker1 = "trucker-a-test";
+        String trucker1 = UUID.randomUUID().toString();
+        jdbcTemplate.update(
+            "INSERT INTO users (id, tenant_id, email, password_hash, role, first_name, last_name) " +
+            "VALUES (?, ?, ?, '$2a$10$x', 'TRUCKER', 'T', 'R') ON CONFLICT (id) DO NOTHING",
+            trucker1, testTenantId, trucker1 + "@test.com");
 
         PaymentAccount domain1 = PaymentAccount.createNew(
             "John Doe",
@@ -204,8 +204,18 @@ class PaymentAccountRepositoryTest {
         // Arrange
         String tenantA = "test-tenant-123";
         String tenantB = "tenant-1";
-        String truckerA = "trucker-a-test";
-        String truckerB = "trucker-b-test";
+        String truckerA = UUID.randomUUID().toString();
+        String truckerB = UUID.randomUUID().toString();
+        jdbcTemplate.update("INSERT INTO tenants (id, name) VALUES (?, ?) ON CONFLICT (id) DO NOTHING", tenantA, "Tenant A");
+        jdbcTemplate.update("INSERT INTO tenants (id, name) VALUES (?, ?) ON CONFLICT (id) DO NOTHING", tenantB, "Tenant B");
+        jdbcTemplate.update(
+            "INSERT INTO users (id, tenant_id, email, password_hash, role, first_name, last_name) " +
+            "VALUES (?, ?, ?, '$2a$10$x', 'TRUCKER', 'T', 'R') ON CONFLICT (id) DO NOTHING",
+            truckerA, tenantA, truckerA + "@test.com");
+        jdbcTemplate.update(
+            "INSERT INTO users (id, tenant_id, email, password_hash, role, first_name, last_name) " +
+            "VALUES (?, ?, ?, '$2a$10$x', 'TRUCKER', 'T', 'R') ON CONFLICT (id) DO NOTHING",
+            truckerB, tenantB, truckerB + "@test.com");
 
         PaymentAccount tenantADomain = PaymentAccount.createNew(
             "Trucker A",

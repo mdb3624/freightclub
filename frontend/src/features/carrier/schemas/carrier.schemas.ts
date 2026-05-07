@@ -20,7 +20,9 @@ export const AvailableDaysEnum = z.enum(['MON_FRI', 'WEEKENDS', 'MON_SUN', 'CUST
 
 // Equipment Schemas
 export const equipmentFormSchema = z.object({
-  equipmentType: EquipmentTypeEnum,
+  equipmentType: z.enum(EquipmentTypeEnum.options, {
+    errorMap: () => ({ message: 'Equipment type required' }),
+  }),
   lengthFeet: z.number().min(1, 'Length must be positive'),
   widthFeet: z.number().min(1, 'Width must be positive'),
   heightFeet: z.number().min(1, 'Height must be positive'),

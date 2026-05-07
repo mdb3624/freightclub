@@ -7,6 +7,8 @@ import com.freightclub.domain.User;
 import com.freightclub.dto.NotificationResponse;
 import com.freightclub.repository.NotificationRepository;
 import com.freightclub.repository.UserRepository;
+import com.freightclub.security.TenantContextHolder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -175,27 +177,33 @@ class NotificationServiceTest {
     @Nested
     class GetNotifications {
 
+        @BeforeEach void setup() { TenantContextHolder.setTenantId(TENANT_ID); }
+        @AfterEach  void teardown() { TenantContextHolder.clear(); }
+
         @Test
         @DisplayName("delegates to repository and returns paged results")
         void returnsPage() {
             Page<Notification> repoPage = new PageImpl<>(List.of());
-            when(notificationRepository.findByUserIdOrderByCreatedAtDesc(eq(SHIPPER_ID), any()))
+            when(notificationRepository.findByUserIdAndTenantIdOrderByCreatedAtDesc(eq(SHIPPER_ID), eq(TENANT_ID), any()))
                     .thenReturn(repoPage);
 
             Page<NotificationResponse> result = service.getNotifications(SHIPPER_ID, 0, 10);
 
             assertThat(result).isNotNull();
-            verify(notificationRepository).findByUserIdOrderByCreatedAtDesc(eq(SHIPPER_ID), any());
+            verify(notificationRepository).findByUserIdAndTenantIdOrderByCreatedAtDesc(eq(SHIPPER_ID), eq(TENANT_ID), any());
         }
     }
 
     @Nested
     class GetUnreadCount {
 
+        @BeforeEach void setup() { TenantContextHolder.setTenantId(TENANT_ID); }
+        @AfterEach  void teardown() { TenantContextHolder.clear(); }
+
         @Test
         @DisplayName("returns count from repository")
         void returnsCount() {
-            when(notificationRepository.countByUserIdAndReadFalse(SHIPPER_ID)).thenReturn(3L);
+            when(notificationRepository.countByUserIdAndTenantIdAndReadFalse(SHIPPER_ID, TENANT_ID)).thenReturn(3L);
 
             long count = service.getUnreadCount(SHIPPER_ID);
 

@@ -64,10 +64,20 @@ export default function AvailabilityTab({ availability, isLoading }: Availabilit
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-white mb-4">Current Status</h3>
           <div className="flex items-center gap-4 p-4 bg-slate-900 rounded-lg">
-            <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" aria-hidden="true" />
+            <div
+              className="w-3 h-3 rounded-full animate-pulse"
+              style={{ backgroundColor: availability?.currentlyOnLoad ? '#EF4444' : '#00E5A8' }}
+              aria-hidden="true"
+            />
             <div className="flex-1">
-              <p className="text-white font-medium">Currently on load</p>
-              <p className="text-slate-400 text-sm">Update your status below</p>
+              <p className="text-white font-medium">
+                {availability?.currentlyOnLoad ? 'Currently on a load' : 'Available for loads'}
+              </p>
+              <p className="text-slate-400 text-sm">
+                {availability?.currentlyOnLoad
+                  ? 'You are marked unavailable for new loads'
+                  : 'You will appear in load matching'}
+              </p>
             </div>
           </div>
         </div>

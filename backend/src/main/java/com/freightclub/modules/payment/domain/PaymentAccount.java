@@ -158,4 +158,11 @@ public class PaymentAccount {
     public String getCurrentVerificationCode() { return currentVerificationCode; }
     public long getExpectedDeposit1Cents() { return expectedDeposit1Cents; }
     public long getExpectedDeposit2Cents() { return expectedDeposit2Cents; }
+    public void setCurrentVerificationCode(String code) { this.currentVerificationCode = code; }
+    public void setExpectedDeposit1Cents(long amount) { this.expectedDeposit1Cents = amount; }
+    public void setExpectedDeposit2Cents(long amount) { this.expectedDeposit2Cents = amount; }
+    public void setPrimary(boolean primary) { this.isPrimary = primary; }
+    public void setVerifiedAt(OffsetDateTime verifiedAt) { this.verifiedAt = verifiedAt; }
+    public void setDeletedAt(OffsetDateTime deletedAt) { this.deletedAt = deletedAt; }
+    public void setStatus(PaymentAccountStatus status) { this.status = status; }
 }

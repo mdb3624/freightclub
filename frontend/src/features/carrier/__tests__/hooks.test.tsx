@@ -8,9 +8,15 @@ import {
   useDeleteEquipment,
 } from '../hooks/useCarrierProfile';
 import axios from 'axios';
+import { vi } from 'vitest';
 
-jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
+vi.mock('axios');
+const mockedAxios = axios as unknown as {
+  get: ReturnType<typeof vi.fn>;
+  post: ReturnType<typeof vi.fn>;
+  put: ReturnType<typeof vi.fn>;
+  delete: ReturnType<typeof vi.fn>;
+};
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,7 +31,7 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('Carrier Profile Hooks', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     queryClient.clear();
   });
 

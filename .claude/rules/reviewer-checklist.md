@@ -22,7 +22,9 @@ This checklist defines the mandatory "Hard Gates" for any code merge. Failure to
 * [ ] **PostGIS Usage**: Are geographic queries utilizing indexed spatial functions for performance?
 
 ## 4. Reliability & Testing (Coder Gate)
-* [ ] **Branch Coverage**: Does the code meet or exceed **80% branch coverage** via JaCoCo?
+* [ ] **Backend Tests**: `mvn test` passes with 0 failures and JaCoCo ≥ 80% branch coverage.
+* [ ] **Frontend Unit Tests**: `npm run test` passes with 0 failures.
+* [ ] **Frontend E2E Tests**: `npm run test:e2e` passes with 0 failures. Any UI feature touched by the story must have a Playwright golden-path test before sign-off.
 * [ ] **Transactional Integrity**: Are Domain Events and Entity state changes wrapped in a single atomic transaction?
 * [ ] **Outbox Pattern**: Does the logic correctly use the `message_outbox` for asynchronous event propagation?
 * [ ] **Idempotency**: Is the system resilient to duplicate events or messages?

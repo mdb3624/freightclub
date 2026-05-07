@@ -2,9 +2,11 @@ package com.freightclub.modules.shipper;
 
 import static org.assertj.core.api.Assertions.*;
 
+import com.freightclub.domain.Tenant;
 import com.freightclub.modules.shipper.domain.ShipperReputation;
 import com.freightclub.modules.shipper.infrastructure.ShipperReputationEntity;
 import com.freightclub.modules.shipper.infrastructure.ShipperReputationRepository;
+import com.freightclub.repository.TenantRepository;
 import com.freightclub.security.TenantContextHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,11 +31,28 @@ class ShipperReputationIntegrationTest {
 
   @Autowired private ShipperReputationRepository repository;
   @Autowired private CacheManager cacheManager;
+  @Autowired private TenantRepository tenantRepository;
 
   @BeforeEach
   void setup() {
     TenantContextHolder.setTenantId(TENANT_ID);
+    ensureTenantsExist();
     cacheManager.getCache("shipperReputation").clear();
+  }
+
+  private void ensureTenantsExist() {
+    createTenantIfMissing(TENANT_ID, "Test Tenant 123");
+    createTenantIfMissing("tenant-1", "Tenant One");
+    createTenantIfMissing("tenant-2", "Tenant Two");
+  }
+
+  private void createTenantIfMissing(String tenantId, String name) {
+    if (!tenantRepository.findById(tenantId).isPresent()) {
+      Tenant tenant = new Tenant();
+      tenant.setId(tenantId);
+      tenant.setName(name);
+      tenantRepository.save(tenant);
+    }
   }
 
   @AfterEach

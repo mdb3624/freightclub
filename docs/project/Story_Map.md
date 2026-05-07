@@ -1,6 +1,6 @@
 # Resilience Logistics: Story Map (Global Hardening Edition)
 
-**Last Updated:** 2026-04-27 | **Scope:** 78 stories mapped | **Unmapped Requirements:** 0 | **Compliance Status:** ✅ RLS, No-Lombok, VARCHAR(36) enforced as hard gates
+**Last Updated:** 2026-04-27 | **Scope:** 80 stories mapped | **Unmapped Requirements:** 0 | **Compliance Status:** ✅ RLS, No-Lombok, VARCHAR(36) enforced as hard gates
 
 ---
 
@@ -86,13 +86,13 @@
 
 ---
 
-## Phase 7: Carrier Management (11 stories)
+## Phase 7: Carrier Management (13 stories)
 
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
 | US-701 | Carrier Profiles (Truck/Trailer/Capacity) | ✅ COMPLETED | 7 | US-101 | ✅ NFR-504 (1h TTL), ✅ RLS, ✅ No-Lombok |
-| US-702 | Trucker Preferred Lanes (Region-Based) | PARTIAL | 7 | US-701 | ✅ NFR-504 (30m TTL) |
-| US-703 | Trucker Availability (Days/Hours)    | PARTIAL | 7 | US-701 | ✅ NFR-504 (5m TTL) |
+| US-702 | Trucker Preferred Lanes (Region-Based) | ✅ COMPLETED | 7 | US-701 | ✅ NFR-504 (1h TTL), ✅ RLS, ✅ No-Lombok |
+| US-703 | Trucker Availability (Days/Hours)    | ✅ COMPLETED | 7 | US-701 | ✅ NFR-504 (5m TTL), ✅ RLS, ✅ No-Lombok |
 | US-704 | Suggested Loads (By Preferred Lanes) | PARTIAL | 7 | US-702 | ✅ NFR-504 (2m TTL) |
 | US-705 | Load Board Filters (Weight, Min Pay) | PARTIAL | 7 | US-701 | ✅ NFR-504 (5m TTL) |
 | US-706 | Load Posting Validation Prompts (Shipper) | PARTIAL | 7 | US-101 | ✅ No NFR-504 (form only) |
@@ -101,6 +101,8 @@
 | US-709 | Block Carrier (Prevent Visibility)   | MIGRATION_PENDING | 7 | US-101 | ✅ Event-driven invalidation |
 | US-710 | View Carrier Public Profile (History) | MIGRATION_PENDING | 7 | US-402 | ✅ NFR-504 (1h TTL) |
 | US-711 | Load Interest / View Count Tracking  | MIGRATION_PENDING | 7 | US-101 | ✅ NFR-504 (5m TTL) |
+| US-713 | Shipper Company Profile Setup (Post-Registration) | READY_FOR_DESIGN | 7 | US-101 | ✅ RLS, ✅ No-Lombok |
+| US-714 | Trucker Onboarding Checklist (Pre-Claim Gate) | READY_FOR_DESIGN | 7 | US-101, US-701 | ✅ RLS, ✅ No-Lombok |
 | US-712 | View Shipper Public Profile (Payment Speed, Rating) | MIGRATION_PENDING | 7b | US-102, US-502 | ✅ NFR-504 (1h TTL), ✅ Avg Payment Speed calc (90-day) |
 
 ---

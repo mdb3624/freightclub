@@ -7,6 +7,12 @@ function toDecimalFt(ft: number | '', inches: number | ''): number | null {
   return (ft === '' ? 0 : ft) + (inches === '' ? 0 : inches) / 12
 }
 
+// datetime-local inputs produce "2026-05-08T09:00" (no seconds).
+// Jackson's LocalDateTime deserializer requires seconds: "2026-05-08T09:00:00".
+function normalizeDateTime(dt: string): string {
+  return /T\d{2}:\d{2}$/.test(dt) ? dt + ':00' : dt
+}
+
 function sanitize(data: LoadFormValues) {
   const { lengthFt, lengthIn, widthFt, widthIn, heightFt, heightIn, ...rest } = data
   return {
@@ -15,6 +21,10 @@ function sanitize(data: LoadFormValues) {
     lengthFt: toDecimalFt(lengthFt, lengthIn),
     widthFt: toDecimalFt(widthFt, widthIn),
     heightFt: toDecimalFt(heightFt, heightIn),
+    pickupFrom:   data.pickupFrom   ? normalizeDateTime(data.pickupFrom)   : data.pickupFrom,
+    pickupTo:     data.pickupTo     ? normalizeDateTime(data.pickupTo)     : data.pickupTo,
+    deliveryFrom: data.deliveryFrom ? normalizeDateTime(data.deliveryFrom) : data.deliveryFrom,
+    deliveryTo:   data.deliveryTo   ? normalizeDateTime(data.deliveryTo)   : data.deliveryTo,
   }
 }
 

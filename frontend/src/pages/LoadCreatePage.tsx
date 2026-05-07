@@ -8,7 +8,7 @@ import type { LoadFormValues } from '@/features/loads/types'
 export function LoadCreatePage() {
   const { mutate, isPending, error } = useCreateLoad()
   const { mutate: saveDraft, isPending: isDraftSaving, error: draftError } = useCreateDraft()
-  const { data: profile } = useProfile()
+  const { data: profile, isLoading: profileLoading } = useProfile()
 
   const defaultValues: Partial<LoadFormValues> = {}
 
@@ -27,15 +27,21 @@ export function LoadCreatePage() {
       </div>
 
       <div className="rounded-xl border border-gray-200 bg-white p-6">
-        <LoadForm
-          onSubmit={mutate}
-          onSaveDraft={saveDraft}
-          defaultValues={defaultValues}
-          isSubmitting={isPending}
-          isDraftSaving={isDraftSaving}
-          error={error ?? draftError}
-          submitLabel="Post Load"
-        />
+        {profileLoading ? (
+          <div className="flex items-center justify-center py-12 text-sm text-gray-400">
+            Loading...
+          </div>
+        ) : (
+          <LoadForm
+            onSubmit={mutate}
+            onSaveDraft={saveDraft}
+            defaultValues={defaultValues}
+            isSubmitting={isPending}
+            isDraftSaving={isDraftSaving}
+            error={error ?? draftError}
+            submitLabel="Post Load"
+          />
+        )}
       </div>
     </AppShell>
   )

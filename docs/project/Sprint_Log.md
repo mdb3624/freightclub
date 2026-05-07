@@ -20,8 +20,8 @@
 | Story ID | Title | Status | Completion Date | Coverage |
 | :--- | :--- | :--- | :--- | :--- |
 | US-701 | Carrier Profiles (Equipment & Lanes) | ✅ COMPLETED | 2026-04-27 | 85% |
-| US-702 | Suggested Loads (Recommendations) | ✅ COMPLETED | 2026-04-27 | 97% |
-| US-703 | Shipper Preferred Carrier Network | ✅ COMPLETED | 2026-04-27 | 97% |
+| US-702 | Suggested Loads / Preferred Lanes (REST wiring) | ✅ COMPLETED | 2026-05-07 | 97% |
+| US-703 | Availability / Carrier Profile REST wiring | ✅ COMPLETED | 2026-05-07 | 97% |
 
 ## Phase 7b Progress: Financial Intelligence & Analytics
 

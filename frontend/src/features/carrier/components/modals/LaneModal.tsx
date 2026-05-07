@@ -25,6 +25,12 @@ const REGIONS = [
   'TEXAS',
 ];
 
+const formatRegion = (r: string) =>
+  r.charAt(0).toUpperCase() + r.slice(1).toLowerCase().replace(/_/g, ' ');
+
+const formatFrequency = (f: string) =>
+  f === 'ANY' ? 'Any frequency' : `${f.charAt(0).toUpperCase()}${f.slice(1).toLowerCase()} loads`;
+
 export default function LaneModal({ lane, onClose }: LaneModalProps) {
   const addLane = useAddLane();
   const updateLane = useUpdateLane();
@@ -104,7 +110,7 @@ export default function LaneModal({ lane, onClose }: LaneModalProps) {
               <option value="">Select origin region</option>
               {REGIONS.map((region) => (
                 <option key={region} value={region}>
-                  {region}
+                  {formatRegion(region)}
                 </option>
               ))}
             </select>
@@ -129,7 +135,7 @@ export default function LaneModal({ lane, onClose }: LaneModalProps) {
               <option value="">Select destination region</option>
               {REGIONS.map((region) => (
                 <option key={region} value={region}>
-                  {region}
+                  {formatRegion(region)}
                 </option>
               ))}
             </select>
@@ -175,7 +181,7 @@ export default function LaneModal({ lane, onClose }: LaneModalProps) {
               <option value="">Select frequency</option>
               {FrequencyPreferenceEnum.options.map((freq) => (
                 <option key={freq} value={freq}>
-                  {freq === 'ANY' ? 'Any frequency' : `${freq.toLowerCase()} loads`}
+                  {formatFrequency(freq)}
                 </option>
               ))}
             </select>

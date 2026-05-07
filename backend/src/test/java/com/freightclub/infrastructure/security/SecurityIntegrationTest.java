@@ -144,6 +144,7 @@ class SecurityIntegrationTest {
 
     @Test
     void missingJwt_returns401() throws Exception {
+        SecurityContextHolder.clearContext();
         mockMvc.perform(post("/api/v2/loads")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"shipperId\":\"shipper-1\",\"weightLbs\":1000}"))

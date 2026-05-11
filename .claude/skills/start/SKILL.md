@@ -7,7 +7,7 @@ Start FreightClub for the specified environment: `dev`, `test`, or `prod`.
 **Port assignments:**
 - **dev:** Backend = 8080, Frontend (Vite) = 9090
 - **test:** Backend container = 9091
-- **prod:** Backend container = 8080, Frontend container = 80
+- **prod:** Google Cloud Run (no local ports)
 
 ---
 
@@ -105,39 +105,73 @@ Start FreightClub for the specified environment: `dev`, `test`, or `prod`.
 
 ---
 
-## PROD Environment (Docker with External Neon Database)
+## PROD Environment (Google Cloud Run)
 
 **Usage:** `/start prod`
 
-1. **Stop any existing containers**:
-   ```
-   docker compose -f /c/projects/freightclub/docker-compose.prod.yml down
-   ```
+Deploys new images to Google Cloud Run. Database is external Neon — no local containers.
 
-2. **Verify .env.prod exists** with real Neon credentials:
+Constants (sourced from `.env.prod`):
+- `GCP_REGISTRY=us-central1-docker.pkg.dev/freight-club-495117/freightclub-repo`
+- `GCP_PROJECT=freight-club-495117`
+- `GCP_REGION=us-central1`
+
+1. **Verify `.env.prod` exists** and load it:
    ```
-   test -f /c/projects/freightclub/.env.prod && echo "Found .env.prod" || echo "MISSING: Create .env.prod from .env.prod.example with real Neon credentials"
+   test -f /c/projects/freightclub/.env.prod && echo "Found .env.prod" || echo "MISSING .env.prod"
+   set -a && source /c/projects/freightclub/.env.prod && set +a
    ```
    Stop if file is missing.
 
-3. **Start the production environment** with frontend and backend (no internal DB):
+2. **Verify gcloud authentication**:
    ```
-   docker compose -f /c/projects/freightclub/docker-compose.prod.yml --env-file /c/projects/freightclub/.env.prod up -d
+   powershell -ExecutionPolicy Bypass -command "gcloud auth list --filter=status:ACTIVE --format='value(account)'"
+   ```
+   If no active account, tell the user to run: `! gcloud auth login`
+   Note: always use `powershell -ExecutionPolicy Bypass -command "gcloud ..."` — direct `gcloud` calls fail in Git Bash due to Python path mangling, and plain `powershell` fails due to execution policy.
+
+3. **Build backend JAR** (skip tests):
+   ```
+   /c/tools/apache-maven-3.9.9/bin/mvn package -Dmaven.test.skip=true -Djacoco.skip=true -q -f /c/projects/freightclub/backend/pom.xml
    ```
 
-4. **Wait for backend to be ready** — poll until port 9090 responds:
+4. **Configure Docker for Artifact Registry**:
    ```
-   for i in 1 2 3 4 5 6 7 8 9 10; do
-     STATUS=$(powershell -command "try { (Invoke-WebRequest -Uri 'http://localhost:9090/actuator/health' -UseBasicParsing -ErrorAction Stop).StatusCode } catch { \$_.Exception.Response.StatusCode.Value__ }" 2>/dev/null)
-     [ -n "$STATUS" ] && echo "Backend ready (HTTP $STATUS)" && break
-     sleep 5
-   done
+   powershell -ExecutionPolicy Bypass -command "gcloud auth configure-docker us-central1-docker.pkg.dev --quiet"
    ```
-   Expect **401** (Spring Security active = alive).
 
-5. **Verify services**:
-   - Backend: `powershell -command "try { (Invoke-WebRequest -Uri 'http://localhost:9090/actuator/health' -UseBasicParsing).StatusCode } catch { \$_.Exception.Response.StatusCode.Value__ }"` — expect **401**
-   - Frontend: `powershell -command "(Invoke-WebRequest -Uri 'http://localhost:80' -UseBasicParsing).StatusCode"` — expect **200**
-   - Containers: `docker compose -f /c/projects/freightclub/docker-compose.prod.yml ps` — both should be running
+5. **Build and push backend image**:
+   ```
+   docker build -t ${GCP_REGISTRY}/freightclub-backend:${IMAGE_TAG:-latest} -f /c/projects/freightclub/backend/Dockerfile /c/projects/freightclub/backend
+   docker push ${GCP_REGISTRY}/freightclub-backend:${IMAGE_TAG:-latest}
+   ```
 
-6. **Report status** — confirm frontend and backend are up (database is external Neon, not visible in Docker).
+6. **Build and push frontend image**:
+   ```
+   docker build -t ${GCP_REGISTRY}/freightclub-frontend:${IMAGE_TAG:-latest} -f /c/projects/freightclub/frontend/Dockerfile /c/projects/freightclub/frontend
+   docker push ${GCP_REGISTRY}/freightclub-frontend:${IMAGE_TAG:-latest}
+   ```
+
+7. **Deploy backend to Cloud Run** (image-only — env vars/secrets already configured on the service):
+   ```
+   powershell -ExecutionPolicy Bypass -command "gcloud run deploy freightclub-backend --image=${GCP_REGISTRY}/freightclub-backend:${IMAGE_TAG:-latest} --region=us-central1 --project=freight-club-495117 --platform=managed --quiet"
+   ```
+
+8. **Deploy frontend to Cloud Run** (port 8080 — nginx listens on 8080 for Cloud Run):
+   ```
+   powershell -ExecutionPolicy Bypass -command "gcloud run deploy freightclub-frontend --image=${GCP_REGISTRY}/freightclub-frontend:${IMAGE_TAG:-latest} --region=us-central1 --project=freight-club-495117 --platform=managed --port=8080 --allow-unauthenticated --quiet"
+   ```
+
+9. **Get deployed service URLs**:
+   ```
+   gcloud run services describe freightclub-backend --region=us-central1 --project=freight-club-495117 --format="value(status.url)"
+   gcloud run services describe freightclub-frontend --region=us-central1 --project=freight-club-495117 --format="value(status.url)"
+   ```
+
+10. **Verify backend health** using the returned URL:
+    ```
+    powershell -command "(Invoke-WebRequest -Uri '<backend-url>/actuator/health' -UseBasicParsing).StatusCode"
+    ```
+    Expect **200**.
+
+11. **Report status** — print both Cloud Run URLs and confirm backend health check passed.

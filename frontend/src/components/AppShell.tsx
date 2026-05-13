@@ -45,13 +45,16 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-50 focus:bg-primary-600 focus:text-white focus:px-4 focus:py-2">
+        Skip to main content
+      </a>
       <header className="sticky top-0 z-30 border-b border-gray-200 bg-white px-6 py-3">
         <div className={`mx-auto ${maxWidthClass} flex items-center justify-between gap-4`}>
           <div className="flex items-center gap-6">
             <Link to={dashboardPath} className="text-lg font-bold text-gray-900 shrink-0">
               FreightClub
             </Link>
-            <nav className="flex items-center gap-5">
+            <nav role="navigation" className="flex items-center gap-5">
               <NavLink to={dashboardPath}>{dashboardLabel}</NavLink>
               <NavLink to="/profile">Profile</NavLink>
               {user?.role === 'TRUCKER' && (
@@ -71,7 +74,7 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
         </div>
       </header>
 
-      <main className={`mx-auto ${maxWidthClass} px-6 py-8`}>
+      <main id="main-content" className={`mx-auto ${maxWidthClass} px-6 py-8`}>
         {children}
       </main>
     </div>

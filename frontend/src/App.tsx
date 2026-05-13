@@ -24,7 +24,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
         <div className="flex min-h-screen items-center justify-center p-8 text-center">
           <div>
             <h1 className="text-xl font-semibold text-gray-900 mb-2">Something went wrong</h1>
-            <p className="text-sm text-gray-500 mb-4">An unexpected error occurred. Please refresh the page.</p>
+            <p className="text-sm text-gray-600 mb-4">An unexpected error occurred. Please refresh the page.</p>
             <button
               className="text-sm text-primary-600 underline"
               onClick={() => window.location.reload()}

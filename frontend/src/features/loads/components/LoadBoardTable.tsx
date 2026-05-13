@@ -91,7 +91,7 @@ export function LoadBoardTable({ loads, sortBy, sortDir, onSort }: LoadBoardTabl
   if (loads.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-gray-300 bg-white p-12 text-center">
-        <p className="text-gray-400 text-sm">No open loads right now. Check back soon.</p>
+        <p className="text-gray-600 text-sm">No open loads right now. Check back soon.</p>
       </div>
     )
   }

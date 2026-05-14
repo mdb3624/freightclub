@@ -27,31 +27,9 @@ export const documentsApi = {
     return apiPost<void>(`/documents/${loadId}/issue`, form, MULTIPART)
   },
 
-  download: async (documentId: string, filename: string) => {
-    const response = await apiClient.get(`/documents/file/${documentId}`, {
-      responseType: 'blob',
-    })
-    const url = URL.createObjectURL(response.data as Blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  },
+  download: (documentId: string): Promise<Blob> =>
+    apiClient.get(`/documents/file/${documentId}`, { responseType: 'blob' }).then((r) => r.data as Blob),
 
-  exportPdf: async (loadId: string) => {
-    const response = await apiClient.get(`/documents/${loadId}/export`, {
-      responseType: 'blob',
-    })
-    const url = URL.createObjectURL(response.data as Blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `load-export-${loadId.substring(0, 8)}.pdf`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  },
+  exportPdf: (loadId: string): Promise<Blob> =>
+    apiClient.get(`/documents/${loadId}/export`, { responseType: 'blob' }).then((r) => r.data as Blob),
 }

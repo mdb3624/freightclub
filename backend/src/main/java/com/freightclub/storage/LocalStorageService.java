@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-public class LocalStorageService implements StorageService {
+public class LocalStorageService {
 
     private static final Logger log = LoggerFactory.getLogger(LocalStorageService.class);
 
@@ -40,7 +40,6 @@ public class LocalStorageService implements StorageService {
         }
     }
 
-    @Override
     public String store(String tenantId, String loadId, DocumentType type,
                         String originalFilename, String contentType, byte[] data) {
         String ext = EXTENSIONS.getOrDefault(contentType, ".bin");
@@ -56,7 +55,6 @@ public class LocalStorageService implements StorageService {
         }
     }
 
-    @Override
     public byte[] retrieve(String storageKey) {
         if (storageKey == null || storageKey.isEmpty() || storageKey.contains("..")) {
             throw new IllegalArgumentException("Invalid storage key");

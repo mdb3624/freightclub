@@ -26,6 +26,7 @@ import com.freightclub.exception.DocumentUploadRequiredException;
 import com.freightclub.repository.LoadRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -52,13 +53,13 @@ public class LoadService {
     private final RatingService ratingService;
     private final ClaimRepository claimRepository;
     private final LoadEventRepository loadEventRepository;
-    private final NotificationService notificationService;
+    private final ApplicationEventPublisher eventPublisher;
     private final CarrierCostProfileService carrierCostProfileService;
 
     public LoadService(LoadRepository loadRepository, UserRepository userRepository,
                        DocumentService documentService, RatingService ratingService,
                        ClaimRepository claimRepository, LoadEventRepository loadEventRepository,
-                       NotificationService notificationService,
+                       ApplicationEventPublisher eventPublisher,
                        CarrierCostProfileService carrierCostProfileService) {
         this.loadRepository = loadRepository;
         this.userRepository = userRepository;
@@ -66,7 +67,7 @@ public class LoadService {
         this.ratingService = ratingService;
         this.claimRepository = claimRepository;
         this.loadEventRepository = loadEventRepository;
-        this.notificationService = notificationService;
+        this.eventPublisher = eventPublisher;
         this.carrierCostProfileService = carrierCostProfileService;
     }
 
@@ -138,7 +139,7 @@ public class LoadService {
         Load saved = loadRepository.save(load);
         if (previousTruckerId != null) {
             cancelActiveClaim(saved.getId());
-            notificationService.notifyLoadCancelledToTrucker(saved, previousTruckerId, reason);
+            eventPublisher.publishEvent(new LoadCancelledEvent(saved, previousTruckerId, reason));
         }
         writeEvent(saved, "CANCELLED", shipperId);
         return buildResponse(saved);
@@ -223,7 +224,7 @@ public class LoadService {
         Load saved = loadRepository.save(load);
         recordClaim(saved, truckerId);
         writeEvent(saved, "CLAIMED", truckerId);
-        notificationService.notifyLoadClaimed(saved, truckerId);
+        eventPublisher.publishEvent(new LoadClaimedEvent(saved, truckerId));
         return buildResponse(saved);
     }
 
@@ -239,7 +240,7 @@ public class LoadService {
         load.setStatus(LoadStatus.IN_TRANSIT);
         Load saved = loadRepository.save(load);
         writeEvent(saved, "PICKED_UP", truckerId);
-        notificationService.notifyLoadPickedUp(saved);
+        eventPublisher.publishEvent(new LoadPickedUpEvent(saved));
         return buildResponse(saved);
     }
 
@@ -255,7 +256,7 @@ public class LoadService {
         load.setStatus(LoadStatus.DELIVERED);
         Load saved = loadRepository.save(load);
         writeEvent(saved, "DELIVERED", truckerId);
-        notificationService.notifyLoadDelivered(saved);
+        eventPublisher.publishEvent(new LoadDeliveredEvent(saved));
         return buildResponse(saved);
     }
 

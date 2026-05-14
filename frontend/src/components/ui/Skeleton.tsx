@@ -6,6 +6,12 @@ export function Skeleton({ className = '' }: SkeletonProps) {
   return <div className={`animate-pulse rounded bg-gray-200 ${className}`} />
 }
 
+function cellWidth(j: number, cols: number): string {
+  if (j === 0) return 'w-28'
+  if (j === cols - 1) return 'w-12'
+  return 'w-20'
+}
+
 export function TableSkeleton({
   rows = 5,
   cols = 6,
@@ -30,7 +36,7 @@ export function TableSkeleton({
             <tr key={i}>
               {Array.from({ length: cols }).map((_, j) => (
                 <td key={j} className="px-4 py-3">
-                  <Skeleton className={`h-4 ${j === 0 ? 'w-28' : j === cols - 1 ? 'w-12' : 'w-20'}`} />
+                  <Skeleton className={`h-4 ${cellWidth(j, cols)}`} />
                 </td>
               ))}
             </tr>

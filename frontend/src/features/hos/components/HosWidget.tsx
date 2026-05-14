@@ -12,6 +12,12 @@ const DAY_LABELS = [
   '7 days ago',
 ]
 
+function getCycleTextColor(exhausted: boolean, remaining: number): string {
+  if (exhausted) return 'text-red-700'
+  if (remaining <= 14) return 'text-amber-700'
+  return 'text-green-700'
+}
+
 interface Thresholds {
   amber: number
   red: number
@@ -187,7 +193,7 @@ export function HosWidget() {
           <span className="text-xs font-medium text-gray-700">
             70-hr / 8-day on-duty log
           </span>
-          <span className={`text-xs font-semibold ${cycleExhausted ? 'text-red-700' : remaining70hr <= 14 ? 'text-amber-700' : 'text-green-700'}`}>
+          <span className={`text-xs font-semibold ${getCycleTextColor(cycleExhausted, remaining70hr)}`}>
             {totalOnDuty.toFixed(1)} / 70 hrs used
             <span className="ml-1 text-gray-400 font-normal">{cycleExpanded ? '▲' : '▼'}</span>
           </span>

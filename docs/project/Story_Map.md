@@ -44,7 +44,7 @@
 | US-301 | S3 File Storage & Signed Upload URLs | COMPLETED             | 3     | US-101     | ✅ RLS, ✅ No-Lombok                     |
 | US-302 | Platform-Generated BOL               | COMPLETED             | 3     | US-301     | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (5m TTL) |
 | US-303 | BOL/POD Photo Upload & Viewing       | COMPLETED             | 3     | US-301     | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (5m TTL) |
-| US-305 | **POD Upload UI Completion**         | **MIGRATION_PENDING** | **3** | **US-301** | **⚠️ BLOCKER: Phase 7b IFTA**          |
+| US-305 | POD Upload UI Completion             | COMPLETED             | 3     | US-301     | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (5m TTL) |
 | US-308 | **Document Audit Log Service**       | **IN_DEVELOPMENT**    | **3** | **US-303** | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (5m TTL) |
 |        |                                      |                       |       |            |                                        |
 
@@ -183,7 +183,7 @@
 
 | Blocker | Impact | Status |
 |---------|--------|--------|
-| **Phase 3.5 POD UI incomplete** | Blocks US-732 (IFTA mileage tracking) | ⚠️ PENDING — Frontend placeholder |
+| **Phase 3.5 POD UI** | Blocks US-732 (IFTA mileage tracking) | ✅ RESOLVED — US-305 completed |
 | **Phase 3.8 Document audit log** | Blocks US-736 (tax compliance reporting) | ✅ **UNBLOCKED** — US-308 implemented |
 | **Phase 5 payment processor** | Blocks all 7 Phase 5 stories (US-501–507) | ⚠️ BLOCKER — No Stripe/ACH integration |
 | **Phase 6 message broker** | Blocks all 4 Phase 6 stories (US-601–604) | ⚠️ BLOCKER — No WebSocket/message infra |
@@ -194,11 +194,11 @@
 
 | Status | Count | Phases |
 |--------|-------|--------|
-| ✅ COMPLETED | 4 | 1, 1.1, 1.2, 2 |
+| ✅ COMPLETED | 5 | 1, 1.1, 1.2, 2, 3 |
 | 🔄 IN_PROGRESS | 2 | 1, 3 |
 | 🟡 PARTIAL | 9 | 3, 4, 7 |
 | 📋 DESIGN_APPROVED | 0 | — |
-| ⚠️ MIGRATION_PENDING | 63 | 3–9 |
+| ⚠️ MIGRATION_PENDING | 62 | 3–9 |
 | **TOTAL** | **78** | **1–9** |
 
 ---

@@ -71,6 +71,7 @@ When asked to update documentation, manage the backlog, or finalize a story:
 - **Security:** Every table MUST have Row-Level Security (RLS) enabled.
 - **Soft Deletes:** Mandatory `deleted_at` TIMESTAMPTZ column on all core entities.
 - **Migrations:** Naming must follow `VYYYYMMDD_HHmm__Description.sql`.
+- **Foreign Key Validation:** Before committing migrations, verify target columns have UNIQUE/PRIMARY KEY constraints. Target `tenants(id)` for tenant refs, never `users(tenant_id)`. See `backend/src/main/resources/db/migration/MIGRATION_CHECKLIST.md`.
 
 ## Java Development
 - **No-Lombok Rule:** Use standard Java POJOs or Records with manual getters/setters.
@@ -84,6 +85,14 @@ When asked to update documentation, manage the backlog, or finalize a story:
 4. **Verify:** Ensure 80%+ branch coverage via JaCoCo.
 
 ---
+
+## ☁️ Cloud Run Deployment Standards
+- **Service URLs:** Never hardcode Cloud Run service URLs in config files (nginx.conf, docker entrypoint, etc). Use environment variables instead — Cloud Run generates new URLs on each deploy.
+- **Proxy Configuration:** Frontend nginx.conf must use `${BACKEND_URL}` placeholder + `envsubst` at startup to inject backend service URL.
+- **Deployment command:** Pass `--set-env-vars="BACKEND_URL=https://...,BACKEND_HOST=..."` to gcloud run deploy.
+- **Smoke test:** After deployment, verify proxy works with `curl https://frontend-url/api/v1/actuator/health` (should reach backend).
+- **CORS Testing:** When verifying auth flows work, ALWAYS test CORS preflight separately (direct API calls bypass browser CORS checks). Test: `curl -X OPTIONS https://backend/auth/login -H "Origin: frontend-url"` should return 200 with Access-Control-Allow-Origin header. Verify frontend URL is in backend's CORS allowed-origins config (never hardcoded — use env var).
+- See `memory/feedback_hardcoded_service_urls.md` and `memory/feedback_cors_testing.md` for full solutions.
 
 ## ⚠️ Enforcement
 - Role documents override user convenience.

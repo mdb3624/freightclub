@@ -6,6 +6,7 @@ import { useLoads } from '@/features/loads/hooks/useLoads'
 import { useLoadCounts } from '@/features/loads/hooks/useLoadCounts'
 import { useCancelLoad } from '@/features/loads/hooks/useCancelLoad'
 import { usePublishLoad } from '@/features/loads/hooks/usePublishLoad'
+import { ProfileCompletionBanner } from '@/features/shipper/components/ProfileCompletionBanner'
 import { LoadsTable } from '@/features/loads/components/LoadsTable'
 import { AppShell } from '@/components/AppShell'
 import { Button } from '@/components/ui/Button'
@@ -52,6 +53,8 @@ export function ShipperDashboard() {
           </Link>
         </div>
       </div>
+
+      <ProfileCompletionBanner />
 
       {counts && (
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">

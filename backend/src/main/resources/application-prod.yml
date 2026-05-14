@@ -21,7 +21,7 @@ server:
 
 app:
   cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:https://freightclub.app,https://freightclub-frontend-404925591110.us-central1.run.app}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:https://freightclub.app,https://freightclub-frontend-5gecbdg27a-uc.a.run.app}
   cookie:
     secure: true
   storage:

@@ -10,6 +10,11 @@ import {
 } from '../../schemas/carrier.schemas';
 import { useAddEquipment, useUpdateEquipment } from '../../hooks/useCarrierProfile';
 
+function submitLabel(isSubmitting: boolean, isEditing: boolean): string {
+  if (isSubmitting) return 'Saving...'
+  return isEditing ? 'Update Equipment' : 'Add Equipment'
+}
+
 interface EquipmentModalProps {
   equipment: CarrierEquipmentDTO | null;
   onClose: () => void;
@@ -241,7 +246,7 @@ export default function EquipmentModal({ equipment, onClose }: EquipmentModalPro
               disabled={isSubmitting}
               className="flex-1 h-12 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold rounded transition-colors"
             >
-              {isSubmitting ? 'Saving...' : isEditing ? 'Update Equipment' : 'Add Equipment'}
+              {submitLabel(isSubmitting, isEditing)}
             </button>
           </div>
         </form>

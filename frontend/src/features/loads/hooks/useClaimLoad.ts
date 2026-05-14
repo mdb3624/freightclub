@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { loadsApi } from '../api'
+import { loadQueryInvalidations } from '../utils/queryInvalidation'
 import { useToastStore } from '@/store/toastStore'
 
 export function useClaimLoad() {
@@ -8,8 +9,7 @@ export function useClaimLoad() {
   return useMutation({
     mutationFn: (id: string) => loadsApi.claim(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['board'] })
-      queryClient.invalidateQueries({ queryKey: ['my-active-load'] })
+      loadQueryInvalidations.onClaim(queryClient)
       toast('Load claimed! Head to your dashboard to get started.')
     },
     onError: () => {

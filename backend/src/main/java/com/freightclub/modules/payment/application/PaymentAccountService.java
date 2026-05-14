@@ -16,9 +16,12 @@ import java.util.stream.Collectors;
 public class PaymentAccountService {
 
     private final PaymentAccountRepository paymentAccountRepository;
+    private final PaymentAccountMapper paymentAccountMapper;
 
-    public PaymentAccountService(PaymentAccountRepository paymentAccountRepository) {
+    public PaymentAccountService(PaymentAccountRepository paymentAccountRepository,
+                                 PaymentAccountMapper paymentAccountMapper) {
         this.paymentAccountRepository = paymentAccountRepository;
+        this.paymentAccountMapper = paymentAccountMapper;
     }
 
     // AC-1: Create payment account
@@ -36,7 +39,7 @@ public class PaymentAccountService {
         PaymentAccountEntity entity = PaymentAccountEntity.fromDomain(domain);
         PaymentAccountEntity saved = paymentAccountRepository.save(entity);
 
-        return toDTO(saved.toDomain());
+        return paymentAccountMapper.toDto(saved.toDomain());
     }
 
     // AC-2 & AC-3: Verify micro-deposit amounts
@@ -68,7 +71,7 @@ public class PaymentAccountService {
         updated.setId(cmd.accountId());
         PaymentAccountEntity saved = paymentAccountRepository.save(updated);
 
-        return toDTO(saved.toDomain());
+        return paymentAccountMapper.toDto(saved.toDomain());
     }
 
     // AC-4: Set account as primary
@@ -101,7 +104,7 @@ public class PaymentAccountService {
         updated.setId(cmd.accountId());
         PaymentAccountEntity saved = paymentAccountRepository.save(updated);
 
-        return toDTO(saved.toDomain());
+        return paymentAccountMapper.toDto(saved.toDomain());
     }
 
     // AC-4: Get all active payment accounts for trucker
@@ -110,7 +113,7 @@ public class PaymentAccountService {
             .findByTenantIdAndTruckerIdAndDeletedAtIsNull(tenantId, truckerId);
 
         return entities.stream()
-            .map(entity -> toDTO(entity.toDomain()))
+            .map(entity -> paymentAccountMapper.toDto(entity.toDomain()))
             .collect(Collectors.toList());
     }
 
@@ -136,19 +139,4 @@ public class PaymentAccountService {
         paymentAccountRepository.save(updated);
     }
 
-    // Mapper: Domain → DTO
-    private PaymentAccountDTO toDTO(PaymentAccount domain) {
-        return new PaymentAccountDTO(
-            domain.getId(),
-            domain.getAccountHolderName(),
-            domain.getRoutingNumber(),
-            domain.getLastFourDigits(),
-            domain.getAccountType(),
-            domain.getAccountNickname(),
-            domain.getStatus(),
-            domain.isPrimary(),
-            domain.getCreatedAt(),
-            domain.getVerifiedAt()
-        );
-    }
 }

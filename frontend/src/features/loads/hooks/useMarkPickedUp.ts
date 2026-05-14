@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { loadsApi } from '../api'
+import { loadQueryInvalidations } from '../utils/queryInvalidation'
 import { useToastStore } from '@/store/toastStore'
 
 export function useMarkPickedUp() {
@@ -8,8 +9,7 @@ export function useMarkPickedUp() {
   return useMutation({
     mutationFn: (id: string) => loadsApi.pickup(id),
     onSuccess: (load) => {
-      queryClient.invalidateQueries({ queryKey: ['my-active-load'] })
-      queryClient.invalidateQueries({ queryKey: ['board', load.id] })
+      loadQueryInvalidations.onPickup(queryClient, load.id)
       toast("Pickup confirmed — you're now in transit.")
     },
   })

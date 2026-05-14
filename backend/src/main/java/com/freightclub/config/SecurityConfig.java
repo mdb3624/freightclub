@@ -24,7 +24,15 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 @Configuration
@@ -57,9 +65,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .cors(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/v1/auth/**", "/api/v1/market/**", "/error", "/actuator/health").permitAll()
                 .requestMatchers("/api/v1/shippers/*/public-reputation").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/loads/*/claim").hasRole("TRUCKER")
@@ -105,9 +114,34 @@ public class SecurityConfig {
     }
 
     @Bean
+    public FilterRegistrationBean<SimpleOptionsFilter> simpleOptionsFilterRegistration() {
+        FilterRegistrationBean<SimpleOptionsFilter> registration = new FilterRegistrationBean<>(new SimpleOptionsFilter());
+        registration.setOrder(Integer.MIN_VALUE);
+        return registration;
+    }
+
+    public static class SimpleOptionsFilter implements Filter {
+        @Override
+        public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+            HttpServletResponse response = (HttpServletResponse) res;
+            jakarta.servlet.http.HttpServletRequest request = (jakarta.servlet.http.HttpServletRequest) req;
+
+            if (request.getMethod().equals("OPTIONS")) {
+                response.setStatus(200);
+                response.addHeader("Access-Control-Allow-Origin", "*");
+                response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+                response.addHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, X-Requested-With");
+                response.addHeader("Access-Control-Allow-Credentials", "true");
+                return;
+            }
+            chain.doFilter(req, res);
+        }
+    }
+
+    @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(allowedOrigins.split(",")));
+        config.setAllowedOriginPatterns(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
         config.setAllowCredentials(true);

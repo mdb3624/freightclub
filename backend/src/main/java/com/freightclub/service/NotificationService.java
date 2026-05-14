@@ -9,6 +9,7 @@ import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -30,21 +31,22 @@ public class NotificationService {
         this.emailService = emailService;
     }
 
-    /** Trucker claimed shipper's load — notify shipper. */
-    public void notifyLoadClaimed(Load load, String truckerId) {
-        User trucker = userRepository.findById(truckerId).orElse(null);
+    @EventListener
+    public void onLoadClaimed(LoadClaimedEvent event) {
+        Load load = event.load();
+        User trucker = userRepository.findById(event.truckerId()).orElse(null);
         User shipper = userRepository.findById(load.getShipperId()).orElse(null);
         if (trucker == null || shipper == null) return;
 
         String truckerName = trucker.getFirstName() + " " + trucker.getLastName();
-        String route = route(load);
         notify(shipper, load, "LOAD_CLAIMED",
-                truckerName + " claimed your load (" + route + ")",
+                truckerName + " claimed your load (" + route(load) + ")",
                 "[FreightClub] Your load was claimed");
     }
 
-    /** Trucker marked pickup — notify shipper. */
-    public void notifyLoadPickedUp(Load load) {
+    @EventListener
+    public void onLoadPickedUp(LoadPickedUpEvent event) {
+        Load load = event.load();
         User shipper = userRepository.findById(load.getShipperId()).orElse(null);
         if (shipper == null) return;
 
@@ -53,8 +55,9 @@ public class NotificationService {
                 "[FreightClub] Load picked up");
     }
 
-    /** Trucker marked delivered — notify shipper. */
-    public void notifyLoadDelivered(Load load) {
+    @EventListener
+    public void onLoadDelivered(LoadDeliveredEvent event) {
+        Load load = event.load();
         User shipper = userRepository.findById(load.getShipperId()).orElse(null);
         if (shipper == null) return;
 
@@ -63,13 +66,14 @@ public class NotificationService {
                 "[FreightClub] Load delivered");
     }
 
-    /** Shipper cancelled a claimed load — notify trucker with reason. */
-    public void notifyLoadCancelledToTrucker(Load load, String truckerId, String reason) {
-        User trucker = userRepository.findById(truckerId).orElse(null);
+    @EventListener
+    public void onLoadCancelled(LoadCancelledEvent event) {
+        Load load = event.load();
+        User trucker = userRepository.findById(event.truckerId()).orElse(null);
         if (trucker == null) return;
 
         notify(trucker, load, "LOAD_CANCELLED",
-                "The load you claimed (" + route(load) + ") was cancelled. Reason: " + reason,
+                "The load you claimed (" + route(load) + ") was cancelled. Reason: " + event.reason(),
                 "[FreightClub] Your claimed load was cancelled");
     }
 
@@ -125,6 +129,6 @@ public class NotificationService {
 
     private String route(Load load) {
         return load.getOriginCity() + ", " + load.getOriginState()
-                + " \u2192 " + load.getDestinationCity() + ", " + load.getDestinationState();
+                + " → " + load.getDestinationCity() + ", " + load.getDestinationState();
     }
 }

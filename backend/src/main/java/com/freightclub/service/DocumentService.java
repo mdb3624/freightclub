@@ -3,7 +3,6 @@ package com.freightclub.service;
 import com.freightclub.domain.DocumentType;
 import com.freightclub.domain.Load;
 import com.freightclub.domain.LoadDocument;
-import com.freightclub.domain.LoadStatus;
 import com.freightclub.domain.User;
 import com.freightclub.dto.DocumentResponse;
 import com.freightclub.exception.DocumentNotFoundException;
@@ -13,7 +12,7 @@ import com.freightclub.repository.DocumentRepository;
 import com.freightclub.repository.LoadRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
-import com.freightclub.storage.StorageService;
+import com.freightclub.storage.LocalStorageService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
@@ -37,13 +36,13 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
     private final LoadRepository loadRepository;
     private final UserRepository userRepository;
-    private final StorageService storageService;
+    private final LocalStorageService storageService;
     private final BolGeneratorService bolGeneratorService;
 
     public DocumentService(DocumentRepository documentRepository,
                            LoadRepository loadRepository,
                            UserRepository userRepository,
-                           StorageService storageService,
+                           LocalStorageService storageService,
                            BolGeneratorService bolGeneratorService) {
         this.documentRepository = documentRepository;
         this.loadRepository = loadRepository;
@@ -77,27 +76,21 @@ public class DocumentService {
     @CacheEvict(value = "documents", allEntries = true)
     public DocumentResponse uploadBolPhoto(String loadId, String truckerId, MultipartFile file) {
         Load load = requireAssignedLoad(loadId, truckerId);
-        if (load.getStatus() != LoadStatus.CLAIMED) {
-            throw new DocumentUploadRequiredException("BOL photo can only be uploaded when load is CLAIMED");
-        }
+        LoadDocumentPolicy.validateUpload(DocumentType.BOL_PHOTO, load.getStatus());
         return storePhoto(load, truckerId, DocumentType.BOL_PHOTO, file);
     }
 
     @CacheEvict(value = "documents", allEntries = true)
     public DocumentResponse uploadPodPhoto(String loadId, String truckerId, MultipartFile file) {
         Load load = requireAssignedLoad(loadId, truckerId);
-        if (load.getStatus() != LoadStatus.IN_TRANSIT) {
-            throw new DocumentUploadRequiredException("POD photo can only be uploaded when load is IN_TRANSIT");
-        }
+        LoadDocumentPolicy.validateUpload(DocumentType.POD_PHOTO, load.getStatus());
         return storePhoto(load, truckerId, DocumentType.POD_PHOTO, file);
     }
 
     @CacheEvict(value = "documents", allEntries = true)
     public void reportIssue(String loadId, String truckerId, String description, MultipartFile photo) {
         Load load = requireAssignedLoad(loadId, truckerId);
-        if (load.getStatus() != LoadStatus.IN_TRANSIT) {
-            throw new DocumentUploadRequiredException("Issues can only be reported when load is IN_TRANSIT");
-        }
+        LoadDocumentPolicy.validateUpload(DocumentType.ISSUE_PHOTO, load.getStatus());
         if (description == null || description.isBlank()) {
             throw new IllegalArgumentException("Issue description is required");
         }

@@ -1,4 +1,5 @@
 import { computeEarningSummary } from '../utils/earningSummary'
+import { StatCard } from '@/components/ui/StatCard'
 import type { LoadSummary } from '../types'
 
 interface EarningSummaryCardProps {
@@ -15,31 +16,17 @@ export function EarningSummaryCard({ loads }: EarningSummaryCardProps) {
         Last 30 Days
       </h3>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <div>
-          <p className="text-xs text-gray-500">Loads Completed</p>
-          <p className="text-2xl font-bold text-gray-900 mt-0.5">{s.loadsCount}</p>
-        </div>
-        <div>
-          <p className="text-xs text-gray-500">Total Miles</p>
-          <p className="text-2xl font-bold text-gray-900 mt-0.5">
-            {s.totalMiles.toLocaleString()}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-gray-500">Total Revenue</p>
-          <p className="text-2xl font-bold text-gray-900 mt-0.5">
-            ${s.totalRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-gray-500">Effective CPM</p>
-          <p className="text-2xl font-bold text-gray-900 mt-0.5">
-            {s.effectiveCpm != null ? `$${s.effectiveCpm.toFixed(2)}` : '—'}
-          </p>
-          {s.effectiveCpm != null && (
-            <p className="text-xs text-gray-400">per mile</p>
-          )}
-        </div>
+        <StatCard label="Loads Completed" value={s.loadsCount} />
+        <StatCard label="Total Miles" value={s.totalMiles.toLocaleString()} />
+        <StatCard
+          label="Total Revenue"
+          value={`$${s.totalRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+        />
+        <StatCard
+          label="Effective CPM"
+          value={s.effectiveCpm != null ? `$${s.effectiveCpm.toFixed(2)}` : '—'}
+          sub={s.effectiveCpm != null ? 'per mile' : undefined}
+        />
       </div>
     </div>
   )

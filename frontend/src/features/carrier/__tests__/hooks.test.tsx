@@ -4,18 +4,38 @@ import { ReactNode } from 'react';
 import {
   useEquipment,
   useAddEquipment,
-  useUpdateEquipment,
   useDeleteEquipment,
 } from '../hooks/useCarrierProfile';
-import axios from 'axios';
+import { carrierApi } from '../api';
 import { vi } from 'vitest';
 
-vi.mock('axios');
-const mockedAxios = axios as unknown as {
-  get: ReturnType<typeof vi.fn>;
-  post: ReturnType<typeof vi.fn>;
-  put: ReturnType<typeof vi.fn>;
-  delete: ReturnType<typeof vi.fn>;
+vi.mock('../api', () => ({
+  carrierApi: {
+    equipment: {
+      list: vi.fn(),
+      add: vi.fn(),
+      update: vi.fn(),
+      remove: vi.fn(),
+    },
+    lanes: {
+      list: vi.fn(),
+      add: vi.fn(),
+      update: vi.fn(),
+      remove: vi.fn(),
+    },
+    availability: {
+      get: vi.fn(),
+      set: vi.fn(),
+    },
+    publicProfile: vi.fn(),
+  },
+}));
+
+const mockedEquipment = carrierApi.equipment as {
+  list: ReturnType<typeof vi.fn>;
+  add: ReturnType<typeof vi.fn>;
+  update: ReturnType<typeof vi.fn>;
+  remove: ReturnType<typeof vi.fn>;
 };
 
 const queryClient = new QueryClient({
@@ -53,7 +73,7 @@ describe('Carrier Profile Hooks', () => {
         },
       ];
 
-      mockedAxios.get.mockResolvedValueOnce({ data: mockEquipment });
+      mockedEquipment.list.mockResolvedValueOnce(mockEquipment);
 
       const { result } = renderHook(() => useEquipment(truckerId), { wrapper });
 
@@ -64,16 +84,14 @@ describe('Carrier Profile Hooks', () => {
       });
 
       expect(result.current.data).toEqual(mockEquipment);
-      expect(mockedAxios.get).toHaveBeenCalledWith('/api/v1/profile/equipment', {
-        params: { truckerId },
-      });
+      expect(mockedEquipment.list).toHaveBeenCalledWith(truckerId);
     });
 
     it('should not fetch if truckerId is not provided', () => {
       const { result } = renderHook(() => useEquipment(''), { wrapper });
 
       expect(result.current.isLoading).toBe(false);
-      expect(mockedAxios.get).not.toHaveBeenCalled();
+      expect(mockedEquipment.list).not.toHaveBeenCalled();
     });
   });
 
@@ -92,7 +110,7 @@ describe('Carrier Profile Hooks', () => {
         createdAt: new Date().toISOString(),
       };
 
-      mockedAxios.post.mockResolvedValueOnce({ data: mockData });
+      mockedEquipment.add.mockResolvedValueOnce(mockData);
 
       const { result } = renderHook(() => useAddEquipment(), { wrapper });
 
@@ -111,11 +129,13 @@ describe('Carrier Profile Hooks', () => {
       });
 
       expect(result.current.data).toEqual(mockData);
-      expect(mockedAxios.post).toHaveBeenCalledWith('/api/v1/profile/equipment', expect.any(Object));
+      expect(mockedEquipment.add).toHaveBeenCalledWith(expect.objectContaining({
+        equipmentType: 'FLATBED',
+      }));
     });
 
     it('should handle validation errors', async () => {
-      mockedAxios.post.mockRejectedValueOnce({
+      mockedEquipment.add.mockRejectedValueOnce({
         response: {
           status: 400,
           data: { message: 'Invalid equipment type' },
@@ -143,7 +163,7 @@ describe('Carrier Profile Hooks', () => {
     it('should delete equipment and invalidate cache', async () => {
       const equipmentId = 'eq-1';
 
-      mockedAxios.delete.mockResolvedValueOnce({});
+      mockedEquipment.remove.mockResolvedValueOnce(undefined);
 
       const { result } = renderHook(() => useDeleteEquipment(), { wrapper });
 
@@ -153,7 +173,7 @@ describe('Carrier Profile Hooks', () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(mockedAxios.delete).toHaveBeenCalledWith(`/api/v1/profile/equipment/${equipmentId}`);
+      expect(mockedEquipment.remove).toHaveBeenCalledWith(equipmentId);
     });
   });
 });

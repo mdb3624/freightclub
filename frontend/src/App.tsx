@@ -4,6 +4,7 @@ import { TruckerLandingPage } from '@/pages/TruckerLandingPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { RegisterPage } from '@/pages/RegisterPage'
 import { ShipperDashboard } from '@/pages/ShipperDashboard'
+import { ShipperProfilePage } from '@/pages/ShipperProfilePage'
 import { TruckerDashboard } from '@/pages/TruckerDashboard'
 import { LoadCreatePage } from '@/pages/LoadCreatePage'
 import { LoadDetailPage } from '@/pages/LoadDetailPage'
@@ -53,6 +54,15 @@ export default function App() {
         element={
           <ProtectedRoute role="SHIPPER">
             <ShipperDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/shipper/profile"
+        element={
+          <ProtectedRoute role="SHIPPER">
+            <ShipperProfilePage />
           </ProtectedRoute>
         }
       />

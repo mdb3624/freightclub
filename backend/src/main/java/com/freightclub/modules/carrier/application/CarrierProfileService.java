@@ -25,18 +25,21 @@ public class CarrierProfileService {
   private final CarrierAvailabilityRepository availabilityRepository;
   private final CarrierProfileAuditLogRepository auditLogRepository;
   private final ObjectMapper objectMapper;
+  private final CarrierMapper carrierMapper;
 
   public CarrierProfileService(
       CarrierEquipmentRepository equipmentRepository,
       CarrierLaneRepository laneRepository,
       CarrierAvailabilityRepository availabilityRepository,
       CarrierProfileAuditLogRepository auditLogRepository,
-      ObjectMapper objectMapper) {
+      ObjectMapper objectMapper,
+      CarrierMapper carrierMapper) {
     this.equipmentRepository = equipmentRepository;
     this.laneRepository = laneRepository;
     this.availabilityRepository = availabilityRepository;
     this.auditLogRepository = auditLogRepository;
     this.objectMapper = objectMapper;
+    this.carrierMapper = carrierMapper;
   }
 
   // AC-1: Add equipment (validates type/dimensions, creates ACTIVE record)
@@ -60,7 +63,7 @@ public class CarrierProfileService {
     CarrierEquipmentEntity entity = CarrierEquipmentEntity.fromDomain(domain);
     CarrierEquipmentEntity saved = equipmentRepository.save(entity);
 
-    return toDTO(saved.toDomain());
+    return carrierMapper.toDto(saved.toDomain());
   }
 
   // AC-1, AC-7: Get all equipment for trucker (NFR-504: 1h TTL cache)
@@ -76,7 +79,7 @@ public class CarrierProfileService {
         .findByTenantIdAndTruckerIdAndDeletedAtIsNull(tenantId, truckerId);
 
     return entities.stream()
-        .map(entity -> toDTO(entity.toDomain()))
+        .map(entity -> carrierMapper.toDto(entity.toDomain()))
         .collect(Collectors.toList());
   }
 
@@ -106,7 +109,7 @@ public class CarrierProfileService {
     updated.setId(dto.id());
     CarrierEquipmentEntity saved = equipmentRepository.save(updated);
 
-    return toDTO(saved.toDomain());
+    return carrierMapper.toDto(saved.toDomain());
   }
 
   // AC-4: Soft-delete equipment (set deleted_at, prevent deletion if in use)
@@ -164,7 +167,7 @@ public class CarrierProfileService {
     CarrierLaneEntity saved = laneRepository.save(entity);
     appendAuditLog(tenantId, truckerId, "ADD_LANE", null, dto, "SUCCESS");
 
-    return toLaneDTO(saved.toDomain());
+    return carrierMapper.toLaneDto(saved.toDomain());
   }
 
   // AC-2, AC-7: Get all lanes for trucker (NFR-504: 1h TTL cache)
@@ -180,7 +183,7 @@ public class CarrierProfileService {
         .findByTenantIdAndTruckerIdAndDeletedAtIsNull(tenantId, truckerId);
 
     return entities.stream()
-        .map(entity -> toLaneDTO(entity.toDomain()))
+        .map(entity -> carrierMapper.toLaneDto(entity.toDomain()))
         .collect(Collectors.toList());
   }
 
@@ -204,7 +207,7 @@ public class CarrierProfileService {
     CarrierLaneEntity saved = laneRepository.save(updated);
     appendAuditLog(tenantId, truckerId, "UPDATE_LANES", null, dto, "SUCCESS");
 
-    return toLaneDTO(saved.toDomain());
+    return carrierMapper.toLaneDto(saved.toDomain());
   }
 
   // AC-2: Delete lane
@@ -256,7 +259,7 @@ public class CarrierProfileService {
     CarrierAvailabilityEntity saved = availabilityRepository.save(entity);
     appendAuditLog(tenantId, truckerId, "SET_AVAILABILITY", null, dto, "SUCCESS");
 
-    return toAvailabilityDTO(saved.toDomain());
+    return carrierMapper.toAvailabilityDto(saved.toDomain());
   }
 
   // AC-3: Get availability (NFR-504: 30min TTL cache)
@@ -270,7 +273,7 @@ public class CarrierProfileService {
     String tenantId = TenantContextHolder.getTenantId();
     var entity = availabilityRepository.findByTenantIdAndTruckerId(tenantId, truckerId);
 
-    return entity.map(e -> toAvailabilityDTO(e.toDomain())).orElse(null);
+    return entity.map(e -> carrierMapper.toAvailabilityDto(e.toDomain())).orElse(null);
   }
 
   // AC-4: Get public profile (NFR-504: 2h TTL cache, masks sensitive data)
@@ -286,17 +289,17 @@ public class CarrierProfileService {
     List<CarrierEquipmentDTO> equipment = equipmentRepository
         .findByTenantIdAndTruckerIdAndDeletedAtIsNull(tenantId, truckerId)
         .stream()
-        .map(e -> toDTO(e.toDomain()))
+        .map(e -> carrierMapper.toDto(e.toDomain()))
         .collect(Collectors.toList());
 
     List<CarrierLaneDTO> lanes = laneRepository
         .findByTenantIdAndTruckerIdAndDeletedAtIsNull(tenantId, truckerId)
         .stream()
-        .map(e -> toLaneDTO(e.toDomain()))
+        .map(e -> carrierMapper.toLaneDto(e.toDomain()))
         .collect(Collectors.toList());
 
     var availability = availabilityRepository.findByTenantIdAndTruckerId(tenantId, truckerId)
-        .map(e -> toAvailabilityDTO(e.toDomain()))
+        .map(e -> carrierMapper.toAvailabilityDto(e.toDomain()))
         .orElse(null);
 
     return new PublicCarrierProfileDTO(truckerId, equipment, lanes, availability);
@@ -319,42 +322,4 @@ public class CarrierProfileService {
     }
   }
 
-  private CarrierEquipmentDTO toDTO(CarrierEquipment domain) {
-    return new CarrierEquipmentDTO(
-        domain.getId(),
-        domain.getEquipmentType(),
-        domain.getLengthFeet(),
-        domain.getWidthFeet(),
-        domain.getHeightFeet(),
-        domain.getCapacityLbs(),
-        domain.getEquipmentCondition(),
-        domain.getYearModel(),
-        domain.getStatus(),
-        domain.getCreatedAt()
-    );
-  }
-
-  private CarrierLaneDTO toLaneDTO(CarrierLane domain) {
-    return new CarrierLaneDTO(
-        domain.getId(),
-        domain.getOriginRegion(),
-        domain.getDestinationRegion(),
-        domain.getMinRateCents(),
-        domain.getFrequencyPreference(),
-        domain.getStatus(),
-        domain.getCreatedAt()
-    );
-  }
-
-  private CarrierAvailabilityDTO toAvailabilityDTO(CarrierAvailability domain) {
-    return new CarrierAvailabilityDTO(
-        domain.getId(),
-        domain.getAvailableDays(),
-        domain.getAvailableStartTime(),
-        domain.getAvailableEndTime(),
-        domain.getTimeZone(),
-        domain.isCurrentlyOnLoad(),
-        domain.getLastUpdatedAt()
-    );
-  }
 }

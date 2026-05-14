@@ -5,6 +5,7 @@ import { DOCUMENT_LABELS } from '../types'
 import type { LoadDocument } from '../types'
 import { useUploadBolPhoto, useUploadPodPhoto } from '../hooks/useDocuments'
 import { IssueReportModal } from './IssueReportModal'
+import { downloadBlob } from '../utils/fileDownload'
 
 interface Props {
   loadId: string
@@ -45,7 +46,8 @@ export function DocumentSection({ loadId, loadStatus, role, documents }: Props) 
   async function handleDownload(doc: LoadDocument) {
     setDownloadingId(doc.id)
     try {
-      await documentsApi.download(doc.id, doc.originalFilename)
+      const blob = await documentsApi.download(doc.id)
+      downloadBlob(blob, doc.originalFilename)
     } finally {
       setDownloadingId(null)
     }
@@ -54,7 +56,8 @@ export function DocumentSection({ loadId, loadStatus, role, documents }: Props) 
   async function handleExport() {
     setIsExporting(true)
     try {
-      await documentsApi.exportPdf(loadId)
+      const blob = await documentsApi.exportPdf(loadId)
+      downloadBlob(blob, `load-export-${loadId.substring(0, 8)}.pdf`)
     } finally {
       setIsExporting(false)
     }
@@ -67,9 +70,11 @@ export function DocumentSection({ loadId, loadStatus, role, documents }: Props) 
     <div className="rounded-xl border border-gray-200 bg-white p-6 mt-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">Documents</h3>
-        <Button variant="secondary" isLoading={isExporting} onClick={handleExport}>
-          Export PDF
-        </Button>
+        {role === 'SHIPPER' && (
+          <Button variant="secondary" isLoading={isExporting} onClick={handleExport}>
+            Export PDF
+          </Button>
+        )}
       </div>
 
       {/* Document list */}

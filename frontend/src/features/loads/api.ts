@@ -88,4 +88,7 @@ export const loadsApi = {
 
   getAvailableStates: () =>
     apiGet<AvailableStates>('/board/available-states'),
+
+  getCounts: () =>
+    apiGet<Record<string, number>>('/loads/counts'),
 }

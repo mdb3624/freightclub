@@ -25,7 +25,8 @@ public class CacheConfig {
         "ratingList",          // RatingService: per-load and per-user rating lists
         "ratingSummary",       // RatingService: trucker/shipper rating summaries
         "carrierCostProfile",  // US-702/730: Cost profile calculations (1h TTL)
-        "documents"            // DocumentService: BOL/document lookup by loadId+tenant
+        "documents",           // DocumentService: BOL/document lookup by loadId+tenant
+        "carrierProfiles"      // CarrierProfileService: public profile lookup (1h TTL)
     );
   }
 }

@@ -14,14 +14,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -79,7 +77,7 @@ class NotificationServiceTest {
             when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(shipper));
             when(notificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            service.notifyLoadClaimed(buildLoad(), TRUCKER_ID);
+            service.onLoadClaimed(new LoadClaimedEvent(buildLoad(), TRUCKER_ID));
 
             verify(notificationRepository).save(any(Notification.class));
         }
@@ -88,7 +86,7 @@ class NotificationServiceTest {
         @DisplayName("skips notification when trucker not found")
         void truckerNotFound_noOp() {
             when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.empty());
-            service.notifyLoadClaimed(buildLoad(), TRUCKER_ID);
+            service.onLoadClaimed(new LoadClaimedEvent(buildLoad(), TRUCKER_ID));
             verify(notificationRepository, never()).save(any());
         }
 
@@ -97,7 +95,7 @@ class NotificationServiceTest {
         void shipperNotFound_noOp() {
             when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.of(buildUser(TRUCKER_ID, "Alice", "Smith")));
             when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.empty());
-            service.notifyLoadClaimed(buildLoad(), TRUCKER_ID);
+            service.onLoadClaimed(new LoadClaimedEvent(buildLoad(), TRUCKER_ID));
             verify(notificationRepository, never()).save(any());
         }
     }
@@ -112,7 +110,7 @@ class NotificationServiceTest {
             when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(shipper));
             when(notificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            service.notifyLoadPickedUp(buildLoad());
+            service.onLoadPickedUp(new LoadPickedUpEvent(buildLoad()));
 
             verify(notificationRepository).save(any(Notification.class));
         }
@@ -121,7 +119,7 @@ class NotificationServiceTest {
         @DisplayName("skips when shipper not found")
         void shipperNotFound_noOp() {
             when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.empty());
-            service.notifyLoadPickedUp(buildLoad());
+            service.onLoadPickedUp(new LoadPickedUpEvent(buildLoad()));
             verify(notificationRepository, never()).save(any());
         }
     }
@@ -136,7 +134,7 @@ class NotificationServiceTest {
             when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(shipper));
             when(notificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            service.notifyLoadDelivered(buildLoad());
+            service.onLoadDelivered(new LoadDeliveredEvent(buildLoad()));
 
             verify(notificationRepository).save(any(Notification.class));
         }
@@ -145,7 +143,7 @@ class NotificationServiceTest {
         @DisplayName("skips when shipper not found")
         void shipperNotFound_noOp() {
             when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.empty());
-            service.notifyLoadDelivered(buildLoad());
+            service.onLoadDelivered(new LoadDeliveredEvent(buildLoad()));
             verify(notificationRepository, never()).save(any());
         }
     }
@@ -160,7 +158,7 @@ class NotificationServiceTest {
             when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.of(trucker));
             when(notificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            service.notifyLoadCancelledToTrucker(buildLoad(), TRUCKER_ID, "Equipment issue");
+            service.onLoadCancelled(new LoadCancelledEvent(buildLoad(), TRUCKER_ID, "Equipment issue"));
 
             verify(notificationRepository).save(any(Notification.class));
         }
@@ -169,7 +167,7 @@ class NotificationServiceTest {
         @DisplayName("skips when trucker not found")
         void truckerNotFound_noOp() {
             when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.empty());
-            service.notifyLoadCancelledToTrucker(buildLoad(), TRUCKER_ID, "reason");
+            service.onLoadCancelled(new LoadCancelledEvent(buildLoad(), TRUCKER_ID, "reason"));
             verify(notificationRepository, never()).save(any());
         }
     }

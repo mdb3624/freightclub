@@ -1,27 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
-import {
-  CarrierEquipmentDTO,
-  CarrierLaneDTO,
-  CarrierAvailabilityDTO,
+import { carrierApi } from '../api';
+import type {
   EquipmentFormData,
   LaneFormData,
   AvailabilityFormData,
-  PublicCarrierProfileDTO,
 } from '../schemas/carrier.schemas';
-
-const API_BASE = '/api/v1/profile';
 
 // Equipment Queries
 export function useEquipment(truckerId: string) {
   return useQuery({
     queryKey: ['equipment', truckerId],
-    queryFn: async () => {
-      const response = await axios.get<CarrierEquipmentDTO[]>(`${API_BASE}/equipment`, {
-        params: { truckerId },
-      });
-      return response.data;
-    },
+    queryFn: () => carrierApi.equipment.list(truckerId),
     enabled: !!truckerId,
   });
 }
@@ -29,10 +18,7 @@ export function useEquipment(truckerId: string) {
 export function useAddEquipment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: EquipmentFormData) => {
-      const response = await axios.post<CarrierEquipmentDTO>(`${API_BASE}/equipment`, data);
-      return response.data;
-    },
+    mutationFn: (data: EquipmentFormData) => carrierApi.equipment.add(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['equipment'] });
     },
@@ -42,13 +28,8 @@ export function useAddEquipment() {
 export function useUpdateEquipment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: EquipmentFormData }) => {
-      const response = await axios.put<CarrierEquipmentDTO>(
-        `${API_BASE}/equipment/${id}`,
-        data
-      );
-      return response.data;
-    },
+    mutationFn: ({ id, data }: { id: string; data: EquipmentFormData }) =>
+      carrierApi.equipment.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['equipment'] });
     },
@@ -58,9 +39,7 @@ export function useUpdateEquipment() {
 export function useDeleteEquipment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (equipmentId: string) => {
-      await axios.delete(`${API_BASE}/equipment/${equipmentId}`);
-    },
+    mutationFn: (equipmentId: string) => carrierApi.equipment.remove(equipmentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['equipment'] });
     },
@@ -71,12 +50,7 @@ export function useDeleteEquipment() {
 export function useLanes(truckerId: string) {
   return useQuery({
     queryKey: ['lanes', truckerId],
-    queryFn: async () => {
-      const response = await axios.get<CarrierLaneDTO[]>(`${API_BASE}/lanes`, {
-        params: { truckerId },
-      });
-      return response.data;
-    },
+    queryFn: () => carrierApi.lanes.list(truckerId),
     enabled: !!truckerId,
   });
 }
@@ -84,10 +58,7 @@ export function useLanes(truckerId: string) {
 export function useAddLane() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: LaneFormData) => {
-      const response = await axios.post<CarrierLaneDTO>(`${API_BASE}/lanes`, data);
-      return response.data;
-    },
+    mutationFn: (data: LaneFormData) => carrierApi.lanes.add(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['lanes'] });
     },
@@ -97,10 +68,8 @@ export function useAddLane() {
 export function useUpdateLane() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: LaneFormData }) => {
-      const response = await axios.put<CarrierLaneDTO>(`${API_BASE}/lanes/${id}`, data);
-      return response.data;
-    },
+    mutationFn: ({ id, data }: { id: string; data: LaneFormData }) =>
+      carrierApi.lanes.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['lanes'] });
     },
@@ -110,9 +79,7 @@ export function useUpdateLane() {
 export function useDeleteLane() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (laneId: string) => {
-      await axios.delete(`${API_BASE}/lanes/${laneId}`);
-    },
+    mutationFn: (laneId: string) => carrierApi.lanes.remove(laneId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['lanes'] });
     },
@@ -123,15 +90,7 @@ export function useDeleteLane() {
 export function useAvailability(truckerId: string) {
   return useQuery({
     queryKey: ['availability', truckerId],
-    queryFn: async () => {
-      const response = await axios.get<CarrierAvailabilityDTO | null>(
-        `${API_BASE}/availability`,
-        {
-          params: { truckerId },
-        }
-      );
-      return response.data;
-    },
+    queryFn: () => carrierApi.availability.get(truckerId),
     enabled: !!truckerId,
   });
 }
@@ -139,13 +98,7 @@ export function useAvailability(truckerId: string) {
 export function useSetAvailability() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: AvailabilityFormData) => {
-      const response = await axios.put<CarrierAvailabilityDTO>(
-        `${API_BASE}/availability`,
-        data
-      );
-      return response.data;
-    },
+    mutationFn: (data: AvailabilityFormData) => carrierApi.availability.set(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['availability'] });
     },
@@ -156,12 +109,7 @@ export function useSetAvailability() {
 export function usePublicCarrierProfile(truckerId: string) {
   return useQuery({
     queryKey: ['publicProfile', truckerId],
-    queryFn: async () => {
-      const response = await axios.get<PublicCarrierProfileDTO>(
-        `/api/v1/trucker/${truckerId}/public-profile`
-      );
-      return response.data;
-    },
+    queryFn: () => carrierApi.publicProfile(truckerId),
     enabled: !!truckerId,
   });
 }

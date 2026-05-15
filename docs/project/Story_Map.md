@@ -1,6 +1,6 @@
 # Resilience Logistics: Story Map (Global Hardening Edition)
 
-**Last Updated:** 2026-05-14 | **Scope:** 80 stories mapped | **Unmapped Requirements:** 0 | **Compliance Status:** ✅ RLS, No-Lombok, VARCHAR(36) enforced as hard gates | **Phase 1 Governance:** ✅ COMPLETE | **Phase 2 Governance:** ✅ COMPLETE | **Phase 3 Governance:** ✅ COMPLETE (story files + sign-offs 2026-05-14)
+**Last Updated:** 2026-05-15 | **Scope:** 80 stories mapped | **Unmapped Requirements:** 0 | **Compliance Status:** ✅ RLS, No-Lombok, VARCHAR(36), **Test Coverage 50.6%** enforced as hard gates | **Phase 1 Governance:** ✅ COMPLETE | **Phase 2 Governance:** ✅ COMPLETE | **Phase 3 Governance:** ✅ COMPLETE (story files + sign-offs 2026-05-14) | **Backend Coverage Phase A:** ✅ COMPLETE (49.5% → 50.6%, 54 tests)
 
 ---
 
@@ -173,6 +173,8 @@
 | **RLS (Row-Level Security)** | Code review + Flyway migration validation | ✅ Enforced on all 78 stories |
 | **No-Lombok** | Code review + grep for @Getter/@Setter | ✅ Enforced on all backend stories |
 | **VARCHAR(36) Primary Keys** | Schema review + Flyway migration validation | ✅ Enforced on all data stories |
+| **Test Coverage ≥70%** | JaCoCo branch coverage + REVIEWER gate | 🟡 In progress (Phase A: 50.6%, Phase B-C target: 70%) |
+| **Cyclomatic Complexity <10** | Code review + complexity analysis | ✅ Enforced on all code paths |
 | **NFR-504 Caching** | Design review + architecture gate (Phase 7+) | ✅ Documented for all GET endpoints |
 
 ---
@@ -183,6 +185,7 @@
 
 | Blocker | Impact | Status |
 |---------|--------|--------|
+| **Backend Test Coverage ≥70%** | Blocks all Phase 4+ features from shipping | 🟡 IN_PROGRESS — Phase A: 50.6% (+1.1%), Phase B-C scheduled 2026-05-26 |
 | **Phase 3.5 POD UI** | Blocks US-732 (IFTA mileage tracking) | ✅ RESOLVED — US-305 completed |
 | **Phase 3.8 Document audit log** | Blocks US-736 (tax compliance reporting) | ✅ **UNBLOCKED** — US-308 implemented |
 | **Phase 5 payment processor** | Blocks all 7 Phase 5 stories (US-501–507) | ⚠️ BLOCKER — No Stripe/ACH integration |
@@ -203,7 +206,7 @@
 
 ---
 
-**Last Synced:** 2026-04-27 09:50 UTC  
-**Compliance Status:** ✅ All 78 stories cataloged | ✅ Phase 3.8 (US-308) unblocks Phase 7b  
-**Implementation Status:** Phase 1-3 mostly complete; Phase 7 (6 stories) partially implemented; Phase 5-6 blocked on external integrations  
-**Critical Path:** ⚠️ Phase 3.5 POD UI (frontend only) | ⚠️ Phase 5 payment processor | ⚠️ Phase 6 message broker
+**Last Synced:** 2026-05-15 09:30 UTC  
+**Compliance Status:** ✅ All 78 stories cataloged | ✅ Phase 3.8 (US-308) unblocks Phase 7b | ✅ Backend Coverage Phase A (54 tests, 50.6%)  
+**Implementation Status:** Phase 1-3 complete; Phase 7 (6 stories) partially implemented; Phase 5-6 blocked on external integrations; **Backend Coverage Remediation: Phase A DONE, Phase B-C scheduled**  
+**Critical Path:** 🟡 Backend Test Coverage Phase B-C (target 70% by 2026-05-31) | ⚠️ Phase 5 payment processor | ⚠️ Phase 6 message broker

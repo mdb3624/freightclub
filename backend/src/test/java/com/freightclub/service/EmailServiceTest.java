@@ -50,7 +50,7 @@ class EmailServiceTest {
 
     emailService.send("user@example.com", "Test Subject", "Test Body");
 
-    verify(mailSender, never()).send(any());
+    verify(mailSender, never()).send(any(SimpleMailMessage.class));
   }
 
   @Test

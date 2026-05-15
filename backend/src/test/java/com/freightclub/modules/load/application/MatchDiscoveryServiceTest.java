@@ -116,7 +116,7 @@ class MatchDiscoveryServiceTest {
   @Test
   void ignoresEventWhenOriginCityIsNull() {
     LoadPublishedEvent event = new LoadPublishedEvent(
-        "load-123", "tenant-1", "FLATBED", null, "Houston", "2026-05-15");
+        "load-123", "tenant-1", "shipper-1", null, "Houston");
 
     service.processLoadPublished(event);
 
@@ -150,7 +150,7 @@ class MatchDiscoveryServiceTest {
   @Test
   void respectsTenantIdFromEvent() {
     LoadPublishedEvent event = new LoadPublishedEvent(
-        "load-123", "tenant-2", "FLATBED", "Dallas", "Houston", "2026-05-15");
+        "load-123", "tenant-2", "shipper-1", "FLATBED", "Dallas");
     CarrierCandidate candidate = new CarrierCandidate("carrier-1", "FLATBED", "Dallas");
 
     when(carrierSearchPort.findCandidates("tenant-2")).thenReturn(List.of(candidate));

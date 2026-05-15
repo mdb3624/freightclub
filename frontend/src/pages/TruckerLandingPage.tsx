@@ -287,6 +287,33 @@ body.hauler-active::before {
   background: var(--accent); border-radius: 50%; cursor: pointer;
 }
 
+#hauler-root .ticker-wrap { overflow: hidden; flex: 1; }
+#hauler-root .ticker-delta { margin-left: 4px; }
+#hauler-root .ticker-delta.up { color: var(--red); }
+#hauler-root .ticker-delta.down { color: var(--green); }
+
+#hauler-root .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+#hauler-root .card-header .card-title { margin: 0; }
+
+#hauler-root .text-center { text-align: center; }
+#hauler-root .px-10 { padding: 0 40px; }
+#hauler-root .py-10 { padding: 40px 0; }
+#hauler-root .mono-text { font-family: var(--font-mono); font-size: 12px; }
+#hauler-root .mono-text.sm { font-size: 11px; }
+#hauler-root .mono-text.xs { font-size: 10px; }
+
+#hauler-root .overflow-x-auto { overflow-x: auto; }
+
+#hauler-root .table-cell { font-family: var(--font-mono); }
+#hauler-root .table-cell.mono { font-family: var(--font-mono); }
+#hauler-root .table-cell.accent { color: var(--accent); }
+#hauler-root .table-cell.green { color: var(--green); }
+#hauler-root .table-cell.red { color: var(--red); }
+
+#hauler-root .btn-sm { font-size: 11px; padding: 7px 16px; }
+
+#hauler-root .text-date { color: var(--muted); font-size: 12px; }
+
 @media (max-width: 768px) {
   #hauler-root .grid-2, #hauler-root .grid-3, #hauler-root .grid-4 { grid-template-columns: 1fr; }
   #hauler-root .form-row, #hauler-root .form-row-3 { grid-template-columns: 1fr; }
@@ -374,13 +401,13 @@ export function TruckerLandingPage() {
       {/* TICKER */}
       <div className="ticker">
         <div className="ticker-label">MARKET LIVE</div>
-        <div style={{ overflow: 'hidden', flex: 1 }}>
+        <div className="ticker-wrap">
           <div className="ticker-scroll">
             {tickerItemsDoubled.map((item, i) => (
               <span key={i} className="ticker-item">
                 {item.label}: <span title={item.period ? `Week of ${item.period}` : undefined}>{item.stale ? '⚠ ' : ''}{item.value}</span>
                 {item.delta && (
-                  <span style={{ color: item.deltaUp ? 'var(--red)' : 'var(--green)', marginLeft: '4px' }}>{item.delta}</span>
+                  <span className={`ticker-delta ${item.deltaUp ? 'up' : 'down'}`}>{item.delta}</span>
                 )}
               </span>
             ))}
@@ -451,17 +478,17 @@ export function TruckerLandingPage() {
             </div>
 
             <div className="card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <div className="card-title" style={{ margin: 0 }}>Recent Load Analyses</div>
-                <button className="btn btn-danger" onClick={clearLog} style={{ fontSize: 11, padding: '7px 16px' }}>CLEAR LOG</button>
+              <div className="card-header">
+                <div className="card-title">Recent Load Analyses</div>
+                <button className="btn btn-danger btn-sm" onClick={clearLog}>CLEAR LOG</button>
               </div>
 
               {logTotal === 0 ? (
-                <div style={{ textAlign: 'center', padding: 40, color: 'var(--muted)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                <div className="text-center px-10 py-10 mono-text text-muted">
                   No loads analyzed yet. Use the Load Analyzer tab to get started.
                 </div>
               ) : (
-                <div style={{ overflowX: 'auto' }}>
+                <div className="overflow-x-auto">
                   <table className="load-table">
                     <thead>
                       <tr>
@@ -472,14 +499,14 @@ export function TruckerLandingPage() {
                     <tbody>
                       {loadLog.map((l, i) => (
                         <tr key={i}>
-                          <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{l.origin} → {l.dest}</td>
-                          <td><span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--muted)' }}>{l.equip}</span></td>
-                          <td style={{ fontFamily: 'var(--font-mono)' }}>{l.miles.toLocaleString()}</td>
-                          <td style={{ fontFamily: 'var(--font-mono)' }}>${l.rate.toLocaleString()}</td>
-                          <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>${l.rpm}</td>
-                          <td style={{ fontFamily: 'var(--font-mono)', color: parseFloat(l.profit) >= 0 ? 'var(--green)' : 'var(--red)' }}>${parseFloat(l.profit).toLocaleString()}</td>
+                          <td className="table-cell">{l.origin} → {l.dest}</td>
+                          <td><span className="table-cell sm text-muted">{l.equip}</span></td>
+                          <td className="table-cell">{l.miles.toLocaleString()}</td>
+                          <td className="table-cell">${l.rate.toLocaleString()}</td>
+                          <td className="table-cell accent">${l.rpm}</td>
+                          <td className={`table-cell ${parseFloat(l.profit) >= 0 ? 'green' : 'red'}`}>${parseFloat(l.profit).toLocaleString()}</td>
                           <td><span className={`badge badge-${l.verdict}`}>{l.verdict.toUpperCase()}</span></td>
-                          <td style={{ color: 'var(--muted)', fontSize: 12 }}>{l.date}</td>
+                          <td className="text-date">{l.date}</td>
                         </tr>
                       ))}
                     </tbody>

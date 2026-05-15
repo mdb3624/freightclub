@@ -9,6 +9,7 @@ import { useProfile } from '@/features/profile/hooks/useProfile'
 import { useAvailableStates } from '@/features/loads/hooks/useAvailableStates'
 import { LoadBoardTab } from '@/features/loads/components/LoadBoardTab'
 import { LoadHistoryTab } from '@/features/loads/components/LoadHistoryTab'
+import { HosWidget } from '@/features/hos/components/HosWidget'
 import { AppShell } from '@/components/AppShell'
 import { Button } from '@/components/ui/Button'
 import { useDieselPrices } from '@/features/market/hooks/useDieselPrices'
@@ -221,6 +222,8 @@ export function TruckerDashboard() {
             </div>
           </section>
         )}
+
+        <HosWidget />
 
         {!user?.equipmentType && (
           <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">

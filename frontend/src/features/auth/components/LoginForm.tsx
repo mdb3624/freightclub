@@ -1,49 +1,70 @@
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLogin } from '../hooks/useLogin'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
+import { validateLoginForm } from '../utils/validation'
 import type { LoginFormValues } from '../types'
 import type { AxiosError } from 'axios'
 import type { ApiError } from '@/types'
 
-const schema = z.object({
-  email: z.string().min(1, 'Email is required').email('Enter a valid email'),
-  password: z.string().min(1, 'Password is required'),
-})
-
 export function LoginForm() {
   const { mutate, isPending, error } = useLogin()
-
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
-    resolver: zodResolver(schema),
-  })
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [validationErrors, setValidationErrors] = useState<{ email?: string; password?: string }>({})
 
   const apiErrorMessage = error
     ? ((error as AxiosError<ApiError>).response?.data?.message ?? 'Login failed. Please try again.')
     : null
 
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setEmail(value)
+    const errors = validateLoginForm(value, password)
+    setValidationErrors(prev => ({ ...prev, email: errors.email }))
+  }
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setPassword(value)
+    const errors = validateLoginForm(email, value)
+    setValidationErrors(prev => ({ ...prev, password: errors.password }))
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const errors = validateLoginForm(email, password)
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors)
+      return
+    }
+
+    mutate({ email, password } as LoginFormValues)
+  }
+
   return (
-    <form onSubmit={handleSubmit((data) => mutate(data))} className="flex flex-col gap-4" noValidate>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
       {apiErrorMessage && <ErrorBanner message={apiErrorMessage} />}
 
       <Input
         label="Email"
         type="email"
         autoComplete="email"
-        error={errors.email?.message}
-        {...register('email')}
+        value={email}
+        onChange={handleEmailChange}
+        error={validationErrors.email}
       />
 
       <Input
         label="Password"
         type="password"
         autoComplete="current-password"
-        error={errors.password?.message}
-        {...register('password')}
+        value={password}
+        onChange={handlePasswordChange}
+        error={validationErrors.password}
       />
 
       <Button type="submit" isLoading={isPending} className="w-full mt-2">

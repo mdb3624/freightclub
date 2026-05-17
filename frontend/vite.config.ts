@@ -13,6 +13,31 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          // Vendor chunks
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+            return 'vendor-core'
+          }
+          if (id.includes('node_modules/react-router-dom') || id.includes('node_modules/axios') || id.includes('node_modules/zustand')) {
+            return 'vendor-core'
+          }
+          if (id.includes('node_modules/@tanstack/react-query')) {
+            return 'vendor-query'
+          }
+          // Auth module (LoginForm, RegisterForm, auth hooks, authStore)
+          if (id.includes('src/features/auth') || id.includes('src/store/authStore')) {
+            return 'auth'
+          }
+          // Dashboard and loads features stay in main bundle (lazy loaded)
+          return undefined
+        },
+      },
+    },
+    chunkSizeWarningLimit: 500,
+  },
   test: {
     environment: 'jsdom',
     globals: true,

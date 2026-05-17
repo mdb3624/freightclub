@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import axios from 'axios'
 import { useAuthStore } from '@/store/authStore'
+import { useLazyFonts } from '@/hooks/useLazyFonts'
 import type { RefreshResponse } from '@/types'
 import type { UserRole } from '@/types'
 import type { Profile } from '@/features/profile/types'
@@ -13,6 +14,9 @@ interface Props {
 export function AuthInitializer({ children }: Props) {
   const [ready, setReady] = useState(false)
   const setAuth = useAuthStore((s) => s.setAuth)
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+
+  useLazyFonts(isAuthenticated)
 
   useEffect(() => {
     axios.post<RefreshResponse>('/api/v1/auth/refresh', {}, { withCredentials: true })

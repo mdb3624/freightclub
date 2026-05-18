@@ -2,6 +2,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import { resolve } from 'path'
 
 // Determine API target based on environment
 const apiTarget = process.env.VITE_API_URL || 'http://localhost:8080'
@@ -15,7 +16,13 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        loginApp: resolve(__dirname, 'src/apps/login-app/main.html'),
+      },
       output: {
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
         manualChunks: (id) => {
           // Vendor chunks
           if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {

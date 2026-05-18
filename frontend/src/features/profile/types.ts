@@ -33,6 +33,7 @@ export interface Profile {
   phoneEldMisc: number | null
   perDiemDailyRate: number | null
   perDiemDaysPerMonth: number | null
+  monthlyFixedCosts: number | null
   fuelCostPerGallon: number | null
   milesPerGallon: number | null
   maintenanceCostPerMile: number | null
@@ -67,6 +68,7 @@ export interface UpdateProfileValues {
   phoneEldMisc: number | '' | null
   perDiemDailyRate: number | '' | null
   perDiemDaysPerMonth: number | '' | null
+  monthlyFixedCosts: number | '' | null
   fuelCostPerGallon: number | '' | null
   milesPerGallon: number | '' | null
   maintenanceCostPerMile: number | '' | null

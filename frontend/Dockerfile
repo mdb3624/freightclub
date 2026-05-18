@@ -11,6 +11,7 @@ FROM nginx:alpine
 RUN apk add --no-cache gettext
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nginx.conf.template
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 EXPOSE 8080
-RUN echo '#!/bin/sh\nset -e\nexport BACKEND_URL=${BACKEND_URL:-http://localhost:8080}\nexport BACKEND_HOST=${BACKEND_HOST:-localhost:8080}\nenvsubst < /etc/nginx/nginx.conf.template > /etc/nginx/conf.d/default.conf\nnginx -g "daemon off;"' > /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]

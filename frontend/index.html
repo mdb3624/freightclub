@@ -3,28 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FreightClub - Login</title>
+  <title>FreightClub</title>
 </head>
 <body>
   <div id="root"></div>
-
-  <!-- Load login app -->
-  <script type="module" src="/src/apps/login-app/main.tsx"></script>
-
-  <!-- Check if user is already authenticated -->
-  <script>
-    fetch('/api/v1/auth/status', { credentials: 'include' })
-      .then(r => {
-        if (r.ok) {
-          // User authenticated, load main app and redirect
-          import('/src/main.tsx').then(() => {
-            window.location.href = '/dashboard'
-          })
-        }
-      })
-      .catch(() => {
-        // Auth check failed, show login form (already loaded)
-      })
-  </script>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

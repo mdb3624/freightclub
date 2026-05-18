@@ -108,6 +108,24 @@ public class User {
     @Column(name = "target_margin_per_mile", precision = 6, scale = 4)
     private BigDecimal targetMarginPerMile;
 
+    @Column(name = "truck_payment_lease", nullable = true)
+    private BigDecimal truckPaymentLease;
+
+    @Column(name = "insurance", nullable = true)
+    private BigDecimal insurance;
+
+    @Column(name = "ifta_irp_permits", nullable = true)
+    private BigDecimal iftaIrpPermits;
+
+    @Column(name = "phone_eld_misc", nullable = true)
+    private BigDecimal phoneEldMisc;
+
+    @Column(name = "per_diem_daily_rate", nullable = true)
+    private BigDecimal perDiemDailyRate;
+
+    @Column(name = "per_diem_days_per_month", nullable = true)
+    private Integer perDiemDaysPerMonth;
+
     @Column(name = "notify_email", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
     private boolean notifyEmail = true;
 
@@ -198,4 +216,16 @@ public class User {
     public void setNotifyInApp(boolean notifyInApp) { this.notifyInApp = notifyInApp; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getDeletedAt() { return deletedAt; }
+    public BigDecimal getTruckPaymentLease() { return truckPaymentLease; }
+    public void setTruckPaymentLease(BigDecimal truckPaymentLease) { this.truckPaymentLease = truckPaymentLease; }
+    public BigDecimal getInsurance() { return insurance; }
+    public void setInsurance(BigDecimal insurance) { this.insurance = insurance; }
+    public BigDecimal getIftaIrpPermits() { return iftaIrpPermits; }
+    public void setIftaIrpPermits(BigDecimal iftaIrpPermits) { this.iftaIrpPermits = iftaIrpPermits; }
+    public BigDecimal getPhoneEldMisc() { return phoneEldMisc; }
+    public void setPhoneEldMisc(BigDecimal phoneEldMisc) { this.phoneEldMisc = phoneEldMisc; }
+    public BigDecimal getPerDiemDailyRate() { return perDiemDailyRate; }
+    public void setPerDiemDailyRate(BigDecimal perDiemDailyRate) { this.perDiemDailyRate = perDiemDailyRate; }
+    public Integer getPerDiemDaysPerMonth() { return perDiemDaysPerMonth; }
+    public void setPerDiemDaysPerMonth(Integer perDiemDaysPerMonth) { this.perDiemDaysPerMonth = perDiemDaysPerMonth; }
 }

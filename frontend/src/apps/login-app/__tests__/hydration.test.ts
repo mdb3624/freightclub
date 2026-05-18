@@ -5,7 +5,7 @@ import { execSync } from 'child_process'
 
 describe('Login App Hydration Performance', () => {
   it('should have login app bundle under 6KB gzipped', () => {
-    // Find actual main bundle from build output
+    // Find actual main bundle from build output (loginApp entry point resolves to main-*.js)
     const assetsDir = join(process.cwd(), 'dist', 'assets')
     const files = readdirSync(assetsDir)
     const mainBundle = files.find((f) => f.startsWith('main-') && f.endsWith('.js'))

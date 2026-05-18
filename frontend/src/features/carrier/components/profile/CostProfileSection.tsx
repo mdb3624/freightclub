@@ -10,7 +10,12 @@ interface Props {
 
 function CostProfileSummary({ control }: { control: Control<UpdateProfileValues> }) {
   const values = useWatch({ control })
-  const monthly = Number(values.monthlyFixedCosts) || 0
+  const truckPayment = Number(values.truckPaymentLease) || 0
+  const insurance = Number(values.insurance) || 0
+  const ifta = Number(values.iftaIrpPermits) || 0
+  const phone = Number(values.phoneEldMisc) || 0
+  const perDiem = (Number(values.perDiemDailyRate) || 0) * (Number(values.perDiemDaysPerMonth) || 0)
+  const monthly = truckPayment + insurance + ifta + phone + perDiem
   const milesTarget = Number(values.monthlyMilesTarget) || 0
   const fuelPerGallon = Number(values.fuelCostPerGallon) || 0
   const mpg = Number(values.milesPerGallon) || 0
@@ -53,55 +58,117 @@ export function CostProfileSection({ register, control }: Props) {
           Used to calculate load profitability and your minimum RPM. All fields optional.
         </p>
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Input
-          label="Monthly Fixed Costs ($)"
-          type="number"
-          step="0.01"
-          min="0"
-          placeholder="e.g. 3500 (truck payment + insurance + permits)"
-          {...register('monthlyFixedCosts')}
-        />
-        <Input
-          label="Monthly Miles Target"
-          type="number"
-          min="1"
-          placeholder="e.g. 10000"
-          {...register('monthlyMilesTarget')}
-        />
-        <Input
-          label="Fuel Cost per Gallon ($)"
-          type="number"
-          step="0.001"
-          min="0"
-          placeholder="e.g. 3.799"
-          {...register('fuelCostPerGallon')}
-        />
-        <Input
-          label="Miles per Gallon (MPG)"
-          type="number"
-          step="0.1"
-          min="0"
-          placeholder="e.g. 6.5"
-          {...register('milesPerGallon')}
-        />
-        <Input
-          label="Maintenance Cost per Mile ($)"
-          type="number"
-          step="0.001"
-          min="0"
-          placeholder="e.g. 0.15"
-          {...register('maintenanceCostPerMile')}
-        />
-        <Input
-          label="Target Profit Margin per Mile ($)"
-          type="number"
-          step="0.001"
-          min="0"
-          placeholder="e.g. 0.50"
-          {...register('targetMarginPerMile')}
-        />
+
+      <div className="space-y-4">
+        <div>
+          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Fixed Monthly Costs</p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Input
+              label="Truck Payment / Lease ($)"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="e.g. 1800"
+              {...register('truckPaymentLease')}
+            />
+            <Input
+              label="Insurance ($)"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="e.g. 900"
+              {...register('insurance')}
+            />
+            <Input
+              label="IFTA / IRP / Permits ($)"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="e.g. 200"
+              {...register('iftaIrpPermits')}
+            />
+            <Input
+              label="Phone / ELD / Misc ($)"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="e.g. 150"
+              {...register('phoneEldMisc')}
+            />
+          </div>
+        </div>
+
+        <div>
+          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Variable Costs</p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Input
+              label="Diesel Price ($/Gal)"
+              type="number"
+              step="0.001"
+              min="0"
+              placeholder="e.g. 3.89"
+              {...register('fuelCostPerGallon')}
+            />
+            <Input
+              label="Fuel Efficiency (MPG)"
+              type="number"
+              step="0.1"
+              min="0"
+              placeholder="e.g. 6.5"
+              {...register('milesPerGallon')}
+            />
+            <Input
+              label="Maintenance Reserve ($/MI)"
+              type="number"
+              step="0.001"
+              min="0"
+              placeholder="e.g. 0.17"
+              {...register('maintenanceCostPerMile')}
+            />
+            <div className="grid grid-cols-2 gap-2">
+              <Input
+                label="Per Diem ($/Day)"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="e.g. 800"
+                {...register('perDiemDailyRate')}
+              />
+              <Input
+                label="Days/Month"
+                type="number"
+                step="1"
+                min="0"
+                max="31"
+                placeholder="e.g. 20"
+                {...register('perDiemDaysPerMonth')}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Operational</p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Input
+              label="Miles Driven (Monthly)"
+              type="number"
+              min="1"
+              placeholder="e.g. 8000"
+              {...register('monthlyMilesTarget')}
+            />
+            <Input
+              label="Target Profit Margin ($/MI)"
+              type="number"
+              step="0.001"
+              min="0"
+              placeholder="e.g. 0.60"
+              {...register('targetMarginPerMile')}
+            />
+          </div>
+        </div>
       </div>
+
       <CostProfileSummary control={control} />
     </section>
   )

@@ -27,7 +27,12 @@ export interface Profile {
   mcNumber: string | null
   dotNumber: string | null
   equipmentType: EquipmentType | null
-  monthlyFixedCosts: number | null
+  truckPaymentLease: number | null
+  insurance: number | null
+  iftaIrpPermits: number | null
+  phoneEldMisc: number | null
+  perDiemDailyRate: number | null
+  perDiemDaysPerMonth: number | null
   fuelCostPerGallon: number | null
   milesPerGallon: number | null
   maintenanceCostPerMile: number | null
@@ -56,7 +61,12 @@ export interface UpdateProfileValues {
   mcNumber: string
   dotNumber: string
   equipmentType: EquipmentType | '' | undefined
-  monthlyFixedCosts: number | '' | null
+  truckPaymentLease: number | '' | null
+  insurance: number | '' | null
+  iftaIrpPermits: number | '' | null
+  phoneEldMisc: number | '' | null
+  perDiemDailyRate: number | '' | null
+  perDiemDaysPerMonth: number | '' | null
   fuelCostPerGallon: number | '' | null
   milesPerGallon: number | '' | null
   maintenanceCostPerMile: number | '' | null

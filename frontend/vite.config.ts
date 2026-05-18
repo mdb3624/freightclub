@@ -50,7 +50,7 @@ export default defineConfig({
     allowedHosts: ['mikebarnes.tail67dcb4.ts.net', ...(process.env.VITE_ALLOWED_HOST ? [process.env.VITE_ALLOWED_HOST] : [])],
     proxy: {
       '/api': {
-        target: apiTarget,
+        target: process.env.VITE_API_URL || 'http://localhost:8090',
         changeOrigin: true,
       },
     },

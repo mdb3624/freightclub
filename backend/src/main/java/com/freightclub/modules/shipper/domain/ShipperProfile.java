@@ -2,7 +2,6 @@ package com.freightclub.modules.shipper.domain;
 
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "shipper_profiles", indexes = {
@@ -56,40 +55,6 @@ public class ShipperProfile {
 
   @Column(name = "deleted_at")
   private OffsetDateTime deletedAt;
-
-  // Cost Profile Fields (US-757: Cost Per Mile Calculator)
-  @Column(name = "truck_payment_lease", nullable = true)
-  private BigDecimal truckPaymentLease;
-
-  @Column(name = "insurance", nullable = true)
-  private BigDecimal insurance;
-
-  @Column(name = "ifta_irp_permits", nullable = true)
-  private BigDecimal iftaIrpPermits;
-
-  @Column(name = "phone_eld_misc", nullable = true)
-  private BigDecimal phoneEldMisc;
-
-  @Column(name = "per_diem_daily_rate", nullable = true)
-  private BigDecimal perDiemDailyRate;
-
-  @Column(name = "per_diem_days_per_month", nullable = true)
-  private Integer perDiemDaysPerMonth;
-
-  @Column(name = "fuel_cost_per_gallon", nullable = true)
-  private BigDecimal fuelCostPerGallon;
-
-  @Column(name = "miles_per_gallon", nullable = true)
-  private BigDecimal milesPerGallon;
-
-  @Column(name = "maintenance_cost_per_mile", nullable = true)
-  private BigDecimal maintenanceCostPerMile;
-
-  @Column(name = "monthly_miles_target", nullable = true)
-  private Integer monthlyMilesTarget;
-
-  @Column(name = "target_margin_per_mile", nullable = true)
-  private BigDecimal targetMarginPerMile;
 
   // Constructors
   public ShipperProfile() {
@@ -221,95 +186,6 @@ public class ShipperProfile {
 
   public void setDeletedAt(OffsetDateTime deletedAt) {
     this.deletedAt = deletedAt;
-  }
-
-  // Cost Profile Getters and Setters (US-757)
-  public BigDecimal getTruckPaymentLease() {
-    return truckPaymentLease;
-  }
-
-  public void setTruckPaymentLease(BigDecimal truckPaymentLease) {
-    this.truckPaymentLease = truckPaymentLease;
-  }
-
-  public BigDecimal getInsurance() {
-    return insurance;
-  }
-
-  public void setInsurance(BigDecimal insurance) {
-    this.insurance = insurance;
-  }
-
-  public BigDecimal getIftaIrpPermits() {
-    return iftaIrpPermits;
-  }
-
-  public void setIftaIrpPermits(BigDecimal iftaIrpPermits) {
-    this.iftaIrpPermits = iftaIrpPermits;
-  }
-
-  public BigDecimal getPhoneEldMisc() {
-    return phoneEldMisc;
-  }
-
-  public void setPhoneEldMisc(BigDecimal phoneEldMisc) {
-    this.phoneEldMisc = phoneEldMisc;
-  }
-
-  public BigDecimal getPerDiemDailyRate() {
-    return perDiemDailyRate;
-  }
-
-  public void setPerDiemDailyRate(BigDecimal perDiemDailyRate) {
-    this.perDiemDailyRate = perDiemDailyRate;
-  }
-
-  public Integer getPerDiemDaysPerMonth() {
-    return perDiemDaysPerMonth;
-  }
-
-  public void setPerDiemDaysPerMonth(Integer perDiemDaysPerMonth) {
-    this.perDiemDaysPerMonth = perDiemDaysPerMonth;
-  }
-
-  public BigDecimal getFuelCostPerGallon() {
-    return fuelCostPerGallon;
-  }
-
-  public void setFuelCostPerGallon(BigDecimal fuelCostPerGallon) {
-    this.fuelCostPerGallon = fuelCostPerGallon;
-  }
-
-  public BigDecimal getMilesPerGallon() {
-    return milesPerGallon;
-  }
-
-  public void setMilesPerGallon(BigDecimal milesPerGallon) {
-    this.milesPerGallon = milesPerGallon;
-  }
-
-  public BigDecimal getMaintenanceCostPerMile() {
-    return maintenanceCostPerMile;
-  }
-
-  public void setMaintenanceCostPerMile(BigDecimal maintenanceCostPerMile) {
-    this.maintenanceCostPerMile = maintenanceCostPerMile;
-  }
-
-  public Integer getMonthlyMilesTarget() {
-    return monthlyMilesTarget;
-  }
-
-  public void setMonthlyMilesTarget(Integer monthlyMilesTarget) {
-    this.monthlyMilesTarget = monthlyMilesTarget;
-  }
-
-  public BigDecimal getTargetMarginPerMile() {
-    return targetMarginPerMile;
-  }
-
-  public void setTargetMarginPerMile(BigDecimal targetMarginPerMile) {
-    this.targetMarginPerMile = targetMarginPerMile;
   }
 
   // Business logic

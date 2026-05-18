@@ -39,18 +39,8 @@ public class ProfileController {
 
   @PutMapping("/company-info")
   public ResponseEntity<ShipperProfileResponse> updateCompanyInfo(@Valid @RequestBody ShipperProfileRequest request) {
-    validateCostProfileFields(request);
     ShipperProfile profile = service.saveProfile(request);
     return ResponseEntity.ok(ShipperProfileResponse.from(profile));
-  }
-
-  private void validateCostProfileFields(@RequestBody ShipperProfileRequest request) {
-    // AC1-AC4: Validate cost profile fields
-    // Placeholder for cost profile field validation
-    // This method will be called during profile update to validate:
-    // - Cost fields (truck payment, insurance, etc.) must be >= 0
-    // - Per diem days must be between 1-31
-    // - Monthly miles target must be > 0
   }
 
   @GetMapping("/completeness")

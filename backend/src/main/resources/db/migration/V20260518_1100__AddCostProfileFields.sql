@@ -1,7 +1,7 @@
 -- Add 11 cost profile fields for Cost Per Mile (CPM) Calculator (US-757)
 -- All fields are nullable to allow gradual adoption
 
-ALTER TABLE profile
+ALTER TABLE freightclub.users
 ADD COLUMN truck_payment_lease NUMERIC(10, 2) NULL
   COMMENT 'Monthly truck payment or lease cost',
 ADD COLUMN insurance NUMERIC(10, 2) NULL

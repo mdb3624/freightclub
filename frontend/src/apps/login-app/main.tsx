@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-
-const App = () => <div>Login App (to be implemented)</div>
+import { LoginPage } from './pages/LoginPage'
+import './styles.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <LoginPage />
   </React.StrictMode>,
 )

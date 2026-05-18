@@ -1,20 +1,22 @@
-import { Component, type ReactNode } from 'react'
+import { Component, type ReactNode, lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { TruckerLandingPage } from '@/pages/TruckerLandingPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { RegisterPage } from '@/pages/RegisterPage'
-import { ShipperDashboard } from '@/pages/ShipperDashboard'
-import { ShipperProfilePage } from '@/pages/ShipperProfilePage'
-import { TruckerDashboard } from '@/pages/TruckerDashboard'
-import { LoadCreatePage } from '@/pages/LoadCreatePage'
-import { LoadDetailPage } from '@/pages/LoadDetailPage'
-import { LoadEditPage } from '@/pages/LoadEditPage'
-import { TruckerLoadDetailPage } from '@/pages/TruckerLoadDetailPage'
-import { ProfilePage } from '@/pages/ProfilePage'
-import { RatingsPage } from '@/pages/RatingsPage'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { AuthInitializer } from '@/components/AuthInitializer'
 import { Toaster } from '@/components/ui/Toaster'
+
+// Lazy load dashboard and protected routes to defer vendor-query and dashboard code
+const ShipperDashboard = lazy(() => import('@/pages/ShipperDashboard').then(m => ({ default: m.ShipperDashboard })))
+const ShipperProfilePage = lazy(() => import('@/pages/ShipperProfilePage').then(m => ({ default: m.ShipperProfilePage })))
+const TruckerDashboard = lazy(() => import('@/pages/TruckerDashboard').then(m => ({ default: m.TruckerDashboard })))
+const LoadCreatePage = lazy(() => import('@/pages/LoadCreatePage').then(m => ({ default: m.LoadCreatePage })))
+const LoadDetailPage = lazy(() => import('@/pages/LoadDetailPage').then(m => ({ default: m.LoadDetailPage })))
+const LoadEditPage = lazy(() => import('@/pages/LoadEditPage').then(m => ({ default: m.LoadEditPage })))
+const TruckerLoadDetailPage = lazy(() => import('@/pages/TruckerLoadDetailPage').then(m => ({ default: m.TruckerLoadDetailPage })))
+const ProfilePage = lazy(() => import('@/pages/ProfilePage').then(m => ({ default: m.ProfilePage })))
+const RatingsPage = lazy(() => import('@/pages/RatingsPage').then(m => ({ default: m.RatingsPage })))
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
   state = { hasError: false }
@@ -40,6 +42,14 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   }
 }
 
+function PageLoader() {
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary-600 border-t-transparent" />
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <ErrorBoundary>
@@ -53,7 +63,9 @@ export default function App() {
         path="/dashboard/shipper"
         element={
           <ProtectedRoute role="SHIPPER">
-            <ShipperDashboard />
+            <Suspense fallback={<PageLoader />}>
+              <ShipperDashboard />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -62,7 +74,9 @@ export default function App() {
         path="/shipper/profile"
         element={
           <ProtectedRoute role="SHIPPER">
-            <ShipperProfilePage />
+            <Suspense fallback={<PageLoader />}>
+              <ShipperProfilePage />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -71,7 +85,9 @@ export default function App() {
         path="/dashboard/trucker"
         element={
           <ProtectedRoute role="TRUCKER">
-            <TruckerDashboard />
+            <Suspense fallback={<PageLoader />}>
+              <TruckerDashboard />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -80,7 +96,9 @@ export default function App() {
         path="/trucker/loads/:id"
         element={
           <ProtectedRoute role="TRUCKER">
-            <TruckerLoadDetailPage />
+            <Suspense fallback={<PageLoader />}>
+              <TruckerLoadDetailPage />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -89,7 +107,9 @@ export default function App() {
         path="/shipper/loads/new"
         element={
           <ProtectedRoute role="SHIPPER">
-            <LoadCreatePage />
+            <Suspense fallback={<PageLoader />}>
+              <LoadCreatePage />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -97,7 +117,9 @@ export default function App() {
         path="/shipper/loads/:id"
         element={
           <ProtectedRoute role="SHIPPER">
-            <LoadDetailPage />
+            <Suspense fallback={<PageLoader />}>
+              <LoadDetailPage />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -105,7 +127,9 @@ export default function App() {
         path="/shipper/loads/:id/edit"
         element={
           <ProtectedRoute role="SHIPPER">
-            <LoadEditPage />
+            <Suspense fallback={<PageLoader />}>
+              <LoadEditPage />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -114,7 +138,9 @@ export default function App() {
         path="/profile"
         element={
           <ProtectedRoute>
-            <ProfilePage />
+            <Suspense fallback={<PageLoader />}>
+              <ProfilePage />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -123,7 +149,9 @@ export default function App() {
         path="/ratings"
         element={
           <ProtectedRoute>
-            <RatingsPage />
+            <Suspense fallback={<PageLoader />}>
+              <RatingsPage />
+            </Suspense>
           </ProtectedRoute>
         }
       />

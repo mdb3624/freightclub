@@ -1,7 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { vi } from 'vitest'
 import { ShipperProfilePage } from './ShipperProfilePage'
+import { queryClient } from '@/lib/queryClient'
 import * as shipperHooks from '@/features/shipper/hooks/useShipperProfile'
 
 vi.mock('@/features/shipper/hooks/useShipperProfile')
@@ -15,7 +17,11 @@ vi.mock('@/components/AppShell', () => ({
 const mockedHooks = shipperHooks as unknown as Record<string, ReturnType<typeof vi.fn>>
 
 const renderWithRouter = (component: React.ReactNode) =>
-  render(<BrowserRouter>{component}</BrowserRouter>)
+  render(
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>{component}</BrowserRouter>
+    </QueryClientProvider>
+  )
 
 beforeEach(() => {
   vi.clearAllMocks()

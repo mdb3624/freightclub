@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FreightClub</title>
-  <!-- Preconnect to backend -->
-  <link rel="preconnect" href="/api/v1">
 </head>
 <body>
   <div id="root"></div>
@@ -13,20 +11,24 @@
   <!-- Load login app by default -->
   <script type="module" src="/src/apps/login-app/main.tsx"></script>
 
-  <!-- After user authenticates, this script loads the main app -->
+  <!-- Check if user is already authenticated -->
   <script>
-    // Check if user is already authenticated
     fetch('/api/v1/auth/status', { credentials: 'include' })
       .then(r => {
         if (r.ok) {
           // User has valid auth cookie, load main app
+          // React Router will handle navigation to dashboard
           import('/src/main.tsx')
-          // Small delay to show login was clicked, then redirect
-          setTimeout(() => window.location.href = '/dashboard', 100)
+        } else if (r.status === 401) {
+          // Not authenticated; login form already loaded
+          // Nothing to do
+        } else {
+          console.warn('Auth status check returned:', r.status)
         }
       })
-      .catch(() => {
-        // No auth, show login form (already loaded)
+      .catch(err => {
+        console.error('Auth check failed:', err)
+        // Login form already loaded as fallback
       })
   </script>
 </body>

@@ -16,11 +16,11 @@ ADD COLUMN per_diem_days_per_month INTEGER NULL
   COMMENT 'Number of days per month eligible for per diem',
 ADD COLUMN fuel_cost_per_gallon NUMERIC(6, 3) NULL
   COMMENT 'Average fuel cost per gallon',
-ADD COLUMN miles_per_gallon NUMERIC(4, 1) NULL
+ADD COLUMN miles_per_gallon NUMERIC(6, 2) NULL
   COMMENT 'Truck fuel efficiency in miles per gallon',
-ADD COLUMN maintenance_cost_per_mile NUMERIC(6, 3) NULL
+ADD COLUMN maintenance_cost_per_mile NUMERIC(6, 4) NULL
   COMMENT 'Estimated maintenance cost per mile',
 ADD COLUMN monthly_miles_target INTEGER NULL
   COMMENT 'Target monthly miles for planning',
-ADD COLUMN target_margin_per_mile NUMERIC(6, 3) NULL
+ADD COLUMN target_margin_per_mile NUMERIC(6, 4) NULL
   COMMENT 'Target profit margin per mile (CPM goal)';

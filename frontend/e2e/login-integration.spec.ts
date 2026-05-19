@@ -8,7 +8,7 @@ test.describe('Login Integration Tests (US-756)', () => {
 
   test('should render login form in <100ms on initial load', async ({ page }) => {
     const startTime = Date.now();
-    await page.goto('http://localhost:9096', { waitUntil: 'networkidle' });
+    await page.goto('/', { waitUntil: 'networkidle' });
     const loadTime = Date.now() - startTime;
 
     // Verify login form elements are present
@@ -21,7 +21,7 @@ test.describe('Login Integration Tests (US-756)', () => {
   });
 
   test('should display error message on failed login', async ({ page }) => {
-    await page.goto('http://localhost:5173');
+    await page.goto('/');
 
     // Fill in invalid credentials
     await page.fill('input[type="email"]', 'invalid@example.com');
@@ -54,7 +54,7 @@ test.describe('Login Integration Tests (US-756)', () => {
     });
 
     const startTime = Date.now();
-    await throttledPage.goto('http://localhost:5173', { waitUntil: 'domcontentloaded' });
+    await throttledPage.goto('/', { waitUntil: 'domcontentloaded' });
     const loadTime = Date.now() - startTime;
 
     // Verify form is still interactive
@@ -68,7 +68,7 @@ test.describe('Login Integration Tests (US-756)', () => {
   });
 
   test('should maintain auth state on page refresh', async ({ page }) => {
-    await page.goto('http://localhost:5173');
+    await page.goto('/');
 
     // Get initial page content
     const initialForm = page.locator('input[type="email"]');
@@ -95,7 +95,7 @@ test.describe('Login Integration Tests (US-756)', () => {
   });
 
   test('should validate required fields', async ({ page }) => {
-    await page.goto('http://localhost:5173');
+    await page.goto('/');
 
     // Try to submit empty form
     await page.click('button', { hasText: /sign in/i });
@@ -107,7 +107,7 @@ test.describe('Login Integration Tests (US-756)', () => {
   });
 
   test('should validate email format', async ({ page }) => {
-    await page.goto('http://localhost:5173');
+    await page.goto('/');
 
     // Enter invalid email
     await page.fill('input[type="email"]', 'notanemail');

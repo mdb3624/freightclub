@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-const BASE_URL = 'http://localhost:9090'
+const BASE_URL = ''
 
 test.describe('HOS Widget Component', () => {
 

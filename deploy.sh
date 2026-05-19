@@ -23,14 +23,7 @@ gcloud run deploy freightclub-backend \
   --timeout=3600 \
   --max-instances=10 \
   --allow-unauthenticated \
-  --update-env-vars 'SPRING_PROFILES_ACTIVE=prod,PORT=8080,DB_URL=jdbc:postgresql://ep-lively-tree-amv4cqt0-pooler.c-5.us-east-1.aws.neon.tech/freightclub_db?sslmode=require&currentSchema=freightclub,DB_USERNAME=neondb_owner,DB_PASSWORD=npg_H0O3SomrgjPK,APP_JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970,JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970,JWT_ISSUER=freightclub,JWT_AUDIENCE=freightclub-api,JWT_ACCESS_EXPIRY_MS=900000,JWT_REFRESH_EXPIRY_MS=604800000' \
-  --quiet
-
-# Update CORS separately to avoid parsing issues with commas in the value
-gcloud run update freightclub-backend \
-  --region=$REGION \
-  --project=$PROJECT_ID \
-  --update-env-vars 'CORS_ALLOWED_ORIGINS=https://freightclub.app,https://freightclub-frontend-404925591110.us-central1.run.app' \
+  --set-env-vars "SPRING_PROFILES_ACTIVE=prod,DB_URL=jdbc:postgresql://ep-lively-tree-amv4cqt0.c-5.us-east-1.aws.neon.tech/freightclub_db?sslmode=require&currentSchema=freightclub,DB_USERNAME=neondb_owner,DB_PASSWORD=npg_H0O3SomrgjPK,APP_JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970,JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970,JWT_ISSUER=freightclub,JWT_AUDIENCE=freightclub-api,JWT_ACCESS_EXPIRY_MS=900000,JWT_REFRESH_EXPIRY_MS=604800000,CORS_ALLOWED_ORIGINS=https://freightclub.app|https://freightclub-frontend-404925591110.us-central1.run.app" \
   --quiet
 
 echo "✓ Backend deployed"
@@ -52,7 +45,7 @@ gcloud run deploy freightclub-frontend \
   --timeout=120 \
   --max-instances=10 \
   --allow-unauthenticated \
-  --set-env-vars="BACKEND_URL=$BACKEND_URL,BACKEND_HOST=$BACKEND_HOST,PORT=8080" \
+  --set-env-vars="BACKEND_URL=$BACKEND_URL,BACKEND_HOST=$BACKEND_HOST" \
   --quiet
 
 echo "✓ Frontend deployed"

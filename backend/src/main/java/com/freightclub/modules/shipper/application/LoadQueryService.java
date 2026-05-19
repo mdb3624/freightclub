@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Application service for querying shipper load data with RLS and soft-delete filtering.
@@ -141,6 +142,7 @@ public class LoadQueryService {
     /**
      * Maps Load entity to LoadItemDto for API response.
      * Extracts key fields for load card display.
+     * Includes null safety guards for temporal and optional fields.
      *
      * @param load Load entity
      * @return LoadItemDto with mapped values
@@ -152,13 +154,13 @@ public class LoadQueryService {
             load.getOriginState(),
             load.getDestinationCity(),
             load.getDestinationState(),
-            load.getPickupFrom().toString(),
-            load.getPickupTo().toString(),
+            Objects.requireNonNull(load.getPickupFrom()).toString(),
+            Objects.requireNonNull(load.getPickupTo()).toString(),
             load.getStatus().name(),
             load.getPayRate().doubleValue(),
             load.getPayRateType().name(),
             null, // claimedByTruckerName (null for shipper view)
-            load.getCreatedAt().toString()
+            Objects.requireNonNull(load.getCreatedAt()).toString()
         );
     }
 }

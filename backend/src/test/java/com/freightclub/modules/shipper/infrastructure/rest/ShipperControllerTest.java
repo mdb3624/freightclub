@@ -1,6 +1,7 @@
 package com.freightclub.modules.shipper.infrastructure.rest;
 
 import com.freightclub.modules.shipper.application.LoadQueryService;
+import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadListResponse;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadStatsResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,5 +70,51 @@ class ShipperControllerTest {
   void testGetLoadStatsRequiresAuth() throws Exception {
     mvc.perform(get("/api/v1/shipper/loads/stats"))
       .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  @WithMockUser(roles = "SHIPPER")
+  void testGetShipperLoads() throws Exception {
+    var item = new LoadListResponse.LoadItemDto(
+        "LOAD-001", "San Jose", "CA", "Phoenix", "AZ",
+        "2026-05-20T08:00", "2026-05-20T17:00",
+        "OPEN", 1200.0, "flat", null, "2026-05-19T10:30:00Z"
+    );
+    var response = LoadListResponse.of(
+        new LoadListResponse.LoadItemDto[] { item },
+        0, 20, 1
+    );
+    when(loadQueryService.getShipperLoads(0, 20, "active", "pickupFrom", "asc"))
+        .thenReturn(response);
+
+    mvc.perform(get("/api/v1/shipper/loads?page=0&limit=20&view=active&sort=pickupFrom&order=asc"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.loads[0].id").value("LOAD-001"))
+        .andExpect(jsonPath("$.loads[0].originCity").value("San Jose"))
+        .andExpect(jsonPath("$.pagination.page").value(0))
+        .andExpect(jsonPath("$.pagination.limit").value(20))
+        .andExpect(jsonPath("$.pagination.total").value(1));
+  }
+
+  @Test
+  @WithMockUser(roles = "SHIPPER")
+  void testGetShipperLoadsWithDefaults() throws Exception {
+    var response = LoadListResponse.of(
+        new LoadListResponse.LoadItemDto[] {},
+        0, 20, 0
+    );
+    when(loadQueryService.getShipperLoads(0, 20, "active", "pickupFrom", "asc"))
+        .thenReturn(response);
+
+    mvc.perform(get("/api/v1/shipper/loads"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.loads").isArray())
+        .andExpect(jsonPath("$.pagination.page").value(0));
+  }
+
+  @Test
+  void testGetShipperLoadsRequiresAuth() throws Exception {
+    mvc.perform(get("/api/v1/shipper/loads"))
+        .andExpect(status().isUnauthorized());
   }
 }

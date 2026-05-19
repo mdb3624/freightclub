@@ -3,6 +3,7 @@ package com.freightclub.modules.shipper.infrastructure.rest;
 import com.freightclub.modules.shipper.application.LoadQueryService;
 import com.freightclub.modules.shipper.application.ShipperProfileService;
 import com.freightclub.modules.shipper.domain.ShipperProfile;
+import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadListResponse;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadStatsResponse;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.ShipperProfileRequest;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.ShipperProfileResponse;
@@ -62,6 +63,18 @@ public class ShipperController {
     ) {
         LoadStatsResponse stats = loadQueryService.getLoadStats(view);
         return ResponseEntity.ok(stats);
+    }
+
+    @GetMapping("/shipper/loads")
+    public ResponseEntity<LoadListResponse> getShipperLoads(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "20") int limit,
+        @RequestParam(defaultValue = "active") String view,
+        @RequestParam(defaultValue = "pickupFrom") String sort,
+        @RequestParam(defaultValue = "asc") String order
+    ) {
+        var response = loadQueryService.getShipperLoads(page, limit, view, sort, order);
+        return ResponseEntity.ok(response);
     }
 
     private void validateRequest(ShipperProfileRequest request) {

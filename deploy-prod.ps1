@@ -29,6 +29,23 @@ Write-Host ""
 
 # Deploy Backend
 Write-Host "Deploying Backend Service..." -ForegroundColor Cyan
+
+# Build env vars with proper escaping for CORS_ALLOWED_ORIGINS
+# NOTE: PORT is reserved in Cloud Run and automatically set - do not include
+$EnvVars = @(
+  "SPRING_PROFILES_ACTIVE=prod",
+  "DB_URL=$($env:DB_URL)",
+  "DB_USERNAME=$($env:DB_USERNAME)",
+  "DB_PASSWORD=$($env:DB_PASSWORD)",
+  "APP_JWT_SECRET=$($env:APP_JWT_SECRET)",
+  "JWT_SECRET=$($env:JWT_SECRET)",
+  "JWT_ISSUER=$($env:JWT_ISSUER)",
+  "JWT_AUDIENCE=$($env:JWT_AUDIENCE)",
+  "JWT_ACCESS_EXPIRY_MS=$($env:JWT_ACCESS_EXPIRY_MS)",
+  "JWT_REFRESH_EXPIRY_MS=$($env:JWT_REFRESH_EXPIRY_MS)",
+  "CORS_ALLOWED_ORIGINS=https://freightclub.app;https://freightclub-frontend-404925591110.us-central1.run.app"
+) -join ","
+
 gcloud run deploy freightclub-backend `
   --image="$ImageRepo/freightclub-backend:$ImageTag" `
   --platform=managed `
@@ -39,7 +56,7 @@ gcloud run deploy freightclub-backend `
   --timeout=3600 `
   --max-instances=10 `
   --allow-unauthenticated `
-  --set-env-vars="SPRING_PROFILES_ACTIVE=prod,PORT=8080,DB_URL=$($env:DB_URL),DB_USERNAME=$($env:DB_USERNAME),DB_PASSWORD=$($env:DB_PASSWORD),APP_JWT_SECRET=$($env:APP_JWT_SECRET),JWT_SECRET=$($env:JWT_SECRET),JWT_ISSUER=$($env:JWT_ISSUER),JWT_AUDIENCE=$($env:JWT_AUDIENCE),JWT_ACCESS_EXPIRY_MS=$($env:JWT_ACCESS_EXPIRY_MS),JWT_REFRESH_EXPIRY_MS=$($env:JWT_REFRESH_EXPIRY_MS),CORS_ALLOWED_ORIGINS=$($env:CORS_ALLOWED_ORIGINS)" `
+  --set-env-vars=$EnvVars `
   --quiet
 
 if ($LASTEXITCODE -eq 0) {

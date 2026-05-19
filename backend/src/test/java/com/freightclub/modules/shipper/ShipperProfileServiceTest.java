@@ -477,7 +477,7 @@ class ShipperProfileServiceTest {
 
             // Then
             assertNotNull(result);
-            assertEquals("tenant-123", profileCaptor.getValue().tenantId());
+            assertEquals("tenant-123", profileCaptor.getValue().getTenantId());
             verify(repository, times(1)).save(any(ShipperProfile.class));
         }
     }
@@ -521,7 +521,7 @@ class ShipperProfileServiceTest {
             when(repository.save(any())).thenAnswer(invocation -> {
                 ShipperProfile profile = invocation.getArgument(0);
                 return new ShipperProfile(
-                    existingProfile.id(), // ID remains same
+                    existingProfile.getId(), // ID remains same
                     profile.getTenantId(),
                     profile.getCompanyName(),
                     profile.getBillingEmail(),
@@ -546,7 +546,7 @@ class ShipperProfileServiceTest {
             ArgumentCaptor<ShipperProfile> captor = ArgumentCaptor.forClass(ShipperProfile.class);
             verify(repository).save(captor.capture());
             assertEquals("tenant-123", captor.getValue().getTenantId());
-            assertEquals("uuid-123", result.id());
+            assertEquals("uuid-123", result.getId());
             verify(repository, times(1)).save(any(ShipperProfile.class));
         }
     }
@@ -622,8 +622,8 @@ class ShipperProfileServiceTest {
 
             // Then: tenant-1 gets their profile
             assertTrue(result1.isPresent());
-            assertEquals("tenant-1", result1.get().tenantId());
-            assertEquals("uuid-1", result1.get().id());
+            assertEquals("tenant-1", result1.get().getTenantId());
+            assertEquals("uuid-1", result1.get().getId());
             verify(repository, times(1)).findByTenantIdAndDeletedAtIsNull("tenant-1");
         }
 
@@ -634,8 +634,8 @@ class ShipperProfileServiceTest {
 
             // Then: tenant-2 gets their profile
             assertTrue(result2.isPresent());
-            assertEquals("tenant-2", result2.get().tenantId());
-            assertEquals("uuid-2", result2.get().id());
+            assertEquals("tenant-2", result2.get().getTenantId());
+            assertEquals("uuid-2", result2.get().getId());
             verify(repository, times(1)).findByTenantIdAndDeletedAtIsNull("tenant-2");
         }
     }
@@ -672,7 +672,7 @@ class ShipperProfileServiceTest {
 
             // Then: repository queried with tenant-1 only, not other tenants
             assertTrue(result.isPresent());
-            assertEquals("tenant-1", result.get().tenantId());
+            assertEquals("tenant-1", result.get().getTenantId());
             verify(repository, times(1)).findByTenantIdAndDeletedAtIsNull("tenant-1");
             verify(repository, never()).findByTenantIdAndDeletedAtIsNull("tenant-2");
         }

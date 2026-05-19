@@ -164,7 +164,31 @@ public interface ShipperProfileRepository extends JpaRepository<ShipperProfile, 
   }
   ```
 
-### 1.6 LoadService Integration: Publish Gating
+### 1.6 Caching Strategy
+
+**Backend Caching:**
+- **Profile Data Cache:** Cache shipper profile in Spring Cache (via `@Cacheable`) with key `shipper:profile:{tenantId}`, TTL 5 minutes
+  - `getProfile()` uses `@Cacheable("shipper-profiles")`
+  - `saveProfile()` invalidates cache via `@CacheEvict("shipper-profiles")`
+  - Dashboard/API calls benefit from reduced DB hits
+  
+- **Completeness % Cache:** Calculated and stored in `completeness_pct` column on every save (no separate cache needed; DB is the cache)
+  - `getCompletenessPercent()` reads from DB column (no computation on each call)
+
+**Frontend Caching:**
+- React Query caches profile fetch with key `['shipper', 'profile']`, staleTime 2 minutes
+  - Dashboard and ProfilePage share the same cache entry
+  - Mutation `useUpdateProfile()` invalidates cache on success
+  - User can manually refetch if needed (though cache should stay fresh)
+
+**Cache Invalidation:**
+- Backend: When profile is saved via POST/PUT, evict cache immediately
+- Frontend: When mutation succeeds, update cache and refetch if needed
+- Dashboard doesn't show stale data; completeness % updates in real-time after form submission
+
+---
+
+### 1.7 LoadService Integration: Publish Gating
 
 **File:** `backend/src/main/java/com/freightclub/service/LoadService.java`
 

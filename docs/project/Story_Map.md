@@ -102,6 +102,7 @@
 | US-710 | View Carrier Public Profile (History) | MIGRATION_PENDING | 7 | US-402 | ✅ NFR-504 (1h TTL) |
 | US-711 | Load Interest / View Count Tracking  | MIGRATION_PENDING | 7 | US-101 | ✅ NFR-504 (5m TTL) |
 | US-713 | Shipper Company Profile Setup (Post-Registration) | ✅ COMPLETED | 7 | US-101 | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (5m TTL) |
+| US-715 | **Shipper Dashboard (Load Summary & Management)** | **READY_FOR_DESIGN** | **7** | **US-101, US-103** | **✅ RLS, ✅ No-Lombok, ✅ NFR-504 (2m TTL)** |
 | US-714 | Trucker Onboarding Checklist (Pre-Claim Gate) | READY_FOR_DESIGN | 7 | US-101, US-701 | ✅ RLS, ✅ No-Lombok |
 | US-712 | View Shipper Public Profile (Payment Speed, Rating) | MIGRATION_PENDING | 7b | US-102, US-502 | ✅ NFR-504 (1h TTL), ✅ Avg Payment Speed calc (90-day) |
 

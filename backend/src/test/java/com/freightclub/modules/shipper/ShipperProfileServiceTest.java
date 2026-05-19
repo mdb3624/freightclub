@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -45,33 +46,40 @@ class ShipperProfileServiceTest {
             "https://logo.png"
         );
 
-        // Mock repository save
-        when(repository.save(any())).thenAnswer(invocation -> {
-            ShipperProfile profile = invocation.getArgument(0);
-            return new ShipperProfile(
-                "uuid-123",
-                profile.tenantId(),
-                profile.companyName(),
-                profile.billingEmail(),
-                profile.phoneNumber(),
-                profile.city(),
-                profile.state(),
-                profile.zipCode(),
-                profile.mcNumber(),
-                profile.usdotNumber(),
-                profile.logoUrl(),
-                100, // AC-4: all fields = 20+20+15+25+15+5 = 100
-                null,
-                null,
-                null
-            );
-        });
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-123");
 
-        // When
-        ShipperProfile result = service.saveProfile(request);
+            // Mock repository save
+            when(repository.save(any())).thenAnswer(invocation -> {
+                ShipperProfile profile = invocation.getArgument(0);
+                return new ShipperProfile(
+                    "uuid-123",
+                    profile.tenantId(),
+                    profile.companyName(),
+                    profile.billingEmail(),
+                    profile.phoneNumber(),
+                    profile.city(),
+                    profile.state(),
+                    profile.zipCode(),
+                    profile.mcNumber(),
+                    profile.usdotNumber(),
+                    profile.logoUrl(),
+                    100, // AC-4: all fields = 20+20+15+25+15+5 = 100
+                    null,
+                    null,
+                    null
+                );
+            });
 
-        // Then
-        assertEquals(100, result.completenessPercent());
+            // When
+            ShipperProfile result = service.saveProfile(request);
+
+            // Then
+            ArgumentCaptor<ShipperProfile> captor = ArgumentCaptor.forClass(ShipperProfile.class);
+            verify(repository).save(captor.capture());
+            assertEquals("tenant-123", captor.getValue().tenantId());
+            assertEquals(100, result.completenessPercent());
+        }
     }
 
     @Test
@@ -89,32 +97,39 @@ class ShipperProfileServiceTest {
             null  // no logo
         );
 
-        when(repository.save(any())).thenAnswer(invocation -> {
-            ShipperProfile profile = invocation.getArgument(0);
-            return new ShipperProfile(
-                "uuid-123",
-                profile.tenantId(),
-                profile.companyName(),
-                profile.billingEmail(),
-                profile.phoneNumber(),
-                profile.city(),
-                profile.state(),
-                profile.zipCode(),
-                null,
-                null,
-                null,
-                80, // AC-4: required only = 20+20+15+25 = 80
-                null,
-                null,
-                null
-            );
-        });
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-123");
 
-        // When
-        ShipperProfile result = service.saveProfile(request);
+            when(repository.save(any())).thenAnswer(invocation -> {
+                ShipperProfile profile = invocation.getArgument(0);
+                return new ShipperProfile(
+                    "uuid-123",
+                    profile.tenantId(),
+                    profile.companyName(),
+                    profile.billingEmail(),
+                    profile.phoneNumber(),
+                    profile.city(),
+                    profile.state(),
+                    profile.zipCode(),
+                    null,
+                    null,
+                    null,
+                    80, // AC-4: required only = 20+20+15+25 = 80
+                    null,
+                    null,
+                    null
+                );
+            });
 
-        // Then
-        assertEquals(80, result.completenessPercent());
+            // When
+            ShipperProfile result = service.saveProfile(request);
+
+            // Then
+            ArgumentCaptor<ShipperProfile> captor = ArgumentCaptor.forClass(ShipperProfile.class);
+            verify(repository).save(captor.capture());
+            assertEquals("tenant-123", captor.getValue().tenantId());
+            assertEquals(80, result.completenessPercent());
+        }
     }
 
     @Test
@@ -138,14 +153,19 @@ class ShipperProfileServiceTest {
             null
         );
 
-        when(repository.findByTenantIdAndDeletedAtIsNull("tenant-123"))
-            .thenReturn(Optional.of(profile));
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-123");
 
-        // When (mocking TenantContextHolder)
-        boolean ready = service.isPublishReady();
+            when(repository.findByTenantIdAndDeletedAtIsNull("tenant-123"))
+                .thenReturn(Optional.of(profile));
 
-        // Then
-        assertTrue(ready);
+            // When
+            boolean ready = service.isPublishReady();
+
+            // Then
+            assertTrue(ready);
+            verify(repository).findByTenantIdAndDeletedAtIsNull("tenant-123");
+        }
     }
 
     @Test
@@ -169,14 +189,19 @@ class ShipperProfileServiceTest {
             null
         );
 
-        when(repository.findByTenantIdAndDeletedAtIsNull("tenant-123"))
-            .thenReturn(Optional.of(profile));
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-123");
 
-        // When
-        boolean ready = service.isPublishReady();
+            when(repository.findByTenantIdAndDeletedAtIsNull("tenant-123"))
+                .thenReturn(Optional.of(profile));
 
-        // Then
-        assertFalse(ready);
+            // When
+            boolean ready = service.isPublishReady();
+
+            // Then
+            assertFalse(ready);
+            verify(repository).findByTenantIdAndDeletedAtIsNull("tenant-123");
+        }
     }
 
     @Test
@@ -200,14 +225,19 @@ class ShipperProfileServiceTest {
             null
         );
 
-        when(repository.findByTenantIdAndDeletedAtIsNull("tenant-123"))
-            .thenReturn(Optional.of(profile));
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-123");
 
-        // When
-        Integer completeness = service.getCompletenessPercent();
+            when(repository.findByTenantIdAndDeletedAtIsNull("tenant-123"))
+                .thenReturn(Optional.of(profile));
 
-        // Then
-        assertEquals(75, completeness);
+            // When
+            Integer completeness = service.getCompletenessPercent();
+
+            // Then
+            assertEquals(75, completeness);
+            verify(repository).findByTenantIdAndDeletedAtIsNull("tenant-123");
+        }
     }
 
     // ============= EDGE CASES - COMPLETENESS CALCULATION =============
@@ -401,34 +431,39 @@ class ShipperProfileServiceTest {
             null
         );
 
-        ArgumentCaptor<ShipperProfile> profileCaptor = ArgumentCaptor.forClass(ShipperProfile.class);
-        when(repository.save(profileCaptor.capture())).thenAnswer(invocation -> {
-            ShipperProfile profile = invocation.getArgument(0);
-            return new ShipperProfile(
-                "uuid-123",
-                profile.tenantId(),
-                profile.companyName(),
-                profile.billingEmail(),
-                profile.phoneNumber(),
-                profile.city(),
-                profile.state(),
-                profile.zipCode(),
-                null,
-                null,
-                null,
-                80,
-                null,
-                null,
-                null
-            );
-        });
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-123");
 
-        // When
-        ShipperProfile result = service.saveProfile(request);
+            ArgumentCaptor<ShipperProfile> profileCaptor = ArgumentCaptor.forClass(ShipperProfile.class);
+            when(repository.save(profileCaptor.capture())).thenAnswer(invocation -> {
+                ShipperProfile profile = invocation.getArgument(0);
+                return new ShipperProfile(
+                    "uuid-123",
+                    profile.tenantId(),
+                    profile.companyName(),
+                    profile.billingEmail(),
+                    profile.phoneNumber(),
+                    profile.city(),
+                    profile.state(),
+                    profile.zipCode(),
+                    null,
+                    null,
+                    null,
+                    80,
+                    null,
+                    null,
+                    null
+                );
+            });
 
-        // Then
-        assertNotNull(result);
-        verify(repository, times(1)).save(any(ShipperProfile.class));
+            // When
+            ShipperProfile result = service.saveProfile(request);
+
+            // Then
+            assertNotNull(result);
+            assertEquals("tenant-123", profileCaptor.getValue().tenantId());
+            verify(repository, times(1)).save(any(ShipperProfile.class));
+        }
     }
 
     @Test
@@ -464,66 +499,58 @@ class ShipperProfileServiceTest {
             null
         );
 
-        when(repository.save(any())).thenAnswer(invocation -> {
-            ShipperProfile profile = invocation.getArgument(0);
-            return new ShipperProfile(
-                existingProfile.id(), // ID remains same
-                profile.tenantId(),
-                profile.companyName(),
-                profile.billingEmail(),
-                profile.phoneNumber(),
-                profile.city(),
-                profile.state(),
-                profile.zipCode(),
-                null,
-                null,
-                null,
-                80,
-                null,
-                null,
-                null
-            );
-        });
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-123");
 
-        // When
-        ShipperProfile result = service.saveProfile(request);
+            when(repository.save(any())).thenAnswer(invocation -> {
+                ShipperProfile profile = invocation.getArgument(0);
+                return new ShipperProfile(
+                    existingProfile.id(), // ID remains same
+                    profile.tenantId(),
+                    profile.companyName(),
+                    profile.billingEmail(),
+                    profile.phoneNumber(),
+                    profile.city(),
+                    profile.state(),
+                    profile.zipCode(),
+                    null,
+                    null,
+                    null,
+                    80,
+                    null,
+                    null,
+                    null
+                );
+            });
 
-        // Then
-        assertEquals("uuid-123", result.id());
-        verify(repository, times(1)).save(any(ShipperProfile.class));
+            // When
+            ShipperProfile result = service.saveProfile(request);
+
+            // Then
+            ArgumentCaptor<ShipperProfile> captor = ArgumentCaptor.forClass(ShipperProfile.class);
+            verify(repository).save(captor.capture());
+            assertEquals("tenant-123", captor.getValue().tenantId());
+            assertEquals("uuid-123", result.id());
+            verify(repository, times(1)).save(any(ShipperProfile.class));
+        }
     }
 
     @Test
     void getProfile_respectsSoftDelete() {
         // Given: profile with deleted_at = NOT_NULL (soft deleted)
-        ShipperProfile deletedProfile = new ShipperProfile(
-            "uuid-123",
-            "tenant-123",
-            "Deleted Company",
-            "deleted@company.com",
-            "512-555-0182",
-            "Austin",
-            "TX",
-            "78701",
-            null,
-            null,
-            null,
-            80,
-            null,
-            null,
-            null
-        );
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-123");
 
-        when(repository.findByTenantIdAndDeletedAtIsNull("tenant-123"))
-            .thenReturn(Optional.empty()); // no profile found because it's soft-deleted
+            when(repository.findByTenantIdAndDeletedAtIsNull("tenant-123"))
+                .thenReturn(Optional.empty()); // no profile found because it's soft-deleted
 
-        // When
-        // Note: getProfile is not yet implemented, this test verifies the expected behavior
-        Optional<ShipperProfile> result = repository.findByTenantIdAndDeletedAtIsNull("tenant-123");
+            // When: getProfile called for soft-deleted profile
+            Optional<ShipperProfile> result = service.getProfile();
 
-        // Then
-        assertTrue(result.isEmpty(), "Soft-deleted profile should not be returned");
-        verify(repository, times(1)).findByTenantIdAndDeletedAtIsNull("tenant-123");
+            // Then
+            assertTrue(result.isEmpty(), "Soft-deleted profile should not be returned");
+            verify(repository, times(1)).findByTenantIdAndDeletedAtIsNull("tenant-123");
+        }
     }
 
     // ============= MULTI-TENANCY TESTS =============
@@ -572,16 +599,29 @@ class ShipperProfileServiceTest {
         when(repository.findByTenantIdAndDeletedAtIsNull("tenant-2"))
             .thenReturn(Optional.of(profile2));
 
-        // When
-        Optional<ShipperProfile> result1 = repository.findByTenantIdAndDeletedAtIsNull("tenant-1");
-        Optional<ShipperProfile> result2 = repository.findByTenantIdAndDeletedAtIsNull("tenant-2");
+        // When: tenant-1 calls getProfile
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-1");
+            Optional<ShipperProfile> result1 = service.getProfile();
 
-        // Then
-        assertTrue(result1.isPresent());
-        assertTrue(result2.isPresent());
-        assertEquals("tenant-1", result1.get().tenantId());
-        assertEquals("tenant-2", result2.get().tenantId());
-        assertNotEquals(result1.get().id(), result2.get().id());
+            // Then: tenant-1 gets their profile
+            assertTrue(result1.isPresent());
+            assertEquals("tenant-1", result1.get().tenantId());
+            assertEquals("uuid-1", result1.get().id());
+            verify(repository, times(1)).findByTenantIdAndDeletedAtIsNull("tenant-1");
+        }
+
+        // When: tenant-2 calls getProfile
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-2");
+            Optional<ShipperProfile> result2 = service.getProfile();
+
+            // Then: tenant-2 gets their profile
+            assertTrue(result2.isPresent());
+            assertEquals("tenant-2", result2.get().tenantId());
+            assertEquals("uuid-2", result2.get().id());
+            verify(repository, times(1)).findByTenantIdAndDeletedAtIsNull("tenant-2");
+        }
     }
 
     @Test
@@ -605,18 +645,22 @@ class ShipperProfileServiceTest {
             null
         );
 
-        when(repository.findByTenantIdAndDeletedAtIsNull("tenant-1"))
-            .thenReturn(Optional.of(tenant1Profile));
-        when(repository.findByTenantIdAndDeletedAtIsNull("tenant-2"))
-            .thenReturn(Optional.empty());
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-1");
 
-        // When: getProfile called for tenant-1
-        Optional<ShipperProfile> result = repository.findByTenantIdAndDeletedAtIsNull("tenant-1");
+            when(repository.findByTenantIdAndDeletedAtIsNull("tenant-1"))
+                .thenReturn(Optional.of(tenant1Profile));
+            when(repository.findByTenantIdAndDeletedAtIsNull("tenant-2"))
+                .thenReturn(Optional.empty());
 
-        // Then: repository queried with tenant-1 only, not other tenants
-        assertTrue(result.isPresent());
-        assertEquals("tenant-1", result.get().tenantId());
-        verify(repository, times(1)).findByTenantIdAndDeletedAtIsNull("tenant-1");
-        verify(repository, never()).findByTenantIdAndDeletedAtIsNull("tenant-2");
+            // When: getProfile called for tenant-1
+            Optional<ShipperProfile> result = service.getProfile();
+
+            // Then: repository queried with tenant-1 only, not other tenants
+            assertTrue(result.isPresent());
+            assertEquals("tenant-1", result.get().tenantId());
+            verify(repository, times(1)).findByTenantIdAndDeletedAtIsNull("tenant-1");
+            verify(repository, never()).findByTenantIdAndDeletedAtIsNull("tenant-2");
+        }
     }
 }

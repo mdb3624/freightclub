@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-const BASE_URL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:9090'
+const BASE_URL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:9096'
 
 test.describe('Carrier Cost Profile Setup — US-757', () => {
   test.beforeEach(async ({ page }) => {
@@ -10,8 +10,8 @@ test.describe('Carrier Cost Profile Setup — US-757', () => {
   })
 
   test('golden path: trucker enters all 10 cost fields, saves, reloads, verifies persistence', async ({ page }) => {
-    // Setup: Login as trucker
-    await page.getByLabel('Email').fill('trucker@test.com')
+    // Setup: Login as carrier (TRUCKER role for cost profile feature)
+    await page.getByLabel('Email').fill('carrier@test.com')
     await page.getByLabel('Password').fill('N1kk101!')
     await page.getByRole('button', { name: /sign in/i }).click()
 

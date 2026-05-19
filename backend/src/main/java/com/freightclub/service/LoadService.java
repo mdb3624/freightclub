@@ -15,6 +15,7 @@ import com.freightclub.dto.LoadResponse;
 import com.freightclub.dto.LoadSummaryResponse;
 import com.freightclub.dto.UpdateLoadRequest;
 import com.freightclub.modules.carrier.application.CarrierCostProfileService;
+import com.freightclub.modules.shipper.application.ShipperProfileService;
 import com.freightclub.repository.ClaimRepository;
 import com.freightclub.repository.LoadEventRepository;
 import com.freightclub.repository.LoadSpecifications;
@@ -23,6 +24,7 @@ import com.freightclub.exception.LoadNotClaimableException;
 import com.freightclub.exception.LoadNotFoundException;
 import com.freightclub.exception.LoadStatusTransitionException;
 import com.freightclub.exception.DocumentUploadRequiredException;
+import com.freightclub.exception.ProfileIncompleteException;
 import com.freightclub.repository.LoadRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
@@ -55,12 +57,14 @@ public class LoadService {
     private final LoadEventRepository loadEventRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final CarrierCostProfileService carrierCostProfileService;
+    private final ShipperProfileService shipperProfileService;
 
     public LoadService(LoadRepository loadRepository, UserRepository userRepository,
                        DocumentService documentService, RatingService ratingService,
                        ClaimRepository claimRepository, LoadEventRepository loadEventRepository,
                        ApplicationEventPublisher eventPublisher,
-                       CarrierCostProfileService carrierCostProfileService) {
+                       CarrierCostProfileService carrierCostProfileService,
+                       ShipperProfileService shipperProfileService) {
         this.loadRepository = loadRepository;
         this.userRepository = userRepository;
         this.documentService = documentService;
@@ -69,6 +73,7 @@ public class LoadService {
         this.loadEventRepository = loadEventRepository;
         this.eventPublisher = eventPublisher;
         this.carrierCostProfileService = carrierCostProfileService;
+        this.shipperProfileService = shipperProfileService;
     }
 
     public LoadResponse createDraft(CreateLoadRequest request, String shipperId) {
@@ -149,6 +154,13 @@ public class LoadService {
         Load load = findOwnedLoad(id, shipperId);
         if (load.getStatus() != LoadStatus.DRAFT) {
             throw new LoadEditForbiddenException("Only DRAFT loads can be published");
+        }
+        // [US-713] Gate: block if shipper profile is incomplete
+        if (!shipperProfileService.isPublishReady()) {
+            Integer completeness = shipperProfileService.getCompletenessPercent();
+            throw new ProfileIncompleteException(
+                "Complete your company profile (currently " + completeness + "% complete) before publishing loads."
+            );
         }
         load.setStatus(LoadStatus.OPEN);
         Load saved = loadRepository.save(load);

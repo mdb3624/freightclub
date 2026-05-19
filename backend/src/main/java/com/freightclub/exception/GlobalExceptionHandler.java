@@ -100,6 +100,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), req);
     }
 
+    @ExceptionHandler(ProfileIncompleteException.class)
+    public ResponseEntity<ErrorResponse> handleProfileIncomplete(ProfileIncompleteException ex, HttpServletRequest req) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(HttpServletRequest req) {
         return build(HttpStatus.FORBIDDEN, "Access denied", req);

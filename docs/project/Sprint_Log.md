@@ -37,4 +37,4 @@
 | Story ID | Title | Status | Completion Date | Coverage |
 | :--- | :--- | :--- | :--- | :--- |
 | US-753 | Replace Zod with Regex Validation (Login) | ✅ COMPLETED | 2026-05-19 | 100% |
-| US-713 | Shipper Company Profile Setup | 📋 BACKLOG | — | — |
+| US-713 | Shipper Company Profile Setup | ✅ COMPLETED | 2026-05-19 | 85% |

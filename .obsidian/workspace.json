@@ -185,6 +185,8 @@
   },
   "active": "10407db0231ba370",
   "lastOpenFiles": [
+    "backend/tmpfile",
+    "frontend/tmpfile",
     "frontend/dist/assets/AppShell-63cp8dz2.js",
     "frontend/dist/assets/StarRating-Dzw9XLQZ.js",
     "frontend/dist/assets/RatingsPage-BfEgBKsy.js",
@@ -194,8 +196,6 @@
     "frontend/dist/assets/api-DgiimDXu.js",
     "frontend/dist/assets/RatingForm-DenxWfnV.js",
     "frontend/dist/assets/profitability-CA_C-0du.js",
-    "frontend/dist/assets/TruckerLoadDetailPage-NG1omE28.js",
-    "frontend/dist/assets/useLoad-C7x51sAQ.js",
     "frontend/playwright-report/data/e7eee660d9330b3f79e85d93dd170793c967fa0e.md",
     "frontend/test-results/cost-profile-setup-Carrier-46efa-eloads-verifies-persistence-chromium/error-context.md",
     "frontend/playwright-report/data/fb69f9a80d8754b2174bf818875ec606d913383b.md",

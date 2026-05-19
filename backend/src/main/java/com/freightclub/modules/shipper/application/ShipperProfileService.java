@@ -36,7 +36,7 @@ public class ShipperProfileService {
         int completeness = calculateCompleteness(request);
 
         ShipperProfile profile = new ShipperProfile(
-            existing != null ? existing.id() : UUID.randomUUID().toString(),
+            existing != null ? existing.getId() : UUID.randomUUID().toString(),
             tenantId,
             request.companyName(),
             request.billingEmail(),
@@ -48,7 +48,7 @@ public class ShipperProfileService {
             request.usdotNumber(),
             request.logoUrl(),
             completeness,
-            existing != null ? existing.createdAt() : OffsetDateTime.now(),
+            existing != null ? existing.getCreatedAt() : OffsetDateTime.now(),
             OffsetDateTime.now(),
             null
         );
@@ -58,7 +58,7 @@ public class ShipperProfileService {
 
     public Integer getCompletenessPercent() {
         return getProfile()
-            .map(ShipperProfile::completenessPercent)
+            .map(ShipperProfile::getCompletenessPercent)
             .orElse(0);
     }
 
@@ -70,16 +70,16 @@ public class ShipperProfileService {
         // AC-4 Completeness Calculation
         // Company name (20%), Email (20%), Phone (15%), Address (25%), MC/USDOT (15%), Logo (5%)
         int total = 0;
-        if (profile.companyName() != null && !profile.companyName().isBlank()) total += 20;
-        if (profile.billingEmail() != null && !profile.billingEmail().isBlank()) total += 20;
-        if (profile.phoneNumber() != null && !profile.phoneNumber().isBlank()) total += 15;
-        if (profile.city() != null && !profile.city().isBlank() &&
-            profile.state() != null && !profile.state().isBlank() &&
-            profile.zipCode() != null && !profile.zipCode().isBlank()) total += 25;
-        boolean hasMC = profile.mcNumber() != null && !profile.mcNumber().isBlank();
-        boolean hasUSDOT = profile.usdotNumber() != null && !profile.usdotNumber().isBlank();
+        if (profile.getCompanyName() != null && !profile.getCompanyName().isBlank()) total += 20;
+        if (profile.getBillingEmail() != null && !profile.getBillingEmail().isBlank()) total += 20;
+        if (profile.getPhoneNumber() != null && !profile.getPhoneNumber().isBlank()) total += 15;
+        if (profile.getCity() != null && !profile.getCity().isBlank() &&
+            profile.getState() != null && !profile.getState().isBlank() &&
+            profile.getZipCode() != null && !profile.getZipCode().isBlank()) total += 25;
+        boolean hasMC = profile.getMcNumber() != null && !profile.getMcNumber().isBlank();
+        boolean hasUSDOT = profile.getUsdotNumber() != null && !profile.getUsdotNumber().isBlank();
         if (hasMC || hasUSDOT) total += 15;
-        if (profile.logoUrl() != null && !profile.logoUrl().isBlank()) total += 5;
+        if (profile.getLogoUrl() != null && !profile.getLogoUrl().isBlank()) total += 5;
         return Math.min(total, 100);
     }
 

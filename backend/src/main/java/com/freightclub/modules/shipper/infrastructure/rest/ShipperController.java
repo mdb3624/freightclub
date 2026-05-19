@@ -139,19 +139,19 @@ public class ShipperController {
 
     private ShipperProfileResponse mapToResponse(ShipperProfile profile) {
         return new ShipperProfileResponse(
-            profile.id(),
-            profile.companyName(),
-            profile.billingEmail(),
-            profile.phoneNumber(),
-            profile.city(),
-            profile.state(),
-            profile.zipCode(),
-            profile.mcNumber(),
-            profile.usdotNumber(),
-            profile.logoUrl(),
-            profile.completenessPercent(),
-            profile.createdAt() != null ? profile.createdAt().toString() : null,
-            profile.updatedAt() != null ? profile.updatedAt().toString() : null
+            profile.getId(),
+            profile.getCompanyName(),
+            profile.getBillingEmail(),
+            profile.getPhoneNumber(),
+            profile.getCity(),
+            profile.getState(),
+            profile.getZipCode(),
+            profile.getMcNumber(),
+            profile.getUsdotNumber(),
+            profile.getLogoUrl(),
+            profile.getCompletenessPercent(),
+            profile.getCreatedAt() != null ? profile.getCreatedAt().toString() : null,
+            profile.getUpdatedAt() != null ? profile.getUpdatedAt().toString() : null
         );
     }
 }

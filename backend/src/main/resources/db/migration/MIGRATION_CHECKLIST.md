@@ -9,6 +9,7 @@ Before committing any migration file, verify:
 - [ ] All timestamps use `TIMESTAMPTZ` (not TIMESTAMP)
 - [ ] All core entities have `deleted_at TIMESTAMPTZ` (soft deletes)
 - [ ] Schema is explicitly set: `CREATE TABLE freightclub.table_name`
+- [ ] **IDEMPOTENCY**: All DDL wrapped in PL/pgSQL `DO $$BEGIN ... IF NOT EXISTS ... END $$;` block
 
 ## Foreign Keys
 - [ ] **CRITICAL**: Target column has a UNIQUE or PRIMARY KEY constraint
@@ -40,6 +41,42 @@ Before committing any migration file, verify:
 - ❌ RLS policy without `deleted_at IS NULL` — returns soft-deleted rows
 - ❌ Not granting permissions to `freightclub_runtime` role
 - ❌ Creating tables outside the `freightclub` schema
+- ❌ **BARE DDL**: `ALTER TABLE ADD COLUMN` or `CREATE TABLE` without IF NOT EXISTS — fails on partial state from previous failed run, breaks all 100+ tests via Spring context error
+
+## Idempotent Migration Templates
+
+**For ALTER TABLE ADD COLUMN:**
+```sql
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'users' AND column_name = 'fuel_cost_per_gallon') THEN
+    ALTER TABLE freightclub.users ADD COLUMN fuel_cost_per_gallon NUMERIC(6, 3) NULL;
+  END IF;
+END $$;
+```
+
+**For CREATE TABLE:**
+```sql
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.tables 
+    WHERE table_schema = 'freightclub' AND table_name = 'new_table') THEN
+    CREATE TABLE freightclub.new_table (id UUID PRIMARY KEY, ...);
+  END IF;
+END $$;
+```
+
+**For CREATE INDEX:**
+```sql
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_indexes 
+    WHERE schemaname = 'freightclub' AND indexname = 'idx_name') THEN
+    CREATE INDEX idx_name ON freightclub.table_name (column);
+  END IF;
+END $$;
+```
 
 ## Validation Script
 ```bash

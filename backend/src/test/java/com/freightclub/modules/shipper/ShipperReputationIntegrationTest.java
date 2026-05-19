@@ -157,15 +157,19 @@ class ShipperReputationIntegrationTest {
     entity = repository.save(entity);
 
     OffsetDateTime beforeUpdate = entity.getUpdatedAt();
+    String entityId = entity.getId();
 
     // Simulate payment confirmed: avg speed improves
     rep.updateMetrics(new BigDecimal("7"), 6, 0, 0);
     entity = ShipperReputationEntity.fromDomain(rep);
     entity = repository.save(entity);
 
-    assertThat(entity.getAveragePaymentSpeedDays()).isEqualTo(new BigDecimal("7"));
-    assertThat(entity.getCompletedLoadCount()).isEqualTo(6);
-    assertThat(entity.getUpdatedAt()).isAfter(beforeUpdate);
+    // Reload from DB to ensure values are persisted
+    ShipperReputationEntity reloaded = repository.findById(entityId).orElse(null);
+    assertThat(reloaded).isNotNull();
+    assertThat(reloaded.getAveragePaymentSpeedDays()).isEqualTo(new BigDecimal("7"));
+    assertThat(reloaded.getCompletedLoadCount()).isEqualTo(6);
+    assertThat(reloaded.getUpdatedAt()).isAfter(beforeUpdate);
   }
 
   @Test

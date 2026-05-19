@@ -54,7 +54,12 @@ public class ProfileService {
         user.setMcNumber(request.mcNumber());
         user.setDotNumber(request.dotNumber());
         user.setEquipmentType(request.equipmentType());
-        user.setMonthlyFixedCosts(request.monthlyFixedCosts());
+        user.setTruckPaymentLease(request.truckPaymentLease());
+        user.setInsurance(request.insurance());
+        user.setIftaIrpPermits(request.iftaIrpPermits());
+        user.setPhoneEldMisc(request.phoneEldMisc());
+        user.setPerDiemDailyRate(request.perDiemDailyRate());
+        user.setPerDiemDaysPerMonth(request.perDiemDaysPerMonth());
         user.setFuelCostPerGallon(request.fuelCostPerGallon());
         user.setMilesPerGallon(request.milesPerGallon());
         user.setMaintenanceCostPerMile(request.maintenanceCostPerMile());

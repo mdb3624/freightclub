@@ -278,11 +278,15 @@ class ShipperProfileServiceTest {
             );
         });
 
-        // When
-        ShipperProfile result = service.saveProfile(request);
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-123");
 
-        // Then
-        assertEquals(60, result.completenessPercent());
+            // When
+            ShipperProfile result = service.saveProfile(request);
+
+            // Then
+            assertEquals(60, result.completenessPercent());
+        }
     }
 
     @Test
@@ -321,11 +325,15 @@ class ShipperProfileServiceTest {
             );
         });
 
-        // When
-        ShipperProfile result = service.saveProfile(request);
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-123");
 
-        // Then
-        assertEquals(0, result.completenessPercent());
+            // When
+            ShipperProfile result = service.saveProfile(request);
+
+            // Then
+            assertEquals(0, result.completenessPercent());
+        }
     }
 
     @Test
@@ -364,11 +372,15 @@ class ShipperProfileServiceTest {
             );
         });
 
-        // When
-        ShipperProfile result = service.saveProfile(request);
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-123");
 
-        // Then
-        assertEquals(85, result.completenessPercent());
+            // When
+            ShipperProfile result = service.saveProfile(request);
+
+            // Then
+            assertEquals(85, result.completenessPercent());
+        }
     }
 
     @Test
@@ -407,11 +419,15 @@ class ShipperProfileServiceTest {
             );
         });
 
-        // When
-        ShipperProfile result = service.saveProfile(request);
+        try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+            mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-123");
 
-        // Then
-        assertEquals(95, result.completenessPercent());
+            // When
+            ShipperProfile result = service.saveProfile(request);
+
+            // Then
+            assertEquals(95, result.completenessPercent());
+        }
     }
 
     // ============= PERSISTENCE TESTS =============
@@ -650,8 +666,6 @@ class ShipperProfileServiceTest {
 
             when(repository.findByTenantIdAndDeletedAtIsNull("tenant-1"))
                 .thenReturn(Optional.of(tenant1Profile));
-            when(repository.findByTenantIdAndDeletedAtIsNull("tenant-2"))
-                .thenReturn(Optional.empty());
 
             // When: getProfile called for tenant-1
             Optional<ShipperProfile> result = service.getProfile();

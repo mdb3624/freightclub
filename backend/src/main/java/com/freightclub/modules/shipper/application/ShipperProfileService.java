@@ -4,178 +4,99 @@ import com.freightclub.modules.shipper.domain.ShipperProfile;
 import com.freightclub.modules.shipper.infrastructure.ShipperProfileRepository;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.ShipperProfileRequest;
 import com.freightclub.security.TenantContextHolder;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 @Service
+@Transactional
 public class ShipperProfileService {
 
-  private final ShipperProfileRepository repository;
-  private static final Pattern EMAIL_PATTERN =
-    Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
-  private static final Pattern PHONE_PATTERN =
-    Pattern.compile("^\\(\\d{3}\\)\\s?\\d{3}-\\d{4}$");
-  private static final Pattern ZIP_PATTERN =
-    Pattern.compile("^\\d{5}$");
+    private final ShipperProfileRepository repository;
 
-  public ShipperProfileService(ShipperProfileRepository repository) {
-    this.repository = repository;
-  }
+    public ShipperProfileService(ShipperProfileRepository repository) {
+        this.repository = repository;
+    }
 
-  // For testing without repository
-  public ShipperProfileService() {
-    this.repository = null;
-  }
+    @Cacheable(value = "shipper-profiles", key = "#root.targetClass.name + '.' + T(com.freightclub.security.TenantContextHolder).getTenantId()")
+    public Optional<ShipperProfile> getProfile() {
+        String tenantId = TenantContextHolder.getTenantId();
+        return repository.findByTenantIdAndDeletedAtIsNull(tenantId);
+    }
 
-  @Transactional(readOnly = true)
-  public Optional<ShipperProfile> getProfile() {
-    String tenantId = TenantContextHolder.getTenantId();
-    return repository.findByTenantIdAndDeletedAtIsNull(tenantId);
-  }
+    @CacheEvict(value = "shipper-profiles", allEntries = true)
+    public ShipperProfile saveProfile(ShipperProfileRequest request) {
+        String tenantId = TenantContextHolder.getTenantId();
+        ShipperProfile existing = repository.findByTenantIdAndDeletedAtIsNull(tenantId).orElse(null);
 
-  @Transactional
-  public ShipperProfile saveProfile(ShipperProfileRequest request) {
-    String tenantId = TenantContextHolder.getTenantId();
+        int completeness = calculateCompleteness(request);
 
-    // Validate required fields
-    validateRequired(request);
-
-    // Find existing or create new
-    ShipperProfile profile = repository.findByTenantIdAndDeletedAtIsNull(tenantId)
-      .orElseGet(() -> {
-        ShipperProfile newProfile = new ShipperProfile(
-          UUID.randomUUID().toString(),
-          tenantId
+        ShipperProfile profile = new ShipperProfile(
+            existing != null ? existing.id() : UUID.randomUUID().toString(),
+            tenantId,
+            request.companyName(),
+            request.billingEmail(),
+            request.phoneNumber(),
+            request.city(),
+            request.state(),
+            request.zipCode(),
+            request.mcNumber(),
+            request.usdotNumber(),
+            request.logoUrl(),
+            completeness,
+            existing != null ? existing.createdAt() : OffsetDateTime.now(),
+            OffsetDateTime.now(),
+            null
         );
-        newProfile.setCreatedAt(OffsetDateTime.now());
-        return newProfile;
-      });
 
-    // Update fields
-    profile.setCompanyName(request.companyName());
-    profile.setBillingEmail(request.billingEmail());
-    profile.setPhoneNumber(request.phoneNumber());
-    profile.setCity(request.city());
-    profile.setState(request.state());
-    profile.setZipCode(request.zipCode());
-    profile.setMcNumber(request.mcNumber());
-    profile.setUsdotNumber(request.usdotNumber());
-    profile.setLogoUrl(request.logoUrl());
-    profile.setUpdatedAt(OffsetDateTime.now());
-
-    // Calculate and set completeness
-    int completeness = calculateCompleteness(profile);
-    profile.setCompletenessPercent(completeness);
-
-    return repository.save(profile);
-  }
-
-  @Transactional(readOnly = true)
-  public int getCompletenessPercent() {
-    return getProfile()
-      .map(ShipperProfile::getCompletenessPercent)
-      .orElse(0);
-  }
-
-  @Transactional(readOnly = true)
-  public boolean isPublishReady() {
-    return getProfile()
-      .map(this::isPublishReady)
-      .orElse(false);
-  }
-
-  // Public for testing
-  public int calculateCompleteness(ShipperProfile profile) {
-    int completeness = 0;
-
-    // Required fields
-    if (profile.getCompanyName() != null && !profile.getCompanyName().isEmpty()) {
-      completeness += 20;
-    }
-    if (profile.getBillingEmail() != null && isValidEmail(profile.getBillingEmail())) {
-      completeness += 20;
-    }
-    if (profile.getPhoneNumber() != null && isValidPhone(profile.getPhoneNumber())) {
-      completeness += 15;
-    }
-    if (profile.getCity() != null && !profile.getCity().isEmpty()) {
-      completeness += 15;
-    }
-    if (profile.getState() != null && isValidStateCode(profile.getState())) {
-      completeness += 5;
-    }
-    if (profile.getZipCode() != null && isValidZip(profile.getZipCode())) {
-      completeness += 10;
+        return repository.save(profile);
     }
 
-    // Optional but high-value fields
-    if ((profile.getMcNumber() != null && !profile.getMcNumber().isEmpty()) ||
-        (profile.getUsdotNumber() != null && !profile.getUsdotNumber().isEmpty())) {
-      completeness += 15;
-    }
-    if (profile.getLogoUrl() != null && !profile.getLogoUrl().isEmpty()) {
-      completeness += 5;
+    public Integer getCompletenessPercent() {
+        return getProfile()
+            .map(ShipperProfile::completenessPercent)
+            .orElse(0);
     }
 
-    return Math.min(completeness, 100);
-  }
-
-  // Public for testing
-  public boolean isPublishReady(ShipperProfile profile) {
-    return profile.getCompletenessPercent() != null &&
-           profile.getCompletenessPercent() >= 80;
-  }
-
-  // Validation helpers
-  private void validateRequired(ShipperProfileRequest request) {
-    if (request.companyName() == null || request.companyName().isEmpty()) {
-      throw new IllegalArgumentException("Company name is required");
+    public boolean isPublishReady() {
+        return getCompletenessPercent() >= 80;
     }
-    if (!isValidEmail(request.billingEmail())) {
-      throw new IllegalArgumentException("Invalid email format");
-    }
-    if (!isValidPhone(request.phoneNumber())) {
-      throw new IllegalArgumentException("Invalid phone format. Expected: (XXX) XXX-XXXX");
-    }
-    if (request.city() == null || request.city().isEmpty()) {
-      throw new IllegalArgumentException("City is required");
-    }
-    if (!isValidStateCode(request.state())) {
-      throw new IllegalArgumentException("Invalid state code");
-    }
-    if (!isValidZip(request.zipCode())) {
-      throw new IllegalArgumentException("Invalid ZIP code format. Expected: 5 digits");
-    }
-  }
 
-  private boolean isValidEmail(String email) {
-    return email != null && EMAIL_PATTERN.matcher(email).matches();
-  }
+    public int calculateCompleteness(ShipperProfile profile) {
+        // AC-4 Completeness Calculation
+        // Company name (20%), Email (20%), Phone (15%), Address (25%), MC/USDOT (15%), Logo (5%)
+        int total = 0;
+        if (profile.companyName() != null && !profile.companyName().isBlank()) total += 20;
+        if (profile.billingEmail() != null && !profile.billingEmail().isBlank()) total += 20;
+        if (profile.phoneNumber() != null && !profile.phoneNumber().isBlank()) total += 15;
+        if (profile.city() != null && !profile.city().isBlank() &&
+            profile.state() != null && !profile.state().isBlank() &&
+            profile.zipCode() != null && !profile.zipCode().isBlank()) total += 25;
+        boolean hasMC = profile.mcNumber() != null && !profile.mcNumber().isBlank();
+        boolean hasUSDOT = profile.usdotNumber() != null && !profile.usdotNumber().isBlank();
+        if (hasMC || hasUSDOT) total += 15;
+        if (profile.logoUrl() != null && !profile.logoUrl().isBlank()) total += 5;
+        return Math.min(total, 100);
+    }
 
-  private boolean isValidPhone(String phone) {
-    return phone != null && PHONE_PATTERN.matcher(phone).matches();
-  }
-
-  private boolean isValidZip(String zip) {
-    return zip != null && ZIP_PATTERN.matcher(zip).matches();
-  }
-
-  private boolean isValidStateCode(String state) {
-    // Simplified: 2-letter uppercase state code
-    return state != null && state.matches("[A-Z]{2}");
-  }
-
-  @Transactional
-  public void deleteProfile() {
-    String tenantId = TenantContextHolder.getTenantId();
-    repository.findByTenantIdAndDeletedAtIsNull(tenantId)
-      .ifPresent(profile -> {
-        profile.softDelete();
-        repository.save(profile);
-      });
-  }
+    private int calculateCompleteness(ShipperProfileRequest request) {
+        // AC-4 Completeness Calculation
+        // Company name (20%), Email (20%), Phone (15%), Address (25%), MC/USDOT (15%), Logo (5%)
+        int total = 0;
+        if (request.companyName() != null && !request.companyName().isBlank()) total += 20;
+        if (request.billingEmail() != null && !request.billingEmail().isBlank()) total += 20;
+        if (request.phoneNumber() != null && !request.phoneNumber().isBlank()) total += 15;
+        if (request.city() != null && !request.city().isBlank() &&
+            request.state() != null && !request.state().isBlank() &&
+            request.zipCode() != null && !request.zipCode().isBlank()) total += 25;
+        boolean hasMC = request.mcNumber() != null && !request.mcNumber().isBlank();
+        boolean hasUSDOT = request.usdotNumber() != null && !request.usdotNumber().isBlank();
+        if (hasMC || hasUSDOT) total += 15;
+        if (request.logoUrl() != null && !request.logoUrl().isBlank()) total += 5;
+        return Math.min(total, 100);
+    }
 }

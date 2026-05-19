@@ -234,6 +234,41 @@ Users maintain a profile with company name, contact info, and role-specific data
 - Profiles auto-created on user registration
 - Carrier profile linked to trucker user by `user_id`
 
+### Cost Per Mile Calculator (Trucker)
+**Status:** Implemented (US-757)
+
+Truckers can track granular operating costs (fuel, maintenance, insurance, permits, per diem) to calculate their minimum acceptable revenue per mile (RPM) and make data-driven load acceptance decisions.
+
+**Endpoints:**
+- `GET /api/v1/profile` — Returns all 11 cost profile fields
+- `PUT /api/v1/profile` — Updates cost profile fields
+
+**Cost Profile Fields:**
+- **Fixed Monthly Costs:** Truck Payment/Lease, Insurance, IFTA/IRP/Permits, Phone/ELD/Misc, Per Diem
+- **Variable Costs:** Fuel Cost ($/Gal), Fuel Efficiency (MPG), Maintenance Reserve ($/Mi)
+- **Operational Targets:** Monthly Miles Target, Target Profit Margin ($/Mi)
+
+**Calculations:**
+- Fixed CPM = Total Fixed Costs ÷ Monthly Miles
+- Fuel CPM = Diesel Price ÷ MPG
+- Variable CPM = Fuel CPM + Maintenance CPM
+- Total CPM = Fixed CPM + Variable CPM
+- **Minimum RPM** = Total CPM + Target Profit Margin
+
+**Features:**
+- Real-time CPM calculation as trucker enters values
+- All fields optional (defaults to 0 if empty)
+- Smart display (hides calculation if monthly miles not set)
+- Division-by-zero guards (fuel efficiency > 0 required)
+- Per diem auto-calculated from daily rate × days per month (1-31)
+- Data persisted and restored on page reload
+
+**Validation:**
+- Cost fields ≥ 0
+- Per diem days: 1-31
+- Monthly miles > 0
+- Invalid input returns 400 BAD_REQUEST with details
+
 ---
 
 ## Frontend Pages & Features

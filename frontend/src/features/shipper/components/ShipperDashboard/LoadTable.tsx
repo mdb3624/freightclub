@@ -12,22 +12,16 @@ interface LoadTableProps {
     payUnit: string
     claimedByTruckerName: string | null
   }>
-  onSort: (column: string) => void
   onViewDetails: (id: string) => void
   onEdit: (id: string) => void
   onCancel: (id: string) => void
-  currentSort: string
-  currentOrder: 'asc' | 'desc'
 }
 
 export function LoadTable({
   loads,
-  onSort,
   onViewDetails,
   onEdit,
   onCancel,
-  currentSort,
-  currentOrder,
 }: LoadTableProps) {
   const statusColorMap: Record<string, string> = {
     DRAFT: 'bg-gray-100 text-gray-800',

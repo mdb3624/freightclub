@@ -57,8 +57,7 @@ export function ShipperDashboard() {
   return (
     <AppShell maxWidth="5xl">
       <div className="space-y-6">
-        <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">Shipper Dashboard</h1>
+        <div className="flex justify-end">
           <button
             onClick={() => navigate('/shipper/loads/new')}
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"

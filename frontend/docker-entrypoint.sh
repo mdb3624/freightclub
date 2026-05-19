@@ -10,35 +10,32 @@ echo "Backend URL: $BACKEND_URL"
 echo "Backend Host: $BACKEND_HOST"
 echo ""
 
-# Generate config from template, substituting BACKEND_URL and BACKEND_HOST
-# Escape special characters in URLs for sed
+# Generate config from template
+# Use awk for safe variable substitution
 echo "Generating nginx config..."
-BACKEND_URL_ESCAPED=$(printf '%s\n' "$BACKEND_URL" | sed -e 's/[\/&]/\\&/g')
-BACKEND_HOST_ESCAPED=$(printf '%s\n' "$BACKEND_HOST" | sed -e 's/[\/&]/\\&/g')
+awk -v backend_url="$BACKEND_URL" -v backend_host="$BACKEND_HOST" \
+  '{
+    gsub(/\$\{BACKEND_URL\}/, backend_url);
+    gsub(/\$\{BACKEND_HOST\}/, backend_host);
+    print;
+  }' \
+  /etc/nginx/nginx.conf.template > /etc/nginx/conf.d/default.conf
 
-cat /etc/nginx/nginx.conf.template | \
-  sed "s|\${BACKEND_URL}|$BACKEND_URL_ESCAPED|g" | \
-  sed "s|\${BACKEND_HOST}|$BACKEND_HOST_ESCAPED|g" > /etc/nginx/conf.d/default.conf || {
-  echo "ERROR: Failed to generate nginx config"
+if [ ! -s /etc/nginx/conf.d/default.conf ]; then
+  echo "ERROR: Failed to generate config (empty file)"
   exit 1
-}
-
-# Debug: show generated config
-echo ""
-echo "Generated nginx configuration:"
-head -35 /etc/nginx/conf.d/default.conf | tail -20
+fi
 
 # Verify config syntax
-echo ""
 echo "Verifying nginx config..."
 if ! nginx -t 2>&1; then
   echo "ERROR: Invalid nginx configuration"
-  echo "Full config:"
+  echo "Config content:"
   cat /etc/nginx/conf.d/default.conf
   exit 1
 fi
 
-echo "✓ Configuration ready"
+echo "✓ Configuration valid"
 echo "Starting nginx..."
 
 # Start nginx

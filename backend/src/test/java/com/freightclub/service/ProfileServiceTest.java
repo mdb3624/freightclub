@@ -95,7 +95,8 @@ class ProfileServiceTest {
                     null, null, null, null, null,
                     true, false, true,
                     null, null, null,
-                    null, null, null, null, null, null);
+                    null, null, null, null, null, null,
+                    null, null, null, null, null);
 
             ProfileResponse response = service.updateProfile(USER_ID, request);
 
@@ -115,7 +116,8 @@ class ProfileServiceTest {
                     null, null, null, null, null,
                     true, false, true,
                     null, null, null,
-                    null, null, null, null, null, null);
+                    null, null, null, null, null, null,
+                    null, null, null, null, null);
 
             assertThatThrownBy(() -> service.updateProfile(USER_ID, request))
                     .isInstanceOf(RuntimeException.class);

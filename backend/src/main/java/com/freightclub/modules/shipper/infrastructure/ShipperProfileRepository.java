@@ -8,6 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface ShipperProfileRepository extends JpaRepository<ShipperProfile, String> {
-
-  Optional<ShipperProfile> findByTenantIdAndDeletedAtIsNull(String tenantId);
+    Optional<ShipperProfile> findByTenantIdAndDeletedAtIsNull(String tenantId);
 }

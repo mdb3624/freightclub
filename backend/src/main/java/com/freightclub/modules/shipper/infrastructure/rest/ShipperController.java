@@ -1,24 +1,30 @@
 package com.freightclub.modules.shipper.infrastructure.rest;
 
+import com.freightclub.modules.shipper.application.LoadQueryService;
 import com.freightclub.modules.shipper.application.ShipperProfileService;
 import com.freightclub.modules.shipper.domain.ShipperProfile;
+import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadStatsResponse;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.ShipperProfileRequest;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.ShipperProfileResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/profile")
+@RequestMapping("/api/v1")
+@PreAuthorize("hasRole('SHIPPER')")
 public class ShipperController {
 
     private final ShipperProfileService shipperProfileService;
+    private final LoadQueryService loadQueryService;
 
-    public ShipperController(ShipperProfileService shipperProfileService) {
+    public ShipperController(ShipperProfileService shipperProfileService, LoadQueryService loadQueryService) {
         this.shipperProfileService = shipperProfileService;
+        this.loadQueryService = loadQueryService;
     }
 
-    @GetMapping
+    @GetMapping("/profile")
     public ResponseEntity<ShipperProfileResponse> getProfile() {
         var profile = shipperProfileService.getProfile();
 
@@ -32,7 +38,7 @@ public class ShipperController {
         return ResponseEntity.ok(mapToResponse(profile.get()));
     }
 
-    @PostMapping("/company-info")
+    @PostMapping("/profile/company-info")
     public ResponseEntity<ShipperProfileResponse> saveProfile(@RequestBody ShipperProfileRequest request) {
         // Validation happens here
         validateRequest(request);
@@ -41,13 +47,21 @@ public class ShipperController {
         return ResponseEntity.status(HttpStatus.CREATED).body(mapToResponse(saved));
     }
 
-    @PutMapping("/company-info")
+    @PutMapping("/profile/company-info")
     public ResponseEntity<ShipperProfileResponse> updateProfile(@RequestBody ShipperProfileRequest request) {
         // Validation happens here
         validateRequest(request);
 
         ShipperProfile updated = shipperProfileService.saveProfile(request);
         return ResponseEntity.ok(mapToResponse(updated));
+    }
+
+    @GetMapping("/shipper/loads/stats")
+    public ResponseEntity<LoadStatsResponse> getLoadStats(
+        @RequestParam(defaultValue = "active") String view
+    ) {
+        LoadStatsResponse stats = loadQueryService.getLoadStats(view);
+        return ResponseEntity.ok(stats);
     }
 
     private void validateRequest(ShipperProfileRequest request) {

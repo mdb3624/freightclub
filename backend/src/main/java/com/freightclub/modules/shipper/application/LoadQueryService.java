@@ -98,7 +98,7 @@ public class LoadQueryService {
             LoadStatus.DELIVERED
         );
 
-        var pageResult = loadRepository.findByTenantIdAndStatusAndDeletedAtIsNull(
+        var pageResult = loadRepository.findByTenantIdAndStatusInAndDeletedAtIsNull(
             tenantId, publishedStatuses, pageable
         );
 

@@ -91,15 +91,4 @@ public interface LoadRepository extends JpaRepository<Load, String>, JpaSpecific
     Page<Load> findByTenantIdAndStatusInAndDeletedAtIsNull(
             String tenantId, java.util.Collection<LoadStatus> statuses, Pageable pageable);
 
-    /**
-     * Find paginated loads by tenant and status (soft-delete filter: deleted_at IS NULL).
-     * Overload for single status with sorting support.
-     *
-     * @param tenantId tenant identifier
-     * @param status   load status to filter by
-     * @param pageable pagination and sorting specification
-     * @return page of loads matching the criteria
-     */
-    Page<Load> findByTenantIdAndStatusAndDeletedAtIsNull(
-            String tenantId, LoadStatus status, Pageable pageable);
 }

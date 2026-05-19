@@ -227,7 +227,7 @@ class LoadQueryServiceTest {
 
     private Load createLoad(String id, LoadStatus status, boolean deleted) {
         var load = new Load();
-        load.setId(id);
+        setField(load, "id", id);
         load.setTenantId(TenantContextHolder.getTenantId());
         load.setShipperId("shipper-1");
         load.setStatus(status);
@@ -258,7 +258,7 @@ class LoadQueryServiceTest {
 
     private Load createLoadWithPickupFrom(String id, LoadStatus status, boolean deleted, LocalDateTime pickupFrom) {
         var load = new Load();
-        load.setId(id);
+        setField(load, "id", id);
         load.setTenantId(TenantContextHolder.getTenantId());
         load.setShipperId("shipper-1");
         load.setStatus(status);
@@ -285,5 +285,15 @@ class LoadQueryServiceTest {
         }
 
         return loadRepository.save(load);
+    }
+
+    private static void setField(Object target, String name, Object value) {
+        try {
+            var f = target.getClass().getDeclaredField(name);
+            f.setAccessible(true);
+            f.set(target, value);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

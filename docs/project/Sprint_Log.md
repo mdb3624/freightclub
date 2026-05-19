@@ -31,3 +31,10 @@
 | US-705 | Carrier Performance Dashboard | ✅ COMPLETED | 2026-04-27 | 95% |
 | US-706 | Revenue & Profitability Reports | ✅ COMPLETED | 2026-04-27 | 95% |
 | US-757 | Trucker Cost Per Mile Calculator | ✅ COMPLETED | 2026-05-19 | 85% |
+
+## Infrastructure Progress: Performance & Optimization
+
+| Story ID | Title | Status | Completion Date | Coverage |
+| :--- | :--- | :--- | :--- | :--- |
+| US-753 | Replace Zod with Regex Validation (Login) | ✅ COMPLETED | 2026-05-19 | 100% |
+| US-713 | Shipper Company Profile Setup | 📋 BACKLOG | — | — |

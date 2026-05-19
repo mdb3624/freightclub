@@ -30,3 +30,32 @@ export interface ApiError {
   path: string
   timestamp: string
 }
+
+export interface ShipperProfileResponse {
+  id: string
+  tenantId: string
+  companyName: string
+  billingEmail: string
+  phoneNumber: string
+  city: string
+  state: string
+  zipCode: string
+  mcNumber?: string
+  usdotNumber?: string
+  logoUrl?: string
+  profileCompleteness: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ShipperProfileRequest {
+  companyName: string
+  billingEmail: string
+  phoneNumber: string
+  city: string
+  state: string
+  zipCode: string
+  mcNumber?: string
+  usdotNumber?: string
+  logoUrl?: string
+}

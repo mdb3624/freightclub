@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { useLoads } from '@/features/loads/hooks/useLoads'
 import { useCancelLoad } from '@/features/loads/hooks/useCancelLoad'
 import { usePublishLoad } from '@/features/loads/hooks/usePublishLoad'
+import { useShipperProfile } from '@/features/shipper/hooks/useShipperProfile'
+import { ProfileCompletionBanner } from '@/features/shipper/components/ProfileCompletionBanner'
 import { LoadsTable } from '@/features/loads/components/LoadsTable'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
@@ -10,11 +12,16 @@ import { ErrorBanner } from '@/components/ui/ErrorBanner'
 export function LoadsListPage() {
   const [page, setPage] = useState(0)
   const { data, isLoading, isError } = useLoads(page)
+  const { data: shipperProfile } = useShipperProfile()
   const { mutate: cancelLoad, isPending: isCancelling } = useCancelLoad()
   const { mutate: publishLoad, isPending: isPublishing } = usePublishLoad()
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-8">
+      {shipperProfile && shipperProfile.profileCompleteness > 0 && (
+        <ProfileCompletionBanner completeness={shipperProfile.profileCompleteness} />
+      )}
+
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">My Loads</h1>
         <Link to="/shipper/loads/new">

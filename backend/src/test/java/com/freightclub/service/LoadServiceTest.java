@@ -140,5 +140,48 @@ class LoadServiceTest {
                     .isInstanceOf(LoadEditForbiddenException.class)
                     .hasMessageContaining("Only DRAFT loads can be published");
         }
+
+        @Test
+        @DisplayName("US-713: blocks incomplete profile when < 80%")
+        void testPublishLoad_BlocksIncompleteProfile() {
+            Load load = buildDraftLoad();
+            when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
+                    .thenReturn(Optional.of(load));
+            when(shipperProfileService.isPublishReady()).thenReturn(false);
+            when(shipperProfileService.getCompletenessPercent()).thenReturn(60);
+
+            assertThatThrownBy(() -> loadService.publishLoad(LOAD_ID, SHIPPER_ID))
+                    .isInstanceOf(ProfileIncompleteException.class);
+            verify(loadRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("US-713: allows complete profile")
+        void testPublishLoad_AllowsCompleteProfile() {
+            Load load = buildDraftLoad();
+            when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
+                    .thenReturn(Optional.of(load));
+            when(shipperProfileService.isPublishReady()).thenReturn(true);
+            when(loadRepository.save(any())).thenReturn(load);
+
+            loadService.publishLoad(LOAD_ID, SHIPPER_ID);
+
+            assertThat(load.getStatus()).isEqualTo(LoadStatus.OPEN);
+            verify(loadRepository).save(load);
+        }
+
+        @Test
+        @DisplayName("US-713: includes completeness percent in error message")
+        void testPublishLoad_IncludedInErrorMessage() {
+            Load load = buildDraftLoad();
+            when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(LOAD_ID, TENANT_ID))
+                    .thenReturn(Optional.of(load));
+            when(shipperProfileService.isPublishReady()).thenReturn(false);
+            when(shipperProfileService.getCompletenessPercent()).thenReturn(60);
+
+            assertThatThrownBy(() -> loadService.publishLoad(LOAD_ID, SHIPPER_ID))
+                    .isInstanceOf(ProfileIncompleteException.class)
+                    .hasMessageContaining("60%");
+        }
     }
 }

@@ -30,3 +30,4 @@
 | US-704 | Load Board Analytics | ✅ COMPLETED | 2026-04-27 | 95% |
 | US-705 | Carrier Performance Dashboard | ✅ COMPLETED | 2026-04-27 | 95% |
 | US-706 | Revenue & Profitability Reports | ✅ COMPLETED | 2026-04-27 | 95% |
+| US-757 | Trucker Cost Per Mile Calculator | ✅ COMPLETED | 2026-05-19 | 85% |

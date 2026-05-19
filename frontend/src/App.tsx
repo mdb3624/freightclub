@@ -8,8 +8,6 @@ import { AuthInitializer } from '@/components/AuthInitializer'
 import { Toaster } from '@/components/ui/Toaster'
 
 // Lazy load dashboard and protected routes to defer vendor-query and dashboard code
-const ShipperDashboard = lazy(() => import('@/pages/ShipperDashboard').then(m => ({ default: m.ShipperDashboard })))
-const ShipperProfilePage = lazy(() => import('@/pages/ShipperProfilePage').then(m => ({ default: m.ShipperProfilePage })))
 const TruckerDashboard = lazy(() => import('@/pages/TruckerDashboard').then(m => ({ default: m.TruckerDashboard })))
 const LoadCreatePage = lazy(() => import('@/pages/LoadCreatePage').then(m => ({ default: m.LoadCreatePage })))
 const LoadDetailPage = lazy(() => import('@/pages/LoadDetailPage').then(m => ({ default: m.LoadDetailPage })))
@@ -59,27 +57,7 @@ export default function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
-      <Route
-        path="/dashboard/shipper"
-        element={
-          <ProtectedRoute role="SHIPPER">
-            <Suspense fallback={<PageLoader />}>
-              <ShipperDashboard />
-            </Suspense>
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/shipper/profile"
-        element={
-          <ProtectedRoute role="SHIPPER">
-            <Suspense fallback={<PageLoader />}>
-              <ShipperProfilePage />
-            </Suspense>
-          </ProtectedRoute>
-        }
-      />
+      {/* US-713: Shipper Company Profile Setup - deferred to backlog */}
 
       <Route
         path="/dashboard/trucker"

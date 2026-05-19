@@ -10,20 +10,28 @@ echo "Backend URL: $BACKEND_URL"
 echo "Backend Host: $BACKEND_HOST"
 echo ""
 
-# Generate config from template, substituting only BACKEND_URL and BACKEND_HOST
+# Generate config from template, substituting BACKEND_URL and BACKEND_HOST
+# Only substitute the backend variables, leave nginx variables unchanged
 echo "Generating nginx config..."
-envsubst '$BACKEND_URL $BACKEND_HOST' < /etc/nginx/nginx.conf.template > /etc/nginx/conf.d/default.conf || {
+cat /etc/nginx/nginx.conf.template | sed "s|\${BACKEND_URL}|${BACKEND_URL}|g" | sed "s|\${BACKEND_HOST}|${BACKEND_HOST}|g" > /etc/nginx/conf.d/default.conf || {
   echo "ERROR: Failed to generate nginx config"
   exit 1
 }
 
+# Debug: show generated config
+echo ""
+echo "Generated nginx configuration:"
+head -35 /etc/nginx/conf.d/default.conf | tail -20
+
 # Verify config syntax
+echo ""
 echo "Verifying nginx config..."
-nginx -t || {
+if ! nginx -t 2>&1; then
   echo "ERROR: Invalid nginx configuration"
+  echo "Full config:"
   cat /etc/nginx/conf.d/default.conf
   exit 1
-}
+fi
 
 echo "✓ Configuration ready"
 echo "Starting nginx..."

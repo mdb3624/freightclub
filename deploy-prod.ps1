@@ -80,7 +80,7 @@ if ($LASTEXITCODE -eq 0) {
       --timeout=120 `
       --max-instances=10 `
       --allow-unauthenticated `
-      --set-env-vars="BACKEND_URL=$BackendURL,BACKEND_HOST=$BackendHost,PORT=8080" `
+      --set-env-vars="BACKEND_URL=$BackendURL,BACKEND_HOST=$BackendHost" `
       --quiet
 
     if ($LASTEXITCODE -eq 0) {

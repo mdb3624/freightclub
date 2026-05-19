@@ -1,42 +1,31 @@
 #!/bin/sh
 set -e
 
-# Set default backend URL if not provided
-export BACKEND_URL=${BACKEND_URL:-http://localhost:8080}
-export BACKEND_HOST=${BACKEND_HOST:-localhost:8080}
+# Set defaults
+BACKEND_URL=${BACKEND_URL:-http://localhost:8080}
+BACKEND_HOST=${BACKEND_HOST:-localhost:8080}
 
-echo "=== Frontend Container Startup ==="
-echo "Backend URL: $BACKEND_URL"
-echo "Backend Host: $BACKEND_HOST"
-echo ""
+echo "Frontend starting..."
+echo "Backend: $BACKEND_URL"
 
-# Generate config from template
-# Use awk for safe variable substitution
-echo "Generating nginx config..."
-awk -v backend_url="$BACKEND_URL" -v backend_host="$BACKEND_HOST" \
-  '{
-    gsub(/\$\{BACKEND_URL\}/, backend_url);
-    gsub(/\$\{BACKEND_HOST\}/, backend_host);
-    print;
-  }' \
-  /etc/nginx/nginx.conf.template > /etc/nginx/conf.d/default.conf
+# Copy template and substitute variables
+if [ -f /etc/nginx/nginx.conf.template ]; then
+  cp /etc/nginx/nginx.conf.template /etc/nginx/conf.d/default.conf
 
-if [ ! -s /etc/nginx/conf.d/default.conf ]; then
-  echo "ERROR: Failed to generate config (empty file)"
+  # Use sed with careful escaping
+  sed -i "s|\${BACKEND_URL}|$BACKEND_URL|g" /etc/nginx/conf.d/default.conf
+  sed -i "s|\${BACKEND_HOST}|$BACKEND_HOST|g" /etc/nginx/conf.d/default.conf
+else
+  echo "ERROR: nginx.conf.template not found"
   exit 1
 fi
 
-# Verify config syntax
-echo "Verifying nginx config..."
-if ! nginx -t 2>&1; then
-  echo "ERROR: Invalid nginx configuration"
-  echo "Config content:"
-  cat /etc/nginx/conf.d/default.conf
+# Test config
+if ! nginx -t >/dev/null 2>&1; then
+  echo "ERROR: nginx config invalid"
+  nginx -t
   exit 1
 fi
-
-echo "✓ Configuration valid"
-echo "Starting nginx..."
 
 # Start nginx
 exec nginx -g "daemon off;"

@@ -14,29 +14,29 @@ public record CompletenessResponse(
     List<String> remainingFields = new ArrayList<>();
 
     if (calculatedCompleteness < 80) {
-      if (profile.companyName() == null || profile.companyName().isEmpty()) {
+      if (profile.getCompanyName() == null || profile.getCompanyName().isEmpty()) {
         remainingFields.add("companyName");
       }
-      if (profile.billingEmail() == null || profile.billingEmail().isEmpty()) {
+      if (profile.getBillingEmail() == null || profile.getBillingEmail().isEmpty()) {
         remainingFields.add("billingEmail");
       }
-      if (profile.phoneNumber() == null || profile.phoneNumber().isEmpty()) {
+      if (profile.getPhoneNumber() == null || profile.getPhoneNumber().isEmpty()) {
         remainingFields.add("phoneNumber");
       }
-      if (profile.city() == null || profile.city().isEmpty()) {
+      if (profile.getCity() == null || profile.getCity().isEmpty()) {
         remainingFields.add("city");
       }
-      if (profile.state() == null || profile.state().isEmpty()) {
+      if (profile.getState() == null || profile.getState().isEmpty()) {
         remainingFields.add("state");
       }
-      if (profile.zipCode() == null || profile.zipCode().isEmpty()) {
+      if (profile.getZipCode() == null || profile.getZipCode().isEmpty()) {
         remainingFields.add("zipCode");
       }
-      if ((profile.mcNumber() == null || profile.mcNumber().isEmpty()) &&
-          (profile.usdotNumber() == null || profile.usdotNumber().isEmpty())) {
+      if ((profile.getMcNumber() == null || profile.getMcNumber().isEmpty()) &&
+          (profile.getUsdotNumber() == null || profile.getUsdotNumber().isEmpty())) {
         remainingFields.add("mcNumber or usdotNumber");
       }
-      if (profile.logoUrl() == null || profile.logoUrl().isEmpty()) {
+      if (profile.getLogoUrl() == null || profile.getLogoUrl().isEmpty()) {
         remainingFields.add("logoUrl");
       }
     }

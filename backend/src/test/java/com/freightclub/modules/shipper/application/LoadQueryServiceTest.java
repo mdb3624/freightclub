@@ -1,0 +1,289 @@
+package com.freightclub.modules.shipper.application;
+
+import com.freightclub.domain.Load;
+import com.freightclub.domain.LoadStatus;
+import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadListResponse;
+import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadStatsResponse;
+import com.freightclub.repository.LoadRepository;
+import com.freightclub.security.TenantContextHolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+/**
+ * Tests for LoadQueryService with RLS and soft-delete filtering.
+ * AC-US-715: Load statistics and pagination with tenant isolation.
+ */
+@SpringBootTest
+@ActiveProfiles("test")
+class LoadQueryServiceTest {
+
+    @Autowired
+    private LoadQueryService service;
+
+    @Autowired
+    private LoadRepository loadRepository;
+
+    private String tenantId;
+
+    @BeforeEach
+    void setup() {
+        tenantId = "test-tenant-" + System.nanoTime();
+        TenantContextHolder.setTenantId(tenantId);
+    }
+
+    @AfterEach
+    void teardown() {
+        TenantContextHolder.clear();
+    }
+
+    @Test
+    @DisplayName("getLoadStats returns active load counts excluding draft and cancelled")
+    void testGetLoadStatsActiveView() {
+        // Given: Create test loads for active view
+        createLoad("LOAD-001", LoadStatus.OPEN, false);
+        createLoad("LOAD-002", LoadStatus.OPEN, false);
+        createLoad("LOAD-003", LoadStatus.CLAIMED, false);
+        createLoad("LOAD-004", LoadStatus.IN_TRANSIT, false);
+        createLoad("LOAD-005", LoadStatus.DELIVERED, false);
+        createLoad("LOAD-006", LoadStatus.DRAFT, false); // Should not count
+        createLoad("LOAD-007", LoadStatus.CANCELLED, true); // Soft-deleted, should not count
+
+        // When: Query active stats
+        var stats = service.getLoadStats("active");
+
+        // Then: Verify counts match active loads only
+        assertNotNull(stats.active());
+        assertEquals(2, stats.active().open(), "Should count 2 OPEN loads");
+        assertEquals(1, stats.active().claimed(), "Should count 1 CLAIMED load");
+        assertEquals(1, stats.active().inTransit(), "Should count 1 IN_TRANSIT load");
+        assertEquals(1, stats.active().delivered(), "Should count 1 DELIVERED load");
+        assertEquals(0, stats.active().draft(), "Draft should be 0 in active view");
+        assertEquals(0, stats.active().cancelled(), "Cancelled should be 0 in active view");
+    }
+
+    @Test
+    @DisplayName("getLoadStats returns all load counts including draft and soft-deleted")
+    void testGetLoadStatsAllView() {
+        // Given: Create test loads for all view
+        createLoad("LOAD-001", LoadStatus.DRAFT, false);
+        createLoad("LOAD-002", LoadStatus.OPEN, false);
+        createLoad("LOAD-003", LoadStatus.CLAIMED, false);
+        createLoad("LOAD-004", LoadStatus.IN_TRANSIT, false);
+        createLoad("LOAD-005", LoadStatus.DELIVERED, false);
+        createLoad("LOAD-006", LoadStatus.CANCELLED, true); // Soft-deleted
+
+        // When: Query all stats
+        var stats = service.getLoadStats("all");
+
+        // Then: Verify counts include draft and soft-deleted
+        assertNotNull(stats.all());
+        assertEquals(1, stats.all().draft(), "Should count 1 DRAFT load");
+        assertEquals(1, stats.all().open(), "Should count 1 OPEN load");
+        assertEquals(1, stats.all().claimed(), "Should count 1 CLAIMED load");
+        assertEquals(1, stats.all().inTransit(), "Should count 1 IN_TRANSIT load");
+        assertEquals(1, stats.all().delivered(), "Should count 1 DELIVERED load");
+        assertEquals(1, stats.all().cancelled(), "Should count 1 soft-deleted CANCELLED load");
+    }
+
+    @Test
+    @DisplayName("getShipperLoads returns paginated results with correct pagination metadata")
+    void testGetShipperLoadsWithPagination() {
+        // Given: Create 25 loads
+        for (int i = 0; i < 25; i++) {
+            createLoad("LOAD-" + String.format("%03d", i), LoadStatus.OPEN, false);
+        }
+
+        // When: Query page 1 (20 per page)
+        var page1 = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
+
+        // Then: Verify page 1 has 20 loads
+        assertNotNull(page1);
+        assertEquals(20, page1.loads().length, "Page 1 should have 20 loads");
+        assertEquals(0, page1.pagination().page(), "Page should be 0-indexed");
+        assertEquals(25, page1.pagination().total(), "Total should be 25");
+
+        // When: Query page 2
+        var page2 = service.getShipperLoads(1, 20, "active", "pickupFrom", "asc");
+
+        // Then: Verify page 2 has remaining 5 loads
+        assertNotNull(page2);
+        assertEquals(5, page2.loads().length, "Page 2 should have 5 remaining loads");
+        assertEquals(1, page2.pagination().page(), "Page should be 1");
+        assertEquals(25, page2.pagination().total(), "Total should still be 25");
+    }
+
+    @Test
+    @DisplayName("getShipperLoads respects tenant isolation via TenantContextHolder")
+    void testGetShipperLoadsRespectsTenantIsolation() {
+        // Given: Create load for tenant1
+        String tenant1 = tenantId;
+        TenantContextHolder.setTenantId(tenant1);
+        createLoad("LOAD-001", LoadStatus.OPEN, false);
+
+        // And: Create load for tenant2
+        String tenant2 = "other-tenant-" + System.nanoTime();
+        TenantContextHolder.setTenantId(tenant2);
+        createLoad("LOAD-002", LoadStatus.OPEN, false);
+
+        // When: Query as tenant1
+        TenantContextHolder.setTenantId(tenant1);
+        var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
+
+        // Then: Tenant1 should see only their load
+        assertNotNull(results);
+        assertEquals(1, results.loads().length, "Tenant1 should see only their load");
+        assertEquals("LOAD-001", results.loads()[0].id(), "Should be tenant1's load");
+    }
+
+    @Test
+    @DisplayName("getShipperLoads excludes soft-deleted loads from active view")
+    void testGetShipperLoadsExcludesSoftDeleted() {
+        // Given: Create mix of active and soft-deleted loads
+        createLoad("LOAD-001", LoadStatus.OPEN, false);
+        createLoad("LOAD-002", LoadStatus.OPEN, false);
+        createLoad("LOAD-003", LoadStatus.DELIVERED, true); // Soft-deleted
+
+        // When: Query active view
+        var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
+
+        // Then: Should not include soft-deleted load
+        assertNotNull(results);
+        assertEquals(2, results.loads().length, "Should exclude soft-deleted loads");
+    }
+
+    @Test
+    @DisplayName("getShipperLoads returns correct load item data mapping")
+    void testGetShipperLoadsDataMapping() {
+        // Given: Create load with specific data
+        createLoad("LOAD-001", LoadStatus.OPEN, false);
+
+        // When: Query loads
+        var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
+
+        // Then: Verify load item has correct mapped fields
+        assertNotNull(results);
+        assertEquals(1, results.loads().length);
+        var loadItem = results.loads()[0];
+        assertEquals("LOAD-001", loadItem.id());
+        assertEquals("Los Angeles", loadItem.originCity());
+        assertEquals("CA", loadItem.originState());
+        assertEquals("San Francisco", loadItem.destinationCity());
+        assertEquals("CA", loadItem.destinationState());
+        assertEquals("OPEN", loadItem.status());
+        assertEquals(1500.0, loadItem.payAmount());
+        assertEquals("per mile", loadItem.payUnit());
+    }
+
+    @Test
+    @DisplayName("getShipperLoads supports sorting in ascending order")
+    void testGetShipperLoadsSortingAsc() {
+        // Given: Create loads with different pickup times
+        var load1 = createLoadWithPickupFrom("LOAD-001", LoadStatus.OPEN, false,
+                LocalDateTime.of(2026, 6, 1, 10, 0));
+        var load2 = createLoadWithPickupFrom("LOAD-002", LoadStatus.OPEN, false,
+                LocalDateTime.of(2026, 6, 3, 10, 0));
+
+        // When: Query with ascending sort
+        var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
+
+        // Then: Results should be sorted earliest first
+        assertNotNull(results);
+        assertEquals(2, results.loads().length);
+        assertEquals("LOAD-001", results.loads()[0].id());
+        assertEquals("LOAD-002", results.loads()[1].id());
+    }
+
+    @Test
+    @DisplayName("getShipperLoads supports sorting in descending order")
+    void testGetShipperLoadsSortingDesc() {
+        // Given: Create loads with different pickup times
+        createLoadWithPickupFrom("LOAD-001", LoadStatus.OPEN, false,
+                LocalDateTime.of(2026, 6, 1, 10, 0));
+        createLoadWithPickupFrom("LOAD-002", LoadStatus.OPEN, false,
+                LocalDateTime.of(2026, 6, 3, 10, 0));
+
+        // When: Query with descending sort
+        var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "desc");
+
+        // Then: Results should be sorted latest first
+        assertNotNull(results);
+        assertEquals(2, results.loads().length);
+        assertEquals("LOAD-002", results.loads()[0].id());
+        assertEquals("LOAD-001", results.loads()[1].id());
+    }
+
+    // Helper methods
+
+    private Load createLoad(String id, LoadStatus status, boolean deleted) {
+        var load = new Load();
+        load.setId(id);
+        load.setTenantId(TenantContextHolder.getTenantId());
+        load.setShipperId("shipper-1");
+        load.setStatus(status);
+        load.setOriginCity("Los Angeles");
+        load.setOriginState("CA");
+        load.setOriginZip("90001");
+        load.setOriginAddress1("123 Main St");
+        load.setDestinationCity("San Francisco");
+        load.setDestinationState("CA");
+        load.setDestinationZip("94102");
+        load.setDestinationAddress1("456 Market St");
+        load.setCommodity("Dry Goods");
+        load.setWeightLbs(BigDecimal.valueOf(1000));
+        load.setEquipmentType(com.freightclub.domain.EquipmentType.FLATBED);
+        load.setPayRate(BigDecimal.valueOf(1500));
+        load.setPayRateType(com.freightclub.domain.PayRateType.PER_MILE);
+        load.setPickupFrom(LocalDateTime.of(2026, 6, 1, 10, 0));
+        load.setPickupTo(LocalDateTime.of(2026, 6, 1, 17, 0));
+        load.setDeliveryFrom(LocalDateTime.of(2026, 6, 2, 10, 0));
+        load.setDeliveryTo(LocalDateTime.of(2026, 6, 2, 17, 0));
+
+        if (deleted) {
+            load.setDeletedAt(LocalDateTime.now());
+        }
+
+        return loadRepository.save(load);
+    }
+
+    private Load createLoadWithPickupFrom(String id, LoadStatus status, boolean deleted, LocalDateTime pickupFrom) {
+        var load = new Load();
+        load.setId(id);
+        load.setTenantId(TenantContextHolder.getTenantId());
+        load.setShipperId("shipper-1");
+        load.setStatus(status);
+        load.setOriginCity("Los Angeles");
+        load.setOriginState("CA");
+        load.setOriginZip("90001");
+        load.setOriginAddress1("123 Main St");
+        load.setDestinationCity("San Francisco");
+        load.setDestinationState("CA");
+        load.setDestinationZip("94102");
+        load.setDestinationAddress1("456 Market St");
+        load.setCommodity("Dry Goods");
+        load.setWeightLbs(BigDecimal.valueOf(1000));
+        load.setEquipmentType(com.freightclub.domain.EquipmentType.FLATBED);
+        load.setPayRate(BigDecimal.valueOf(1500));
+        load.setPayRateType(com.freightclub.domain.PayRateType.PER_MILE);
+        load.setPickupFrom(pickupFrom);
+        load.setPickupTo(pickupFrom.plusHours(7));
+        load.setDeliveryFrom(pickupFrom.plusDays(1));
+        load.setDeliveryTo(pickupFrom.plusDays(1).plusHours(7));
+
+        if (deleted) {
+            load.setDeletedAt(LocalDateTime.now());
+        }
+
+        return loadRepository.save(load);
+    }
+}

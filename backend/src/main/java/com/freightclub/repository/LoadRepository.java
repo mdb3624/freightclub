@@ -56,4 +56,50 @@ public interface LoadRepository extends JpaRepository<Load, String>, JpaSpecific
 
     @Query("SELECT DISTINCT l.destinationState FROM Load l WHERE l.status = 'OPEN' AND l.deletedAt IS NULL AND l.equipmentType = :equipmentType ORDER BY l.destinationState")
     java.util.List<String> findDistinctDestinationStatesByEquipmentType(@Param("equipmentType") com.freightclub.domain.EquipmentType equipmentType);
+
+    // Queries for LoadQueryService (US-715)
+
+    /**
+     * Count active loads by tenant and status (soft-delete filter: deleted_at IS NULL).
+     * Used for dashboard statistics (active view).
+     *
+     * @param tenantId tenant identifier
+     * @param status   load status to filter by
+     * @return count of non-deleted loads matching the status
+     */
+    long countByTenantIdAndStatusAndDeletedAtIsNull(String tenantId, LoadStatus status);
+
+    /**
+     * Count soft-deleted loads by tenant and status (soft-delete filter: deleted_at IS NOT NULL).
+     * Used for dashboard statistics (all view, CANCELLED count).
+     *
+     * @param tenantId tenant identifier
+     * @param status   load status to filter by
+     * @return count of soft-deleted loads matching the status
+     */
+    long countByTenantIdAndStatusAndDeletedAtIsNotNull(String tenantId, LoadStatus status);
+
+    /**
+     * Find paginated loads by tenant and multiple statuses (soft-delete filter: deleted_at IS NULL).
+     * Used for shipper load list (active view, published statuses only).
+     *
+     * @param tenantId tenant identifier
+     * @param statuses list of load statuses to include
+     * @param pageable pagination and sorting specification
+     * @return page of loads matching the criteria
+     */
+    Page<Load> findByTenantIdAndStatusInAndDeletedAtIsNull(
+            String tenantId, java.util.Collection<LoadStatus> statuses, Pageable pageable);
+
+    /**
+     * Find paginated loads by tenant and status (soft-delete filter: deleted_at IS NULL).
+     * Overload for single status with sorting support.
+     *
+     * @param tenantId tenant identifier
+     * @param status   load status to filter by
+     * @param pageable pagination and sorting specification
+     * @return page of loads matching the criteria
+     */
+    Page<Load> findByTenantIdAndStatusAndDeletedAtIsNull(
+            String tenantId, LoadStatus status, Pageable pageable);
 }

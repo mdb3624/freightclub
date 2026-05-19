@@ -11,9 +11,14 @@ echo "Backend Host: $BACKEND_HOST"
 echo ""
 
 # Generate config from template, substituting BACKEND_URL and BACKEND_HOST
-# Only substitute the backend variables, leave nginx variables unchanged
+# Escape special characters in URLs for sed
 echo "Generating nginx config..."
-cat /etc/nginx/nginx.conf.template | sed "s|\${BACKEND_URL}|${BACKEND_URL}|g" | sed "s|\${BACKEND_HOST}|${BACKEND_HOST}|g" > /etc/nginx/conf.d/default.conf || {
+BACKEND_URL_ESCAPED=$(printf '%s\n' "$BACKEND_URL" | sed -e 's/[\/&]/\\&/g')
+BACKEND_HOST_ESCAPED=$(printf '%s\n' "$BACKEND_HOST" | sed -e 's/[\/&]/\\&/g')
+
+cat /etc/nginx/nginx.conf.template | \
+  sed "s|\${BACKEND_URL}|$BACKEND_URL_ESCAPED|g" | \
+  sed "s|\${BACKEND_HOST}|$BACKEND_HOST_ESCAPED|g" > /etc/nginx/conf.d/default.conf || {
   echo "ERROR: Failed to generate nginx config"
   exit 1
 }

@@ -54,16 +54,16 @@ class ShipperProfileServiceTest {
                 ShipperProfile profile = invocation.getArgument(0);
                 return new ShipperProfile(
                     "uuid-123",
-                    profile.tenantId(),
-                    profile.companyName(),
-                    profile.billingEmail(),
-                    profile.phoneNumber(),
-                    profile.city(),
-                    profile.state(),
-                    profile.zipCode(),
-                    profile.mcNumber(),
-                    profile.usdotNumber(),
-                    profile.logoUrl(),
+                    profile.getTenantId(),
+                    profile.getCompanyName(),
+                    profile.getBillingEmail(),
+                    profile.getPhoneNumber(),
+                    profile.getCity(),
+                    profile.getState(),
+                    profile.getZipCode(),
+                    profile.getMcNumber(),
+                    profile.getUsdotNumber(),
+                    profile.getLogoUrl(),
                     100, // AC-4: all fields = 20+20+15+25+15+5 = 100
                     null,
                     null,
@@ -77,8 +77,8 @@ class ShipperProfileServiceTest {
             // Then
             ArgumentCaptor<ShipperProfile> captor = ArgumentCaptor.forClass(ShipperProfile.class);
             verify(repository).save(captor.capture());
-            assertEquals("tenant-123", captor.getValue().tenantId());
-            assertEquals(100, result.completenessPercent());
+            assertEquals("tenant-123", captor.getValue().getTenantId());
+            assertEquals(100, result.getCompletenessPercent());
         }
     }
 
@@ -104,13 +104,13 @@ class ShipperProfileServiceTest {
                 ShipperProfile profile = invocation.getArgument(0);
                 return new ShipperProfile(
                     "uuid-123",
-                    profile.tenantId(),
-                    profile.companyName(),
-                    profile.billingEmail(),
-                    profile.phoneNumber(),
-                    profile.city(),
-                    profile.state(),
-                    profile.zipCode(),
+                    profile.getTenantId(),
+                    profile.getCompanyName(),
+                    profile.getBillingEmail(),
+                    profile.getPhoneNumber(),
+                    profile.getCity(),
+                    profile.getState(),
+                    profile.getZipCode(),
                     null,
                     null,
                     null,
@@ -127,8 +127,8 @@ class ShipperProfileServiceTest {
             // Then
             ArgumentCaptor<ShipperProfile> captor = ArgumentCaptor.forClass(ShipperProfile.class);
             verify(repository).save(captor.capture());
-            assertEquals("tenant-123", captor.getValue().tenantId());
-            assertEquals(80, result.completenessPercent());
+            assertEquals("tenant-123", captor.getValue().getTenantId());
+            assertEquals(80, result.getCompletenessPercent());
         }
     }
 
@@ -261,13 +261,13 @@ class ShipperProfileServiceTest {
             ShipperProfile profile = invocation.getArgument(0);
             return new ShipperProfile(
                 "uuid-123",
-                profile.tenantId(),
-                profile.companyName(),
-                profile.billingEmail(),
-                profile.phoneNumber(),
-                profile.city(),
-                profile.state(),
-                profile.zipCode(),
+                profile.getTenantId(),
+                profile.getCompanyName(),
+                profile.getBillingEmail(),
+                profile.getPhoneNumber(),
+                profile.getCity(),
+                profile.getState(),
+                profile.getZipCode(),
                 null,
                 null,
                 null,
@@ -285,7 +285,7 @@ class ShipperProfileServiceTest {
             ShipperProfile result = service.saveProfile(request);
 
             // Then
-            assertEquals(60, result.completenessPercent());
+            assertEquals(60, result.getCompletenessPercent());
         }
     }
 
@@ -308,13 +308,13 @@ class ShipperProfileServiceTest {
             ShipperProfile profile = invocation.getArgument(0);
             return new ShipperProfile(
                 "uuid-123",
-                profile.tenantId(),
-                profile.companyName(),
-                profile.billingEmail(),
-                profile.phoneNumber(),
-                profile.city(),
-                profile.state(),
-                profile.zipCode(),
+                profile.getTenantId(),
+                profile.getCompanyName(),
+                profile.getBillingEmail(),
+                profile.getPhoneNumber(),
+                profile.getCity(),
+                profile.getState(),
+                profile.getZipCode(),
                 null,
                 null,
                 null,
@@ -332,7 +332,7 @@ class ShipperProfileServiceTest {
             ShipperProfile result = service.saveProfile(request);
 
             // Then
-            assertEquals(0, result.completenessPercent());
+            assertEquals(0, result.getCompletenessPercent());
         }
     }
 
@@ -355,16 +355,16 @@ class ShipperProfileServiceTest {
             ShipperProfile profile = invocation.getArgument(0);
             return new ShipperProfile(
                 "uuid-123",
-                profile.tenantId(),
-                profile.companyName(),
-                profile.billingEmail(),
-                profile.phoneNumber(),
-                profile.city(),
-                profile.state(),
-                profile.zipCode(),
+                profile.getTenantId(),
+                profile.getCompanyName(),
+                profile.getBillingEmail(),
+                profile.getPhoneNumber(),
+                profile.getCity(),
+                profile.getState(),
+                profile.getZipCode(),
                 null,
                 null,
-                profile.logoUrl(),
+                profile.getLogoUrl(),
                 85, // required(80) + logo(5) = 85
                 null,
                 null,
@@ -379,7 +379,7 @@ class ShipperProfileServiceTest {
             ShipperProfile result = service.saveProfile(request);
 
             // Then
-            assertEquals(85, result.completenessPercent());
+            assertEquals(85, result.getCompletenessPercent());
         }
     }
 
@@ -402,14 +402,14 @@ class ShipperProfileServiceTest {
             ShipperProfile profile = invocation.getArgument(0);
             return new ShipperProfile(
                 "uuid-123",
-                profile.tenantId(),
-                profile.companyName(),
-                profile.billingEmail(),
-                profile.phoneNumber(),
-                profile.city(),
-                profile.state(),
-                profile.zipCode(),
-                profile.mcNumber(),
+                profile.getTenantId(),
+                profile.getCompanyName(),
+                profile.getBillingEmail(),
+                profile.getPhoneNumber(),
+                profile.getCity(),
+                profile.getState(),
+                profile.getZipCode(),
+                profile.getMcNumber(),
                 null,
                 null,
                 95, // required(80) + MC(15) = 95
@@ -426,7 +426,7 @@ class ShipperProfileServiceTest {
             ShipperProfile result = service.saveProfile(request);
 
             // Then
-            assertEquals(95, result.completenessPercent());
+            assertEquals(95, result.getCompletenessPercent());
         }
     }
 
@@ -455,13 +455,13 @@ class ShipperProfileServiceTest {
                 ShipperProfile profile = invocation.getArgument(0);
                 return new ShipperProfile(
                     "uuid-123",
-                    profile.tenantId(),
-                    profile.companyName(),
-                    profile.billingEmail(),
-                    profile.phoneNumber(),
-                    profile.city(),
-                    profile.state(),
-                    profile.zipCode(),
+                    profile.getTenantId(),
+                    profile.getCompanyName(),
+                    profile.getBillingEmail(),
+                    profile.getPhoneNumber(),
+                    profile.getCity(),
+                    profile.getState(),
+                    profile.getZipCode(),
                     null,
                     null,
                     null,
@@ -522,13 +522,13 @@ class ShipperProfileServiceTest {
                 ShipperProfile profile = invocation.getArgument(0);
                 return new ShipperProfile(
                     existingProfile.id(), // ID remains same
-                    profile.tenantId(),
-                    profile.companyName(),
-                    profile.billingEmail(),
-                    profile.phoneNumber(),
-                    profile.city(),
-                    profile.state(),
-                    profile.zipCode(),
+                    profile.getTenantId(),
+                    profile.getCompanyName(),
+                    profile.getBillingEmail(),
+                    profile.getPhoneNumber(),
+                    profile.getCity(),
+                    profile.getState(),
+                    profile.getZipCode(),
                     null,
                     null,
                     null,
@@ -545,7 +545,7 @@ class ShipperProfileServiceTest {
             // Then
             ArgumentCaptor<ShipperProfile> captor = ArgumentCaptor.forClass(ShipperProfile.class);
             verify(repository).save(captor.capture());
-            assertEquals("tenant-123", captor.getValue().tenantId());
+            assertEquals("tenant-123", captor.getValue().getTenantId());
             assertEquals("uuid-123", result.id());
             verify(repository, times(1)).save(any(ShipperProfile.class));
         }

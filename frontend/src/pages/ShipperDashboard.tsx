@@ -1,4 +1,5 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { AppShell } from '@/components/AppShell'
 import { useLoadStats } from '@/features/shipper/hooks/useLoadStats'
 import { useLoadBoard } from '@/features/shipper/hooks/useLoadBoard'
 import { SummaryStrip } from '@/features/shipper/components/ShipperDashboard/SummaryStrip'
@@ -54,8 +55,8 @@ export function ShipperDashboard() {
   const isEmpty = !loadsData?.loads.length
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <AppShell maxWidth="5xl">
+      <div className="space-y-6">
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-900">Shipper Dashboard</h1>
           <button
@@ -122,6 +123,6 @@ export function ShipperDashboard() {
           </>
         )}
       </div>
-    </div>
+    </AppShell>
   )
 }

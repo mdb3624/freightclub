@@ -1,6 +1,6 @@
 # US-715: Shipper Dashboard
 
-**Status:** READY_FOR_DESIGN  
+**Status:** DONE  
 **Phase:** 7  
 **Depends On:** US-101 (Core load registration), US-103 (Load CRUD)  
 **Acceptance Criteria Basis:** Shipper persona (docs/business/personas/shipper.md, lines 58, 64)

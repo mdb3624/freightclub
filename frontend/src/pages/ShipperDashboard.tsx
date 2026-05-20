@@ -57,15 +57,6 @@ export function ShipperDashboard() {
   return (
     <AppShell maxWidth="5xl">
       <div className="space-y-6">
-        <div className="flex justify-end">
-          <button
-            onClick={() => navigate('/shipper/loads/new')}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-          >
-            + Post Load
-          </button>
-        </div>
-
         <div className="mb-6 flex gap-2 border-b border-gray-200">
           <button
             onClick={() => handleViewToggle('active')}

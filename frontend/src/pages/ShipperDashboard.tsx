@@ -57,26 +57,34 @@ export function ShipperDashboard() {
   return (
     <AppShell maxWidth="5xl">
       <div className="space-y-6">
-        <div className="mb-6 flex gap-2 border-b border-gray-200">
+        <div className="mb-6 flex items-center justify-between border-b border-gray-200">
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleViewToggle('active')}
+              className={`px-4 py-2 text-sm font-medium ${
+                view === 'active'
+                  ? 'border-b-2 border-blue-600 text-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Active Loads
+            </button>
+            <button
+              onClick={() => handleViewToggle('all')}
+              className={`px-4 py-2 text-sm font-medium ${
+                view === 'all'
+                  ? 'border-b-2 border-blue-600 text-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              All Loads
+            </button>
+          </div>
           <button
-            onClick={() => handleViewToggle('active')}
-            className={`px-4 py-2 text-sm font-medium ${
-              view === 'active'
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
+            onClick={() => navigate('/shipper/loads/new')}
+            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700"
           >
-            Active Loads
-          </button>
-          <button
-            onClick={() => handleViewToggle('all')}
-            className={`px-4 py-2 text-sm font-medium ${
-              view === 'all'
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            All Loads
+            + Post Load
           </button>
         </div>
 

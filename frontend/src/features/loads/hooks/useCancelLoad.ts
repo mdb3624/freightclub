@@ -12,8 +12,8 @@ export function useCancelLoad() {
   return useMutation({
     mutationFn: ({ id, reason }: { id: string; reason: string }) =>
       loadsApi.cancel(id, reason),
-    onSuccess: (_load, { id }) => {
-      loadQueryInvalidations.onCancel(queryClient, id)
+    onSuccess: () => {
+      loadQueryInvalidations.onCancel(queryClient)
       toast('Load cancelled.', 'info')
       navigate('/dashboard/shipper')
     },

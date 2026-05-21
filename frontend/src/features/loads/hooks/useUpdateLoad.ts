@@ -10,8 +10,8 @@ export function useUpdateLoad(id: string) {
   return useMutation({
     mutationFn: (data: LoadFormValues) => loadsApi.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['loads'] })
-      queryClient.invalidateQueries({ queryKey: ['loads', id] })
+      queryClient.invalidateQueries({ queryKey: ['shipper-loads-stats'] })
+      queryClient.invalidateQueries({ queryKey: ['shipper-loads'] })
       navigate('/dashboard/shipper')
     },
   })

@@ -62,6 +62,13 @@ public class SecurityConfig {
     }
 
     @Bean
+    public FilterRegistrationBean<AuthRateLimitFilter> authRateLimitFilterRegistration() {
+        FilterRegistrationBean<AuthRateLimitFilter> registration = new FilterRegistrationBean<>(authRateLimitFilter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)

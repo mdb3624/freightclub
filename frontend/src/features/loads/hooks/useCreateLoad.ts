@@ -9,7 +9,8 @@ export function useCreateLoad() {
   return useMutation({
     mutationFn: loadsApi.create,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['loads'] })
+      queryClient.invalidateQueries({ queryKey: ['shipper-loads-stats'] })
+      queryClient.invalidateQueries({ queryKey: ['shipper-loads'] })
       navigate('/dashboard/shipper')
     },
   })

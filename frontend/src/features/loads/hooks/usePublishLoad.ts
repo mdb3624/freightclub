@@ -7,7 +7,8 @@ export function usePublishLoad() {
   return useMutation({
     mutationFn: (id: string) => loadsApi.publish(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['loads'] })
+      queryClient.invalidateQueries({ queryKey: ['shipper-loads-stats'] })
+      queryClient.invalidateQueries({ queryKey: ['shipper-loads'] })
     },
   })
 }

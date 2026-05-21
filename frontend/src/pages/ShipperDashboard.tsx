@@ -14,7 +14,7 @@ export function ShipperDashboard() {
 
   const view = (searchParams.get('view') || 'active') as 'active' | 'all'
   const page = parseInt(searchParams.get('page') || '0', 10)
-  const sort = searchParams.get('sort') || 'pickupDate'
+  const sort = searchParams.get('sort') || 'pickupFrom'
   const order = (searchParams.get('order') || 'asc') as 'asc' | 'desc'
   const search = searchParams.get('search') || ''
 

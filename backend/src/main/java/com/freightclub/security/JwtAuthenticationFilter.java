@@ -58,6 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
 
                     TenantContextHolder.setTenantId(tenantId);
+                    TenantContextHolder.setUserId(userId);
 
                     var auth = new UsernamePasswordAuthenticationToken(
                             userId,

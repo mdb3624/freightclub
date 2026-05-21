@@ -14,8 +14,8 @@ export const loadQueryInvalidations = {
     qc.invalidateQueries({ queryKey: ['board', loadId] })
     qc.invalidateQueries({ queryKey: ['my-load-history'] })
   },
-  onCancel: (qc: QueryClient, loadId: string) => {
-    qc.invalidateQueries({ queryKey: ['loads'] })
-    qc.invalidateQueries({ queryKey: ['loads', loadId] })
+  onCancel: (qc: QueryClient) => {
+    qc.invalidateQueries({ queryKey: ['shipper-loads-stats'] })
+    qc.invalidateQueries({ queryKey: ['shipper-loads'] })
   },
 }

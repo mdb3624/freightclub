@@ -8,6 +8,7 @@ package com.freightclub.security;
 public final class TenantContextHolder {
 
     private static final ThreadLocal<String> TENANT_ID = new ThreadLocal<>();
+    private static final ThreadLocal<String> USER_ID = new ThreadLocal<>();
 
     private TenantContextHolder() {}
 
@@ -40,12 +41,40 @@ public final class TenantContextHolder {
     }
 
     /**
-     * Clears the tenant context for the current thread.
+     * Sets the user_id (subject from JWT) for the current request thread.
+     *
+     * @param userId the user identifier (non-null, non-blank)
+     * @throws IllegalArgumentException if userId is null or blank
+     */
+    public static void setUserId(String userId) {
+        if (userId == null || userId.isBlank()) {
+            throw new IllegalArgumentException("user_id cannot be null or blank");
+        }
+        USER_ID.set(userId);
+    }
+
+    /**
+     * Gets the user_id (subject from JWT) for the current request thread.
+     *
+     * @return the user_id bound to this thread
+     * @throws IllegalStateException if no user context is bound (request was not authenticated)
+     */
+    public static String getCurrentUserId() {
+        String userId = USER_ID.get();
+        if (userId == null) {
+            throw new IllegalStateException("No user context bound to this request");
+        }
+        return userId;
+    }
+
+    /**
+     * Clears the tenant and user context for the current thread.
      * MANDATORY: Must be called in a finally block to prevent ThreadLocal memory leaks.
      * Failure to clear will cause subsequent requests on the same thread to inherit stale context,
      * violating AC-3 (Context Cleanup) and potentially exposing data across tenants.
      */
     public static void clear() {
         TENANT_ID.remove();
+        USER_ID.remove();
     }
 }

@@ -9,7 +9,8 @@ export function useCreateDraft() {
   return useMutation({
     mutationFn: loadsApi.createDraft,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['loads'] })
+      queryClient.invalidateQueries({ queryKey: ['shipper-loads-stats'] })
+      queryClient.invalidateQueries({ queryKey: ['shipper-loads'] })
       navigate('/dashboard/shipper')
     },
   })

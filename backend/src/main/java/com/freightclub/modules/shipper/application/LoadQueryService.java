@@ -85,21 +85,15 @@ public class LoadQueryService {
         String sortOrder
     ) {
         String tenantId = TenantContextHolder.getTenantId();
+        String shipperId = TenantContextHolder.getCurrentUserId();
 
         // Build sort direction
         var direction = Sort.Direction.fromString(sortOrder.toUpperCase());
         var pageable = PageRequest.of(page, limit, Sort.by(direction, sortField));
 
-        // Query non-deleted active loads (published statuses)
-        var publishedStatuses = List.of(
-            LoadStatus.OPEN,
-            LoadStatus.CLAIMED,
-            LoadStatus.IN_TRANSIT,
-            LoadStatus.DELIVERED
-        );
-
-        var pageResult = loadRepository.findByTenantIdAndStatusInAndDeletedAtIsNull(
-            tenantId, publishedStatuses, pageable
+        // Query non-deleted loads for current shipper
+        var pageResult = loadRepository.findByTenantIdAndShipperIdAndDeletedAtIsNull(
+            tenantId, shipperId, pageable
         );
 
         // Map Load entities to DTOs

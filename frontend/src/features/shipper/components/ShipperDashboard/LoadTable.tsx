@@ -40,7 +40,6 @@ export function LoadTable({
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="border-b border-gray-300">
-            <th className="text-left px-3 py-2 font-semibold w-20">ID</th>
             <th className="text-left px-3 py-2 font-semibold w-24">Origin</th>
             <th className="text-left px-3 py-2 font-semibold w-24">Destination</th>
             <th className="text-left px-3 py-2 font-semibold w-32">Pickup Window</th>
@@ -52,7 +51,6 @@ export function LoadTable({
         <tbody>
           {loads.map((load) => (
             <tr key={load.id} className="border-b border-gray-200 hover:bg-gray-50">
-              <td className="px-3 py-2 font-medium text-blue-600">{load.id}</td>
               <td className="px-3 py-2">{load.originCity}, {load.originState}</td>
               <td className="px-3 py-2">{load.destinationCity}, {load.destinationState}</td>
               <td className="px-3 py-2 text-xs">

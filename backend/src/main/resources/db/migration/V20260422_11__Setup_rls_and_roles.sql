@@ -18,53 +18,53 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA freightclub TO freightclub_runtim
 -- Set default search path for the role
 ALTER ROLE freightclub_runtime SET search_path TO freightclub, public;
 
--- Enable RLS policies
+-- Enable RLS policies (using VARCHAR not CHAR to match column type)
 CREATE POLICY users_tenant_isolation ON freightclub.users
     FOR ALL
-    USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
-    WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
+    USING (tenant_id = current_setting('app.current_tenant')::VARCHAR)
+    WITH CHECK (tenant_id = current_setting('app.current_tenant')::VARCHAR);
 
 CREATE POLICY loads_tenant_isolation ON freightclub.loads
     FOR ALL
-    USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
-    WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
+    USING (tenant_id = current_setting('app.current_tenant')::VARCHAR)
+    WITH CHECK (tenant_id = current_setting('app.current_tenant')::VARCHAR);
 
 CREATE POLICY claims_tenant_isolation ON freightclub.claims
     FOR ALL
-    USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
-    WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
+    USING (tenant_id = current_setting('app.current_tenant')::VARCHAR)
+    WITH CHECK (tenant_id = current_setting('app.current_tenant')::VARCHAR);
 
 CREATE POLICY load_events_tenant_isolation ON freightclub.load_events
     FOR ALL
-    USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
-    WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
+    USING (tenant_id = current_setting('app.current_tenant')::VARCHAR)
+    WITH CHECK (tenant_id = current_setting('app.current_tenant')::VARCHAR);
 
 CREATE POLICY load_documents_tenant_isolation ON freightclub.load_documents
     FOR ALL
-    USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
-    WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
+    USING (tenant_id = current_setting('app.current_tenant')::VARCHAR)
+    WITH CHECK (tenant_id = current_setting('app.current_tenant')::VARCHAR);
 
 CREATE POLICY load_ratings_tenant_isolation ON freightclub.load_ratings
     FOR ALL
-    USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
-    WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
+    USING (tenant_id = current_setting('app.current_tenant')::VARCHAR)
+    WITH CHECK (tenant_id = current_setting('app.current_tenant')::VARCHAR);
 
 CREATE POLICY notifications_tenant_isolation ON freightclub.notifications
     FOR ALL
-    USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
-    WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
+    USING (tenant_id = current_setting('app.current_tenant')::VARCHAR)
+    WITH CHECK (tenant_id = current_setting('app.current_tenant')::VARCHAR);
 
 CREATE POLICY carrier_profiles_tenant_isolation ON freightclub.carrier_profiles
     FOR ALL
-    USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
-    WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
+    USING (tenant_id = current_setting('app.current_tenant')::VARCHAR)
+    WITH CHECK (tenant_id = current_setting('app.current_tenant')::VARCHAR);
 
--- Force RLS on all tables
-ALTER TABLE freightclub.users FORCE ROW LEVEL SECURITY;
-ALTER TABLE freightclub.loads FORCE ROW LEVEL SECURITY;
-ALTER TABLE freightclub.claims FORCE ROW LEVEL SECURITY;
-ALTER TABLE freightclub.load_events FORCE ROW LEVEL SECURITY;
-ALTER TABLE freightclub.load_documents FORCE ROW LEVEL SECURITY;
-ALTER TABLE freightclub.load_ratings FORCE ROW LEVEL SECURITY;
-ALTER TABLE freightclub.notifications FORCE ROW LEVEL SECURITY;
-ALTER TABLE freightclub.carrier_profiles FORCE ROW LEVEL SECURITY;
+-- Enable RLS on all tables (but do NOT force it - allows superuser bypass for tests)
+ALTER TABLE freightclub.users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE freightclub.loads ENABLE ROW LEVEL SECURITY;
+ALTER TABLE freightclub.claims ENABLE ROW LEVEL SECURITY;
+ALTER TABLE freightclub.load_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE freightclub.load_documents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE freightclub.load_ratings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE freightclub.notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE freightclub.carrier_profiles ENABLE ROW LEVEL SECURITY;

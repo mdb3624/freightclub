@@ -13,16 +13,16 @@ import java.util.UUID;
 public class Load {
 
     @Id
-    @Column(columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String id;
 
     @Column(name = "tenant_id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String tenantId;
 
-    @Column(name = "shipper_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(name = "shipper_id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String shipperId;
 
-    @Column(name = "trucker_id", columnDefinition = "CHAR(36)")
+    @Column(name = "trucker_id", columnDefinition = "VARCHAR(36)")
     private String truckerId;
 
     @Enumerated(EnumType.STRING)

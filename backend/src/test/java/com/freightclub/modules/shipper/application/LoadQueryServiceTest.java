@@ -76,6 +76,11 @@ class LoadQueryServiceTest {
 
         TenantContextHolder.setTenantId(tenantId);
         TenantContextHolder.setUserId(shipperId);
+
+        // Set PostgreSQL session variable for RLS policies
+        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, true)")
+                .setParameter("tid", tenantId)
+                .getSingleResult();
     }
 
 
@@ -131,6 +136,9 @@ class LoadQueryServiceTest {
         createLoad("LOAD-002", LoadStatus.OPEN, false);
         createLoad("LOAD-003", LoadStatus.CLAIMED, false);
 
+        // Flush to ensure persistence before querying
+        em.flush();
+
         // When: Query by tenant and status
         long count = loadRepository.countByTenantIdAndStatusAndDeletedAtIsNull(tenantId, LoadStatus.OPEN);
 
@@ -150,6 +158,8 @@ class LoadQueryServiceTest {
         createLoad("LOAD-005", LoadStatus.DELIVERED, false);
         createLoad("LOAD-006", LoadStatus.DRAFT, false); // Should not count
         createLoad("LOAD-007", LoadStatus.CANCELLED, true); // Soft-deleted, should not count
+
+        em.flush();
 
         // When: Query active stats
         var stats = service.getLoadStats("active");
@@ -177,6 +187,8 @@ class LoadQueryServiceTest {
         createLoad("LOAD-005", LoadStatus.DELIVERED, false);
         createLoad("LOAD-006", LoadStatus.CANCELLED, true); // Soft-deleted
 
+        em.flush();
+
         // When: Query all stats
         var stats = service.getLoadStats("all");
 
@@ -199,6 +211,8 @@ class LoadQueryServiceTest {
         for (int i = 0; i < 25; i++) {
             createLoad("LOAD-" + String.format("%03d", i), LoadStatus.OPEN, false);
         }
+
+        em.flush();
 
         // When: Query page 1 (20 per page)
         var page1 = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -254,6 +268,7 @@ class LoadQueryServiceTest {
                 .getSingleResult();
         createLoad("LOAD-002", LoadStatus.OPEN, false);
 
+        em.flush();
 
         // When: Query as tenant1
         TenantContextHolder.setTenantId(tenant1);
@@ -275,6 +290,8 @@ class LoadQueryServiceTest {
         createLoad("LOAD-001", LoadStatus.OPEN, false);
         createLoad("LOAD-002", LoadStatus.OPEN, false);
         createLoad("LOAD-003", LoadStatus.DELIVERED, true); // Soft-deleted
+
+        em.flush();
 
         // When: Query active view
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -320,6 +337,8 @@ class LoadQueryServiceTest {
         createLoadWithPickupFrom("LOAD-002", LoadStatus.OPEN, false,
                 LocalDateTime.of(2026, 6, 3, 10, 0));
 
+        em.flush();
+
         // When: Query with ascending sort
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
 
@@ -340,6 +359,8 @@ class LoadQueryServiceTest {
                 LocalDateTime.of(2026, 6, 1, 10, 0));
         createLoadWithPickupFrom("LOAD-002", LoadStatus.OPEN, false,
                 LocalDateTime.of(2026, 6, 3, 10, 0));
+
+        em.flush();
 
         // When: Query with descending sort
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "desc");

@@ -16,7 +16,7 @@ public class Load {
     @Column(columnDefinition = "CHAR(36)", nullable = false, updatable = false)
     private String id;
 
-    @Column(name = "tenant_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(name = "tenant_id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String tenantId;
 
     @Column(name = "shipper_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)

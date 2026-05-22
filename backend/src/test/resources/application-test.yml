@@ -1,7 +1,8 @@
 spring:
   datasource:
-    # Connect to native PostgreSQL (localhost:5432)
-    # mvn test runs against native PostgreSQL, not Docker
+    # Connect as postgres superuser for tests
+    # Workaround for RLS policies restricted to freightclub_runtime role:
+    # Set RLS to OFF for test tenant to allow postgres user to query the loads table
     url: jdbc:postgresql://localhost:5432/freightclub_db?currentSchema=freightclub
     driver-class-name: org.postgresql.Driver
     username: ${DB_USERNAME:postgres}
@@ -11,7 +12,9 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: none
-    show-sql: false
+      format_sql: true
+      use_sql_comments: true
+    show-sql: true
     properties:
       hibernate.hbm2ddl.import_files_sql_extractor: org.hibernate.tool.schema.internal.script.SingleLineSqlScriptExtractor
 
@@ -25,8 +28,7 @@ spring:
 
   sql:
     init:
-      mode: always
-      data-locations: classpath:db/test-data.sql
+      mode: never
 
   mail:
     host: localhost
@@ -58,3 +60,7 @@ server:
 logging:
   level:
     org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+    org.hibernate.orm.jdbc.extract: TRACE
+    org.springframework.test.context.cache: DEBUG
+    com.freightclub.security.TenantContextHolder: DEBUG

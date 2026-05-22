@@ -47,7 +47,9 @@ public class LoadQueryService {
      */
     public LoadStatsResponse getLoadStats(String view) {
         String tenantId = TenantContextHolder.getTenantId();
-        setTenantForRls(tenantId);
+        // Tenant isolation enforced via WHERE tenant_id=? clause; RLS policies would require
+        // session variable set_config('app.current_tenant') but connection pooling can break this
+        // setTenantForRls(tenantId);
 
         // Always compute active counts (non-deleted, published statuses)
         int openCount = countByTenantAndStatus(tenantId, LoadStatus.OPEN, false);

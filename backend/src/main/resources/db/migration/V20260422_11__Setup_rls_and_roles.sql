@@ -20,42 +20,42 @@ ALTER ROLE freightclub_runtime SET search_path TO freightclub, public;
 
 -- Enable RLS policies
 CREATE POLICY users_tenant_isolation ON freightclub.users
-    FOR ALL TO freightclub_runtime
+    FOR ALL
     USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
     WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
 
 CREATE POLICY loads_tenant_isolation ON freightclub.loads
-    FOR ALL TO freightclub_runtime
+    FOR ALL
     USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
     WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
 
 CREATE POLICY claims_tenant_isolation ON freightclub.claims
-    FOR ALL TO freightclub_runtime
+    FOR ALL
     USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
     WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
 
 CREATE POLICY load_events_tenant_isolation ON freightclub.load_events
-    FOR ALL TO freightclub_runtime
+    FOR ALL
     USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
     WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
 
 CREATE POLICY load_documents_tenant_isolation ON freightclub.load_documents
-    FOR ALL TO freightclub_runtime
+    FOR ALL
     USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
     WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
 
 CREATE POLICY load_ratings_tenant_isolation ON freightclub.load_ratings
-    FOR ALL TO freightclub_runtime
+    FOR ALL
     USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
     WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
 
 CREATE POLICY notifications_tenant_isolation ON freightclub.notifications
-    FOR ALL TO freightclub_runtime
+    FOR ALL
     USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
     WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
 
 CREATE POLICY carrier_profiles_tenant_isolation ON freightclub.carrier_profiles
-    FOR ALL TO freightclub_runtime
+    FOR ALL
     USING (tenant_id = current_setting('app.current_tenant')::CHAR(36))
     WITH CHECK (tenant_id = current_setting('app.current_tenant')::CHAR(36));
 

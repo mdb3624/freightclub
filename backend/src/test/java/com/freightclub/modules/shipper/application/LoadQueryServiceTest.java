@@ -57,13 +57,13 @@ class LoadQueryServiceTest {
     @BeforeEach
     void setup() {
         tenantId = "t" + System.nanoTime();
-        // Create tenant before creating loads (FK constraint requires it)
+        // Create tenant before creating loads
         Tenant tenant = new Tenant();
         tenant.setId(tenantId);
         tenant.setName("Test Tenant");
         tenantRepository.save(tenant);
 
-        // Create shipper user for this tenant (FK constraint: loads.shipper_id_fkey -> users.id)
+        // Create shipper user for this tenant
         shipperId = "s" + System.nanoTime();
         User shipper = new User(shipperId);
         shipper.setTenantId(tenantId);
@@ -78,6 +78,7 @@ class LoadQueryServiceTest {
         TenantContextHolder.setUserId(shipperId);
     }
 
+
     @AfterEach
     void teardown() {
         TenantContextHolder.clear();
@@ -87,6 +88,7 @@ class LoadQueryServiceTest {
     @Transactional
     @DisplayName("direct repository query returns saved load")
     void testDirectRepositoryQuery() {
+
         // Given: Create and save a load directly
         Load load = new Load();
         setField(load, "id", "repo-test-load");
@@ -122,6 +124,22 @@ class LoadQueryServiceTest {
 
     @Test
     @Transactional
+    @DisplayName("direct repository query with multiple loads")
+    void testDirectRepositoryQueryMultipleLoads() {
+        // Given: Create multiple loads directly
+        createLoad("LOAD-001", LoadStatus.OPEN, false);
+        createLoad("LOAD-002", LoadStatus.OPEN, false);
+        createLoad("LOAD-003", LoadStatus.CLAIMED, false);
+
+        // When: Query by tenant and status
+        long count = loadRepository.countByTenantIdAndStatusAndDeletedAtIsNull(tenantId, LoadStatus.OPEN);
+
+        // Then: Should find the 2 OPEN loads
+        assertEquals(2, count, "Should find 2 OPEN loads when querying directly");
+    }
+
+    @Test
+    @Transactional
     @DisplayName("getLoadStats returns active load counts excluding draft and cancelled")
     void testGetLoadStatsActiveView() {
         // Given: Create test loads for active view
@@ -132,7 +150,6 @@ class LoadQueryServiceTest {
         createLoad("LOAD-005", LoadStatus.DELIVERED, false);
         createLoad("LOAD-006", LoadStatus.DRAFT, false); // Should not count
         createLoad("LOAD-007", LoadStatus.CANCELLED, true); // Soft-deleted, should not count
-        em.flush(); // Force persist to database within transaction
 
         // When: Query active stats
         var stats = service.getLoadStats("active");
@@ -151,6 +168,7 @@ class LoadQueryServiceTest {
     @Transactional
     @DisplayName("getLoadStats returns all load counts including draft and soft-deleted")
     void testGetLoadStatsAllView() {
+
         // Given: Create test loads for all view
         createLoad("LOAD-001", LoadStatus.DRAFT, false);
         createLoad("LOAD-002", LoadStatus.OPEN, false);
@@ -158,7 +176,6 @@ class LoadQueryServiceTest {
         createLoad("LOAD-004", LoadStatus.IN_TRANSIT, false);
         createLoad("LOAD-005", LoadStatus.DELIVERED, false);
         createLoad("LOAD-006", LoadStatus.CANCELLED, true); // Soft-deleted
-        em.flush(); // Force persist to database within transaction
 
         // When: Query all stats
         var stats = service.getLoadStats("all");
@@ -177,11 +194,11 @@ class LoadQueryServiceTest {
     @Transactional
     @DisplayName("getShipperLoads returns paginated results with correct pagination metadata")
     void testGetShipperLoadsWithPagination() {
+
         // Given: Create 25 loads
         for (int i = 0; i < 25; i++) {
             createLoad("LOAD-" + String.format("%03d", i), LoadStatus.OPEN, false);
         }
-        em.flush(); // Force persist to database within transaction
 
         // When: Query page 1 (20 per page)
         var page1 = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -206,6 +223,7 @@ class LoadQueryServiceTest {
     @Transactional
     @DisplayName("getShipperLoads respects tenant isolation via TenantContextHolder")
     void testGetShipperLoadsRespectsTenantIsolation() {
+
         // Given: Create load for tenant1
         String tenant1 = tenantId;
         String shipper1 = TenantContextHolder.getCurrentUserId();  // Store tenant1's shipper
@@ -231,8 +249,11 @@ class LoadQueryServiceTest {
 
         TenantContextHolder.setTenantId(tenant2);
         TenantContextHolder.setUserId(shipper2);
+        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, true)")
+                .setParameter("tid", tenant2)
+                .getSingleResult();
         createLoad("LOAD-002", LoadStatus.OPEN, false);
-        em.flush(); // Force persist to database within transaction
+
 
         // When: Query as tenant1
         TenantContextHolder.setTenantId(tenant1);
@@ -249,11 +270,11 @@ class LoadQueryServiceTest {
     @Transactional
     @DisplayName("getShipperLoads excludes soft-deleted loads from active view")
     void testGetShipperLoadsExcludesSoftDeleted() {
+
         // Given: Create mix of active and soft-deleted loads
         createLoad("LOAD-001", LoadStatus.OPEN, false);
         createLoad("LOAD-002", LoadStatus.OPEN, false);
         createLoad("LOAD-003", LoadStatus.DELIVERED, true); // Soft-deleted
-        em.flush(); // Force persist to database within transaction
 
         // When: Query active view
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -267,9 +288,9 @@ class LoadQueryServiceTest {
     @Transactional
     @DisplayName("getShipperLoads returns correct load item data mapping")
     void testGetShipperLoadsDataMapping() {
+
         // Given: Create load with specific data
         createLoad("LOAD-001", LoadStatus.OPEN, false);
-        em.flush(); // Force persist to database within transaction
 
         // When: Query loads
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -292,12 +313,12 @@ class LoadQueryServiceTest {
     @Transactional
     @DisplayName("getShipperLoads supports sorting in ascending order")
     void testGetShipperLoadsSortingAsc() {
+
         // Given: Create loads with different pickup times
-        var load1 = createLoadWithPickupFrom("LOAD-001", LoadStatus.OPEN, false,
+        createLoadWithPickupFrom("LOAD-001", LoadStatus.OPEN, false,
                 LocalDateTime.of(2026, 6, 1, 10, 0));
-        var load2 = createLoadWithPickupFrom("LOAD-002", LoadStatus.OPEN, false,
+        createLoadWithPickupFrom("LOAD-002", LoadStatus.OPEN, false,
                 LocalDateTime.of(2026, 6, 3, 10, 0));
-        em.flush(); // Force persist to database within transaction
 
         // When: Query with ascending sort
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -313,12 +334,12 @@ class LoadQueryServiceTest {
     @Transactional
     @DisplayName("getShipperLoads supports sorting in descending order")
     void testGetShipperLoadsSortingDesc() {
+
         // Given: Create loads with different pickup times
         createLoadWithPickupFrom("LOAD-001", LoadStatus.OPEN, false,
                 LocalDateTime.of(2026, 6, 1, 10, 0));
         createLoadWithPickupFrom("LOAD-002", LoadStatus.OPEN, false,
                 LocalDateTime.of(2026, 6, 3, 10, 0));
-        em.flush(); // Force persist to database within transaction
 
         // When: Query with descending sort
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "desc");

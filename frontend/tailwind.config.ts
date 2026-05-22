@@ -4,7 +4,7 @@ export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
-      // ─── Brand tokens (STYLE_GUIDE.md) ──────────────────────────────────────
+      // ─── Brand tokens (docs/standards/brand_assets/STYLE_GUIDE.md) ──────────
       colors: {
         // Existing primary scale — kept for backwards compatibility.
         // Kinetic Blue (#2563EB) === primary-600.
@@ -63,7 +63,7 @@ export default {
         },
       },
 
-      // ─── Typography (STYLE_GUIDE.md) ────────────────────────────────────────
+      // ─── Typography (docs/standards/brand_assets/STYLE_GUIDE.md) ──────────────
       // Add SORA (headlines) and INTER (body/UI) — install via Google Fonts or
       // npm packages (@fontsource/sora, @fontsource/inter) and import in main.tsx.
       fontFamily: {

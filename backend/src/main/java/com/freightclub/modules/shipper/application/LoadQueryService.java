@@ -6,6 +6,7 @@ import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadListResponse;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadStatsResponse;
 import com.freightclub.repository.LoadRepository;
 import com.freightclub.security.TenantContextHolder;
+import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -23,9 +24,17 @@ import java.util.Objects;
 public class LoadQueryService {
 
     private final LoadRepository loadRepository;
+    private final EntityManager em;
 
-    public LoadQueryService(LoadRepository loadRepository) {
+    public LoadQueryService(LoadRepository loadRepository, EntityManager em) {
         this.loadRepository = loadRepository;
+        this.em = em;
+    }
+
+    private void setTenantForRls(String tenantId) {
+        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, true)")
+                .setParameter("tid", tenantId)
+                .getSingleResult();
     }
 
     /**
@@ -38,6 +47,7 @@ public class LoadQueryService {
      */
     public LoadStatsResponse getLoadStats(String view) {
         String tenantId = TenantContextHolder.getTenantId();
+        setTenantForRls(tenantId);
 
         // Always compute active counts (non-deleted, published statuses)
         int openCount = countByTenantAndStatus(tenantId, LoadStatus.OPEN, false);
@@ -85,6 +95,7 @@ public class LoadQueryService {
         String sortOrder
     ) {
         String tenantId = TenantContextHolder.getTenantId();
+        setTenantForRls(tenantId);
         String shipperId = TenantContextHolder.getCurrentUserId();
 
         // Build sort direction

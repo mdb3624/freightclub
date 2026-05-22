@@ -1,6 +1,8 @@
 package com.freightclub.modules.shipper.domain;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -37,13 +39,15 @@ public class ShipperProfile {
     @Column(name = "logo_url")
     private String logoUrl;
 
-    @Column(name = "completeness_percent")
+    @Column(name = "completeness_pct")
     private Integer completenessPercent;
 
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @CreationTimestamp
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP WITH TIME ZONE", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
 
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @UpdateTimestamp
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP WITH TIME ZONE", nullable = false)
     private OffsetDateTime updatedAt;
 
     @Column(name = "deleted_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")

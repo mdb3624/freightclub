@@ -2,9 +2,14 @@ package com.freightclub.modules.shipper.application;
 
 import com.freightclub.domain.Load;
 import com.freightclub.domain.LoadStatus;
+import com.freightclub.domain.Tenant;
+import com.freightclub.domain.User;
+import com.freightclub.domain.UserRole;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadListResponse;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadStatsResponse;
 import com.freightclub.repository.LoadRepository;
+import com.freightclub.repository.TenantRepository;
+import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 class LoadQueryServiceTest {
 
     @Autowired
@@ -34,12 +41,37 @@ class LoadQueryServiceTest {
     @Autowired
     private LoadRepository loadRepository;
 
+    @Autowired
+    private TenantRepository tenantRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+
     private String tenantId;
 
     @BeforeEach
     void setup() {
-        tenantId = "test-tenant-" + System.nanoTime();
+        tenantId = "t" + System.nanoTime();
+        // Create tenant before creating loads (FK constraint requires it)
+        Tenant tenant = new Tenant();
+        tenant.setId(tenantId);
+        tenant.setName("Test Tenant");
+        tenantRepository.save(tenant);
+
+        // Create shipper user for this tenant (FK constraint: loads.shipper_id_fkey -> users.id)
+        String shipperId = "s" + System.nanoTime();
+        User shipper = new User(shipperId);
+        shipper.setTenantId(tenantId);
+        shipper.setEmail(shipperId + "@test.local");
+        shipper.setPasswordHash("hash");
+        shipper.setRole(UserRole.SHIPPER);
+        shipper.setFirstName("Test");
+        shipper.setLastName("Shipper");
+        userRepository.save(shipper);
+
         TenantContextHolder.setTenantId(tenantId);
+        TenantContextHolder.setUserId(shipperId);
     }
 
     @AfterEach
@@ -48,6 +80,44 @@ class LoadQueryServiceTest {
     }
 
     @Test
+    @Transactional
+    @DisplayName("direct repository query returns saved load")
+    void testDirectRepositoryQuery() {
+        // Given: Create and save a load directly
+        Load load = new Load();
+        setField(load, "id", "repo-test-load");
+        load.setTenantId(tenantId);
+        load.setShipperId(TenantContextHolder.getCurrentUserId());
+        load.setStatus(LoadStatus.OPEN);
+        load.setOriginCity("Test");
+        load.setOriginState("TX");
+        load.setOriginZip("75001");
+        load.setOriginAddress1("123 St");
+        load.setDestinationCity("Test2");
+        load.setDestinationState("TX");
+        load.setDestinationZip("75002");
+        load.setDestinationAddress1("456 St");
+        load.setCommodity("Test");
+        load.setWeightLbs(BigDecimal.valueOf(1000));
+        load.setEquipmentType(com.freightclub.domain.EquipmentType.FLATBED);
+        load.setPayRate(BigDecimal.valueOf(1500));
+        load.setPayRateType(com.freightclub.domain.PayRateType.PER_MILE);
+        load.setPickupFrom(LocalDateTime.now());
+        load.setPickupTo(LocalDateTime.now().plusHours(1));
+        load.setDeliveryFrom(LocalDateTime.now().plusDays(1));
+        load.setDeliveryTo(LocalDateTime.now().plusDays(1).plusHours(1));
+
+        loadRepository.save(load);
+
+        // When: Query by tenant and status
+        long count = loadRepository.countByTenantIdAndStatusAndDeletedAtIsNull(tenantId, LoadStatus.OPEN);
+
+        // Then: Should find the load
+        assertEquals(1, count, "Direct repository query should find 1 OPEN load");
+    }
+
+    @Test
+    @Transactional
     @DisplayName("getLoadStats returns active load counts excluding draft and cancelled")
     void testGetLoadStatsActiveView() {
         // Given: Create test loads for active view
@@ -73,6 +143,7 @@ class LoadQueryServiceTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("getLoadStats returns all load counts including draft and soft-deleted")
     void testGetLoadStatsAllView() {
         // Given: Create test loads for all view
@@ -97,6 +168,7 @@ class LoadQueryServiceTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("getShipperLoads returns paginated results with correct pagination metadata")
     void testGetShipperLoadsWithPagination() {
         // Given: Create 25 loads
@@ -124,20 +196,39 @@ class LoadQueryServiceTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("getShipperLoads respects tenant isolation via TenantContextHolder")
     void testGetShipperLoadsRespectsTenantIsolation() {
         // Given: Create load for tenant1
         String tenant1 = tenantId;
+        String shipper1 = TenantContextHolder.getCurrentUserId();  // Store tenant1's shipper
         TenantContextHolder.setTenantId(tenant1);
         createLoad("LOAD-001", LoadStatus.OPEN, false);
 
-        // And: Create load for tenant2
-        String tenant2 = "other-tenant-" + System.nanoTime();
+        // And: Create tenant2 and its shipper, then create load
+        String tenant2 = "t" + System.nanoTime();
+        Tenant t2 = new Tenant();
+        t2.setId(tenant2);
+        t2.setName("Tenant 2");
+        tenantRepository.save(t2);
+
+        String shipper2 = "s" + System.nanoTime();
+        User u2 = new User(shipper2);
+        u2.setTenantId(tenant2);
+        u2.setEmail(shipper2 + "@test.local");
+        u2.setPasswordHash("hash");
+        u2.setRole(UserRole.SHIPPER);
+        u2.setFirstName("Test");
+        u2.setLastName("Shipper2");
+        userRepository.save(u2);
+
         TenantContextHolder.setTenantId(tenant2);
+        TenantContextHolder.setUserId(shipper2);
         createLoad("LOAD-002", LoadStatus.OPEN, false);
 
         // When: Query as tenant1
         TenantContextHolder.setTenantId(tenant1);
+        TenantContextHolder.setUserId(shipper1);
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
 
         // Then: Tenant1 should see only their load
@@ -147,6 +238,7 @@ class LoadQueryServiceTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("getShipperLoads excludes soft-deleted loads from active view")
     void testGetShipperLoadsExcludesSoftDeleted() {
         // Given: Create mix of active and soft-deleted loads
@@ -163,6 +255,7 @@ class LoadQueryServiceTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("getShipperLoads returns correct load item data mapping")
     void testGetShipperLoadsDataMapping() {
         // Given: Create load with specific data
@@ -186,6 +279,7 @@ class LoadQueryServiceTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("getShipperLoads supports sorting in ascending order")
     void testGetShipperLoadsSortingAsc() {
         // Given: Create loads with different pickup times
@@ -205,6 +299,7 @@ class LoadQueryServiceTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("getShipperLoads supports sorting in descending order")
     void testGetShipperLoadsSortingDesc() {
         // Given: Create loads with different pickup times
@@ -229,7 +324,7 @@ class LoadQueryServiceTest {
         var load = new Load();
         setField(load, "id", id);
         load.setTenantId(TenantContextHolder.getTenantId());
-        load.setShipperId("shipper-1");
+        load.setShipperId(TenantContextHolder.getCurrentUserId());
         load.setStatus(status);
         load.setOriginCity("Los Angeles");
         load.setOriginState("CA");
@@ -260,7 +355,7 @@ class LoadQueryServiceTest {
         var load = new Load();
         setField(load, "id", id);
         load.setTenantId(TenantContextHolder.getTenantId());
-        load.setShipperId("shipper-1");
+        load.setShipperId(TenantContextHolder.getCurrentUserId());
         load.setStatus(status);
         load.setOriginCity("Los Angeles");
         load.setOriginState("CA");

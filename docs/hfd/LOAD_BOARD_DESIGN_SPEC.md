@@ -91,7 +91,7 @@ The Load Board is a **trucker's primary workspace** for finding, evaluating, and
 
 ## 2. High-Contrast & Glare Resistance
 
-### Color Assignments (per STYLE_GUIDE)
+### Color Assignments (per docs/standards/brand_assets/STYLE_GUIDE.md)
 - **Load Card Background:** White (bg-white)
 - **RPM Green (Profitable):** `rpm-high` (#22C55E) with white text
 - **RPM Yellow (Breakeven):** `rpm-neutral` (#F59E0B) with dark text

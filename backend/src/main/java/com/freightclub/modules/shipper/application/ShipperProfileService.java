@@ -66,6 +66,19 @@ public class ShipperProfileService {
         return getCompletenessPercent() >= 80;
     }
 
+    /**
+     * SEC-001-AC-003: Authorization check for @PreAuthorize annotation.
+     * ShipperProfile is per-tenant (singleton); verify tenant ownership.
+     * Returns true if profile exists for current tenant context.
+     */
+    @Transactional(readOnly = true)
+    public boolean isOwner(String profileId) {
+        String tenantId = TenantContextHolder.getTenantId();
+        return repository.findByTenantIdAndDeletedAtIsNull(tenantId)
+                .map(p -> p.getId().equals(profileId))
+                .orElse(false);
+    }
+
     public int calculateCompleteness(ShipperProfile profile) {
         // AC-4 Completeness Calculation
         // Company name (20%), Email (20%), Phone (15%), Address (25%), MC/USDOT (15%), Logo (5%)

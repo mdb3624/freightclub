@@ -2,7 +2,7 @@
 **Role:** Human Factors Designer
 **Date:** 2026-05-07
 **Scope:** LanesTab, LaneCard, LaneModal, AvailabilityTab
-**Standard:** STYLE_GUIDE.md (AxleStack brand), mobile-first / high-glare operator environment
+**Standard:** docs/standards/brand_assets/STYLE_GUIDE.md (AxleStack brand), mobile-first / high-glare operator environment
 
 ---
 

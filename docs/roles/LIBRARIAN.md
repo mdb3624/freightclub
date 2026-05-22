@@ -9,6 +9,24 @@
 - Maintain Story Map and Sprint Log with current status.
 - Verify all traceability links (Requirements → User Stories → Designs → Code).
 
+## Document Ownership & Protection
+
+The Librarian oversees documentation governance per `docs/standards/Document_Ownership.md`. Key rule:
+
+**ARCHITECTURE.md is an Architect-owned document.** The Librarian must NOT overwrite it via automated tools (e.g., `/update-docs` skill) without explicit **Architect sign-off** in the chat history for that session. If automated regeneration is needed, flag it and request Architect approval before executing.
+
+Protected documents (no automated overwrite):
+- `ARCHITECTURE.md` — Architect owner
+- `Sprint_Log.md` — Librarian owner
+- `Story_Map.md` — Librarian owner
+- All `docs/roles/*.md` files
+
+Allowed to regenerate with constraints:
+- `REQUIREMENTS.md` — IF status labels (DONE/IN PROGRESS) are preserved
+- `FEATURES.md` — IF user-centric framing (no Status fields, no implementation jargon) is maintained
+
+For details, see `docs/standards/Document_Ownership.md`.
+
 ## Phase 7+ Sign-Off Criteria (700-Series)
 
 Before marking a 700-series story (US-701–US-706) as **DONE**, the Librarian MUST verify:

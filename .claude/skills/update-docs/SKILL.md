@@ -12,11 +12,33 @@ Regenerate all project documentation by scanning the live codebase. Spawns one s
 | `ARCHITECTURE.md` | System design, component breakdown, ADRs, DB schema, multi-tenancy |
 | `EXECUTIVE-SUMMARY.md` | One-page investor/stakeholder view: what's built, what's next, key risks |
 | `PROJECT-PLAN.md` | Phase-by-phase delivery plan with scope, status, and next priorities |
-| `CHANGELOG.md` (entry) | Summary of what changed across all docs |
+| `docs/project/CHANGELOG.md` (entry) | Summary of what changed across all docs |
 
 ## Steps
 
-Spawn all six doc agents **in parallel** using the Agent tool with `run_in_background: true`, then write the CHANGELOG entry once all complete.
+### Step 0 — Pre-Flight: Validate Document Ownership (REQUIRED)
+
+**Invoke the `/validate-doc-ownership` skill before spawning any doc agents.**
+
+Input:
+- Action: `regenerate`
+- Documents: `["FEATURES.md", "REQUIREMENTS.md", "GAP-ANALYSIS.md", "ARCHITECTURE.md", "EXECUTIVE-SUMMARY.md", "PROJECT-PLAN.md"]`
+- Mode: `auto`
+
+**Expected outcomes:**
+- **APPROVED** → Proceed to Step 1 (spawn doc agents)
+- **BLOCKED** → ARCHITECTURE.md flagged as Architect-owned. Ask user: "Regenerate ARCHITECTURE.md? (requires explicit Architect approval in chat)"
+  - If user says YES → Proceed with all 6 agents
+  - If user says NO → Remove ARCHITECTURE.md from list and spawn 5 agents only
+- **APPROVED_WITH_CONSTRAINTS** → Proceed to Step 1, but flag constraints for pre-commit validation in Step 3
+
+If validation returns BLOCKED and user doesn't approve, do NOT spawn agents.
+
+---
+
+### Step 1 — Spawn Doc Agents (conditional on Step 0 passing)
+
+Spawn all approved doc agents **in parallel** using the Agent tool with `run_in_background: true`, then write the CHANGELOG entry once all complete.
 
 ---
 
@@ -138,7 +160,7 @@ Prompt:
 
 ### After all six complete — CHANGELOG entry
 
-Append a new entry to `CHANGELOG.md` (create the file if it does not exist) with this format:
+Append a new entry to `docs/project/CHANGELOG.md` (create the file if it does not exist) with this format:
 
 ```markdown
 ## [Unreleased] — YYYY-MM-DD

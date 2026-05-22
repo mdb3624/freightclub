@@ -166,6 +166,18 @@ public class DocumentService {
 
     // ── Private helpers ──
 
+    /**
+     * SEC-001-AC-003: Authorization check for @PreAuthorize annotation.
+     * Verify document ownership (tenant_id match) for DELETE/PUT endpoints.
+     * Returns false if document not found or tenant mismatch (no exception).
+     */
+    @Transactional(readOnly = true)
+    public boolean isOwner(String documentId) {
+        return documentRepository.findById(documentId)
+                .map(doc -> doc.getTenantId().equals(TenantContextHolder.getTenantId()))
+                .orElse(false);
+    }
+
     private Load requireAssignedLoad(String loadId, String truckerId) {
         Load load = loadRepository.findByIdAndDeletedAtIsNull(loadId)
                 .orElseThrow(() -> new LoadNotFoundException(loadId));

@@ -1,90 +1,55 @@
 # FreightClub Executive Summary
 
-**Last Updated:** April 22, 2026
-
----
-
 ## What FreightClub Is
 
-FreightClub is a multi-tenant SaaS load board platform connecting shippers (freight owners) with independent owner/operator truckers. Shippers post freight loads with pickup/delivery locations, weight, dimensions, and pay rate; truckers browse available loads, claim them, and deliver. The platform solves fragmented trucking market opacity by providing financial transparency (real-time profitability analysis) and trust mechanisms (shipper/trucker ratings).
-
-**Problem Solved:** Independent truckers lack visibility into load profitability; shippers lack carrier reliability data.  
-**Target Users:** Shippers, owner/operator truckers, freight brokers.
-
----
+FreightClub is a multi-tenant load board platform connecting shippers (freight providers) with owner-operator truckers for on-demand freight transport. Shippers post loads (pickup/delivery locations, weight, deadline); truckers browse available loads, claim them, and handle pickup and delivery. The platform reduces friction for small to mid-sized trucking companies entering the spot market and provides shippers with transparent, real-time visibility into carrier performance.
 
 ## Current State
 
-**Phases 1, 1.1, and 1.2 Complete (110 backend tests passing):**
-
-**Live Today:**
-- Full shipper workflow: create loads (draft or publish), edit, cancel with reason, view status timeline
-- Full trucker workflow: browse load board, filter by state/equipment/date, claim, mark pickup, mark delivered
-- Real-time profitability analysis: CPM calculator, per-load earnings breakdown, 30-day earnings summary
-- Authentication: JWT (short-lived access token in memory, HTTP-only refresh cookie), rate-limited auth endpoints
-- Multi-tenancy: Shared schema with `tenant_id` isolation, company join codes
-- Diesel prices: EIA API integration with 6-hour cache; displayed on landing page and dashboards
-- Notifications: Email on load status changes (claimed, picked up, delivered, cancelled); in-app notification bell with unread count
-- Documents: Auto-generated BOL at publish; document storage backend (S3) ready
-
-**Database:** PostgreSQL (migrated from MySQL April 22, 2026); Flyway migrations with soft-delete pattern, UUIDs, multi-tenant constraints.
-
----
+**Completed & Live (Phases 1–2):**
+- Core load lifecycle: Create, claim, pickup, deliver, settle
+- User authentication (JWT + HTTP-only cookies) with multi-tenant isolation
+- Load board with real-time claim management and conflict detection
+- Shipper and trucker profiles with role-based capabilities
+- Ratings & reputation system (1–5 stars post-delivery)
+- Email notifications for key events (claim, pickup, delivery, cancellation)
+- EIA diesel pricing API integration with regional fuel price data
+- Backend: 109 passing tests (Spring Boot 3.x, Java 21, PostgreSQL)
+- Frontend: 17 passing tests (React 18, TypeScript, Vite, Tailwind CSS, Zustand)
+- Deployed to Google Cloud Run (frontend + backend)
 
 ## What's Next
 
-**Phase 2 Completion (Q2 2026):** Populate `load_events` table on status transitions; build timeline UI; make BOL/POD uploads mandatory before pickup/delivery.
+**Phase 7 (Fleet Management)** is initializing:
+- Carrier cost profiles (fixed costs, per-mile maintenance, fuel calculations)
+- Hours of Service (HOS) integration for trucker compliance
+- Shipper company profile setup (multi-shipper operations)
+- Cost-per-mile (CPM) profitability analysis
 
-**Phase 4 (Ratings):** Post-delivery 5-star ratings, shipper reputation profiles, rating badges on load board. **Blocked by:** `claims` table not written (Phase 1.2 bug).
+Phases 3–6 (Document Management, Reviews & Ratings refinement, Payments & Invoicing, In-App Messaging) are planned but not yet started. Phase 7A–7b (DOT Compliance, Financial Intelligence), Phase 8 (Bidding), and Phase 9 (Admin Tools) follow.
 
-**Phase 5+:** Payments/invoicing, in-app messaging, bidding, advanced carrier management, admin console.
+## Key Risks
 
----
+1. **Security & Authorization Gaps** – Multiple endpoints lack user identity verification; rate limiting missing on public load board; CORS misconfiguration could allow unintended origins. Tenant isolation relies on application-layer checks, not PostgreSQL RLS.
 
-## Key Risks (Top 5)
+2. **Incomplete Features** – Load cancellation notifications not wired to truckers; profile cost calculations exist in frontend but no backend service; HOS widget has UI but no backend endpoints; document export stub not implemented.
 
-### 1. Three Critical Phase 1.2 Bugs Unresolved
-- `claims` table created but never written to (no record when trucker claims load)
-- `load_events` table created but never populated (timeline empty; blocks notifications)
-- Date validation uses string comparison, not Date objects (false date range failures possible)
-- **Impact:** Cannot track delivered loads; Phase 4 ratings blocked; timeline display broken.
+3. **Missing Data Constraints** – Loads table lacks enum constraint on status; duplicate active claims possible at DB level; missing unique indexes on (tenant_id, status, created_at) slow query performance; soft-delete filtering inconsistent across queries.
 
-### 2. Insufficient Test Coverage
-- 6 backend services untested: ProfileService, NotificationService, EmailService, BolGeneratorService, EiaFuelPriceService, DocumentService
-- 6 backend controllers untested: Profile, Document, Notification, Market, LoadBoard, Rating
-- Only 3 frontend test files for 100+ components/hooks (~3% coverage)
-- **Impact:** Silent null pointer exceptions (NotificationService); undetected regressions.
+4. **Test Coverage** – Backend at 70% line coverage; critical audit trails and financial ledger not tested; frontend E2E coverage sparse (only golden-path tests for Phase 1 features).
 
-### 3. Missing Authorization Checks
-- LoadBoardController.getLoad() doesn't validate userId (any trucker can view any shipper's load)
-- ProfileController lacks user/tenant verification (User A can update User B's profile)
-- Rating endpoints unauthenticated and unrate-limited (attacker can enumerate all users)
-- **Impact:** Cross-tenant data leakage; potential data breach.
-
-### 4. Database Integrity Gaps
-- No CHECK constraints on status enums (invalid statuses insertable)
-- Missing foreign keys on ratings/notifications tables (orphaned records possible)
-- Soft-delete filtering inconsistent across queries (deleted records may reappear)
-- **Impact:** Data corruption; regulatory audit failures.
-
-### 5. Incomplete Feature Wiring
-- Cancellation notification to truckers not triggered in LoadService
-- HOS widget frontend-only, no backend storage
-- Document export endpoint stubbed but not implemented
-- **Impact:** Truckers unaware of load cancellations; non-functional HOS.
-
----
+5. **Multi-Tenancy Foundation** – Row-level security not enforced at database layer (PostgreSQL RLS not enabled); no tenant verification in SecurityConfig; user could access another tenant's data if IDs are guessed.
 
 ## Tech Stack Snapshot
 
 | Layer | Technology |
-|-------|-----------|
-| Frontend | React 18 + TypeScript + Vite + Tailwind CSS |
-| State | Zustand (UI) + React Query (server state) |
-| Backend | Spring Boot 3.x (Java 21) |
-| Auth | Spring Security + JWT (RS256) + HTTP-only refresh cookie |
-| Database | PostgreSQL + Spring Data JPA + Hibernate |
-| Migrations | Flyway (versioned SQL) |
-| Storage | AWS S3 (documents) |
-| APIs | EIA Open Data (diesel prices) |
+|-------|------------|
+| **Frontend** | React 18, TypeScript, Vite, Tailwind CSS, Zustand (state), React Query (data), Playwright (E2E tests) |
+| **Backend** | Spring Boot 3.x, Java 21, Spring Security, Spring Data JPA, Hibernate, Bucket4j (rate limiting), JJWT (JWT auth) |
+| **Database** | PostgreSQL (Neon), Flyway (migrations), soft deletes (deleted_at TIMESTAMPTZ), UUID primary keys |
+| **Deployment** | Google Cloud Run (containerized), Cloud SQL for PostgreSQL |
+| **External APIs** | EIA Diesel Pricing (regional fuel data), SMTP (email notifications) |
 
+---
+
+**Status Summary:** Core platform functional and deployed. Phase 1–2 features live. Phase 7 initiating. High-priority security and data consistency gaps require hardening before Phase 2 feature expansion or public launch.

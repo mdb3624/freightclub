@@ -14,6 +14,7 @@ public class CacheConfig {
   public CacheManager cacheManager() {
     // NFR-504 cache definitions
     return new ConcurrentMapCacheManager(
+        "loads",               // SEC-001: Load detail caching (tenant-aware key)
         "notifications",       // NotificationService pagination cache
         "notificationCount",   // NotificationService unread count
         "documentAudit",       // AC-308-8: Document audit trail (5m TTL)

@@ -1,375 +1,377 @@
-# FreightClub Architecture
+# FreightClub Architecture Document
 
 ## System Overview
 
-FreightClub is a multi-tenant load board platform for the trucking industry. Shippers post freight loads to be transported, and owner/operator truckers browse and claim those loads for pickup and delivery. The system enforces strict tenant isolation at the database and application layers, uses JWT-based stateless authentication with HTTP-only refresh cookies, and implements pessimistic locking for critical operations like load claiming.
+FreightClub is a multi-tenant load board platform for the trucking industry. Shippers post freight loads, owner-operator truckers browse available loads and claim them for transport. The system enforces role-based access (SHIPPER/TRUCKER), manages the full load lifecycle (DRAFT → OPEN → CLAIMED → PICKED_UP → DELIVERED → COMPLETED), and supports ancillary features including documents (BOL, POD, issue photos), ratings, notifications, and dynamic cost profiling.
 
-The platform is built on a three-tier architecture: a React 18 + TypeScript frontend with Vite, a Spring Boot 3.x REST API backend (Java 21), and PostgreSQL with Row-Level Security (RLS) for multi-tenant data isolation. Flyway manages all schema migrations with strict naming conventions and soft-delete patterns.
+The architecture follows a layered structure: REST API Controllers → Spring Services (with domain events) → JPA Repositories → PostgreSQL with Flyway migrations. Multi-tenancy is enforced via `TenantContextHolder` at the service layer, combined with PostgreSQL Row-Level Security (RLS) on all core tables. Authentication uses JWT (short-lived access tokens in memory + HTTP-only refresh cookies). Frontend is React 18 + TypeScript with feature-sliced architecture, proxied through Vite.
+
+---
 
 ## Component Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│  FRONTEND (Vite, React 18, TypeScript)                              │
-│  ├─ Pages: LoginPage, RegisterPage, ShipperDashboard, TruckerDash...│
-│  ├─ Features (feature-sliced): auth/, loads/, documents/, hos/     │
-│  │  └─ components/, hooks/, types.ts, api.ts per feature           │
-│  ├─ State: Zustand (auth token) + React Query (server state)       │
-│  └─ Port: 8080                                                      │
-└────────────────────────────┬────────────────────────────────────────┘
-                             │ HTTP Proxy
-                             ▼ /api → http://localhost:9090
-┌─────────────────────────────────────────────────────────────────────┐
-│  BACKEND (Spring Boot 3.x, Java 21)                                 │
-│  ├─ Controllers: AuthController, LoadController, LoadBoardController│
-│  │              DocumentController, RatingController, etc.          │
-│  ├─ Services: LoadService, AuthService, DocumentService, etc.      │
-│  │  └─ Enforce tenant_id isolation via TenantContextHolder         │
-│  ├─ Repositories: LoadRepository, UserRepository, ClaimRepository  │
-│  │  └─ Spring Data JPA + Specifications (LoadSpecifications)       │
-│  ├─ Security: JwtService, JwtAuthenticationFilter,                 │
-│  │             AuthRateLimitFilter (Bucket4j), RefreshTokenService │
-│  └─ Port: 9090                                                      │
-└────────────────────────────┬────────────────────────────────────────┘
-                             │ JDBC
-                             ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│  DATABASE (PostgreSQL, Neon)                                         │
-│  ├─ Tables: tenants, users, loads, claims, load_events,            │
-│  │           load_documents, ratings, refresh_tokens, notifications│
-│  ├─ RLS: All core tables have Row-Level Security enabled           │
-│  ├─ Soft Deletes: deleted_at TIMESTAMPTZ column per table          │
-│  └─ Migrations: Flyway (V{YYYYMMDD}_{seq}__{description}.sql)      │
-└─────────────────────────────────────────────────────────────────────┘
+FRONTEND (React 18 + Vite)
+├─ /apps           : Multi-entry build (main app + login-app)
+├─ /features       : Feature-sliced (loads, board, profile, etc)
+├─ /components/ui  : Shared UI atoms (button, input, dialog)
+├─ /hooks          : Custom hooks (useLoadBoard, useAuth, etc)
+├─ /store          : Zustand state (auth, notifications)
+└─ /pages          : Page components
+                    ↓
+         Vite Proxy (port 9090)
+         /api → localhost:8080
+                    ↓
+BACKEND (Spring Boot 3.x, port 8080 dev / 9090 prod)
+├─ REST Controllers
+│  ├─ /api/v1/auth        (login, register, refresh, logout)
+│  ├─ /api/v1/loads       (create, update, list, claim, cancel)
+│  ├─ /api/v1/board       (marketplace: browse open loads)
+│  ├─ /api/v1/documents   (BOL, POD, issue photo uploads)
+│  ├─ /api/v1/ratings     (create/read shipper & trucker ratings)
+│  ├─ /api/v1/notifications (in-app, email push)
+│  ├─ /api/v1/profiles    (user profile & carrier cost setup)
+│  └─ /api/v1/market      (public: diesel prices, carrier equipment)
+│
+├─ Service Layer
+│  ├─ AuthService, LoadService, RatingService
+│  ├─ DocumentService, ProfileService, NotificationService
+│  ├─ EiaFuelPriceService, CarrierCostProfileService
+│  ├─ EmailService, BolGeneratorService
+│  └─ (Domain events: LoadClaimedEvent, LoadPickedUpEvent, etc.)
+│
+├─ Domain Entities
+│  ├─ Load, Claim, User, Tenant, Rating, LoadEvent
+│  ├─ LoadDocument, Notification, RefreshToken
+│  └─ CarrierProfile
+│
+└─ Repositories
+   ├─ LoadRepository (soft-delete, pessimistic locking)
+   ├─ UserRepository, TenantRepository, ClaimRepository
+   └─ LoadSpecifications (dynamic filtering)
+                    ↓
+         Flyway Migrations, RLS Policies
+                    ↓
+PostgreSQL Database (Neon)
+├─ Core Tables: tenants, users, loads, claims
+├─ Support: refresh_tokens, load_documents, load_events
+├─ Ratings, Notifications, CarrierProfiles
+└─ PostGIS enabled for geospatial queries
 ```
+
+---
 
 ## Backend Layer Breakdown
 
-### Controllers (`controller/`)
-Request handlers for REST API endpoints. Use constructor injection and delegate to services. Validate input with `@Valid` and `@RequestBody`.
+### Controllers (REST API)
 
-**Key Controllers:**
-- **AuthController**: `POST /auth/register`, `POST /auth/login`, `POST /auth/refresh`, `POST /auth/logout`
-- **LoadController**: CRUD for loads (POST create/draft, PUT update, GET list/detail, DELETE)
-- **LoadBoardController**: `GET /board` — filtered load list for truckers (published only, trucker-specific matching)
-- **DocumentController**: File upload/download for BOL and POD photos, issue attachments
-- **RatingController**: Create and retrieve ratings (shipper→trucker and trucker→shipper)
-- **ProfileController**: Get/update user profiles
-- **NotificationController**: List notifications, mark as read
-- **MarketController**: Public fuel price data (EIA integration)
+| Controller | Key Endpoints | Role Requirements |
+|---|---|---|
+| AuthController | POST /register, /login, /refresh, /logout | Public (register/login), Authenticated (refresh/logout) |
+| LoadController | POST /create, /draft; PUT /{id}; GET list; DELETE /{id} | SHIPPER |
+| LoadBoardController | GET /board?equipment=X&origin=&dest=; POST /{id}/claim | TRUCKER (post requires role) |
+| DocumentController | POST /{id}/bol-photo, /pod-photo, /issue; GET list | TRUCKER (post), Both (get) |
+| RatingController | POST /{id}/shipper, /trucker; GET /{id} | Role-specific (post), Authenticated (get) |
+| NotificationController | GET list; PATCH /{id}/read | Authenticated |
+| ProfileController | GET /{id}; PUT /{id}; GET /carrier/{id}/cost-profile | Authenticated |
+| MarketController | GET /diesel-price; GET /carrier-equipment | Public |
 
-### Service Layer (`service/`)
-Business logic layer. All services enforce `tenant_id` isolation via `TenantContextHolder.getTenantId()`. Use constructor injection for dependencies. Marked with `@Service` and `@Transactional`.
+### Services
 
-**Key Services:**
-- **LoadService** (7 constructor params): Core load lifecycle
-  - Create, update, publish, claim, pick up, deliver, cancel loads
-  - Enforce overweight acknowledgment (>80,000 lbs)
-  - Write LoadEvent rows on every status transition
-  - Use `@Lock(LockModeType.PESSIMISTIC_WRITE)` on claims to prevent double-claiming
-  
-- **AuthService**: User registration, login, token refresh, logout
-  - BCrypt password hashing (strength 12)
-  - Generates access token + refresh token
-  - Refresh token rotated on every `/auth/refresh` call
-  
-- **DocumentService**: Upload/download BOL, POD, and issue documents
-  - File storage (local or S3)
-  - Link documents to loads
-  
-- **RatingService**: Create and retrieve ratings between users
-  - Post-delivery ratings (can only rate after DELIVERED status)
-  
-- **NotificationService**: In-app notifications for load events, claims, etc.
-  
-- **RefreshTokenService**: Manage HTTP-only refresh tokens
-  - Rotate on each use; invalidate old tokens
-  
-- **EiaFuelPriceService**: Cache EIA diesel price data (server-side, not exposed directly)
-
-### Repositories (`repository/`)
-Spring Data JPA repositories with custom queries and Specifications for filtering.
-
-**Key Repositories:**
-- **LoadRepository**: Extends `JpaRepository` + `JpaSpecificationExecutor`
-  - Custom queries for tenant-filtered loads
-  - Soft-delete filtering: `AND deleted_at IS NULL`
-  
-- **LoadSpecifications**: Criteria builder for dynamic load filtering (status, equipment, origin, destination, date ranges)
-  
-- **ClaimRepository**: Find active claims by load and trucker
-  - `@Lock(LockModeType.PESSIMISTIC_WRITE)` on claim operations
-  
-- **UserRepository**: Find users by email, id
-  - Tenant-scoped queries
-  
-- **RefreshTokenRepository**: Lookup and invalidate tokens
-  
-- **LoadEventRepository**: Append-only event log for load status changes
-  
-- **NotificationRepository**: Query notifications by user and tenant
-
-### Security (`security/`)
-JWT lifecycle, authentication filters, tenant context management.
-
-**Key Classes:**
-- **JwtService**: 
-  - Generate access tokens (HS256, 15-min expiry)
-  - Validate token claims (issuer, audience, signature)
-  - Extract user ID, email, role, tenantId from token
-  
-- **JwtAuthenticationFilter** (extends `OncePerRequestFilter`):
-  - Extracts `Authorization: Bearer <token>` header
-  - Validates token and sets Spring Security context
-  - Stores tenantId in `TenantContextHolder` for downstream queries
-  
-- **AuthRateLimitFilter** (Bucket4j):
-  - Limits auth endpoints (login, register, refresh) to prevent brute-force
-  
-- **RefreshTokenService**:
-  - Issue HTTP-only refresh cookies (secure, SameSite=Strict)
-  - Rotate tokens on each refresh call
-  
-- **TenantContextHolder** (ThreadLocal):
-  - Stores current tenant ID for request lifecycle
-  - Services query: `TenantContextHolder.getTenantId()`
-  
-- **UserDetailsServiceImpl**:
-  - Load user by email for Spring Security authentication
-
-### Config (`config/`)
-- **SecurityConfig**: Defines filter chain, CORS, session policy (STATELESS), authorization rules
-- **JwtConfig**: Parses JWT properties from `application.yml`
-
-### Filters (`filter/`)
-- **CorrelationIdFilter**: Generates unique trace ID for all requests (logged via MDC)
+| Service | Responsibility |
+|---|---|
+| AuthService | Login/register, JWT generation, token refresh, logout |
+| LoadService | Load CRUD, lifecycle transitions, claim validation |
+| RatingService | Calculate/store shipper & trucker reputation scores |
+| DocumentService | BOL/POD photo uploads, legal document generation |
+| ProfileService | User profile updates, carrier cost config |
+| NotificationService | Event-driven in-app/email notifications |
+| EiaFuelPriceService | Poll EIA API for diesel prices (cached) |
+| CarrierCostProfileService | Cost per mile, RPM calculations, equipment hierarchy |
+| EmailService | SMTP dispatch |
+| BolGeneratorService | PDF generation for legal BOL documents |
 
 ### Domain Entities
 
-Core JPA entities with tenant isolation:
+| Entity | ID | TenantId | Soft Delete | Notes |
+|---|---|---|---|---|
+| Tenant | UUID (String) | N/A | Yes | Top-level tenant isolation container |
+| User | UUID (String) | Yes | Yes | Shipper/Trucker, includes cost profile fields |
+| Load | UUID (String) | Yes | Yes | Load lifecycle: DRAFT→OPEN→CLAIMED→PICKED_UP→DELIVERED→COMPLETED |
+| Claim | UUID (String) | Yes | Yes | Trucker claim on load; pessimistic locked during claim |
+| Rating | UUID (String) | Yes | Yes | Shipper-to-trucker or trucker-to-shipper reputation |
+| LoadDocument | UUID (String) | Yes | Yes | BOL, POD, issue photos |
+| LoadEvent | UUID (String) | Yes | Yes | Event audit log for load lifecycle |
+| Notification | UUID (String) | Yes | Yes | In-app notifications linked to user |
+| RefreshToken | UUID (String) | N/A | No | Session token, auto-expires |
 
-- **User**: id, tenant_id, email, password_hash, role (SHIPPER/TRUCKER), first_name, last_name, trucker-specific fields, soft delete
-- **Load**: id, tenant_id, shipper_id, trucker_id (denormalized cache), status, origin/destination, times, commodity, weight, equipment, pay_rate, dimensions, special_requirements, cancel_reason, soft delete
-- **Claim**: id, tenant_id, load_id, trucker_id, status (ACTIVE/RELEASED/CANCELLED), claimed_at, released_at. Authoritative claim record.
-- **LoadEvent**: Audit trail (CREATED, CLAIMED, PICKED_UP, DELIVERED, CANCELLED with actor_id)
-- **RefreshToken**: user_id, token_hash (SHA-256), expires_at, revoked, revoked_at
-- **LoadDocument**: load_id, document_type (BOL/POD), file_url, uploaded_by, uploaded_at
-- **LoadRating**: load_id, claim_id, rater_id, ratee_id, rating (1-5), comment
-- **Notification**: tenant_id, recipient_id, event_type, load_id, read_at
+### Repositories
+
+- **LoadRepository**: Soft-delete filtering, pessimistic write locking for claim atomicity
+- **LoadSpecifications**: Dynamic predicate-based filtering for board queries
+- All queries include `AND deleted_at IS NULL`
+- Board queries are cross-tenant (marketplace: all users see all open loads)
+
+---
 
 ## Frontend Folder Structure
 
 ```
-frontend/src/
-├── pages/
-│   ├── LoginPage.tsx, RegisterPage.tsx
-│   ├── ProfilePage.tsx, RatingsPage.tsx
-│   ├── ShipperDashboard.tsx, TruckerDashboard.tsx
-│   ├── LoadCreatePage.tsx, LoadEditPage.tsx, LoadDetailPage.tsx
-│   ├── LoadsListPage.tsx, TruckerLoadDetailPage.tsx
-│   └── TruckerLandingPage.tsx (market board, 58KB)
-│
-├── features/ (feature-sliced)
-│   ├── auth/hooks/useLogin.ts, useRegister.ts, useLogout.ts
-│   ├── loads/hooks/useCreateLoad.ts, useClaimLoad.ts, useMarkPickedUp.ts, 
-│   │                useMarkDelivered.ts, useCancelLoad.ts, useLoadBoard.ts, etc.
-│   ├── documents/hooks/useDocuments.ts
-│   ├── ratings/hooks/useRatings.ts
-│   ├── profile/hooks/, notifications/hooks/, market/hooks/, hos/hooks/
-│   └── components/ (per feature)
-│
-├── store/
-│   ├── authStore.ts (Zustand: user, accessToken, setUser, logout)
-│   ├── toastStore.ts (Zustand: toast notifications)
-│   └── authStore.test.ts
-│
-├── components/, hooks/, utils/
-└── App.tsx (Router, Protected routes)
+src/
+├─ apps/
+│  ├─ main/               (primary SPA entry point)
+│  └─ login-app/          (separate login module)
+├─ features/              (feature-sliced architecture)
+│  ├─ loads/
+│  │  ├─ components/      (LoadForm, LoadList, LoadDetail)
+│  │  ├─ hooks/           (useLoadList, useLoadDetail, useClaimLoad)
+│  │  ├─ pages/
+│  │  └─ types.ts
+│  ├─ board/
+│  │  ├─ components/      (BoardFilter, LoadCard, LoadMap)
+│  │  ├─ hooks/           (useBoardFilter, useBoardQuery)
+│  │  └─ pages/
+│  ├─ profile/
+│  ├─ auth/
+│  ├─ notifications/
+│  ├─ ratings/
+│  └─ documents/
+├─ components/
+│  ├─ ui/                 (Tailwind atoms: Button, Input, Dialog, Card)
+│  └─ shared/             (ErrorBoundary, AppShell, layout helpers)
+├─ hooks/
+├─ store/                 (Zustand: auth, notifications)
+├─ lib/
+│  ├─ api.ts              (Axios client, interceptors)
+│  └─ apiClient.ts        (API methods)
+├─ pages/
+├─ types/
+├─ test/
+│  └─ setup.ts            (Vitest configuration)
+└─ App.tsx                (root component with ErrorBoundary)
 ```
 
-**Pattern**: Feature-sliced design. Each feature (auth, loads, documents) is self-contained with hooks, components, types. Pages compose features. Server state via React Query; UI state via Zustand.
+**Key Files:**
+- `vite.config.ts`: Proxy target `http://localhost:8080`, port 9090, Tailscale domain allowlist
+- `src/store/authStore.ts`: Zustand store; access token in-memory only
+- `src/lib/api.ts`: Axios instance with auth interceptors
+
+---
 
 ## Auth Flow
 
-1. **Registration**: User submits email, password, role, companyName (create tenant) or joinCode (join existing). Backend hashes password (BCrypt), creates Tenant/User, generates JWT + refresh token.
+### Token Lifecycle
 
-2. **JWT Creation** (15 minutes expiry):
-   - Subject: user.id
-   - Claims: email, role, tenantId, issuer, audience
-   - Signed with HMAC-SHA256
-   - Stored in Zustand store (volatile memory)
+1. **Register/Login (POST /api/v1/auth/register | /login)**
+   - Backend generates 15-minute JWT access token + 7-day refresh token
+   - Returns response with `accessToken`, `expiresIn`, `user`
+   - Sets HTTP-only, Secure, SameSite=Strict cookie: `refreshToken=<jwt>`
 
-3. **Refresh Token Creation** (7 days expiry):
-   - Generate: 32-byte SecureRandom, Base64-urlencoded
-   - Hash: SHA-256, stored in DB
-   - Sent as HTTP-only cookie (secure, same-site)
+2. **Access Token Storage**
+   - Frontend stores `accessToken` in Zustand in-memory state ONLY (no localStorage)
+   - Session persistence relies on HTTP-only refresh cookie
 
-4. **Request Handling**:
-   - Frontend sends `Authorization: Bearer {accessToken}` header
-   - `JwtAuthenticationFilter` validates token, extracts userId/role/tenantId
-   - Sets `TenantContextHolder` for request duration
-   - Creates authentication with ROLE_SHIPPER or ROLE_TRUCKER
-   - Clears context in finally block
+3. **API Requests**
+   - Frontend axios interceptor adds: `Authorization: Bearer <accessToken>`
+   - Backend JWT filter validates and populates Spring SecurityContext
+   - `TenantContextHolder.getTenantId()` extracted from JWT claims
 
-5. **Token Refresh**:
-   - Frontend calls POST `/api/v1/auth/refresh` with refresh cookie
-   - `RefreshTokenService` validates hash, marks old as revoked, generates new
-   - Returns new access token + rotated refresh cookie
+4. **Token Refresh (POST /api/v1/auth/refresh)**
+   - Frontend detects expiry; sends refresh request (cookie auto-included)
+   - Backend validates refresh token, generates new access + refresh token
+   - Frontend updates Zustand state
 
-6. **Logout**: Revokes all refresh tokens for user.
+5. **Logout (POST /api/v1/auth/logout)**
+   - Frontend clears Zustand auth state
+   - Response sets expired refresh cookie
 
-**Security**: Access token in memory (XSS safe via same-origin); refresh token in HTTP-only cookie (CSRF-protected); rotation prevents reuse attacks.
+### JWT Claims & Validation
+
+- **Issuer**: `freightclub`
+- **Audience**: `freightclub-api`
+- **Claims**: `sub` (user id), `tenant_id`, `role` (SHIPPER|TRUCKER)
+- **Validation**: Signature verified using `@Value("${app.jwt.secret}")` key
+
+### Spring Security Filter Chain
+
+1. **SimpleOptionsFilter**: Handles preflight OPTIONS globally
+2. **AuthRateLimitFilter** (Bucket4j): Rate limit on /auth endpoints
+3. **JwtAuthenticationFilter**: Extract JWT, validate, populate SecurityContext
+4. **ExceptionHandling**: 401 on invalid/missing token
+
+---
 
 ## Multi-Tenancy Strategy
 
-**Model**: Shared database schema with tenant_id isolation at query level.
+### Tenant Isolation
 
-1. **Tenant Context Per Request**:
-   - JWT includes tenantId claim
-   - `JwtAuthenticationFilter` calls `TenantContextHolder.setTenantId(tenantId)`
-   - `TenantContextHolder` uses ThreadLocal to store tenant_id per request
-   - Services retrieve via `getTenantId()` and pass to repositories
-   - Filter clears ThreadLocal in finally block
+1. **Tenant Creation**: Assigned during registration
+2. **User → Tenant Mapping**: Every User has immutable `tenant_id`
+3. **Service Layer Enforcement**: All repository queries scoped by `TenantContextHolder.getTenantId()`
 
-2. **Query Isolation**:
-   - Every table has tenant_id FK
-   - All repository queries include `WHERE tenant_id = ?`
-   - Example: `LoadRepository.findByIdAndDeletedAtIsNull(id)` filters by user's tenant
+### Database Row-Level Security (RLS)
 
-3. **User Registration**:
-   - New user with companyName → backend creates Tenant with random 6-char join code
-   - New user with joinCode → backend joins existing Tenant
-   - All data scoped to tenant_id
+- Enabled on: tenants, users, loads, claims, load_events, load_documents, ratings, notifications, carrier_profiles
+- Policy: `WHERE tenant_id = current_setting('app.tenant_id')`
 
-4. **Role-Based Access**:
-   - SHIPPER: Create, publish, update, view own loads
-   - TRUCKER: Claim, pickup, deliver, view board
-   - Controllers enforce via SecurityConfig: `.requestMatchers(...).hasRole("SHIPPER")`
+### Cross-Tenant Queries (Board/Marketplace)
+
+- Load Board: Truckers see ALL open loads across all tenants
+- Market Endpoints: Public diesel prices, carrier equipment (no tenant filter)
+
+---
 
 ## Database Design
 
 ### Core Tables
 
-**tenants**: id, name, plan, join_code, created_at, updated_at, deleted_at (soft delete)
+```
+tenants
+  ├─ id (CHAR(36), PK)
+  ├─ name, plan, join_code
+  └─ created_at, updated_at, deleted_at
 
-**users**: id, tenant_id (FK), email (UNIQUE globally), password_hash, role, first_name, last_name, trucker fields (mc_number, dot_number, equipment_type), cost_profile, created_at, updated_at, deleted_at
-- Indexes: (tenant_id), (tenant_id, role), (email)
+users
+  ├─ id (CHAR(36), PK), tenant_id (FK)
+  ├─ email (unique), password_hash, role
+  ├─ address fields, carrier fields
+  ├─ cost profile (monthly_fixed_costs, fuel_cost_per_gallon, mpg, etc.)
+  └─ created_at, updated_at, deleted_at
 
-**loads**: id, tenant_id (FK), shipper_id (FK), trucker_id (FK, nullable cache), status, origin, destination, origin_zip, destination_zip, origin_state, destination_state, distance_miles, pickup_from/to, delivery_from/to, commodity, weight_lbs, overweight_acknowledged, equipment_type, dimensions, pay_rate, pay_rate_type, payment_terms, special_requirements, cancel_reason, created_at, updated_at, deleted_at
-- Indexes: (tenant_id, shipper_id), (tenant_id, status), (tenant_id, created_at), (tenant_id, equipment_type, destination_state)
+loads
+  ├─ id (CHAR(36), PK), tenant_id (FK), shipper_id (FK), trucker_id (FK)
+  ├─ status (DRAFT, OPEN, CLAIMED, PICKED_UP, DELIVERED, COMPLETED, CANCELLED)
+  ├─ origin/destination (city, state, zip, lat, lng with PostGIS)
+  ├─ weight_lbs, equipment_type, pickup_date, delivery_date
+  ├─ pay_amount, pay_rate_type
+  └─ created_at, updated_at, deleted_at
 
-**claims**: id, tenant_id (FK), load_id (FK), trucker_id (FK), status (ACTIVE/RELEASED/CANCELLED), claimed_at, released_at, created_at, updated_at
-- Indexes: (tenant_id, load_id), (tenant_id, trucker_id), (load_id, status)
-- Purpose: Authoritative claim history; loads.trucker_id is convenience cache
+claims
+  ├─ id (CHAR(36), PK), load_id (FK, unique), trucker_id (FK)
+  ├─ status (PENDING, ACCEPTED, REJECTED)
+  └─ created_at, updated_at, deleted_at
 
-**load_events**: id, tenant_id, load_id, actor_id, event_type (CREATED/CLAIMED/PICKED_UP/DELIVERED/CANCELLED), created_at
+refresh_tokens
+  ├─ token (VARCHAR(500), PK), user_id (FK)
+  └─ expires_at (TIMESTAMP WITH TIME ZONE)
 
-**load_documents**: id, tenant_id, load_id, uploaded_by, document_type (BOL/POD), file_url, uploaded_at
+load_documents, load_events, ratings, notifications, carrier_profiles
+  (similar structure with tenant_id, soft-delete pattern)
+```
 
-**load_ratings**: id, tenant_id, load_id, claim_id, rater_id, ratee_id, rating (1-5), comment, created_at
+### Flyway Migrations
 
-**refresh_tokens**: id, user_id, token_hash (SHA-256), expires_at, revoked, revoked_at
+**Naming**: `VYYYYMMDD_HHmm__Description.sql`
 
-**notifications**: id, tenant_id, recipient_id, load_id, event_type, read_at, created_at
+**Key Files**:
+- `V20260422_00__Initialize_schema.sql`: PostGIS, schemas
+- `V20260422_01__Create_tenants.sql`: Tenant + RLS
+- `V20260422_02__Create_users.sql`: User + cost profile
+- `V20260422_03__Create_loads.sql`: Load + status machine
+- `V20260422_11__Setup_rls_and_roles.sql`: RLS policies
+- `V20260426_2343__Create_Quick_Pay_Settlement_Tables.sql`: Settlement (Phase 2)
 
-### Design Patterns
-
-- **Soft Delete**: All entities have optional deleted_at. Queries use `WHERE deleted_at IS NULL`.
-- **Migration Naming**: Flyway convention `V{YYYYMMDD}_{number}__{description}.sql`
-- **Denormalization**: loads.trucker_id caches active claim from claims table for performance
-
-## Key Architectural Decisions
-
-### ADR-1: SELECT FOR UPDATE for Claim Locking
-
-**Problem**: Race condition if two truckers claim same load simultaneously.
-
-**Solution**: `findByIdAndDeletedAtIsNullForUpdate` uses SQL `SELECT ... FOR UPDATE` to acquire pessimistic row lock until transaction commits.
-
-### ADR-2: In-Memory Access Token Storage
-
-**Problem**: Refresh tokens survive page refresh; access tokens can be ephemeral.
-
-**Solution**: Access token in Zustand store (volatile). Refresh token in HTTP-only cookie (survives refresh). On app load, call `/api/v1/auth/refresh` if no access token but cookie exists.
-
-### ADR-3: Refresh Token Rotation with Hash Storage
-
-**Problem**: Long-lived refresh tokens; if leaked, attacker forges new access tokens indefinitely.
-
-**Solution**: Store token hash (SHA-256), not raw token. Rotate on every refresh: mark old hash revoked, generate new, return new to frontend. Reuse of old token rejected.
-
-### ADR-4: ThreadLocal Tenant Context
-
-**Problem**: Tenant ID needed throughout request processing.
-
-**Solution**: `TenantContextHolder` stores tenant_id in ThreadLocal. `JwtAuthenticationFilter` populates; services retrieve via static method. Cleared in filter finally block. Trade-off: thread-safe for servlet-per-thread; requires manual clearing.
-
-### ADR-5: Shared Database Schema with Tenant_id FK
-
-**Problem**: Multi-tenancy options: isolated schema, row-level security, or shared schema with app-level isolation.
-
-**Solution**: Shared schema. Every table has tenant_id FK. All queries filter by tenant_id. Simpler operations; easier migrations; but queries must always include tenant_id filter (human error risk).
-
-### ADR-6: Bucket4j Rate Limiting on Auth Endpoints
-
-**Problem**: Brute-force attacks on login/refresh.
-
-**Solution**: `AuthRateLimitFilter` applies Bucket4j rate limiting: 5 requests per 10 seconds per IP. Returns 429 Too Many Requests if exceeded.
-
-### ADR-7: Vite Proxy for API Requests
-
-**Problem**: Frontend on 8080, backend on 9090; CORS adds complexity.
-
-**Solution**: Vite proxies `/api/**` to backend. Frontend calls relative paths `/api/v1/...` which Vite rewrites to `http://localhost:9090/api/v1/...`. Eliminates CORS in dev; production uses reverse proxy (Nginx).
-
-### ADR-8: EIA Proxy with Server-Side Cache
-
-**Problem**: Real-time fuel prices from U.S. EIA API; client-side calls expose API key; repeated calls expensive.
-
-**Solution**: Backend `EiaFuelPriceService` calls EIA API server-side, caches response (Redis/in-memory TTL), returns to frontend. API key in server environment, not exposed to client.
-
-### ADR-9: Load Status State Machine with Event Sourcing Baseline
-
-**Problem**: Complex load lifecycle (DRAFT → OPEN → CLAIMED → IN_TRANSIT → DELIVERED) with notifications and audit trail.
-
-**Solution**: Services enforce state transitions via explicit checks. All transitions write to `load_events` table. Services publish notifications via `NotificationService`.
-
-### ADR-10: Denormalized Trucker_id Cache in Loads Table
-
-**Problem**: Claim history in claims table; queries need to find "active trucker for load" frequently.
-
-**Solution**: Maintain `loads.trucker_id` as denormalized cache of active claim. Claims table is source of truth; trucker_id is for convenience.
-
-## Methodology
-
-### Domain-Driven Design (DDD)
-
-FreightClub organizes business logic around core domains:
-
-- **Load Domain**: Entity (Load) with bounded contexts for creation, claiming, state transitions, and event sourcing via LoadEvent.
-- **Tenant Domain**: Multi-tenant isolation enforced at DB and application layers via TenantContextHolder.
-- **Authentication Domain**: JWT lifecycle, refresh token rotation, stateless security model.
-- **Financial Domain**: Cost profiles, RPM calculations, profitability heuristics, rate limiting for economic fairness.
-
-Domain services (LoadService, AuthService, etc.) encapsulate business rules. Repositories handle persistence via Spring Data JPA. Domain events (LoadEvent) provide audit trail and enable downstream notifications.
-
-### Test-Driven Development (TDD)
-
-All new story implementations must follow this workflow:
-
-1. **Write failing test first** — Establish acceptance criteria before any implementation.
-2. **Implement minimal code** — Make the test pass without over-engineering.
-3. **Refactor for clarity** — Clean up while tests remain green.
-
-**Coverage Target**: Minimum 80% branch coverage (NFR-502) enforced via JaCoCo on `mvn verify`.
-
-**Test Layers**:
-- **Unit Tests**: Service methods in isolation (mock repositories).
-- **Integration Tests**: Controller + service + repository with embedded H2 or real PostgreSQL (preferred for migrations).
-- **UI Tests**: Vitest for frontend hooks and components; React Query mocking for API boundaries.
-
-**Verification**: `mvn -f backend/pom.xml verify` (includes JaCoCo report). Frontend: `npm test` in `frontend/`.
+**Soft-Delete Pattern**: `deleted_at TIMESTAMP WITH TIME ZONE`; queries use `AND deleted_at IS NULL`
 
 ---
 
-**Last Updated**: 2026-04-23 | Phase 1–2 complete. Phase 3 in progress. DDD and TDD methodology enforced.
+## Key Architectural Decisions
+
+### 1. Pessimistic Locking for Load Claims
+- Use `@Lock(LockModeType.PESSIMISTIC_WRITE)` to prevent race conditions
+- First trucker to claim gets the load; others fail atomically
+
+### 2. In-Memory Access Token + HTTP-Only Refresh Cookie
+- Access token in Zustand (no localStorage); prevents XSS
+- Refresh cookie auto-included by browser; supports automatic token refresh
+
+### 3. Feature-Sliced Frontend Architecture
+- Organize by feature (loads, board, profile) not technical layer
+- Scales as features grow; clear ownership and independent deployability
+
+### 4. Spring Domain Events for Async Notifications
+- Publish LoadClaimedEvent, LoadPickedUpEvent, etc. via ApplicationEventPublisher
+- Decouples services; supports future subscribers (analytics, webhooks)
+
+### 5. TenantContextHolder for Implicit Multi-Tenancy
+- Extract tenant_id from JWT → store in context → auto-scope all queries
+- Prevents accidental cross-tenant queries; no boilerplate in services
+
+### 6. Soft Deletes (Logical vs Physical Deletion)
+- Set `deleted_at` instead of DELETE; preserves audit trail
+- Requires discipline: every SELECT filters `AND deleted_at IS NULL`
+
+### 7. Vite Proxy + Tailscale Domain Allowlist
+- Frontend dev server proxies /api/* to backend; supports Tailscale tunnel
+- Removes CORS complexity during dev; matches production nginx setup
+
+### 8. Role-Based Access Control (RBAC) at Controller Level
+- Spring Security @RequestMatchers enforces role (SHIPPER vs TRUCKER)
+- Declarative rules in SecurityConfig; supports future permission expansion
+
+### 9. Bucket4j Rate Limiting on Auth Endpoints
+- Limits /auth/* requests to prevent password guessing
+- Threshold: ~5 attempts per minute per IP/user
+
+### 10. EIA API Polling for Diesel Prices
+- Periodically fetch U.S. Energy Information Administration prices
+- Caching reduces external API calls; provides real-time fuel context
+
+---
+
+## Deployment & Cloud Run Standards
+
+### Environment Variables
+
+- `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`: PostgreSQL (Neon)
+- `APP_JWT_SECRET`: JWT signing key
+- `JWT_ISSUER`, `JWT_AUDIENCE`: JWT claim values
+- `CORS_ALLOWED_ORIGINS`: Comma-separated frontend URLs
+- `VITE_API_URL`: Frontend → backend proxy target
+- `VITE_ALLOWED_HOST`: Tailscale domain or custom hostname
+
+### Cloud Run Notes
+
+- Backend service runs on port 9090
+- Frontend service runs on port 5173 (Vite)
+- Proxy config: `/api` → backend Cloud Run URL (injected at deploy, never hardcoded)
+- Health check: `GET /actuator/health` returns 200 when ready
+
+---
+
+## Testing Strategy
+
+### Backend
+
+- **Unit Tests**: Service, repository, domain logic (JUnit 5 + Mockito)
+- **Integration Tests**: Controller → Service → Repository → DB
+- **Coverage Target**: 80% branch coverage (JaCoCo enforced)
+- **Command**: `mvn test`
+
+### Frontend
+
+- **Unit Tests**: Component logic, hooks, utilities (Vitest + React Testing Library)
+- **E2E Tests**: Playwright golden-path tests
+- **Commands**: `npm run test`, `npm run test:e2e`
+
+---
+
+## Technology Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS, Zustand, React Query, Axios |
+| Backend | Spring Boot 3.x (Java 21), Spring Security, Spring Data JPA, Hibernate |
+| Database | PostgreSQL (Neon), Flyway, PostGIS, Row-Level Security |
+| Authentication | JWT (15min access token) + HTTP-only refresh cookie (7 days) |
+| Events | Spring ApplicationEventPublisher (in-process pub/sub) |
+| Rate Limiting | Bucket4j |
+| Document Storage | Cloud storage (GCS/S3) via service abstraction |
+| Email | SMTP |
+| Deployment | Google Cloud Run (containerized), Cloud SQL |
+
+---
+
+**Document Version**: 1.0
+**Last Updated**: 2026-05-21
+**Governance**: FreightClub CLAUDE.md (Role-Based Operating Context)

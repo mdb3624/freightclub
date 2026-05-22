@@ -1,96 +1,78 @@
 # Role: Reviewer
 
-**Task:** Audit code for security, quality, and performance.
+**Task:** Audit code for security, quality, performance, and visual evidence integrity.
 
-## Hard Gates (Automatic REJECT)
+## 🛠️ The "Evidence First" Protocol (NEW)
 
-- ❌ Any table without an RLS policy.
-- ❌ Any method with cyclomatic complexity > 10.
-- ❌ Test coverage < 80% branch coverage (JaCoCo).
-- ❌ Any UI feature shipped without a passing Playwright e2e test for the golden path.
-- ❌ `npm run test` or `npm run test:e2e` has failures at time of review.
-- ❌ *(Phase 7+)* GET endpoint without `@Cacheable` annotation (NFR-504).
-- ❌ *(Phase 7+)* Cache key without `TenantContextHolder.getTenantId()` (multi-tenant isolation).
-- ❌ *(Phase 7+)* Mutation endpoint (POST/PUT/DELETE) without `@CacheEvict` or event-driven invalidation.
-- ❌ *(Phase 7+)* No test case verifying multi-tenant cache isolation.
+Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 
-## Soft Gates (Request Changes)
+* **Path Check:** Verify that `test-results/evidence/` contains a `.png` or `.jpg` file named after the Story ID.
+* **Visual Match:** Confirm the screenshot reflects the UI state described in the story's Acceptance Criteria.
+* **PR Injection:** Ensure the `gh pr create` command includes these images in the PR body.
 
-- ⚠️ Cache TTL not justified in code comments or design doc.
-- ⚠️ Complex filter parameters not included in cache key template.
-- ⚠️ Cache invalidation not atomic (outside transaction boundary).
-- ⚠️ Monitoring/metrics not configured for cache hit/miss ratios.
+## 🛑 Hard Gates (Automatic REJECT)
 
-## Review Checklist
+* ❌ **Missing Evidence:** No screenshot artifact found for the current Story ID in `test-results/evidence/`.
+* ❌ **E2E Failure:** `npm run test:e2e` (Playwright) has failures or was skipped.
+* ❌ **Coverage Gap:** Any UI feature shipped without a passing Playwright e2e test for the golden path.
+* ❌ **Table Security:** Any table without an RLS policy.
+* ❌ **Complexity:** Any method with cyclomatic complexity > 10.
+* ❌ **Test Coverage:** Backend branch coverage < 80% (JaCoCo).
+* ❌ *(Phase 7+)* GET endpoint without `@Cacheable` or missing `TenantContextHolder.getTenantId()`.
 
-### Security & Data Integrity
-- [ ] No cross-tenant data leakage possible (cache keys include `tenant_id`)
-- [ ] RLS policy enabled on all core tables
-- [ ] Soft deletes (deleted_at) checked in all queries
-- [ ] JWT claims validated (iss, aud, exp)
+## 📋 Review Checklist
 
-### Code Quality
-- [ ] No method exceeds cyclomatic complexity of 10
-- [ ] Constructor injection used (no field `@Autowired`)
-- [ ] Exception handling appropriate (not suppressed)
-- [ ] No unused imports or variables
+### 🖼️ Visual & Frontend Evidence
 
-### Performance & Caching (Phase 7+)
-- [ ] All GET endpoints have `@Cacheable` with tenant-aware key
-- [ ] Cache key template: `{tenantId}:{entityType}:{identifier}`
-- [ ] All mutation endpoints have `@CacheEvict` or event listener
-- [ ] Cache invalidation is atomic (within transaction)
-- [ ] TTL set appropriate to entity type (2-5 min for mutable, 1hr for stable)
-- [ ] Related cache entries also evicted on mutation
+* [ ] **Screenshot Exists:** Artifact found at `test-results/evidence/[story_id]_success.png`.
+* [ ] **Visual Compliance:** Screenshot confirms adherence to **docs/standards/brand_assets/STYLE_GUIDE.md** (typography, colors, contrast).
+* [ ] **Playwright Audit:** E2E script includes `await page.screenshot()` at the final success milestone.
+* [ ] **Route Discovery:** Verified that the HFD agent used static route discovery rather than trial-and-error.
 
-### Testing
-- [ ] Backend: `mvn test` passes with 0 failures, JaCoCo ≥ 80% branch coverage
-- [ ] Frontend unit tests: `npm run test` passes with 0 failures
-- [ ] Frontend e2e tests: `npm run test:e2e` passes with 0 failures
-- [ ] Any UI feature touched by the story has a Playwright test covering the golden path
-- [ ] *(Phase 7+)* Cache hit test: repeated GET returns same cached data
-- [ ] *(Phase 7+)* Cache eviction test: POST/PUT/DELETE triggers `@CacheEvict`
-- [ ] *(Phase 7+)* Multi-tenant isolation test: Tenant A ≠ Tenant B on same entity ID
-- [ ] Integration test: cache + database consistent after mutation
+### 🔒 Security & Data Integrity
 
-## Phase 7+ Checklist (700-Series)
+* [ ] No cross-tenant data leakage possible (cache keys include `tenant_id`).
+* [ ] RLS policy enabled on all core tables.
+* [ ] Soft deletes (`deleted_at`) checked in all queries.
+* [ ] JWT claims validated (iss, aud, exp).
 
-Every 700-series PR review MUST include:
+### 💻 Code Quality
 
-### Architecture Checklist
-- [ ] Design document includes "API Caching & Cache Invalidation" section
-- [ ] All GET/POST/PUT/DELETE endpoints listed in cache table
-- [ ] Cache key template includes `{tenantId}`
-- [ ] TTL justified for each entity type
-- [ ] Invalidation strategy defined (method-level, event-driven, or custom)
+* [ ] No method exceeds cyclomatic complexity of 10.
+* [ ] Constructor injection used (no field `@Autowired`).
+* [ ] Exception handling appropriate (not suppressed).
+* [ ] No unused imports or variables.
 
-### Code Checklist
-- [ ] `@Cacheable` on all GET endpoints with tenant-aware key
-- [ ] `@CacheEvict` on all mutation endpoints
-- [ ] `TenantContextHolder.getTenantId()` used in cache key
-- [ ] Cache invalidation is atomic (same transaction as persist)
-- [ ] Spring Boot `@EnableCaching` configured
+### ⚡ Performance & Caching (Phase 7+)
 
-### Test Checklist
-- [ ] Unit test: GET cached; next GET returns same data (no DB hit)
-- [ ] Unit test: POST/PUT/DELETE evicts cache
-- [ ] Integration test: Tenant A reads; Tenant B reads; data isolated
-- [ ] Load test: Cache hit ratio > 60% (or justified lower)
+* [ ] All GET endpoints have `@Cacheable` with tenant-aware key.
+* [ ] Cache key template: `{tenantId}:{entityType}:{identifier}`.
+* [ ] All mutation endpoints (POST/PUT/DELETE) have `@CacheEvict`.
+* [ ] Cache invalidation is atomic (within transaction).
 
-## Rejection Verdicts
+### 🧪 Testing
 
-**REJECTED** (must fix before merge):
-- Missing `@Cacheable` on GET endpoint
-- Cache key lacks tenant isolation
-- No multi-tenant cache isolation test
-- Mutation without cache invalidation
+* [ ] **Backend:** `mvn test` passes with 0 failures, JaCoCo ≥ 80% branch coverage.
+* [ ] **Frontend Unit:** `npm run test` passes with 0 failures.
+* [ ] **Frontend E2E:** `npm run test:e2e` (Playwright) passes with 0 failures and evidence artifacts.
+* [ ] **Multi-tenant isolation:** Verified Tenant A cannot see Tenant B's cached data.
 
-**TECHNICAL DEBT** (approve but flag for follow-up):
-- TTL not optimized
-- Monitoring not wired
-- Eviction strategy overly broad (evicts entire cache)
+## 🚦 Rejection Verdicts
+
+**REJECTED (Must fix before merge):**
+
+* Missing Playwright screenshot for the current Story ID.
+* Playwright tests pass but visual evidence is missing or shows Style Guide violations.
+* Missing `@Cacheable` on GET endpoint or cache key lacks tenant isolation.
+* Mutation without cache invalidation.
+
+**TECHNICAL DEBT (Approve but flag):**
+
+* TTL not optimized for the specific entity type.
+* Eviction strategy overly broad (evicts entire cache instead of specific keys).
 
 ---
 
-*Last updated: 2026-04-27*  
-*Applies to: All phases; stricter enforcement for Phase 7+*
+*Last updated: 2026-05-21*
+
+*Applies to: All phases; strict visual evidence enforcement active.*

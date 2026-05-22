@@ -98,8 +98,8 @@ class LoadServiceTest {
 
             loadService.publishLoad(LOAD_ID, SHIPPER_ID);
 
-            verify(loadRepository).save(load);
             verify(documentService).generateBolOnPublish(load);
+            verify(loadRepository).save(load);
         }
 
         @Test

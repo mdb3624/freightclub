@@ -1,6 +1,16 @@
 # Resilience Logistics: Story Map (Global Hardening Edition)
 
-**Last Updated:** 2026-05-15 | **Scope:** 80 stories mapped | **Unmapped Requirements:** 0 | **Compliance Status:** ✅ RLS, No-Lombok, VARCHAR(36), **Test Coverage 50.6%** enforced as hard gates | **Phase 1 Governance:** ✅ COMPLETE | **Phase 2 Governance:** ✅ COMPLETE | **Phase 3 Governance:** ✅ COMPLETE (story files + sign-offs 2026-05-14) | **Backend Coverage Phase A:** ✅ COMPLETE (49.5% → 50.6%, 54 tests)
+**Last Updated:** 2026-05-22 | **Scope:** 83 stories mapped | **Unmapped Requirements:** 0 | **Compliance Status:** ✅ RLS, No-Lombok, VARCHAR(36), **Test Coverage 50.6%** enforced as hard gates | **Phase 1 Governance:** ✅ COMPLETE | **Phase 2 Governance:** ✅ COMPLETE | **Phase 3 Governance:** ✅ COMPLETE (story files + sign-offs 2026-05-14) | **Backend Coverage Phase A:** ✅ COMPLETE (49.5% → 50.6%, 54 tests) | **Security & Infrastructure Hardening:** 3 P1 stories added (SEC-001, SEC-002, INF-001)
+
+---
+
+## Critical Security & Infrastructure (3 stories)
+
+| ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
+| :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
+| SEC-001 | Add @PreAuthorize to DELETE/PUT Endpoints | REVIEWER_APPROVED_PENDING_TESTS | Cross | — | ✅ RLS, ✅ No-Lombok, ✅ 80% branch coverage required |
+| SEC-002 | PostgreSQL RLS Policies (5 Tables)    | REVIEWER_APPROVED_PENDING_TESTS | Cross | — | ✅ RLS enforcement at DB level, ✅ Idempotent Flyway |
+| INF-001 | Flyway Migration Idempotency (20 migrations) | DESIGN_APPROVED | Cross | — | ✅ DO block pattern, ✅ Exception handling |
 
 ---
 
@@ -201,13 +211,14 @@
 | ✅ COMPLETED | 5 | 1, 1.1, 1.2, 2, 3 |
 | 🔄 IN_PROGRESS | 2 | 1, 3 |
 | 🟡 PARTIAL | 9 | 3, 4, 7 |
-| 📋 DESIGN_APPROVED | 0 | — |
+| 📋 DESIGN_APPROVED | 1 | Cross (INF-001) |
+| 🔍 REVIEWER_APPROVED_PENDING_TESTS | 2 | Cross (SEC-001, SEC-002) |
 | ⚠️ MIGRATION_PENDING | 62 | 3–9 |
-| **TOTAL** | **78** | **1–9** |
+| **TOTAL** | **81** | **1–9 + Cross (5 complete, 2 in progress, 9 partial, 1 design-approved, 2 reviewer-approved, 62 pending)** |
 
 ---
 
-**Last Synced:** 2026-05-15 09:30 UTC  
-**Compliance Status:** ✅ All 78 stories cataloged | ✅ Phase 3.8 (US-308) unblocks Phase 7b | ✅ Backend Coverage Phase A (54 tests, 50.6%)  
-**Implementation Status:** Phase 1-3 complete; Phase 7 (6 stories) partially implemented; Phase 5-6 blocked on external integrations; **Backend Coverage Remediation: Phase A DONE, Phase B-C scheduled**  
-**Critical Path:** 🟡 Backend Test Coverage Phase B-C (target 70% by 2026-05-31) | ⚠️ Phase 5 payment processor | ⚠️ Phase 6 message broker
+**Last Synced:** 2026-05-22 15:15 UTC  
+**Compliance Status:** ✅ All 81 stories cataloged | ✅ SEC-001, SEC-002 code-complete & reviewer-approved | ✅ INF-001 ready for Coder | ✅ Phase 3.8 (US-308) unblocks Phase 7b | ✅ Backend Coverage Phase A (54 tests, 50.6%)  
+**Implementation Status:** Phase 1-3 complete; Phase 7 (6 stories) partially implemented; SEC-001/002 code review PASSED, test execution REQUIRED; INF-001 awaiting Coder; Phase 5-6 blocked on external integrations; **Backend Coverage Remediation: Phase A DONE, Phase B-C scheduled**  
+**Critical Path:** 🔴 SEC-001/002 local test execution + coverage gates (BLOCKER) | 🔴 INF-001 Coder phase (20 Flyway migrations) | 🟡 Backend Test Coverage Phase B-C (target 70% by 2026-05-31) | ⚠️ Phase 5 payment processor | ⚠️ Phase 6 message broker

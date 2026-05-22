@@ -2,7 +2,7 @@
 
 **Auditor:** Claude Code (claude-sonnet-4-6)
 **Branch:** refactor/kiss-cleanup
-**Sources:** `docs/standards/STYLE_GUIDE.md`, `docs/roles/HUMAN_FACTORS_DESIGNER.md`, `frontend/tailwind.config.ts`, component inventory
+**Sources:** `docs/standards/brand_assets/STYLE_GUIDE.md`, `docs/roles/HUMAN_FACTORS_DESIGNER.md`, `frontend/tailwind.config.ts`, component inventory
 
 ---
 
@@ -10,9 +10,9 @@
 
 | Category | Requirement | Source |
 |---|---|---|
-| **Color palette** | Deep Space Navy `#0B1220`, Kinetic Blue `#2563EB`, Secondary Blue `#00D4FF`, Accent Teal `#00E5A8`, semantic success/warning/error | STYLE_GUIDE.md |
-| **Typography** | SORA for headlines, INTER for body/UI/code | STYLE_GUIDE.md |
-| **Icons** | Lucide-React only | STYLE_GUIDE.md |
+| **Color palette** | Deep Space Navy `#0B1220`, Kinetic Blue `#2563EB`, Secondary Blue `#00D4FF`, Accent Teal `#00E5A8`, semantic success/warning/error | docs/standards/brand_assets/STYLE_GUIDE.md |
+| **Typography** | SORA for headlines, INTER for body/UI/code | docs/standards/brand_assets/STYLE_GUIDE.md |
+| **Icons** | Lucide-React only | docs/standards/brand_assets/STYLE_GUIDE.md |
 | **Mobile-first** | High-glare, high-vibration design — oversized touch targets | HFD role |
 | **Touch targets** | Minimum 44×44px (Apple/WCAG standard) | HFD role |
 | **Cognitive load** | Hick's Law — group complex forms into sequential steps | HFD role |

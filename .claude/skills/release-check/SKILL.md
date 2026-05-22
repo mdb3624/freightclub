@@ -238,15 +238,40 @@ Test Coverage           OK — 74.3%
 - Print: `Release check FAILED. Fix the issues above before committing.`
 - **Stop. Do not write CHANGELOG or create a commit.**
 
-**If all rows show OK:** proceed to Phase 3.
+**If all rows show OK:** proceed to Phase 2.5.
 
 ---
 
-## Phase 3 — Finalize (only runs when all Phase 1 agents succeed)
+## Phase 2.5 — Pre-Commit: Validate Document Ownership Constraints
+
+**Invoke the `/validate-doc-ownership` skill to ensure regenerated docs meet their ownership constraints.**
+
+Input:
+- Action: `commit`
+- Documents: List of all docs that were regenerated (same as Phase 1 agents)
+- Mode: `auto`
+
+**Expected response:** Validation checklist with constraints to verify for each doc.
+
+**Apply constraint checks:**
+
+| Document | Constraint | How to Verify | Action if Failed |
+|---|---|---|---|
+| REQUIREMENTS.md | Preserve [DONE] story status | Read existing REQUIREMENTS.md from disk; grep for `[DONE]` entries; confirm they still exist in regenerated version | STOP — Regenerated version lost completed story status. Investigate why. |
+| FEATURES.md | User-centric framing (no Status fields) | Read regenerated FEATURES.md; grep for `**Status:**` ; should find 0 matches | STOP — Regenerated version contains Status fields. Regenerate with user-centric prompt. |
+| PROJECT-PLAN.md | Matches current phase status | Read PROJECT-PLAN.md phase summary; cross-check with code + REQUIREMENTS.md completion %; verify consistency | WARN — Phase status may have drifted. Review before committing. |
+
+**If any constraint check fails:** Stop and do not proceed to Phase 3. Fix the regenerated doc and re-run the validation.
+
+**If all constraints pass:** Proceed to Phase 3.
+
+---
+
+## Phase 3 — Finalize (only runs when Phase 2.5 validation passes)
 
 ### 1. Update CHANGELOG.md
 
-Prepend a new entry to `C:\projects\freightclub\CHANGELOG.md` (create the file if it does not exist). Read the existing file first, then prepend — do not delete existing entries.
+Prepend a new entry to `C:\projects\freightclub\docs\project\CHANGELOG.md` (create the file if it does not exist). Read the existing file first, then prepend — do not delete existing entries.
 
 Format:
 
@@ -274,7 +299,7 @@ Run the following in sequence:
 cd /c/projects/freightclub
 
 git add FEATURES.md REQUIREMENTS.md GAP-ANALYSIS.md ARCHITECTURE.md \
-        EXECUTIVE-SUMMARY.md PROJECT-PLAN.md CHANGELOG.md
+        EXECUTIVE-SUMMARY.md PROJECT-PLAN.md docs/project/CHANGELOG.md
 
 # Also stage any test files the coverage agent wrote/modified:
 git add backend/src/test/java/ 2>/dev/null || true

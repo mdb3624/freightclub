@@ -47,8 +47,12 @@ class LoadQueryServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private jakarta.persistence.EntityManager em;
+
 
     private String tenantId;
+    private String shipperId;
 
     @BeforeEach
     void setup() {
@@ -60,7 +64,7 @@ class LoadQueryServiceTest {
         tenantRepository.save(tenant);
 
         // Create shipper user for this tenant (FK constraint: loads.shipper_id_fkey -> users.id)
-        String shipperId = "s" + System.nanoTime();
+        shipperId = "s" + System.nanoTime();
         User shipper = new User(shipperId);
         shipper.setTenantId(tenantId);
         shipper.setEmail(shipperId + "@test.local");
@@ -128,6 +132,7 @@ class LoadQueryServiceTest {
         createLoad("LOAD-005", LoadStatus.DELIVERED, false);
         createLoad("LOAD-006", LoadStatus.DRAFT, false); // Should not count
         createLoad("LOAD-007", LoadStatus.CANCELLED, true); // Soft-deleted, should not count
+        em.flush(); // Force persist to database within transaction
 
         // When: Query active stats
         var stats = service.getLoadStats("active");
@@ -153,6 +158,7 @@ class LoadQueryServiceTest {
         createLoad("LOAD-004", LoadStatus.IN_TRANSIT, false);
         createLoad("LOAD-005", LoadStatus.DELIVERED, false);
         createLoad("LOAD-006", LoadStatus.CANCELLED, true); // Soft-deleted
+        em.flush(); // Force persist to database within transaction
 
         // When: Query all stats
         var stats = service.getLoadStats("all");
@@ -175,6 +181,7 @@ class LoadQueryServiceTest {
         for (int i = 0; i < 25; i++) {
             createLoad("LOAD-" + String.format("%03d", i), LoadStatus.OPEN, false);
         }
+        em.flush(); // Force persist to database within transaction
 
         // When: Query page 1 (20 per page)
         var page1 = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -225,6 +232,7 @@ class LoadQueryServiceTest {
         TenantContextHolder.setTenantId(tenant2);
         TenantContextHolder.setUserId(shipper2);
         createLoad("LOAD-002", LoadStatus.OPEN, false);
+        em.flush(); // Force persist to database within transaction
 
         // When: Query as tenant1
         TenantContextHolder.setTenantId(tenant1);
@@ -245,6 +253,7 @@ class LoadQueryServiceTest {
         createLoad("LOAD-001", LoadStatus.OPEN, false);
         createLoad("LOAD-002", LoadStatus.OPEN, false);
         createLoad("LOAD-003", LoadStatus.DELIVERED, true); // Soft-deleted
+        em.flush(); // Force persist to database within transaction
 
         // When: Query active view
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -260,6 +269,7 @@ class LoadQueryServiceTest {
     void testGetShipperLoadsDataMapping() {
         // Given: Create load with specific data
         createLoad("LOAD-001", LoadStatus.OPEN, false);
+        em.flush(); // Force persist to database within transaction
 
         // When: Query loads
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -287,6 +297,7 @@ class LoadQueryServiceTest {
                 LocalDateTime.of(2026, 6, 1, 10, 0));
         var load2 = createLoadWithPickupFrom("LOAD-002", LoadStatus.OPEN, false,
                 LocalDateTime.of(2026, 6, 3, 10, 0));
+        em.flush(); // Force persist to database within transaction
 
         // When: Query with ascending sort
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -307,6 +318,7 @@ class LoadQueryServiceTest {
                 LocalDateTime.of(2026, 6, 1, 10, 0));
         createLoadWithPickupFrom("LOAD-002", LoadStatus.OPEN, false,
                 LocalDateTime.of(2026, 6, 3, 10, 0));
+        em.flush(); // Force persist to database within transaction
 
         // When: Query with descending sort
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "desc");
@@ -323,8 +335,8 @@ class LoadQueryServiceTest {
     private Load createLoad(String id, LoadStatus status, boolean deleted) {
         var load = new Load();
         setField(load, "id", id);
-        load.setTenantId(TenantContextHolder.getTenantId());
-        load.setShipperId(TenantContextHolder.getCurrentUserId());
+        load.setTenantId(tenantId);
+        load.setShipperId(shipperId);
         load.setStatus(status);
         load.setOriginCity("Los Angeles");
         load.setOriginState("CA");
@@ -354,8 +366,8 @@ class LoadQueryServiceTest {
     private Load createLoadWithPickupFrom(String id, LoadStatus status, boolean deleted, LocalDateTime pickupFrom) {
         var load = new Load();
         setField(load, "id", id);
-        load.setTenantId(TenantContextHolder.getTenantId());
-        load.setShipperId(TenantContextHolder.getCurrentUserId());
+        load.setTenantId(tenantId);
+        load.setShipperId(shipperId);
         load.setStatus(status);
         load.setOriginCity("Los Angeles");
         load.setOriginState("CA");

@@ -261,9 +261,6 @@ class LoadQueryServiceTest {
         createLoad("LOAD-005", LoadStatus.DELIVERED, false);
         createLoad("LOAD-006", LoadStatus.CANCELLED, true); // Soft-deleted
 
-        em.flush();
-        refreshSessionVariable();
-
         // When: Query all stats
         var stats = service.getLoadStats("all");
 
@@ -285,9 +282,6 @@ class LoadQueryServiceTest {
         for (int i = 0; i < 25; i++) {
             createLoad("LOAD-" + String.format("%03d", i), LoadStatus.OPEN, false);
         }
-
-        em.flush();
-        refreshSessionVariable();
 
         // When: Query page 1 (20 per page)
         var page1 = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -367,9 +361,6 @@ class LoadQueryServiceTest {
         createLoad("LOAD-002", LoadStatus.OPEN, false);
         createLoad("LOAD-003", LoadStatus.DELIVERED, true); // Soft-deleted
 
-        em.flush();
-        refreshSessionVariable();
-
         // When: Query active view
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
 
@@ -384,9 +375,6 @@ class LoadQueryServiceTest {
 
         // Given: Create load with specific data
         createLoad("LOAD-001", LoadStatus.OPEN, false);
-
-        em.flush();
-        refreshSessionVariable();
 
         // When: Query loads
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -415,9 +403,6 @@ class LoadQueryServiceTest {
         createLoadWithPickupFrom("LOAD-002", LoadStatus.OPEN, false,
                 LocalDateTime.of(2026, 6, 3, 10, 0));
 
-        em.flush();
-        refreshSessionVariable();
-
         // When: Query with ascending sort
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
 
@@ -437,9 +422,6 @@ class LoadQueryServiceTest {
                 LocalDateTime.of(2026, 6, 1, 10, 0));
         createLoadWithPickupFrom("LOAD-002", LoadStatus.OPEN, false,
                 LocalDateTime.of(2026, 6, 3, 10, 0));
-
-        em.flush();
-        refreshSessionVariable();
 
         // When: Query with descending sort
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "desc");

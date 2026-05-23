@@ -184,10 +184,6 @@ class LoadQueryServiceTest {
         load2.setDeliveryTo(LocalDateTime.now().plusDays(1).plusHours(1));
         loadRepository.save(load2);
 
-        // Flush to database and clear session cache so query sees committed data
-        em.flush();
-        em.clear();
-
         // When: Query by tenant and status
         long count = loadRepository.countByTenantIdAndStatusAndDeletedAtIsNull(tenantId, LoadStatus.OPEN);
 
@@ -458,10 +454,7 @@ class LoadQueryServiceTest {
             load.setDeletedAt(LocalDateTime.now());
         }
 
-        loadRepository.save(load);
-        em.flush();
-        em.clear();
-        return load;
+        return loadRepository.save(load);
     }
 
     private Load createLoadWithPickupFrom(String id, LoadStatus status, boolean deleted, LocalDateTime pickupFrom) {
@@ -495,10 +488,7 @@ class LoadQueryServiceTest {
             load.setDeletedAt(LocalDateTime.now());
         }
 
-        loadRepository.save(load);
-        em.flush();
-        em.clear();
-        return load;
+        return loadRepository.save(load);
     }
 
     private static void setField(Object target, String name, Object value) {

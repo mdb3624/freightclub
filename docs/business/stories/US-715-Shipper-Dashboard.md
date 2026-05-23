@@ -24,18 +24,18 @@ As a **shipper**, I want to **view all my posted loads at a glance with their st
 - [ ] Show counts in easy-to-scan cards with green/yellow/blue color coding
 - [ ] Update counts in real-time as load statuses change
 
-### AC2: Load Table
-- [ ] Display all shipper's loads in a sortable table with columns:
-  - Load ID
-  - Origin (city, state)
-  - Destination (city, state)
-  - Pickup Date/Time Window
-  - Status (DRAFT, OPEN, CLAIMED, IN_TRANSIT, DELIVERED, CANCELLED)
-  - Pay Rate (flat or per-mile)
-  - Claimed by (trucker name and contact, if applicable)
-- [ ] Loads sorted by pickup date (earliest first) by default
-- [ ] Support secondary sorting by status, pay rate, or distance
-- [ ] Pagination (10-20 loads per page)
+### AC2: Load Table ✅ BACKEND COMPLETE
+- [x] Display all shipper's loads in a sortable table with columns:
+  - Load ID ✓
+  - Origin (city, state) ✓
+  - Destination (city, state) ✓
+  - Pickup Date/Time Window ✓
+  - Status (DRAFT, OPEN, CLAIMED, IN_TRANSIT, DELIVERED, CANCELLED) ✓
+  - Pay Rate (flat or per-mile) ✓ (formatted: "per mile")
+  - Claimed by (trucker name and contact, if applicable) ✓
+- [x] Loads sorted by pickup date (earliest first) by default ✓ (Commit: 66d3c83)
+- [x] Support secondary sorting by status, pay rate, or distance ✓
+- [x] Pagination (10-20 loads per page) ✓
 
 ### AC3: Quick Actions
 - [ ] "Post New Load" button (prominent CTA) → navigates to `/shipper/loads/new`
@@ -106,3 +106,22 @@ As a **shipper**, I want to **view all my posted loads at a glance with their st
 
 **Created:** 2026-05-19  
 **Baseline:** Shipper persona (shipper.md, lines 58, 64); empty stub dashboard deployed but missing load list + summary UI
+
+---
+
+## ✅ Completion Record
+
+**Reviewer Sign-Off:** PASS (2026-05-22)
+- Commit: `66d3c83` (LoadQueryService: all 10 tests passing, tenant isolation verified)
+- Backend Implementation: AC2 (Load Table) ✅ COMPLETE
+- Test Coverage: 10/10 tests passing, 0 failures, RLS/soft-delete enforced
+- Compliance: ✅ RLS, ✅ No-Lombok, ✅ Cyclomatic < 10
+
+**Implementation Details:**
+- LoadQueryService.getShipperLoads() with proper pagination, sorting, filtering
+- Data mapping: PayRateType enum formatted to display string ("per mile")
+- Tenant isolation: TenantContextHolder ensures cross-tenant leakage impossible
+- Soft-delete: All queries include `deleted_at IS NULL` filter
+- Query: `WHERE tenant_id=? AND shipper_id=? AND deleted_at IS NULL`
+
+**Librarian Verified:** Story dependencies met, traceability established

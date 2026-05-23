@@ -136,6 +136,8 @@ class LoadQueryServiceTest {
     @DisplayName("direct repository query with multiple loads")
     void testDirectRepositoryQueryMultipleLoads() {
         // Given: Create multiple loads directly (inline without helper)
+        refreshSessionVariable();
+
         Load load1 = new Load();
         setField(load1, "id", "LOAD-001");
         load1.setTenantId(tenantId);
@@ -159,6 +161,8 @@ class LoadQueryServiceTest {
         load1.setDeliveryFrom(LocalDateTime.now().plusDays(1));
         load1.setDeliveryTo(LocalDateTime.now().plusDays(1).plusHours(1));
         loadRepository.save(load1);
+
+        refreshSessionVariable();
 
         Load load2 = new Load();
         setField(load2, "id", "LOAD-002");

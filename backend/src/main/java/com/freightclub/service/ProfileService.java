@@ -6,12 +6,14 @@ import com.freightclub.dto.ProfileResponse;
 import com.freightclub.dto.UpdateProfileRequest;
 import com.freightclub.repository.TenantRepository;
 import com.freightclub.repository.UserRepository;
+import com.freightclub.security.TenantContextHolder;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -132,6 +134,20 @@ public class ProfileService {
      */
     public static BigDecimal calculateMinimumRpm(BigDecimal totalCpm, BigDecimal marginPerMile) {
         return totalCpm.add(marginPerMile);
+    }
+
+    /**
+     * SEC-001-AC-003: Authorization check for @PreAuthorize annotation.
+     * Verify user ownership (tenant_id match) for PUT endpoints.
+     * Returns false if user not found or tenant mismatch (no exception).
+     */
+    @Transactional(readOnly = true)
+    public boolean isOwner(String userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            return false;
+        }
+        return user.get().getTenantId().equals(TenantContextHolder.getTenantId());
     }
 
     private static String emptyToNull(String value) {

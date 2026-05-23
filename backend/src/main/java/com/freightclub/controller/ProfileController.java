@@ -11,6 +11,7 @@ import com.freightclub.service.ProfileService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ public class ProfileController {
     }
 
     @PutMapping
+    @PreAuthorize("@profileService.isOwner(#userId)")
     public ResponseEntity<ProfileResponse> updateProfile(
             @AuthenticationPrincipal String userId,
             @Valid @RequestBody UpdateProfileRequest request) {
@@ -55,6 +57,7 @@ public class ProfileController {
     }
 
     @PutMapping("/equipment/{id}")
+    @PreAuthorize("@carrierProfileService.isEquipmentOwner(#id)")
     public ResponseEntity<CarrierEquipmentDTO> updateEquipment(
             @AuthenticationPrincipal String userId,
             @PathVariable String id,
@@ -66,6 +69,7 @@ public class ProfileController {
     }
 
     @DeleteMapping("/equipment/{id}")
+    @PreAuthorize("@carrierProfileService.isEquipmentOwner(#id)")
     public ResponseEntity<Void> deleteEquipment(
             @AuthenticationPrincipal String userId,
             @PathVariable String id) {
@@ -88,6 +92,7 @@ public class ProfileController {
     }
 
     @PutMapping("/lanes/{id}")
+    @PreAuthorize("@carrierProfileService.isLaneOwner(#id)")
     public ResponseEntity<CarrierLaneDTO> updateLane(
             @AuthenticationPrincipal String userId,
             @PathVariable String id,
@@ -99,6 +104,7 @@ public class ProfileController {
     }
 
     @DeleteMapping("/lanes/{id}")
+    @PreAuthorize("@carrierProfileService.isLaneOwner(#id)")
     public ResponseEntity<Void> deleteLane(
             @AuthenticationPrincipal String userId,
             @PathVariable String id) {
@@ -115,6 +121,7 @@ public class ProfileController {
     }
 
     @PutMapping("/availability")
+    @PreAuthorize("@profileService.isOwner(#userId)")
     public ResponseEntity<CarrierAvailabilityDTO> setAvailability(
             @AuthenticationPrincipal String userId,
             @RequestBody CarrierAvailabilityDTO dto) {

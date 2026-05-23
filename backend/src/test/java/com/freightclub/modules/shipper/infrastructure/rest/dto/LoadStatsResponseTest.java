@@ -26,7 +26,7 @@ class LoadStatsResponseTest {
   @Test
   void testFromWithAllView() {
     var activeStats = LoadStatsResponse.StatusCounts.of(5, 3, 2, 10);
-    var allStats = LoadStatsResponse.StatusCounts.of(6, 3, 2, 10, 1, 5); // draft, cancelled added
+    var allStats = LoadStatsResponse.StatusCounts.of(5, 3, 2, 10, 6, 5); // (open, claimed, inTransit, delivered, draft, cancelled)
 
     var response = LoadStatsResponse.of(activeStats, allStats, "all");
 

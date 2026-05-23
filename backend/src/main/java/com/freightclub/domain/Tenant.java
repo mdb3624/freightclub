@@ -12,7 +12,7 @@ import java.util.UUID;
 public class Tenant {
 
     @Id
-    @Column(columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String id;
 
     @Column(nullable = false)

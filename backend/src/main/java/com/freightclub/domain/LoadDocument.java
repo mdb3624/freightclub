@@ -11,16 +11,16 @@ import java.util.UUID;
 public class LoadDocument {
 
     @Id
-    @Column(columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String id;
 
-    @Column(name = "tenant_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(name = "tenant_id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String tenantId;
 
-    @Column(name = "load_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(name = "load_id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String loadId;
 
-    @Column(name = "uploaded_by", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(name = "uploaded_by", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String uploadedBy;
 
     @Enumerated(EnumType.STRING)

@@ -11,19 +11,19 @@ import java.util.UUID;
 public class Rating {
 
     @Id
-    @Column(columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String id;
 
-    @Column(name = "tenant_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(name = "tenant_id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String tenantId;
 
-    @Column(name = "load_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(name = "load_id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String loadId;
 
-    @Column(name = "rater_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(name = "rater_id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String reviewerId;
 
-    @Column(name = "ratee_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(name = "ratee_id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String reviewedId;
 
     @Enumerated(EnumType.STRING)

@@ -89,8 +89,13 @@ class LoadQueryServiceTest {
         TenantContextHolder.clear();
     }
 
+    private void refreshSessionVariable() {
+        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, true)")
+                .setParameter("tid", tenantId)
+                .getSingleResult();
+    }
+
     @Test
-    @Transactional
     @DisplayName("direct repository query returns saved load")
     void testDirectRepositoryQuery() {
 
@@ -128,16 +133,60 @@ class LoadQueryServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("direct repository query with multiple loads")
     void testDirectRepositoryQueryMultipleLoads() {
-        // Given: Create multiple loads directly
-        createLoad("LOAD-001", LoadStatus.OPEN, false);
-        createLoad("LOAD-002", LoadStatus.OPEN, false);
-        createLoad("LOAD-003", LoadStatus.CLAIMED, false);
+        // Given: Create multiple loads directly (inline without helper)
+        Load load1 = new Load();
+        setField(load1, "id", "LOAD-001");
+        load1.setTenantId(tenantId);
+        load1.setShipperId(shipperId);
+        load1.setStatus(LoadStatus.OPEN);
+        load1.setOriginCity("Test");
+        load1.setOriginState("TX");
+        load1.setOriginZip("75001");
+        load1.setOriginAddress1("123 St");
+        load1.setDestinationCity("Test2");
+        load1.setDestinationState("TX");
+        load1.setDestinationZip("75002");
+        load1.setDestinationAddress1("456 St");
+        load1.setCommodity("Test");
+        load1.setWeightLbs(BigDecimal.valueOf(1000));
+        load1.setEquipmentType(com.freightclub.domain.EquipmentType.FLATBED);
+        load1.setPayRate(BigDecimal.valueOf(1500));
+        load1.setPayRateType(com.freightclub.domain.PayRateType.PER_MILE);
+        load1.setPickupFrom(LocalDateTime.now());
+        load1.setPickupTo(LocalDateTime.now().plusHours(1));
+        load1.setDeliveryFrom(LocalDateTime.now().plusDays(1));
+        load1.setDeliveryTo(LocalDateTime.now().plusDays(1).plusHours(1));
+        loadRepository.save(load1);
 
-        // Flush to ensure persistence before querying
+        Load load2 = new Load();
+        setField(load2, "id", "LOAD-002");
+        load2.setTenantId(tenantId);
+        load2.setShipperId(shipperId);
+        load2.setStatus(LoadStatus.OPEN);
+        load2.setOriginCity("Test");
+        load2.setOriginState("TX");
+        load2.setOriginZip("75001");
+        load2.setOriginAddress1("123 St");
+        load2.setDestinationCity("Test2");
+        load2.setDestinationState("TX");
+        load2.setDestinationZip("75002");
+        load2.setDestinationAddress1("456 St");
+        load2.setCommodity("Test");
+        load2.setWeightLbs(BigDecimal.valueOf(1000));
+        load2.setEquipmentType(com.freightclub.domain.EquipmentType.FLATBED);
+        load2.setPayRate(BigDecimal.valueOf(1500));
+        load2.setPayRateType(com.freightclub.domain.PayRateType.PER_MILE);
+        load2.setPickupFrom(LocalDateTime.now());
+        load2.setPickupTo(LocalDateTime.now().plusHours(1));
+        load2.setDeliveryFrom(LocalDateTime.now().plusDays(1));
+        load2.setDeliveryTo(LocalDateTime.now().plusDays(1).plusHours(1));
+        loadRepository.save(load2);
+
+        // Flush to database and clear session cache so query sees committed data
         em.flush();
+        em.clear();
 
         // When: Query by tenant and status
         long count = loadRepository.countByTenantIdAndStatusAndDeletedAtIsNull(tenantId, LoadStatus.OPEN);
@@ -147,7 +196,6 @@ class LoadQueryServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("getLoadStats returns active load counts excluding draft and cancelled")
     void testGetLoadStatsActiveView() {
         // Given: Create test loads for active view
@@ -160,6 +208,7 @@ class LoadQueryServiceTest {
         createLoad("LOAD-007", LoadStatus.CANCELLED, true); // Soft-deleted, should not count
 
         em.flush();
+        refreshSessionVariable();
 
         // When: Query active stats
         var stats = service.getLoadStats("active");
@@ -175,7 +224,6 @@ class LoadQueryServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("getLoadStats returns all load counts including draft and soft-deleted")
     void testGetLoadStatsAllView() {
 
@@ -188,6 +236,7 @@ class LoadQueryServiceTest {
         createLoad("LOAD-006", LoadStatus.CANCELLED, true); // Soft-deleted
 
         em.flush();
+        refreshSessionVariable();
 
         // When: Query all stats
         var stats = service.getLoadStats("all");
@@ -203,7 +252,6 @@ class LoadQueryServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("getShipperLoads returns paginated results with correct pagination metadata")
     void testGetShipperLoadsWithPagination() {
 
@@ -213,6 +261,7 @@ class LoadQueryServiceTest {
         }
 
         em.flush();
+        refreshSessionVariable();
 
         // When: Query page 1 (20 per page)
         var page1 = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -234,7 +283,6 @@ class LoadQueryServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("getShipperLoads respects tenant isolation via TenantContextHolder")
     void testGetShipperLoadsRespectsTenantIsolation() {
 
@@ -270,9 +318,12 @@ class LoadQueryServiceTest {
 
         em.flush();
 
-        // When: Query as tenant1
+        // When: Query as tenant1 - switch tenant context and update session variable
         TenantContextHolder.setTenantId(tenant1);
         TenantContextHolder.setUserId(shipper1);
+        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, true)")
+                .setParameter("tid", tenant1)
+                .getSingleResult();
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
 
         // Then: Tenant1 should see only their load
@@ -282,7 +333,6 @@ class LoadQueryServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("getShipperLoads excludes soft-deleted loads from active view")
     void testGetShipperLoadsExcludesSoftDeleted() {
 
@@ -292,6 +342,7 @@ class LoadQueryServiceTest {
         createLoad("LOAD-003", LoadStatus.DELIVERED, true); // Soft-deleted
 
         em.flush();
+        refreshSessionVariable();
 
         // When: Query active view
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -302,12 +353,14 @@ class LoadQueryServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("getShipperLoads returns correct load item data mapping")
     void testGetShipperLoadsDataMapping() {
 
         // Given: Create load with specific data
         createLoad("LOAD-001", LoadStatus.OPEN, false);
+
+        em.flush();
+        refreshSessionVariable();
 
         // When: Query loads
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -327,7 +380,6 @@ class LoadQueryServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("getShipperLoads supports sorting in ascending order")
     void testGetShipperLoadsSortingAsc() {
 
@@ -338,6 +390,7 @@ class LoadQueryServiceTest {
                 LocalDateTime.of(2026, 6, 3, 10, 0));
 
         em.flush();
+        refreshSessionVariable();
 
         // When: Query with ascending sort
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -350,7 +403,6 @@ class LoadQueryServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("getShipperLoads supports sorting in descending order")
     void testGetShipperLoadsSortingDesc() {
 
@@ -361,6 +413,7 @@ class LoadQueryServiceTest {
                 LocalDateTime.of(2026, 6, 3, 10, 0));
 
         em.flush();
+        refreshSessionVariable();
 
         // When: Query with descending sort
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "desc");
@@ -375,6 +428,9 @@ class LoadQueryServiceTest {
     // Helper methods
 
     private Load createLoad(String id, LoadStatus status, boolean deleted) {
+        // Ensure session variable is set before creating load (for RLS enforcement)
+        refreshSessionVariable();
+
         var load = new Load();
         setField(load, "id", id);
         load.setTenantId(tenantId);
@@ -402,10 +458,16 @@ class LoadQueryServiceTest {
             load.setDeletedAt(LocalDateTime.now());
         }
 
-        return loadRepository.save(load);
+        loadRepository.save(load);
+        em.flush();
+        em.clear();
+        return load;
     }
 
     private Load createLoadWithPickupFrom(String id, LoadStatus status, boolean deleted, LocalDateTime pickupFrom) {
+        // Ensure session variable is set before creating load (for RLS enforcement)
+        refreshSessionVariable();
+
         var load = new Load();
         setField(load, "id", id);
         load.setTenantId(tenantId);
@@ -433,7 +495,10 @@ class LoadQueryServiceTest {
             load.setDeletedAt(LocalDateTime.now());
         }
 
-        return loadRepository.save(load);
+        loadRepository.save(load);
+        em.flush();
+        em.clear();
+        return load;
     }
 
     private static void setField(Object target, String name, Object value) {

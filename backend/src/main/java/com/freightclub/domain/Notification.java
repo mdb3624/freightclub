@@ -11,16 +11,16 @@ import java.util.UUID;
 public class Notification {
 
     @Id
-    @Column(columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String id;
 
-    @Column(name = "tenant_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(name = "tenant_id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String tenantId;
 
-    @Column(name = "user_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(name = "user_id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String userId;
 
-    @Column(name = "load_id", columnDefinition = "CHAR(36)", nullable = false, updatable = false)
+    @Column(name = "load_id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
     private String loadId;
 
     @Column(name = "notification_type", nullable = false, length = 50)

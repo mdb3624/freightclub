@@ -26,3 +26,8 @@ app:
     audience: ${JWT_AUDIENCE:freightclub-api}
     access-token-expiry-ms: ${JWT_ACCESS_EXPIRY_MS:900000}
     refresh-token-expiry-ms: ${JWT_REFRESH_EXPIRY_MS:604800000}
+
+sendgrid:
+  api-key: ${SENDGRID_API_KEY:test-api-key}
+  from-email: notifications@freightclub.com
+  from-name: FreightClub

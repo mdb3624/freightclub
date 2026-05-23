@@ -132,18 +132,50 @@ class NotificationServiceTest {
         void happyPath() {
             User shipper = buildUser(SHIPPER_ID, "Bob", "Jones");
             when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(shipper));
+            when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.empty());
             when(notificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            service.onLoadDelivered(new LoadDeliveredEvent(buildLoad()));
+            service.onLoadDelivered(new LoadDeliveredEvent(buildLoad(), TRUCKER_ID));
 
-            verify(notificationRepository).save(any(Notification.class));
+            verify(notificationRepository, atLeastOnce()).save(any(Notification.class));
         }
 
         @Test
-        @DisplayName("skips when shipper not found")
-        void shipperNotFound_noOp() {
+        @DisplayName("notifies trucker on delivery")
+        void notifiesTruckerOnDelivery() {
+            User trucker = buildUser(TRUCKER_ID, "Alice", "Smith");
             when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.empty());
-            service.onLoadDelivered(new LoadDeliveredEvent(buildLoad()));
+            when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.of(trucker));
+            when(notificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            service.onLoadDelivered(new LoadDeliveredEvent(buildLoad(), TRUCKER_ID));
+
+            verify(notificationRepository).save(any(Notification.class));
+            verify(emailService).send(eq("alice@example.com"), contains("Delivery confirmed"), anyString());
+        }
+
+        @Test
+        @DisplayName("notifies both shipper and trucker on delivery")
+        void notifiesBothOnDelivery() {
+            User shipper = buildUser(SHIPPER_ID, "Bob", "Jones");
+            User trucker = buildUser(TRUCKER_ID, "Alice", "Smith");
+            when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(shipper));
+            when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.of(trucker));
+            when(notificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            service.onLoadDelivered(new LoadDeliveredEvent(buildLoad(), TRUCKER_ID));
+
+            verify(notificationRepository, times(2)).save(any(Notification.class));
+            verify(emailService).send(eq("bob@example.com"), contains("Load delivered"), anyString());
+            verify(emailService).send(eq("alice@example.com"), contains("Delivery confirmed"), anyString());
+        }
+
+        @Test
+        @DisplayName("skips when both shipper and trucker not found")
+        void neitherFound_noOp() {
+            when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.empty());
+            when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.empty());
+            service.onLoadDelivered(new LoadDeliveredEvent(buildLoad(), TRUCKER_ID));
             verify(notificationRepository, never()).save(any());
         }
     }

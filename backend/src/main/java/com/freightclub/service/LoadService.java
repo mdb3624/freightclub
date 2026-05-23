@@ -266,7 +266,7 @@ public class LoadService {
         load.setStatus(LoadStatus.DELIVERED);
         Load saved = loadRepository.save(load);
         writeEvent(saved, "DELIVERED", truckerId);
-        eventPublisher.publishEvent(new LoadDeliveredEvent(saved));
+        eventPublisher.publishEvent(new LoadDeliveredEvent(saved, truckerId));
         return buildResponse(saved);
     }
 

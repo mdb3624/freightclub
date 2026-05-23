@@ -59,11 +59,17 @@ public class NotificationService {
     public void onLoadDelivered(LoadDeliveredEvent event) {
         Load load = event.load();
         User shipper = userRepository.findById(load.getShipperId()).orElse(null);
-        if (shipper == null) return;
-
-        notify(shipper, load, "LOAD_DELIVERED",
-                "Your load (" + route(load) + ") has been delivered.",
-                "[FreightClub] Load delivered");
+        if (shipper != null) {
+            notify(shipper, load, "LOAD_DELIVERED",
+                    "Your load (" + route(load) + ") has been delivered. Please confirm receipt.",
+                    "[FreightClub] Load delivered");
+        }
+        User trucker = userRepository.findById(event.truckerId()).orElse(null);
+        if (trucker != null) {
+            notify(trucker, load, "LOAD_DELIVERED",
+                    "Delivery confirmed for load (" + route(load) + "). Your invoice will be generated shortly.",
+                    "[FreightClub] Delivery confirmed");
+        }
     }
 
     @EventListener

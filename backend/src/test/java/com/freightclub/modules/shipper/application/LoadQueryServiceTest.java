@@ -325,6 +325,9 @@ class LoadQueryServiceTest {
         String tenant1 = tenantId;
         String shipper1 = TenantContextHolder.getCurrentUserId();  // Store tenant1's shipper
         TenantContextHolder.setTenantId(tenant1);
+        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, false)")
+                .setParameter("tid", tenant1)
+                .getSingleResult();
         createLoad("T1-001", LoadStatus.OPEN, false);
 
         // And: Create tenant2 and its shipper, then create load
@@ -456,10 +459,13 @@ class LoadQueryServiceTest {
 
         try {
             var load = new Load();
+            // Use current context holder values instead of class fields
+            String currentTenantId = TenantContextHolder.getTenantId();
+            String currentShipperId = TenantContextHolder.getCurrentUserId();
             // Make ID unique by including tenant ID
-            setField(load, "id", tenantId + "-" + id);
-            load.setTenantId(tenantId);
-            load.setShipperId(shipperId);
+            setField(load, "id", currentTenantId + "-" + id);
+            load.setTenantId(currentTenantId);
+            load.setShipperId(currentShipperId);
             load.setStatus(status);
             load.setOriginCity("Los Angeles");
             load.setOriginState("CA");
@@ -484,7 +490,7 @@ class LoadQueryServiceTest {
             }
 
             em.persist(load);
-            System.out.println("DEBUG: Persisted load " + id + " with tenant " + tenantId);
+            System.out.println("DEBUG: Persisted load " + id + " with tenant " + currentTenantId);
             return load;
         } catch (Exception e) {
             System.out.println("ERROR saving load " + id + ": " + e.getMessage());
@@ -498,10 +504,13 @@ class LoadQueryServiceTest {
         refreshSessionVariable();
 
         var load = new Load();
+        // Use current context holder values instead of class fields
+        String currentTenantId = TenantContextHolder.getTenantId();
+        String currentShipperId = TenantContextHolder.getCurrentUserId();
         // Make ID unique by including tenant ID
-        setField(load, "id", tenantId + "-" + id);
-        load.setTenantId(tenantId);
-        load.setShipperId(shipperId);
+        setField(load, "id", currentTenantId + "-" + id);
+        load.setTenantId(currentTenantId);
+        load.setShipperId(currentShipperId);
         load.setStatus(status);
         load.setOriginCity("Los Angeles");
         load.setOriginState("CA");
@@ -525,7 +534,9 @@ class LoadQueryServiceTest {
             load.setDeletedAt(LocalDateTime.now());
         }
 
-        return loadRepository.save(load);
+        em.persist(load);
+        em.flush();
+        return load;
     }
 
     private static void setField(Object target, String name, Object value) {

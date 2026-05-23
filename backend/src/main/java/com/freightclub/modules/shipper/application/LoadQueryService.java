@@ -163,9 +163,13 @@ public class LoadQueryService {
             Objects.requireNonNull(load.getPickupTo()).toString(),
             load.getStatus().name(),
             load.getPayRate().doubleValue(),
-            load.getPayRateType().name(),
+            formatPayRateType(load.getPayRateType()),
             null, // claimedByTruckerName (null for shipper view)
             Objects.requireNonNull(load.getCreatedAt()).toString()
         );
+    }
+
+    private String formatPayRateType(com.freightclub.domain.PayRateType type) {
+        return type.name().toLowerCase().replace("_", " ");
     }
 }

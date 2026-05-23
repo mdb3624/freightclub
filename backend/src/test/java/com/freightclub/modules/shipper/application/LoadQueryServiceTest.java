@@ -198,17 +198,43 @@ class LoadQueryServiceTest {
     @Test
     @DisplayName("getLoadStats returns active load counts excluding draft and cancelled")
     void testGetLoadStatsActiveView() {
-        // Given: Create test loads for active view
-        createLoad("LOAD-001", LoadStatus.OPEN, false);
-        createLoad("LOAD-002", LoadStatus.OPEN, false);
-        createLoad("LOAD-003", LoadStatus.CLAIMED, false);
-        createLoad("LOAD-004", LoadStatus.IN_TRANSIT, false);
-        createLoad("LOAD-005", LoadStatus.DELIVERED, false);
-        createLoad("LOAD-006", LoadStatus.DRAFT, false); // Should not count
-        createLoad("LOAD-007", LoadStatus.CANCELLED, true); // Soft-deleted, should not count
-
-        em.flush();
-        refreshSessionVariable();
+        // Given: Create test loads for active view (inline, matching working pattern)
+        for (String[] load : new String[][] {
+            {"LOAD-001", "OPEN", "false"},
+            {"LOAD-002", "OPEN", "false"},
+            {"LOAD-003", "CLAIMED", "false"},
+            {"LOAD-004", "IN_TRANSIT", "false"},
+            {"LOAD-005", "DELIVERED", "false"},
+            {"LOAD-006", "DRAFT", "false"},
+            {"LOAD-007", "CANCELLED", "true"}
+        }) {
+            Load l = new Load();
+            setField(l, "id", load[0]);
+            l.setTenantId(tenantId);
+            l.setShipperId(shipperId);
+            l.setStatus(LoadStatus.valueOf(load[1]));
+            l.setOriginCity("Los Angeles");
+            l.setOriginState("CA");
+            l.setOriginZip("90001");
+            l.setOriginAddress1("123 Main St");
+            l.setDestinationCity("San Francisco");
+            l.setDestinationState("CA");
+            l.setDestinationZip("94102");
+            l.setDestinationAddress1("456 Market St");
+            l.setCommodity("Dry Goods");
+            l.setWeightLbs(BigDecimal.valueOf(1000));
+            l.setEquipmentType(com.freightclub.domain.EquipmentType.FLATBED);
+            l.setPayRate(BigDecimal.valueOf(1500));
+            l.setPayRateType(com.freightclub.domain.PayRateType.PER_MILE);
+            l.setPickupFrom(LocalDateTime.of(2026, 6, 1, 10, 0));
+            l.setPickupTo(LocalDateTime.of(2026, 6, 1, 17, 0));
+            l.setDeliveryFrom(LocalDateTime.of(2026, 6, 2, 10, 0));
+            l.setDeliveryTo(LocalDateTime.of(2026, 6, 2, 17, 0));
+            if (load[2].equals("true")) {
+                l.setDeletedAt(LocalDateTime.now());
+            }
+            loadRepository.save(l);
+        }
 
         // When: Query active stats
         var stats = service.getLoadStats("active");

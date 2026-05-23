@@ -62,6 +62,7 @@ class LoadQueryServiceTest {
         tenant.setId(tenantId);
         tenant.setName("Test Tenant");
         tenantRepository.save(tenant);
+        em.flush();  // Ensure tenant is persisted
 
         // Create shipper user for this tenant
         shipperId = "s" + System.nanoTime();
@@ -73,12 +74,13 @@ class LoadQueryServiceTest {
         shipper.setFirstName("Test");
         shipper.setLastName("Shipper");
         userRepository.save(shipper);
+        em.flush();  // Ensure shipper is persisted
 
         TenantContextHolder.setTenantId(tenantId);
         TenantContextHolder.setUserId(shipperId);
 
-        // Set PostgreSQL session variable for RLS policies
-        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, true)")
+        // Set PostgreSQL session variable for RLS policies (false = session-level, persists across transactions)
+        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, false)")
                 .setParameter("tid", tenantId)
                 .getSingleResult();
     }
@@ -90,7 +92,7 @@ class LoadQueryServiceTest {
     }
 
     private void refreshSessionVariable() {
-        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, true)")
+        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, false)")
                 .setParameter("tid", tenantId)
                 .getSingleResult();
     }
@@ -123,7 +125,8 @@ class LoadQueryServiceTest {
         load.setDeliveryFrom(LocalDateTime.now().plusDays(1));
         load.setDeliveryTo(LocalDateTime.now().plusDays(1).plusHours(1));
 
-        loadRepository.save(load);
+        em.persist(load);
+        em.flush();
 
         // When: Query by tenant and status
         long count = loadRepository.countByTenantIdAndStatusAndDeletedAtIsNull(tenantId, LoadStatus.OPEN);
@@ -137,7 +140,7 @@ class LoadQueryServiceTest {
     void testDirectRepositoryQueryMultipleLoads() {
         // Given: Create multiple loads directly (inline without helper)
         Load load1 = new Load();
-        setField(load1, "id", "LOAD-001");
+        setField(load1, "id", tenantId + "-LOAD-001");
         load1.setTenantId(tenantId);
         load1.setShipperId(shipperId);
         load1.setStatus(LoadStatus.OPEN);
@@ -158,10 +161,11 @@ class LoadQueryServiceTest {
         load1.setPickupTo(LocalDateTime.now().plusHours(1));
         load1.setDeliveryFrom(LocalDateTime.now().plusDays(1));
         load1.setDeliveryTo(LocalDateTime.now().plusDays(1).plusHours(1));
-        loadRepository.save(load1);
+        em.persist(load1);
+        em.flush();  // Flush after each save
 
         Load load2 = new Load();
-        setField(load2, "id", "LOAD-002");
+        setField(load2, "id", tenantId + "-LOAD-002");
         load2.setTenantId(tenantId);
         load2.setShipperId(shipperId);
         load2.setStatus(LoadStatus.OPEN);
@@ -182,7 +186,9 @@ class LoadQueryServiceTest {
         load2.setPickupTo(LocalDateTime.now().plusHours(1));
         load2.setDeliveryFrom(LocalDateTime.now().plusDays(1));
         load2.setDeliveryTo(LocalDateTime.now().plusDays(1).plusHours(1));
-        loadRepository.save(load2);
+        em.persist(load2);
+        em.flush();  // Flush after load2 as well
+        em.clear();
 
         // When: Query by tenant and status
         long count = loadRepository.countByTenantIdAndStatusAndDeletedAtIsNull(tenantId, LoadStatus.OPEN);
@@ -205,7 +211,7 @@ class LoadQueryServiceTest {
             {"LOAD-007", "CANCELLED", "true"}
         }) {
             Load l = new Load();
-            setField(l, "id", load[0]);
+            setField(l, "id", tenantId + "-" + load[0]);
             l.setTenantId(tenantId);
             l.setShipperId(shipperId);
             l.setStatus(LoadStatus.valueOf(load[1]));
@@ -229,8 +235,10 @@ class LoadQueryServiceTest {
             if (load[2].equals("true")) {
                 l.setDeletedAt(LocalDateTime.now());
             }
-            loadRepository.save(l);
+            em.persist(l);
         }
+        em.flush();
+        em.clear();
 
         // When: Query active stats
         var stats = service.getLoadStats("active");
@@ -256,6 +264,15 @@ class LoadQueryServiceTest {
         createLoad("LOAD-004", LoadStatus.IN_TRANSIT, false);
         createLoad("LOAD-005", LoadStatus.DELIVERED, false);
         createLoad("LOAD-006", LoadStatus.CANCELLED, true); // Soft-deleted
+        em.flush();
+
+        // Debug: Count all loads regardless of tenant
+        long allLoadsCount = (long) em.createNativeQuery("SELECT COUNT(*) FROM freightclub.loads").getSingleResult();
+        System.out.println("DEBUG testGetLoadStatsAllView: Total loads in DB = " + allLoadsCount);
+        long ourLoadsCount = (long) em.createNativeQuery("SELECT COUNT(*) FROM freightclub.loads WHERE tenant_id = ?")
+                .setParameter(1, tenantId)
+                .getSingleResult();
+        System.out.println("DEBUG testGetLoadStatsAllView: Loads with our tenant = " + ourLoadsCount);
 
         // When: Query all stats
         var stats = service.getLoadStats("all");
@@ -276,8 +293,10 @@ class LoadQueryServiceTest {
 
         // Given: Create 25 loads
         for (int i = 0; i < 25; i++) {
-            createLoad("LOAD-" + String.format("%03d", i), LoadStatus.OPEN, false);
+            createLoad("L-" + String.format("%03d", i), LoadStatus.OPEN, false);
         }
+        em.flush();
+        em.clear();
 
         // When: Query page 1 (20 per page)
         var page1 = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -306,7 +325,7 @@ class LoadQueryServiceTest {
         String tenant1 = tenantId;
         String shipper1 = TenantContextHolder.getCurrentUserId();  // Store tenant1's shipper
         TenantContextHolder.setTenantId(tenant1);
-        createLoad("LOAD-001", LoadStatus.OPEN, false);
+        createLoad("T1-001", LoadStatus.OPEN, false);
 
         // And: Create tenant2 and its shipper, then create load
         String tenant2 = "t" + System.nanoTime();
@@ -327,17 +346,17 @@ class LoadQueryServiceTest {
 
         TenantContextHolder.setTenantId(tenant2);
         TenantContextHolder.setUserId(shipper2);
-        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, true)")
+        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, false)")
                 .setParameter("tid", tenant2)
                 .getSingleResult();
-        createLoad("LOAD-002", LoadStatus.OPEN, false);
+        createLoad("T2-001", LoadStatus.OPEN, false);
 
         em.flush();
 
         // When: Query as tenant1 - switch tenant context and update session variable
         TenantContextHolder.setTenantId(tenant1);
         TenantContextHolder.setUserId(shipper1);
-        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, true)")
+        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, false)")
                 .setParameter("tid", tenant1)
                 .getSingleResult();
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -345,7 +364,7 @@ class LoadQueryServiceTest {
         // Then: Tenant1 should see only their load
         assertNotNull(results);
         assertEquals(1, results.loads().length, "Tenant1 should see only their load");
-        assertEquals("LOAD-001", results.loads()[0].id(), "Should be tenant1's load");
+        assertEquals(tenant1 + "-T1-001", results.loads()[0].id(), "Should be tenant1's load");
     }
 
     @Test
@@ -370,7 +389,7 @@ class LoadQueryServiceTest {
     void testGetShipperLoadsDataMapping() {
 
         // Given: Create load with specific data
-        createLoad("LOAD-001", LoadStatus.OPEN, false);
+        createLoad("MAP-001", LoadStatus.OPEN, false);
 
         // When: Query loads
         var results = service.getShipperLoads(0, 20, "active", "pickupFrom", "asc");
@@ -379,7 +398,7 @@ class LoadQueryServiceTest {
         assertNotNull(results);
         assertEquals(1, results.loads().length);
         var loadItem = results.loads()[0];
-        assertEquals("LOAD-001", loadItem.id());
+        assertEquals(tenantId + "-MAP-001", loadItem.id());
         assertEquals("Los Angeles", loadItem.originCity());
         assertEquals("CA", loadItem.originState());
         assertEquals("San Francisco", loadItem.destinationCity());
@@ -394,9 +413,9 @@ class LoadQueryServiceTest {
     void testGetShipperLoadsSortingAsc() {
 
         // Given: Create loads with different pickup times
-        createLoadWithPickupFrom("LOAD-001", LoadStatus.OPEN, false,
+        createLoadWithPickupFrom("S-ASC-001", LoadStatus.OPEN, false,
                 LocalDateTime.of(2026, 6, 1, 10, 0));
-        createLoadWithPickupFrom("LOAD-002", LoadStatus.OPEN, false,
+        createLoadWithPickupFrom("S-ASC-002", LoadStatus.OPEN, false,
                 LocalDateTime.of(2026, 6, 3, 10, 0));
 
         // When: Query with ascending sort
@@ -405,8 +424,8 @@ class LoadQueryServiceTest {
         // Then: Results should be sorted earliest first
         assertNotNull(results);
         assertEquals(2, results.loads().length);
-        assertEquals("LOAD-001", results.loads()[0].id());
-        assertEquals("LOAD-002", results.loads()[1].id());
+        assertEquals(tenantId + "-S-ASC-001", results.loads()[0].id());
+        assertEquals(tenantId + "-S-ASC-002", results.loads()[1].id());
     }
 
     @Test
@@ -414,9 +433,9 @@ class LoadQueryServiceTest {
     void testGetShipperLoadsSortingDesc() {
 
         // Given: Create loads with different pickup times
-        createLoadWithPickupFrom("LOAD-001", LoadStatus.OPEN, false,
+        createLoadWithPickupFrom("S-DESC-001", LoadStatus.OPEN, false,
                 LocalDateTime.of(2026, 6, 1, 10, 0));
-        createLoadWithPickupFrom("LOAD-002", LoadStatus.OPEN, false,
+        createLoadWithPickupFrom("S-DESC-002", LoadStatus.OPEN, false,
                 LocalDateTime.of(2026, 6, 3, 10, 0));
 
         // When: Query with descending sort
@@ -425,44 +444,53 @@ class LoadQueryServiceTest {
         // Then: Results should be sorted latest first
         assertNotNull(results);
         assertEquals(2, results.loads().length);
-        assertEquals("LOAD-002", results.loads()[0].id());
-        assertEquals("LOAD-001", results.loads()[1].id());
+        assertEquals(tenantId + "-S-DESC-002", results.loads()[0].id());
+        assertEquals(tenantId + "-S-DESC-001", results.loads()[1].id());
     }
 
     // Helper methods
 
     private Load createLoad(String id, LoadStatus status, boolean deleted) {
-        // Ensure session variable is set before creating load (for RLS enforcement)
-        refreshSessionVariable();
+        // Don't refresh session variable - it may be causing isolation issues
+        // refreshSessionVariable();
 
-        var load = new Load();
-        setField(load, "id", id);
-        load.setTenantId(tenantId);
-        load.setShipperId(shipperId);
-        load.setStatus(status);
-        load.setOriginCity("Los Angeles");
-        load.setOriginState("CA");
-        load.setOriginZip("90001");
-        load.setOriginAddress1("123 Main St");
-        load.setDestinationCity("San Francisco");
-        load.setDestinationState("CA");
-        load.setDestinationZip("94102");
-        load.setDestinationAddress1("456 Market St");
-        load.setCommodity("Dry Goods");
-        load.setWeightLbs(BigDecimal.valueOf(1000));
-        load.setEquipmentType(com.freightclub.domain.EquipmentType.FLATBED);
-        load.setPayRate(BigDecimal.valueOf(1500));
-        load.setPayRateType(com.freightclub.domain.PayRateType.PER_MILE);
-        load.setPickupFrom(LocalDateTime.of(2026, 6, 1, 10, 0));
-        load.setPickupTo(LocalDateTime.of(2026, 6, 1, 17, 0));
-        load.setDeliveryFrom(LocalDateTime.of(2026, 6, 2, 10, 0));
-        load.setDeliveryTo(LocalDateTime.of(2026, 6, 2, 17, 0));
+        try {
+            var load = new Load();
+            // Make ID unique by including tenant ID
+            setField(load, "id", tenantId + "-" + id);
+            load.setTenantId(tenantId);
+            load.setShipperId(shipperId);
+            load.setStatus(status);
+            load.setOriginCity("Los Angeles");
+            load.setOriginState("CA");
+            load.setOriginZip("90001");
+            load.setOriginAddress1("123 Main St");
+            load.setDestinationCity("San Francisco");
+            load.setDestinationState("CA");
+            load.setDestinationZip("94102");
+            load.setDestinationAddress1("456 Market St");
+            load.setCommodity("Dry Goods");
+            load.setWeightLbs(BigDecimal.valueOf(1000));
+            load.setEquipmentType(com.freightclub.domain.EquipmentType.FLATBED);
+            load.setPayRate(BigDecimal.valueOf(1500));
+            load.setPayRateType(com.freightclub.domain.PayRateType.PER_MILE);
+            load.setPickupFrom(LocalDateTime.of(2026, 6, 1, 10, 0));
+            load.setPickupTo(LocalDateTime.of(2026, 6, 1, 17, 0));
+            load.setDeliveryFrom(LocalDateTime.of(2026, 6, 2, 10, 0));
+            load.setDeliveryTo(LocalDateTime.of(2026, 6, 2, 17, 0));
 
-        if (deleted) {
-            load.setDeletedAt(LocalDateTime.now());
+            if (deleted) {
+                load.setDeletedAt(LocalDateTime.now());
+            }
+
+            em.persist(load);
+            System.out.println("DEBUG: Persisted load " + id + " with tenant " + tenantId);
+            return load;
+        } catch (Exception e) {
+            System.out.println("ERROR saving load " + id + ": " + e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
-
-        return loadRepository.save(load);
     }
 
     private Load createLoadWithPickupFrom(String id, LoadStatus status, boolean deleted, LocalDateTime pickupFrom) {
@@ -470,7 +498,8 @@ class LoadQueryServiceTest {
         refreshSessionVariable();
 
         var load = new Load();
-        setField(load, "id", id);
+        // Make ID unique by including tenant ID
+        setField(load, "id", tenantId + "-" + id);
         load.setTenantId(tenantId);
         load.setShipperId(shipperId);
         load.setStatus(status);

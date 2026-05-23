@@ -1,6 +1,6 @@
 # Resilience Logistics: Story Map (Global Hardening Edition)
 
-**Last Updated:** 2026-05-22 | **Scope:** 83 stories mapped | **Unmapped Requirements:** 0 | **Compliance Status:** ✅ RLS, No-Lombok, VARCHAR(36), **Test Coverage 50.6%** enforced as hard gates | **Phase 1 Governance:** ✅ COMPLETE | **Phase 2 Governance:** ✅ COMPLETE | **Phase 3 Governance:** ✅ COMPLETE (story files + sign-offs 2026-05-14) | **Backend Coverage Phase A:** ✅ COMPLETE (49.5% → 50.6%, 54 tests) | **Security & Infrastructure Hardening:** 3 P1 stories added (SEC-001, SEC-002, INF-001)
+**Last Updated:** 2026-05-23 | **Scope:** 83 stories mapped | **Unmapped Requirements:** 0 | **Compliance Status:** ✅ RLS, No-Lombok, VARCHAR(36), **Test Coverage 50.6%** enforced as hard gates | **Phase 1 Governance:** ✅ COMPLETE | **Phase 2 Governance:** ✅ COMPLETE | **Phase 3 Governance:** ✅ COMPLETE (story files + sign-offs 2026-05-14) | **Backend Coverage Phase A:** ✅ COMPLETE (49.5% → 50.6%, 54 tests) | **Security & Infrastructure Hardening:** ✅ ALL 3 P1 stories DONE (SEC-001, SEC-002, INF-001)
 
 ---
 
@@ -10,7 +10,7 @@
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
 | SEC-001 | Add @PreAuthorize to DELETE/PUT Endpoints | DONE | Cross | — | ✅ RLS, ✅ No-Lombok, ✅ 80% branch coverage (10/10 tests PASS) |
 | SEC-002 | PostgreSQL RLS Policies (5 Tables)    | DONE | Cross | — | ✅ RLS enforcement at DB level, ✅ Idempotent Flyway, ✅ 5/5 tests PASS |
-| INF-001 | Flyway Migration Idempotency (20 migrations) | DESIGN_APPROVED | Cross | — | ✅ DO block pattern, ✅ Exception handling |
+| INF-001 | Flyway Migration Idempotency (20 migrations) | DONE | Cross | — | ✅ DO block pattern, ✅ Exception handling, ✅ 20/20 migrations wrapped |
 
 ---
 
@@ -211,14 +211,14 @@
 | ✅ COMPLETED | 5 | 1, 1.1, 1.2, 2, 3 |
 | 🔄 IN_PROGRESS | 2 | 1, 3 |
 | 🟡 PARTIAL | 9 | 3, 4, 7 |
-| 📋 DESIGN_APPROVED | 1 | Cross (INF-001) |
-| 🔍 REVIEWER_APPROVED_PENDING_TESTS | 2 | Cross (SEC-001, SEC-002) |
+| 📋 DESIGN_APPROVED | 0 | — |
+| 🔍 REVIEWER_APPROVED_PENDING_TESTS | 0 | — |
 | ⚠️ MIGRATION_PENDING | 62 | 3–9 |
-| **TOTAL** | **81** | **1–9 + Cross (5 complete, 2 in progress, 9 partial, 1 design-approved, 2 reviewer-approved, 62 pending)** |
+| **TOTAL** | **81** | **1–9 + Cross (6 complete, 2 in progress, 9 partial, 0 design-approved, 0 reviewer-approved, 62 pending)** |
 
 ---
 
-**Last Synced:** 2026-05-22 20:51 UTC  
-**Compliance Status:** ✅ All 81 stories cataloged | ✅ SEC-001 DONE (10/10 tests PASS) | ✅ SEC-002 code-complete & reviewer-approved | ✅ INF-001 ready for Coder | ✅ Phase 3.8 (US-308) unblocks Phase 7b | ✅ Backend Coverage Phase A (54 tests, 50.6%)  
-**Implementation Status:** Phase 1-3 complete; Phase 7 (6 stories) partially implemented; SEC-001 COMPLETE with tests PASSING; SEC-002 code review PASSED, test execution REQUIRED; INF-001 awaiting Coder; Phase 5-6 blocked on external integrations; **Backend Coverage Remediation: Phase A DONE, Phase B-C scheduled**  
-**Critical Path:** 🟢 SEC-001 DONE | 🔴 SEC-002 local test execution + coverage gates (BLOCKER) | 🔴 INF-001 Coder phase (20 Flyway migrations) | 🟡 Backend Test Coverage Phase B-C (target 70% by 2026-05-31) | ⚠️ Phase 5 payment processor | ⚠️ Phase 6 message broker
+**Last Synced:** 2026-05-23 00:00 UTC  
+**Compliance Status:** ✅ All 81 stories cataloged | ✅ SEC-001 DONE (10/10 tests PASS) | ✅ SEC-002 DONE (5/5 tests PASS, RLS verified) | ✅ INF-001 DONE (20/20 migrations wrapped, idempotent) | ✅ Phase 3.8 (US-308) unblocks Phase 7b | ✅ Backend Coverage Phase A (54 tests, 50.6%)  
+**Implementation Status:** Phase 1-3 complete; Phase 7 (6 stories) partially implemented; SEC-001 COMPLETE with tests PASSING; SEC-002 COMPLETE with RLS enforcement verified at DB level; INF-001 COMPLETE with 20 Flyway migrations wrapped in idempotent DO blocks; Phase 5-6 blocked on external integrations; **Backend Coverage Remediation: Phase A DONE, Phase B-C scheduled**  
+**Critical Path:** 🟢 SEC-001 DONE | 🟢 SEC-002 DONE | 🟢 INF-001 DONE | 🟡 Backend Test Coverage Phase B-C (target 70% by 2026-05-31) | ⚠️ Phase 5 payment processor | ⚠️ Phase 6 message broker | 🟡 Next: US-405 (Phase 4)

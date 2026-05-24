@@ -122,11 +122,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.sendgrid</groupId>
-            <artifactId>sendgrid-java</artifactId>
-            <version>4.10.1</version>
-        </dependency>
+        <!-- SendGrid email delivery — add when SendGridEmailService replaces JavaMailSender -->
+        <!-- <dependency><groupId>com.sendgrid</groupId><artifactId>sendgrid-java</artifactId><version>4.10.1</version></dependency> -->
 
         <!-- Actuator -->
         <dependency>

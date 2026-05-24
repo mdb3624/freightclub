@@ -125,7 +125,7 @@ public class LoadAggregate {
         }
         this.podUrl = podUrl;
         this.status = LoadStatus.DELIVERED;
-        pendingEvents.add(new LoadDeliveredEvent(id, carrierId, tenantId, podUrl));
+        pendingEvents.add(new LoadDeliveredDomainEvent(id, carrierId, tenantId, podUrl));
     }
 
     // ── Analytics ─────────────────────────────────────────────────────────────

@@ -264,7 +264,7 @@ class LoadAggregateTest {
     }
 
     @Test
-    @DisplayName("completeDelivery() emits a LoadDeliveredEvent with correct data")
+    @DisplayName("completeDelivery() emits a LoadDeliveredDomainEvent with correct data")
     void shouldEmitLoadDeliveredEventOnDelivery() {
         LoadAggregate load = inTransitLoad();
         load.completeDelivery(POD_URL);
@@ -272,7 +272,7 @@ class LoadAggregateTest {
         List<DomainEvent> events = load.pullDomainEvents();
 
         assertThat(events).hasSize(1);
-        assertThat(events.get(0)).isInstanceOfSatisfying(LoadDeliveredEvent.class, e -> {
+        assertThat(events.get(0)).isInstanceOfSatisfying(LoadDeliveredDomainEvent.class, e -> {
             assertThat(e.loadId()).isEqualTo(load.getId());
             assertThat(e.carrierId()).isEqualTo(CARRIER);
             assertThat(e.tenantId()).isEqualTo(TENANT);

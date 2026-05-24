@@ -1,6 +1,6 @@
 package com.freightclub.modules.load.domain;
 
-public record LoadDeliveredEvent(
+public record LoadDeliveredDomainEvent(
         String loadId,
         CarrierId carrierId,
         String tenantId,

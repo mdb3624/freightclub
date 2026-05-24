@@ -83,11 +83,16 @@ class NotificationServiceTest {
         }
 
         @Test
-        @DisplayName("skips notification when trucker not found")
-        void truckerNotFound_noOp() {
+        @DisplayName("still notifies shipper when trucker not found")
+        void truckerNotFound_shipperStillNotified() {
+            User shipper = buildUser(SHIPPER_ID, "Bob", "Jones");
             when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.empty());
+            when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(shipper));
+            when(notificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
             service.onLoadClaimed(new LoadClaimedEvent(buildLoad(), TRUCKER_ID));
-            verify(notificationRepository, never()).save(any());
+
+            verify(notificationRepository).save(any(Notification.class));
         }
 
         @Test
@@ -97,6 +102,21 @@ class NotificationServiceTest {
             when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.empty());
             service.onLoadClaimed(new LoadClaimedEvent(buildLoad(), TRUCKER_ID));
             verify(notificationRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("does not send email when shipper has notifyEmail=false")
+        void emailSuppressedWhenNotifyEmailFalse() {
+            User trucker = buildUser(TRUCKER_ID, "Alice", "Smith");
+            User shipper = buildUser(SHIPPER_ID, "Bob", "Jones");
+            shipper.setNotifyEmail(false);
+            when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.of(trucker));
+            when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(shipper));
+            when(notificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            service.onLoadClaimed(new LoadClaimedEvent(buildLoad(), TRUCKER_ID));
+
+            verify(emailService, never()).send(any(), any(), any());
         }
     }
 

@@ -9,7 +9,10 @@ import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.event.EventListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class NotificationService {
+
+    private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
@@ -31,20 +36,27 @@ public class NotificationService {
         this.emailService = emailService;
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onLoadClaimed(LoadClaimedEvent event) {
         Load load = event.load();
         User trucker = userRepository.findById(event.truckerId()).orElse(null);
         User shipper = userRepository.findById(load.getShipperId()).orElse(null);
-        if (trucker == null || shipper == null) return;
-
-        String truckerName = trucker.getFirstName() + " " + trucker.getLastName();
+        if (shipper == null) {
+            log.warn("Shipper not found for load claimed event, loadId={}", load.getId());
+            return;
+        }
+        String truckerName = trucker != null
+                ? trucker.getFirstName() + " " + trucker.getLastName()
+                : "A trucker";
         notify(shipper, load, "LOAD_CLAIMED",
                 truckerName + " claimed your load (" + route(load) + ")",
                 "[FreightClub] Your load was claimed");
+        if (trucker == null) {
+            log.warn("Trucker not found for load claimed event, truckerId={}", event.truckerId());
+        }
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onLoadPickedUp(LoadPickedUpEvent event) {
         Load load = event.load();
         User shipper = userRepository.findById(load.getShipperId()).orElse(null);
@@ -55,7 +67,7 @@ public class NotificationService {
                 "[FreightClub] Load picked up");
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onLoadDelivered(LoadDeliveredEvent event) {
         Load load = event.load();
         User shipper = userRepository.findById(load.getShipperId()).orElse(null);
@@ -72,7 +84,7 @@ public class NotificationService {
         }
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onLoadCancelled(LoadCancelledEvent event) {
         Load load = event.load();
         User trucker = userRepository.findById(event.truckerId()).orElse(null);

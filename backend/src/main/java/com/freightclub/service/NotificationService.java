@@ -27,13 +27,16 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final SmsNotificationService smsNotificationService;
 
     public NotificationService(NotificationRepository notificationRepository,
                                UserRepository userRepository,
-                               EmailService emailService) {
+                               EmailService emailService,
+                               SmsNotificationService smsNotificationService) {
         this.notificationRepository = notificationRepository;
         this.userRepository = userRepository;
         this.emailService = emailService;
+        this.smsNotificationService = smsNotificationService;
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -142,6 +145,13 @@ public class NotificationService {
         }
         if (recipient.isNotifyEmail()) {
             emailService.send(recipient.getEmail(), emailSubject, message);
+        }
+        if (recipient.isNotifySms() && recipient.getPhone() != null) {
+            String smsBody = ("FreightClub: " + message);
+            if (smsBody.length() > 160) {
+                smsBody = smsBody.substring(0, 157) + "...";
+            }
+            smsNotificationService.send(recipient.getPhone(), smsBody);
         }
     }
 

@@ -17,14 +17,19 @@ public class SmsNotificationService {
     private final boolean enabled;
 
     public SmsNotificationService(
-        @Value("${twilio.account-sid}") String accountSid,
-        @Value("${twilio.auth-token}") String authToken,
-        @Value("${twilio.from-number}") String fromNumber,
+        @Value("${twilio.account-sid:}") String accountSid,
+        @Value("${twilio.auth-token:}") String authToken,
+        @Value("${twilio.from-number:}") String fromNumber,
         @Value("${twilio.enabled:false}") boolean enabled
     ) {
         this.fromNumber = fromNumber;
         this.enabled = enabled;
         if (enabled) {
+            if (accountSid.isBlank() || authToken.isBlank() || fromNumber.isBlank()) {
+                throw new IllegalStateException(
+                    "Twilio is enabled but TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, or TWILIO_FROM_NUMBER is not set"
+                );
+            }
             Twilio.init(accountSid, authToken);
         }
     }

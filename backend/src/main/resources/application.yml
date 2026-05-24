@@ -28,7 +28,4 @@ app:
     refresh-token-expiry-ms: ${JWT_REFRESH_EXPIRY_MS:604800000}
 
 twilio:
-  account-sid: ${TWILIO_ACCOUNT_SID:test-sid}
-  auth-token: ${TWILIO_AUTH_TOKEN:test-token}
-  from-number: ${TWILIO_FROM_NUMBER:+15550000000}
   enabled: ${TWILIO_ENABLED:false}

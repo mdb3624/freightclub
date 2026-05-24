@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -123,6 +124,45 @@ class DocumentServiceTest {
             assertThatThrownBy(() -> documentService.uploadBolPhoto(LOAD_ID, TRUCKER_ID, file))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("required");
+        }
+
+        @Test
+        @DisplayName("accepts file at exactly 25 MB")
+        void shouldAcceptFileAtExactSizeLimit() {
+            Load load = buildLoad(LoadStatus.CLAIMED);
+            when(loadRepository.findByIdAndDeletedAtIsNull(LOAD_ID)).thenReturn(Optional.of(load));
+            when(storageService.store(any(), any(), any(), any(), any(), any()))
+                    .thenReturn("storage/photo.jpg");
+            when(documentRepository.save(any())).thenReturn(new LoadDocument());
+
+            byte[] exactLimit = new byte[25 * 1024 * 1024];
+            MockMultipartFile file = new MockMultipartFile("file", "photo.jpg", "image/jpeg", exactLimit);
+            assertThatNoException().isThrownBy(() -> documentService.uploadBolPhoto(LOAD_ID, TRUCKER_ID, file));
+        }
+
+        @Test
+        @DisplayName("rejects file one byte over 25 MB")
+        void shouldRejectFileOneByteOverSizeLimit() {
+            Load load = buildLoad(LoadStatus.CLAIMED);
+            when(loadRepository.findByIdAndDeletedAtIsNull(LOAD_ID)).thenReturn(Optional.of(load));
+
+            byte[] overLimit = new byte[25 * 1024 * 1024 + 1];
+            MockMultipartFile file = new MockMultipartFile("file", "photo.jpg", "image/jpeg", overLimit);
+            assertThatThrownBy(() -> documentService.uploadBolPhoto(LOAD_ID, TRUCKER_ID, file))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("accepts WebP file")
+        void shouldAcceptWebpFile() {
+            Load load = buildLoad(LoadStatus.CLAIMED);
+            when(loadRepository.findByIdAndDeletedAtIsNull(LOAD_ID)).thenReturn(Optional.of(load));
+            when(storageService.store(any(), any(), any(), any(), any(), any()))
+                    .thenReturn("storage/delivery.webp");
+            when(documentRepository.save(any())).thenReturn(new LoadDocument());
+
+            MockMultipartFile file = new MockMultipartFile("file", "delivery.webp", "image/webp", new byte[1000]);
+            assertThatNoException().isThrownBy(() -> documentService.uploadBolPhoto(LOAD_ID, TRUCKER_ID, file));
         }
     }
 

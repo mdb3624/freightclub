@@ -29,3 +29,9 @@ app:
 
 twilio:
   enabled: ${TWILIO_ENABLED:false}
+
+stripe:
+  secret-key: ${STRIPE_SECRET_KEY:}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+  platform-fee-percent: ${STRIPE_PLATFORM_FEE_PERCENT:1.75}
+  enabled: ${STRIPE_ENABLED:false}

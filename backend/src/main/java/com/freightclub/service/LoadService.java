@@ -15,6 +15,7 @@ import com.freightclub.dto.LoadResponse;
 import com.freightclub.dto.LoadSummaryResponse;
 import com.freightclub.dto.UpdateLoadRequest;
 import com.freightclub.modules.carrier.application.CarrierCostProfileService;
+import com.freightclub.modules.payment.application.PaymentService;
 import com.freightclub.modules.shipper.application.ShipperProfileService;
 import com.freightclub.repository.ClaimRepository;
 import com.freightclub.repository.LoadEventRepository;
@@ -58,13 +59,15 @@ public class LoadService {
     private final ApplicationEventPublisher eventPublisher;
     private final CarrierCostProfileService carrierCostProfileService;
     private final ShipperProfileService shipperProfileService;
+    private final PaymentService paymentService;
 
     public LoadService(LoadRepository loadRepository, UserRepository userRepository,
                        DocumentService documentService, RatingService ratingService,
                        ClaimRepository claimRepository, LoadEventRepository loadEventRepository,
                        ApplicationEventPublisher eventPublisher,
                        CarrierCostProfileService carrierCostProfileService,
-                       ShipperProfileService shipperProfileService) {
+                       ShipperProfileService shipperProfileService,
+                       PaymentService paymentService) {
         this.loadRepository = loadRepository;
         this.userRepository = userRepository;
         this.documentService = documentService;
@@ -74,6 +77,7 @@ public class LoadService {
         this.eventPublisher = eventPublisher;
         this.carrierCostProfileService = carrierCostProfileService;
         this.shipperProfileService = shipperProfileService;
+        this.paymentService = paymentService;
     }
 
     public LoadResponse createDraft(CreateLoadRequest request, String shipperId) {
@@ -267,6 +271,26 @@ public class LoadService {
         Load saved = loadRepository.save(load);
         writeEvent(saved, "DELIVERED", truckerId);
         eventPublisher.publishEvent(new LoadDeliveredEvent(saved, truckerId));
+
+        // Auto-create a PENDING invoice for payment collection
+        if (saved.getPayRate() != null && saved.getTruckerId() != null && saved.getShipperId() != null) {
+            long loadAmountCents = saved.getPayRate()
+                    .multiply(java.math.BigDecimal.valueOf(100))
+                    .longValue();
+            try {
+                paymentService.createInvoice(
+                        saved.getTenantId(),
+                        saved.getId(),
+                        saved.getTruckerId(),
+                        saved.getShipperId(),
+                        loadAmountCents);
+            } catch (Exception e) {
+                // Log but do not fail delivery — invoice can be created retroactively
+                org.slf4j.LoggerFactory.getLogger(LoadService.class)
+                        .error("Failed to auto-create invoice for load {}: {}", saved.getId(), e.getMessage(), e);
+            }
+        }
+
         return buildResponse(saved);
     }
 

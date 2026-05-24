@@ -233,6 +233,32 @@ class RatingServiceTest {
     }
 
     // -------------------------------------------------------------------------
+    // Score validation
+    // -------------------------------------------------------------------------
+
+    @Nested
+    class ScoreValidation {
+
+        @Test
+        void shouldRejectScoreOutOfRange_tooHigh() {
+            assertThatThrownBy(() ->
+                    ratingService.rateTrucker("load-1", "shipper-1",
+                            new CreateRatingRequest(6, null)))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("between 1 and 5");
+        }
+
+        @Test
+        void shouldRejectScoreOutOfRange_tooLow() {
+            assertThatThrownBy(() ->
+                    ratingService.rateTrucker("load-1", "shipper-1",
+                            new CreateRatingRequest(0, null)))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("between 1 and 5");
+        }
+    }
+
+    // -------------------------------------------------------------------------
     // Summaries
     // -------------------------------------------------------------------------
 

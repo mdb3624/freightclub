@@ -53,8 +53,15 @@ public class RatingService {
 
     private record RatingContext(String reviewerId, String reviewedId, UserRole role, CreateRatingRequest req) {}
 
+    private static void validateScore(int stars) {
+        if (stars < 1 || stars > 5) {
+            throw new IllegalArgumentException("Rating must be between 1 and 5");
+        }
+    }
+
     @CacheEvict(value = {"ratingSummary", "ratingList"}, allEntries = true)
     public RatingResponse rateTrucker(String loadId, String shipperId, CreateRatingRequest req) {
+        validateScore(req.stars());
         Load load = requireRatableLoad(loadId, TenantContextHolder.getTenantId());
         if (!shipperId.equals(load.getShipperId())) {
             throw new LoadNotFoundException(loadId);
@@ -70,6 +77,7 @@ public class RatingService {
 
     @CacheEvict(value = {"ratingSummary", "ratingList"}, allEntries = true)
     public RatingResponse rateShipper(String loadId, String truckerId, CreateRatingRequest req) {
+        validateScore(req.stars());
         Load load = requireRatableLoad(loadId, TenantContextHolder.getTenantId());
         if (!truckerId.equals(load.getTruckerId())) {
             throw new LoadNotFoundException(loadId);

@@ -6,27 +6,27 @@ gantt
     dateFormat YYYY-MM-DD
     
     section Core Foundation
-    Phase 1: Core Load Lifecycle :phase1, 2026-01-15, 60d
-    Phase 1.1: UX Hardening :phase1_1, 2026-03-01, 14d
-    Phase 1.2: Security & Stability :phase1_2, 2026-03-15, 30d
+    Phase 1 (COMPLETED) :done, p1, 2026-01-15, 60d
+    Phase 1.1 UX Hardening :done, p1a, after p1, 14d
+    Phase 1.2 Security Hardening :done, p1b, after p1a, 30d
     
     section Early Features
-    Phase 2: Notifications & EIA :phase2, 2026-03-20, 30d
-    Phase 3: Document Management :phase3, 2026-04-01, 45d
-    Phase 4: Ratings & Reviews :crit, phase4, 2026-04-26, 30d
+    Phase 2 (COMPLETED) :done, p2, after p1, 30d
+    Phase 3 (COMPLETED) :done, p3, after p2, 45d
+    Phase 4 (COMPLETED) :crit, done, p4, after p3, 30d
     
     section Payments & Integration
-    Phase 5: Payments & Invoicing :active, phase5, 2026-05-20, 60d
-    Phase 6: In-App Messaging :phase6, 2026-07-01, 45d
+    Phase 5 (IN PROGRESS) :active, p5, after p4, 60d
+    Phase 6 (PENDING) :crit, p6, after p5, 45d
     
     section Carrier Management
-    Phase 7: Carrier Management :phase7, 2026-06-15, 90d
-    Phase 7A: DOT Compliance :phase7a, 2026-08-15, 60d
-    Phase 7b: Financial Intelligence :phase7b, 2026-09-01, 60d
+    Phase 7 (PARTIAL) :p7, after p3, 90d
+    Phase 7A DOT Compliance :crit, p7a, after p7, 60d
+    Phase 7b Financial Intelligence :crit, p7b, after p7, 60d
     
     section Advanced Features
-    Phase 8: Bidding & Matching :phase8, 2026-10-01, 45d
-    Phase 9: Admin & Intelligence :phase9, 2026-11-01, 60d
+    Phase 8 Bidding & Matching :crit, p8, after p5, 45d
+    Phase 9 Admin & Intelligence :crit, p9, after p8, 60d
 ```
 
 ## Legend

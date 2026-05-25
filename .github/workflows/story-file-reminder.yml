@@ -1,0 +1,37 @@
+name: Story File Birth Certificate Check
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches: [main]
+
+jobs:
+  check-story-files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for story files
+        run: |
+          # Extract all US-XXX references from PR title and description
+          STORY_IDS=$(echo "${{ github.event.pull_request.title }}" "${{ github.event.pull_request.body }}" | grep -oE 'US-[0-9]+' | sort -u)
+
+          if [ -z "$STORY_IDS" ]; then
+            echo "No story IDs found in PR title or description. Skipping check."
+            exit 0
+          fi
+
+          MISSING_FILES=""
+          for STORY_ID in $STORY_IDS; do
+            STORY_FILE="docs/business/stories/${STORY_ID}.md"
+            if [ ! -f "$STORY_FILE" ]; then
+              MISSING_FILES="${MISSING_FILES}\n- \`${STORY_FILE}\` (referenced: ${STORY_ID})"
+            fi
+          done
+
+          if [ -n "$MISSING_FILES" ]; then
+            echo "::warning::Story files missing for referenced user stories. Please create within 24h of merge:${MISSING_FILES}"
+            echo "Use \`.claude/scripts/new-story-template.sh US-XXX\` to generate a template."
+          fi

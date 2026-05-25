@@ -134,9 +134,9 @@
 
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
-| US-730 | Per-Load Earnings Log (Miles, Fuel, Profit) | MIGRATION_PENDING | 7b | US-305, US-502 | ✅ NFR-504 (1h TTL), ⚠️ Depends Phase 3.5 |
+| US-730 | Per-Load Earnings Log (Miles, Fuel, Profit) | MIGRATION_PENDING | 7b | US-305, US-502 | ✅ NFR-504 (1h TTL), ✅ US-305 ready (POD UI complete) |
 | US-731 | Weekly/Monthly P&L Report            | MIGRATION_PENDING | 7b | US-730 | ✅ NFR-504 (6h TTL) |
-| US-732 | **IFTA Mileage Tracking by State**   | **MIGRATION_PENDING** | **7b** | **US-730** | **⚠️ BLOCKER: Phase 3.5 POD UI** |
+| US-732 | **IFTA Mileage Tracking by State**   | **MIGRATION_PENDING** | **7b** | **US-730** | **✅ US-305 ready (POD signature data available)** |
 | US-733 | Deadhead Mileage Estimation         | MIGRATION_PENDING | 7b | US-730 | ✅ NFR-504 (1h TTL) |
 | US-734 | Deadhead Cost in Profitability      | MIGRATION_PENDING | 7b | US-733 | ✅ NFR-504 (1h TTL) |
 | US-735 | Fuel Surcharge Auto-Calculation     | MIGRATION_PENDING | 7b | US-730, US-203 | ✅ NFR-504 (30m TTL) |
@@ -197,8 +197,8 @@
 | Blocker | Impact | Status |
 |---------|--------|--------|
 | **Backend Test Coverage ≥70%** | Blocks all Phase 4+ features from shipping | 🟡 IN_PROGRESS — Phase A: 50.6% (+1.1%), Phase B-C scheduled 2026-05-26 |
-| **Phase 3.5 POD UI** | Blocks US-732 (IFTA mileage tracking) | ✅ RESOLVED — US-305 completed |
-| **Phase 3.8 Document audit log** | Blocks US-736 (tax compliance reporting) | ✅ **RESOLVED** — US-308 COMPLETED (2026-05-25) |
+| **US-305 (POD Upload UI)** | Blocks US-730, US-732 (earnings/mileage tracking) | ✅ RESOLVED — US-305 COMPLETED |
+| **US-308 (Document Audit Log)** | Blocks US-736 (tax compliance reporting) | ✅ **RESOLVED** — US-308 COMPLETED (2026-05-25) |
 | **Phase 5 payment processor** | Blocks all 7 Phase 5 stories (US-501–507) | ⚠️ BLOCKER — No Stripe/ACH integration |
 | **Phase 6 message broker** | Blocks all 4 Phase 6 stories (US-601–604) | ⚠️ BLOCKER — No WebSocket/message infra |
 
@@ -219,6 +219,6 @@
 ---
 
 **Last Synced:** 2026-05-23 00:00 UTC  
-**Compliance Status:** ✅ All 81 stories cataloged | ✅ SEC-001 DONE (10/10 tests PASS) | ✅ SEC-002 DONE (5/5 tests PASS, RLS verified) | ✅ INF-001 DONE (20/20 migrations wrapped, idempotent) | ✅ Phase 3.8 (US-308) unblocks Phase 7b | ✅ Backend Coverage Phase A (54 tests, 50.6%)  
+**Compliance Status:** ✅ All 81 stories cataloged | ✅ SEC-001 DONE (10/10 tests PASS) | ✅ SEC-002 DONE (5/5 tests PASS, RLS verified) | ✅ INF-001 DONE (20/20 migrations wrapped, idempotent) | ✅ US-308 (Audit Log) unblocks Phase 7b | ✅ Backend Coverage Phase A (54 tests, 50.6%)  
 **Implementation Status:** Phase 1-3 complete; Phase 7 (6 stories) partially implemented; SEC-001 COMPLETE with tests PASSING; SEC-002 COMPLETE with RLS enforcement verified at DB level; INF-001 COMPLETE with 20 Flyway migrations wrapped in idempotent DO blocks; Phase 5-6 blocked on external integrations; **Backend Coverage Remediation: Phase A DONE, Phase B-C scheduled**  
 **Critical Path:** 🟢 SEC-001 DONE | 🟢 SEC-002 DONE | 🟢 INF-001 DONE | 🟡 Backend Test Coverage Phase B-C (target 70% by 2026-05-31) | ⚠️ Phase 5 payment processor | ⚠️ Phase 6 message broker | 🟡 Next: US-405 (Phase 4)

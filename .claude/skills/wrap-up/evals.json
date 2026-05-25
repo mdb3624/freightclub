@@ -1,0 +1,33 @@
+{
+  "skill_name": "wrap-up",
+  "evals": [
+    {
+      "id": 1,
+      "name": "friction-detection-repeated-errors",
+      "prompt": "Run /wrap-up to analyze a session where the same RLS test failure occurred 3 times, requiring the user to correct Claude twice about reading files before writing, and where mvn test was run 4 times manually.",
+      "expected_output": "Skill identifies: (1) RLS + bulk operations friction, (2) file read-before-write pattern, (3) repeated mvn test as automation candidate. Updates .claude/rules/java-patterns.md with RLS guidance, .claude/learnings.md with tech debt entry, CLAUDE.md with file handling rule.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "role-based-categorization",
+      "prompt": "Run /wrap-up to analyze a session with: (1) Architect learning about schema migration idempotency, (2) Coder discovering RLS charset issues, (3) Reviewer finding missing coverage, (4) Librarian needing to update Story Map. Skill should categorize each to the correct file/role.",
+      "expected_output": "Skill creates/updates: .claude/rules/architecture-decisions.md (migration pattern), .claude/rules/java-patterns.md (RLS charset fix), .claude/rules/reviewer-checklist.md (coverage gate), .claude/learnings.md (story map traceability). Each file reflects the role that owns it.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "batch-commit-with-dirty-working-tree",
+      "prompt": "Run /wrap-up in a session where there are unrelated uncommitted changes (e.g., a work-in-progress feature branch with modified .env). Skill should batch-commit wrap-up changes atomically without aborting.",
+      "expected_output": "Skill reads existing files, prepares updates, batches all wrap-up changes into a single commit with message 'chore: update insights and rules via /wrap-up'. Does NOT abort due to dirty working tree. Commits successfully even if unrelated changes exist.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "no-hallucination-checkpoint",
+      "prompt": "Run /wrap-up on a short session (2-3 exchanges) where the user asked about a past learning ('Do we already automate X?'). Skill should NOT add findings from prior sessions—only from this conversation.",
+      "expected_output": "Skill extracts only findings from the current conversation. Does NOT add context about prior automation patterns or prior decisions. Output explicitly states 'Only [N] findings from this session—no prior context included.'",
+      "files": []
+    }
+  ]
+}

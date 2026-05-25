@@ -13,6 +13,7 @@ import com.freightclub.repository.LoadRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
 import com.freightclub.storage.LocalStorageService;
+import com.freightclub.modules.document.application.DocumentAuditService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,17 +40,20 @@ public class DocumentService {
     private final UserRepository userRepository;
     private final LocalStorageService storageService;
     private final BolGeneratorService bolGeneratorService;
+    private final DocumentAuditService auditService;
 
     public DocumentService(DocumentRepository documentRepository,
                            LoadRepository loadRepository,
                            UserRepository userRepository,
                            LocalStorageService storageService,
-                           BolGeneratorService bolGeneratorService) {
+                           BolGeneratorService bolGeneratorService,
+                           DocumentAuditService auditService) {
         this.documentRepository = documentRepository;
         this.loadRepository = loadRepository;
         this.userRepository = userRepository;
         this.storageService = storageService;
         this.bolGeneratorService = bolGeneratorService;
+        this.auditService = auditService;
     }
 
     @CacheEvict(value = "documents", allEntries = true)
@@ -71,20 +76,34 @@ public class DocumentService {
         doc.setContentType("application/pdf");
         doc.setFileSizeBytes(pdf.length);
         documentRepository.save(doc);
+
+        // AC-308-1: Log auto-generated BOL upload
+        auditService.logEvent(doc.getId(), load.getShipperId(), "UPLOADED",
+                Map.of("fileName", "bill-of-lading.pdf", "type", "BOL_GENERATED", "size", pdf.length));
     }
 
     @CacheEvict(value = "documents", allEntries = true)
     public DocumentResponse uploadBolPhoto(String loadId, String truckerId, MultipartFile file) {
         Load load = requireAssignedLoad(loadId, truckerId);
         LoadDocumentPolicy.validateUpload(DocumentType.BOL_PHOTO, load.getStatus());
-        return storePhoto(load, truckerId, DocumentType.BOL_PHOTO, file);
+        DocumentResponse response = storePhoto(load, truckerId, DocumentType.BOL_PHOTO, file);
+
+        // AC-308-1: Log BOL photo upload
+        auditService.logEvent(response.id(), truckerId, "UPLOADED",
+                Map.of("fileName", response.originalFilename(), "type", "BOL_PHOTO", "size", response.fileSizeBytes()));
+        return response;
     }
 
     @CacheEvict(value = "documents", allEntries = true)
     public DocumentResponse uploadPodPhoto(String loadId, String truckerId, MultipartFile file) {
         Load load = requireAssignedLoad(loadId, truckerId);
         LoadDocumentPolicy.validateUpload(DocumentType.POD_PHOTO, load.getStatus());
-        return storePhoto(load, truckerId, DocumentType.POD_PHOTO, file);
+        DocumentResponse response = storePhoto(load, truckerId, DocumentType.POD_PHOTO, file);
+
+        // AC-308-1: Log POD photo upload
+        auditService.logEvent(response.id(), truckerId, "UPLOADED",
+                Map.of("fileName", response.originalFilename(), "type", "POD_PHOTO", "size", response.fileSizeBytes()));
+        return response;
     }
 
     @CacheEvict(value = "documents", allEntries = true)
@@ -121,6 +140,10 @@ public class DocumentService {
             doc.setFileSizeBytes(description.getBytes().length);
         }
         documentRepository.save(doc);
+
+        // AC-308-1: Log issue report upload
+        auditService.logEvent(doc.getId(), truckerId, "UPLOADED",
+                Map.of("fileName", doc.getOriginalFilename(), "type", "ISSUE_PHOTO", "size", doc.getFileSizeBytes()));
     }
 
     @Transactional(readOnly = true)
@@ -138,6 +161,11 @@ public class DocumentService {
         LoadDocument doc = documentRepository.findById(documentId)
                 .orElseThrow(() -> new DocumentNotFoundException(documentId));
         requireAccessToLoad(doc.getLoadId(), requesterId);
+
+        // AC-308-2: Log document download/view
+        auditService.logEvent(documentId, requesterId, "DOWNLOADED",
+                Map.of("fileName", doc.getOriginalFilename(), "type", doc.getDocumentType().toString()));
+
         if (doc.getStorageKey().isEmpty()) {
             String text = doc.getNote() != null ? doc.getNote() : "";
             return new DocumentContent(text.getBytes(), "text/plain", doc.getOriginalFilename());

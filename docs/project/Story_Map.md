@@ -1,6 +1,6 @@
 # Resilience Logistics: Story Map (Global Hardening Edition)
 
-**Last Updated:** 2026-05-25 | **Scope:** 83 stories mapped | **Unmapped Requirements:** 0 | **Compliance Status:** ✅ RLS, No-Lombok, VARCHAR(36), **Test Coverage 50.6%** enforced as hard gates | **Phase 1 Governance:** ✅ COMPLETE | **Phase 2 Governance:** ✅ COMPLETE | **Phase 3 Governance:** ✅ COMPLETE (story files + sign-offs 2026-05-14) | **Phase 3 US-308:** ✅ COMPLETED (audit logging + integration, 2026-05-25) | **Backend Coverage Phase A:** ✅ COMPLETE (49.5% → 50.6%, 54 tests) | **Security & Infrastructure Hardening:** ✅ ALL 3 P1 stories DONE (SEC-001, SEC-002, INF-001)
+**Last Updated:** 2026-05-25 | **Scope:** 83 stories mapped | **Unmapped Requirements:** 0 | **Compliance Status:** ✅ RLS, No-Lombok, VARCHAR(36), **Test Coverage 50.6%** enforced as hard gates | **Phase 1 Governance:** ✅ COMPLETE | **Phase 2 Governance:** ✅ COMPLETE | **Phase 3 Governance:** ✅ COMPLETE (story files + sign-offs 2026-05-14) | **Phase 3 US-308:** ✅ COMPLETED (audit logging + integration, 2026-05-25) | **Phase 4 Governance:** ✅ COMPLETE (story files + status synced 2026-05-25) | **Backend Coverage Phase A:** ✅ COMPLETE (49.5% → 50.6%, 54 tests) | **Security & Infrastructure Hardening:** ✅ ALL 3 P1 stories DONE (SEC-001, SEC-002, INF-001)
 
 ---
 
@@ -64,10 +64,10 @@
 
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
-| US-401 | Bidirectional Rating System            | PARTIAL     | 4     | US-103 | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (1h TTL) |
-| US-402 | Shipper Reputation Profile & Aggregation | PARTIAL | 4 | US-401 | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (2h TTL) |
-| US-403 | Rating History & Timeline             | PARTIAL     | 4     | US-401 | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (30m TTL) |
-| US-405 | **Shipper Reputation Badge on Load Board** | **MIGRATION_PENDING** | **4** | **US-402** | **NFR-504 (2h TTL)** |
+| US-401 | Bidirectional Rating System            | ✅ COMPLETED | 4     | US-103 | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (1h TTL), Commit 7663b11 |
+| US-402 | Shipper Reputation Profile & Aggregation | ✅ COMPLETED | 4 | US-401 | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (2h TTL), Commit 7663b11 |
+| US-403 | Rating History & Timeline             | ✅ COMPLETED | 4     | US-401 | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (30m TTL), Commit 7663b11 |
+| US-405 | **Shipper Reputation Badge on Load Board** | **✅ COMPLETED** | **4** | **US-402** | **✅ NFR-504 (2h TTL), Commit 7663b11** |
 
 ---
 
@@ -76,7 +76,7 @@
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
 | US-501 | **Auto Invoice Generation**            | **MIGRATION_PENDING** | **5** | **US-402** | **⚠️ BLOCKER: Payment processor** |
-| US-502 | **Payment Processing (Stripe/ACH)**   | **MIGRATION_PENDING** | **5** | **US-501** | **⚠️ BLOCKER: Payment processor** |
+| US-502 | **Payment Processing (Stripe/ACH)**   | **IN_PROGRESS** | **5** | **US-501** | **✅ Stripe Connect (Commit 7ed7cf7), platform fee + trucker transfer** |
 | US-503 | **Bank Account Setup & Verification** | **MIGRATION_PENDING** | **5** | **US-502** | **⚠️ BLOCKER: Payment processor** |
 | US-504 | **Payment History & Ledger**          | **MIGRATION_PENDING** | **5** | **US-502** | **NFR-504 (30m TTL)** |
 | US-505 | **Receipt Generation & Export**       | **MIGRATION_PENDING** | **5** | **US-502** | **NFR-504 (24h TTL)** |

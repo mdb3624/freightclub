@@ -131,11 +131,13 @@ class ShipperPreferredCarrierServiceTest {
     when(repository.countByShipperAndTenant(tenantA, TEST_SHIPPER_ID)).thenReturn(3L);
     when(repository.countByShipperAndTenant(tenantB, TEST_SHIPPER_ID)).thenReturn(1L);
 
+    TenantContextHolder.setTenantId(tenantA);
     long countA = service.getPreferredCarrierCount(TEST_SHIPPER_ID);
+
+    TenantContextHolder.setTenantId(tenantB);
     long countB = service.getPreferredCarrierCount(TEST_SHIPPER_ID);
 
-    // In real scenario, TenantContextHolder would switch between tenants
-    // This test verifies the repository is called with correct tenant IDs
-    verify(repository, atLeast(2)).countByShipperAndTenant(anyString(), eq(TEST_SHIPPER_ID));
+    assertEquals(3L, countA);
+    assertEquals(1L, countB);
   }
 }

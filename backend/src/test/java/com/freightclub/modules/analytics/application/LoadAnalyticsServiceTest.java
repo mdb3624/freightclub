@@ -71,11 +71,9 @@ class LoadAnalyticsServiceTest {
 
   @Test
   void testGetAdminAnalytics_ReturnsMetrics() {
-    OffsetDateTime startDate = OffsetDateTime.now(ZoneOffset.UTC).minusDays(7);
-
-    when(repository.countPostedSince(TEST_TENANT_ID, startDate)).thenReturn(100L);
-    when(repository.countClaimedSince(TEST_TENANT_ID, startDate)).thenReturn(50L);
-    when(repository.avgClaimTimeSecondsSince(TEST_TENANT_ID, startDate))
+    when(repository.countPostedSince(eq(TEST_TENANT_ID), any(OffsetDateTime.class))).thenReturn(100L);
+    when(repository.countClaimedSince(eq(TEST_TENANT_ID), any(OffsetDateTime.class))).thenReturn(50L);
+    when(repository.avgClaimTimeSecondsSince(eq(TEST_TENANT_ID), any(OffsetDateTime.class)))
         .thenReturn(7200.0); // 2 hours
 
     LoadAnalyticsService.AdminAnalyticsResponse response =
@@ -90,11 +88,9 @@ class LoadAnalyticsServiceTest {
 
   @Test
   void testGetAdminAnalytics_HandlesZeroLoads() {
-    OffsetDateTime startDate = OffsetDateTime.now(ZoneOffset.UTC).minusDays(7);
-
-    when(repository.countPostedSince(TEST_TENANT_ID, startDate)).thenReturn(0L);
-    when(repository.countClaimedSince(TEST_TENANT_ID, startDate)).thenReturn(0L);
-    when(repository.avgClaimTimeSecondsSince(TEST_TENANT_ID, startDate))
+    when(repository.countPostedSince(eq(TEST_TENANT_ID), any(OffsetDateTime.class))).thenReturn(0L);
+    when(repository.countClaimedSince(eq(TEST_TENANT_ID), any(OffsetDateTime.class))).thenReturn(0L);
+    when(repository.avgClaimTimeSecondsSince(eq(TEST_TENANT_ID), any(OffsetDateTime.class)))
         .thenReturn(0.0);
 
     LoadAnalyticsService.AdminAnalyticsResponse response =
@@ -122,10 +118,14 @@ class LoadAnalyticsServiceTest {
   void testMultiTenantIsolation_FiltersCorrectly() {
     String tenantA = "tenant-a";
     String tenantB = "tenant-b";
-    OffsetDateTime startDate = OffsetDateTime.now(ZoneOffset.UTC).minusDays(7);
 
-    when(repository.countPostedSince(tenantA, startDate)).thenReturn(100L);
-    when(repository.countPostedSince(tenantB, startDate)).thenReturn(50L);
+    when(repository.countPostedSince(eq(tenantA), any(OffsetDateTime.class))).thenReturn(100L);
+    when(repository.countClaimedSince(eq(tenantA), any(OffsetDateTime.class))).thenReturn(50L);
+    when(repository.avgClaimTimeSecondsSince(eq(tenantA), any(OffsetDateTime.class))).thenReturn(7200.0);
+
+    when(repository.countPostedSince(eq(tenantB), any(OffsetDateTime.class))).thenReturn(50L);
+    when(repository.countClaimedSince(eq(tenantB), any(OffsetDateTime.class))).thenReturn(25L);
+    when(repository.avgClaimTimeSecondsSince(eq(tenantB), any(OffsetDateTime.class))).thenReturn(3600.0);
 
     LoadAnalyticsService.AdminAnalyticsResponse responseA =
         service.getAdminAnalytics(tenantA, 7);

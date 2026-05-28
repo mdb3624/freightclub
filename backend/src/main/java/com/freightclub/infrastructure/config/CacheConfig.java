@@ -28,6 +28,7 @@ public class CacheConfig {
         "carrierCostProfile",  // US-702/730: Cost profile calculations (1h TTL)
         "documents",           // DocumentService: BOL/document lookup by loadId+tenant
         "carrierProfiles",     // CarrierProfileService: public profile lookup (1h TTL)
+        "shipper-profiles",    // ShipperProfileService: shipper profile caching
         // Phase 7: Financial Intelligence & Analytics
         "assignedLoads",       // US-708: Direct load assignment cache (5m TTL)
         "blockedCarriers",     // US-709: Blocked carrier list (1h TTL)
@@ -36,7 +37,14 @@ public class CacheConfig {
         "carrierPerformance",  // US-705: Carrier performance metrics (1-4h TTL)
         "loadFinancial",       // US-706: Load financial tracking (1h TTL)
         "loadViews",           // US-711: Load view tracking (5m TTL)
-        "carrierProfileViews"  // US-711: Carrier profile view tracking (5m TTL)
+        "carrierProfileViews", // US-711: Carrier profile view tracking (5m TTL)
+        "loadViewCounts",      // LoadViewTrackingService: load view count cache
+        "loadInterest",        // LoadViewTrackingService: unique carriers viewed load cache
+        "revenueAnalytics",    // LoadFinancialService: revenue summary analysis (1h TTL)
+        "financialForecast",   // LoadFinancialService: financial forecast (1h TTL)
+        "analytics",           // AnalyticsAggregationJob: general analytics cache
+        "laneAnalytics",       // AnalyticsAggregationJob: lane-specific analytics
+        "demandForecast"       // AnalyticsAggregationJob: demand forecasting (4h TTL)
     );
   }
 }

@@ -62,22 +62,20 @@ class LoadFinancialServiceTest {
     assertEquals(TEST_SHIPPER_ID, result.getShipperId());
     assertEquals(TEST_CARRIER_ID, result.getCarrierId());
     // 2% commission
-    assertEquals(BigDecimal.valueOf(3.90), result.getCommission());
+    assertEquals(0, BigDecimal.valueOf(3.90).compareTo(result.getCommission()));
     // Net revenue = total - commission
-    assertEquals(BigDecimal.valueOf(191.10), result.getNetRevenue());
+    assertEquals(0, BigDecimal.valueOf(191.10).compareTo(result.getNetRevenue()));
   }
 
   @Test
   void testGetRevenueSummary_ComputesMetrics() {
-    OffsetDateTime startDate = OffsetDateTime.now(ZoneOffset.UTC).minusDays(30);
-
-    when(repository.getTotalRevenue(TEST_TENANT_ID, TEST_SHIPPER_ID, startDate))
+    when(repository.getTotalRevenue(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
         .thenReturn(127450L);
-    when(repository.getTotalCommission(TEST_TENANT_ID, TEST_SHIPPER_ID, startDate))
+    when(repository.getTotalCommission(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
         .thenReturn(2549L);
-    when(repository.getLoadCount(TEST_TENANT_ID, TEST_SHIPPER_ID, startDate))
+    when(repository.getLoadCount(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
         .thenReturn(847L);
-    when(repository.getAverageRevenuePerLoad(TEST_TENANT_ID, TEST_SHIPPER_ID, startDate))
+    when(repository.getAverageRevenuePerLoad(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
         .thenReturn(150.41);
 
     LoadFinancialService.RevenueSummaryResponse response =
@@ -93,15 +91,13 @@ class LoadFinancialServiceTest {
 
   @Test
   void testGetRevenueSummary_HandlesNoData() {
-    OffsetDateTime startDate = OffsetDateTime.now(ZoneOffset.UTC).minusDays(30);
-
-    when(repository.getTotalRevenue(TEST_TENANT_ID, TEST_SHIPPER_ID, startDate))
+    when(repository.getTotalRevenue(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
         .thenReturn(null);
-    when(repository.getTotalCommission(TEST_TENANT_ID, TEST_SHIPPER_ID, startDate))
+    when(repository.getTotalCommission(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
         .thenReturn(null);
-    when(repository.getLoadCount(TEST_TENANT_ID, TEST_SHIPPER_ID, startDate))
+    when(repository.getLoadCount(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
         .thenReturn(null);
-    when(repository.getAverageRevenuePerLoad(TEST_TENANT_ID, TEST_SHIPPER_ID, startDate))
+    when(repository.getAverageRevenuePerLoad(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
         .thenReturn(null);
 
     LoadFinancialService.RevenueSummaryResponse response =
@@ -132,8 +128,8 @@ class LoadFinancialServiceTest {
         totalRevenue);
 
     // 2% of $100 = $2
-    assertEquals(BigDecimal.valueOf(2.00), result.getCommission());
+    assertEquals(0, BigDecimal.valueOf(2.00).compareTo(result.getCommission()));
     // Net = $100 - $2 = $98
-    assertEquals(BigDecimal.valueOf(98.00), result.getNetRevenue());
+    assertEquals(0, BigDecimal.valueOf(98.00).compareTo(result.getNetRevenue()));
   }
 }

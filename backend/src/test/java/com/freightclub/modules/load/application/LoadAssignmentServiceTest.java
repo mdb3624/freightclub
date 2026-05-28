@@ -203,7 +203,10 @@ class LoadAssignmentServiceTest {
     when(repository.findByLoadAndTenant("load-b", tenantB))
         .thenReturn(Optional.of(assignmentB));
 
+    TenantContextHolder.setTenantId(tenantA);
     Optional<LoadAssignment> resultA = service.getAssignmentByLoad("load-a");
+
+    TenantContextHolder.setTenantId(tenantB);
     Optional<LoadAssignment> resultB = service.getAssignmentByLoad("load-b");
 
     assertTrue(resultA.isPresent());

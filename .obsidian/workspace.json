@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/business/FEATURES.md",
+                "file": "docs/project/GANTT_ROADMAP.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "FEATURES"
+              "title": "GANTT_ROADMAP"
             }
           }
         ]
@@ -185,17 +185,19 @@
   },
   "active": "10407db0231ba370",
   "lastOpenFiles": [
+    "docs/project/output/DEVELOPMENT_METHODOLOGY_v2.md",
+    "docs/project/output/DEVELOPMENT_METHODOLOGY_v2.md.tmp.31040.f248a99f4e6f",
+    "docs/project/output/DEVELOPMENT_METHODOLOGY_v2.md.tmp.31040.77b74bb94632",
+    "docs/project/output/DEVELOPMENT_METHODOLOGY_v2.md.tmp.31040.57d8a2817d04",
+    "docs/project/output/DEVELOPMENT_METHODOLOGY_v2.md.tmp.31040.7056ea1a2258",
+    "docs/project/output/DEVELOPMENT_METHODOLOGY_v2.md.tmp.31040.4fe7fef91f67",
+    "docs/project/output/DEVELOPMENT_METHODOLOGY_v2.md.tmp.31040.c8c7d9f5525f",
+    "docs/project/output/DEVELOPMENT_METHODOLOGY_v3.pdf",
+    "docs/project/output/DEVELOPMENT_METHODOLOGY_v2.pdf",
+    "docs/project/output/DEVELOPMENT_METHODOLOGY.md",
+    "docs/project/output/DEVELOPMENT_METHODOLOGY.pdf",
+    "docs/business/FEATURES.md",
     "docs/business/stories/INF-001.md.tmp.22180.4170be7d1a4e",
-    "backend/src/main/resources/db/migration/V20260427_1601__RevenueReports_US706.sql.tmp.22180.67b4b8a1b9ba",
-    "backend/src/main/resources/db/migration/V20260427_1301__PreferredCarriers_US703.sql.tmp.22180.a87127043d09",
-    "backend/src/main/resources/db/migration/V20260422_09__Create_notifications.sql.tmp.22180.ac43e45792bc",
-    "backend/src/main/resources/db/migration/V20260422_05__Create_claims.sql.tmp.22180.27ebf4178c71",
-    "backend/src/main/resources/db/migration/V20260422_03__Create_loads.sql.tmp.22180.093bd0db5f25",
-    "backend/src/main/resources/db/migration/V20260422_02__Create_users.sql.tmp.22180.e277db477a5d",
-    "backend/src/main/resources/db/migration/V20260422_01__Create_tenants.sql.tmp.22180.5584fcd62856",
-    "backend/target/site/jacoco/com.freightclub.modules.load.infrastructure.rest.dto/LoadResponse.java.html",
-    "backend/target/site/jacoco/com.freightclub.modules.load.infrastructure.rest.dto/LoadResponse.html",
-    "backend/target/site/jacoco/com.freightclub.modules.load.infrastructure.rest.dto/index.source.html",
     "backend/target/site/jacoco/jacoco-resources/up.gif",
     "backend/target/site/jacoco/jacoco-resources/source.gif",
     "backend/target/site/jacoco/jacoco-resources/sort.gif",
@@ -227,9 +229,6 @@
     "docs/business/personas/owner_operator.md",
     "APPROVAL_AND_ACTION_ITEMS_2026_05_15.md",
     "docs/project/LIBRARIAN_SIGN_OFF_US715.md",
-    "frontend/test-results/shipper-dashboard-Shipper--e10b7-act-with-load-rows-in-table-chromium/error-context.md",
-    "frontend/test-results/shipper-dashboard-Shipper--da185-s-accessible-and-functional-chromium/error-context.md",
-    "frontend/test-results/shipper-dashboard-Shipper--7afe1-ty-filters-loads-by-Load-ID-chromium/error-context.md",
-    "frontend/test-results/shipper-dashboard-Shipper--d8dd6-itch-between-load-view-tabs-chromium/error-context.md"
+    "frontend/test-results/shipper-dashboard-Shipper--e10b7-act-with-load-rows-in-table-chromium/error-context.md"
   ]
 }

@@ -1,6 +1,6 @@
 # Sprint Log: Resilience Logistics
 
-**Last Updated:** 2026-05-21  
+**Last Updated:** 2026-05-27  
 **Maintained By:** Librarian
 
 | Sprint | Goal | Status | Key Deliverable |
@@ -8,6 +8,15 @@
 | 01 | Infrastructure Stabilization | ✅ | Standardized `VARCHAR(36)` across core tables. |
 | 02 | Carrier Onboarding | 🏗️ | Implement `preferred_equipment` and service area logic. |
 | 03 | Claims Lifecycle | 📥 | Transition claims logic to new schema standards. |
+
+## Phase 4 Progress: Ratings & Reviews
+
+| Story ID | Title | Status | Completion Date | Coverage | Sign-Off |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-401 | Bidirectional Rating System | ✅ COMPLETED | 2026-04-26 | 80%+ | ✅ REVIEWER_PASS + LIBRARIAN (2026-05-27) |
+| US-402 | Shipper Reputation Profile & Aggregation | ✅ COMPLETED | 2026-04-26 | 80%+ | ✅ REVIEWER_PASS + LIBRARIAN (2026-05-27, spec updated per CHG-402) |
+| US-403 | Rating History & Timeline | ✅ COMPLETED | 2026-04-26 | 80%+ | ✅ Phase 4 Sign-Off (2026-04-27) |
+| US-405 | Shipper Reputation Badge on Load Board | ✅ COMPLETED | 2026-04-26 | 80%+ | ✅ Phase 4 Sign-Off (2026-04-27) |
 
 ## Phase 5 Progress: Payment Settlement & Financial Transactions
 

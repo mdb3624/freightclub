@@ -25,6 +25,35 @@ You MUST load and follow the instructions defined in these files located in `doc
 
 ---
 
+## 🔒 Sequential Lock Protocol (NO Circular Dependencies)
+
+**Effective 2026-05-25 — MANDATORY enforcement**
+
+### Core Rules
+
+1. **Input Acceptance Gates** — Each role MUST validate inputs with a checklist BEFORE starting work
+   - ARCHITECT validates BA story before designing
+   - CODER validates ARCH + HFD + BA inputs before coding
+   - REVIEWER validates CODER outputs before auditing
+2. **Phase Lock** — Once a role accepts inputs, they are FROZEN (no backward changes)
+   - CODER cannot ask BA to change AC mid-implementation
+   - ARCHITECT cannot request BA clarifications after design starts
+3. **Forward-Only Escalation** — Issues escalate to LIBRARIAN, never backward to previous roles
+   - CODER discovers AC impossible? → Escalate to LIBRARIAN (not back to BA)
+   - LIBRARIAN decides: finish story as-is OR create CHG-### change request
+4. **Change Requests (CHG-###)** — Rework requests create new stories, not mid-cycle changes
+   - BA + ARCH inputs wrong? → Create CHG ticket
+   - New story (US-###-v2) created after inputs reworked
+   - Current story completes without rework
+
+### Why
+Circular dependency loops (BA → ARCH → CODER → BA feedback) cause indefinite rework. Sequential locks prevent them.
+
+### How to Apply
+See **CIRCULAR_DEPENDENCY_FIX.md** for full protocol, acceptance checklists, and change request templates.
+
+---
+
 ## 🏛️ Architect Invocation Rule
 When asked to design or model a feature:
 - Load and follow **ARCHITECT.md**.

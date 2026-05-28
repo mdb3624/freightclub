@@ -16,6 +16,7 @@ const LoadEditPage = lazy(() => import('@/pages/LoadEditPage').then(m => ({ defa
 const TruckerLoadDetailPage = lazy(() => import('@/pages/TruckerLoadDetailPage').then(m => ({ default: m.TruckerLoadDetailPage })))
 const ProfilePage = lazy(() => import('@/pages/ProfilePage').then(m => ({ default: m.ProfilePage })))
 const RatingsPage = lazy(() => import('@/pages/RatingsPage').then(m => ({ default: m.RatingsPage })))
+const AnalyticsPage = lazy(() => import('@/features/analytics/pages/AnalyticsPage').then(m => ({ default: m.AnalyticsPage })))
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
   state = { hasError: false }
@@ -141,6 +142,17 @@ export default function App() {
           <ProtectedRoute>
             <Suspense fallback={<PageLoader />}>
               <RatingsPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/analytics"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<PageLoader />}>
+              <AnalyticsPage />
             </Suspense>
           </ProtectedRoute>
         }

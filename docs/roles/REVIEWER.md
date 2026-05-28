@@ -12,6 +12,7 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 
 ## 🛑 Hard Gates (Automatic REJECT)
 
+* ❌ **Sequential Lock Protocol Violation:** CODER made backward requests to BA or ARCHITECT (instead of escalating to LIBRARIAN). PR must reference CHG ticket if inputs were reworked mid-implementation.
 * ❌ **Missing Evidence:** No screenshot artifact found for the current Story ID in `test-results/evidence/`.
 * ❌ **E2E Failure:** `npm run test:e2e` (Playwright) has failures or was skipped.
 * ❌ **Coverage Gap:** Any UI feature shipped without a passing Playwright e2e test for the golden path.
@@ -22,6 +23,15 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 
 ## 📋 Review Checklist
 
+### 🔒 Sequential Lock Protocol (NEW)
+
+* [ ] **No Backward Requests:** CODER did NOT ask BA/ARCHITECT to change inputs mid-implementation.
+* [ ] **Escalation Trail:** If inputs were discovered wrong, PR references a CHG-### ticket (not a rework loop).
+* [ ] **Change Request Valid:** If CHG-### cited, verify LIBRARIAN decision is documented (Option A or B).
+* [ ] **No Circular Loops:** PR history shows linear progression (no BA/ARCH/CODER back-and-forth).
+
+**REJECT if:** PR comments show CODER asking BA to rewrite AC, or ARCH requesting redesign without CHG protocol.
+
 ### 🖼️ Visual & Frontend Evidence
 
 * [ ] **Screenshot Exists:** Artifact found at `test-results/evidence/[story_id]_success.png`.
@@ -29,7 +39,7 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 * [ ] **Playwright Audit:** E2E script includes `await page.screenshot()` at the final success milestone.
 * [ ] **Route Discovery:** Verified that the HFD agent used static route discovery rather than trial-and-error.
 
-### 🔒 Security & Data Integrity
+### 🔐 Security & Data Integrity
 
 * [ ] No cross-tenant data leakage possible (cache keys include `tenant_id`).
 * [ ] RLS policy enabled on all core tables.

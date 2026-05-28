@@ -65,7 +65,7 @@ class LoadAnalyticsTest {
   @DisplayName("should reject null tenantId")
   void testCreate_NullTenantId() {
     assertThrows(IllegalArgumentException.class, () ->
-        LoadAnalytics.recordPosted(null, loadId, postedAt, 45, 162),
+        LoadAnalytics.recordPosted(null, loadId, shipperId, postedAt, 45, 162),
         "tenantId cannot be null");
   }
 
@@ -73,7 +73,7 @@ class LoadAnalyticsTest {
   @DisplayName("should reject null loadId")
   void testCreate_NullLoadId() {
     assertThrows(IllegalArgumentException.class, () ->
-        LoadAnalytics.recordPosted(tenantId, null, postedAt, 45, 162),
+        LoadAnalytics.recordPosted(tenantId, null, shipperId, postedAt, 45, 162),
         "loadId cannot be null");
   }
 
@@ -100,11 +100,11 @@ class LoadAnalyticsTest {
   @DisplayName("should reject invalid match scores")
   void testCreate_InvalidMatchScore() {
     assertThrows(IllegalArgumentException.class, () ->
-        LoadAnalytics.recordPosted(tenantId, loadId, postedAt, 10, 0),
+        LoadAnalytics.recordPosted(tenantId, loadId, shipperId, postedAt, 10, 0),
         "avgMatchScore must be between 1 and 200");
 
     assertThrows(IllegalArgumentException.class, () ->
-        LoadAnalytics.recordPosted(tenantId, loadId, postedAt, 10, 201),
+        LoadAnalytics.recordPosted(tenantId, loadId, shipperId, postedAt, 10, 201),
         "avgMatchScore must be between 1 and 200");
   }
 

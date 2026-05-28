@@ -5,6 +5,7 @@ import com.freightclub.modules.analytics.application.LoadFinancialService.Revenu
 import com.freightclub.security.TenantContextHolder;
 import java.math.BigDecimal;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class LoadFinancialController {
   }
 
   @GetMapping("/shippers/{shipperId}/revenue-summary")
+  @PreAuthorize("hasRole('SHIPPER')")
   public ResponseEntity<RevenueSummaryResponse> getRevenueSummary(
       @PathVariable String shipperId,
       @RequestParam(defaultValue = "30") int days) {
@@ -31,6 +33,7 @@ public class LoadFinancialController {
   }
 
   @GetMapping("/shippers/{shipperId}/lane-profitability")
+  @PreAuthorize("hasRole('SHIPPER')")
   public ResponseEntity<LaneProfitabilityResponse[]> getLaneProfitability(
       @PathVariable String shipperId,
       @RequestParam(defaultValue = "30") int days) {
@@ -40,6 +43,7 @@ public class LoadFinancialController {
   }
 
   @GetMapping("/shippers/{shipperId}/carrier-profitability")
+  @PreAuthorize("hasRole('SHIPPER')")
   public ResponseEntity<CarrierProfitabilityResponse[]> getCarrierProfitability(
       @PathVariable String shipperId,
       @RequestParam(defaultValue = "30") int days) {

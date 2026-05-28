@@ -5,6 +5,7 @@ import com.freightclub.modules.analytics.application.LoadAnalyticsService.AdminA
 import com.freightclub.modules.analytics.application.LoadAnalyticsService.ShipperAnalyticsResponse;
 import com.freightclub.security.TenantContextHolder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class LoadAnalyticsController {
   }
 
   @GetMapping("/admin/analytics/load-board")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<AdminAnalyticsResponse> getAdminAnalytics(
       @RequestParam(defaultValue = "7") int range) {
     String tenantId = TenantContextHolder.getTenantId();
@@ -30,6 +32,7 @@ public class LoadAnalyticsController {
   }
 
   @GetMapping("/shippers/analytics/performance")
+  @PreAuthorize("hasRole('SHIPPER')")
   public ResponseEntity<ShipperAnalyticsResponse> getShipperAnalytics(
       @RequestParam(defaultValue = "7") int range,
       @RequestParam String shipperId) {
@@ -40,6 +43,7 @@ public class LoadAnalyticsController {
   }
 
   @GetMapping("/loads/{loadId}/analytics")
+  @PreAuthorize("hasRole('SHIPPER')")
   public ResponseEntity<LoadAnalyticsDetailResponse> getLoadAnalytics(
       @PathVariable String loadId) {
     // Placeholder for load-specific analytics

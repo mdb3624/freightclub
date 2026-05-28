@@ -16,12 +16,14 @@ class LoadAnalyticsTest {
 
   private String tenantId;
   private String loadId;
+  private String shipperId;
   private OffsetDateTime postedAt;
 
   @BeforeEach
   void setUp() {
     tenantId = UUID.randomUUID().toString();
     loadId = UUID.randomUUID().toString();
+    shipperId = UUID.randomUUID().toString();
     postedAt = OffsetDateTime.now();
   }
 
@@ -34,7 +36,7 @@ class LoadAnalyticsTest {
   @Test
   @DisplayName("should create analytics record for posted load")
   void testCreate_Posted() {
-    LoadAnalytics analytics = LoadAnalytics.recordPosted(tenantId, loadId, postedAt, 45, 162);
+    LoadAnalytics analytics = LoadAnalytics.recordPosted(tenantId, loadId, shipperId, postedAt, 45, 162);
 
     assertNotNull(analytics.getId());
     assertEquals(tenantId, analytics.getTenantId());
@@ -49,7 +51,7 @@ class LoadAnalyticsTest {
   @Test
   @DisplayName("should record claim and calculate time")
   void testRecordClaim() {
-    LoadAnalytics analytics = LoadAnalytics.recordPosted(tenantId, loadId, postedAt, 45, 162);
+    LoadAnalytics analytics = LoadAnalytics.recordPosted(tenantId, loadId, shipperId, postedAt, 45, 162);
 
     OffsetDateTime claimedAt = postedAt.plusHours(2);
     analytics.recordClaim(claimedAt, UUID.randomUUID().toString());
@@ -79,7 +81,7 @@ class LoadAnalyticsTest {
   @DisplayName("should calculate claim time in seconds")
   void testClaimTime_Calculation() {
     OffsetDateTime claimedAt = postedAt.plusMinutes(30);
-    LoadAnalytics analytics = LoadAnalytics.recordPosted(tenantId, loadId, postedAt, 10, 100);
+    LoadAnalytics analytics = LoadAnalytics.recordPosted(tenantId, loadId, shipperId, postedAt, 10, 100);
     analytics.recordClaim(claimedAt, UUID.randomUUID().toString());
 
     assertEquals(1800, analytics.getClaimTimeSeconds()); // 30 minutes = 1800 seconds
@@ -88,7 +90,7 @@ class LoadAnalyticsTest {
   @Test
   @DisplayName("should handle zero claim time")
   void testClaimTime_Immediate() {
-    LoadAnalytics analytics = LoadAnalytics.recordPosted(tenantId, loadId, postedAt, 10, 100);
+    LoadAnalytics analytics = LoadAnalytics.recordPosted(tenantId, loadId, shipperId, postedAt, 10, 100);
     analytics.recordClaim(postedAt, UUID.randomUUID().toString()); // Claimed at same time
 
     assertEquals(0, analytics.getClaimTimeSeconds());
@@ -109,7 +111,7 @@ class LoadAnalyticsTest {
   @Test
   @DisplayName("should soft delete analytics")
   void testSoftDelete() {
-    LoadAnalytics analytics = LoadAnalytics.recordPosted(tenantId, loadId, postedAt, 45, 162);
+    LoadAnalytics analytics = LoadAnalytics.recordPosted(tenantId, loadId, shipperId, postedAt, 45, 162);
 
     assertNull(analytics.getDeletedAt());
     analytics.softDelete();

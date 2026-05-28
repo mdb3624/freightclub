@@ -59,7 +59,7 @@ class LoadAnalyticsServiceTest {
     OffsetDateTime claimedAt = OffsetDateTime.now(ZoneOffset.UTC);
 
     LoadAnalytics analytics = LoadAnalytics.recordPosted(
-        TEST_TENANT_ID, TEST_LOAD_ID, postedAt, 10, 150);
+        TEST_TENANT_ID, TEST_LOAD_ID, TEST_SHIPPER_ID, postedAt, 10, 150);
 
     when(repository.findById(TEST_LOAD_ID)).thenReturn(Optional.of(analytics));
 
@@ -143,6 +143,6 @@ class LoadAnalyticsServiceTest {
   private LoadAnalytics createMockLoadAnalytics() {
     OffsetDateTime postedAt = OffsetDateTime.now(ZoneOffset.UTC);
     return LoadAnalytics.recordPosted(
-        TEST_TENANT_ID, TEST_LOAD_ID, postedAt, 10, 150);
+        TEST_TENANT_ID, TEST_LOAD_ID, TEST_SHIPPER_ID, postedAt, 10, 150);
   }
 }

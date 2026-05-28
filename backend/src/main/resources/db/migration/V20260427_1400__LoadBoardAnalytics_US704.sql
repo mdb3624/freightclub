@@ -6,6 +6,7 @@ DO $$ BEGIN
     id VARCHAR(36) PRIMARY KEY,
     tenant_id VARCHAR(36) NOT NULL,
     load_id VARCHAR(36) NOT NULL,
+    shipper_id VARCHAR(36),
     posted_at TIMESTAMPTZ NOT NULL,
     claimed_at TIMESTAMPTZ,
     claim_time_seconds INT,

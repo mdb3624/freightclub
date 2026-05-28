@@ -30,7 +30,7 @@ public class LoadAnalyticsService {
       int avgMatchScore) {
     String tenantId = TenantContextHolder.getTenantId();
     LoadAnalytics analytics =
-        LoadAnalytics.recordPosted(tenantId, loadId, postedAt, recommendationCount, avgMatchScore);
+        LoadAnalytics.recordPosted(tenantId, loadId, shipperId, postedAt, recommendationCount, avgMatchScore);
     repository.save(analytics);
   }
 

@@ -48,10 +48,11 @@ public interface LoadAnalyticsRepository extends JpaRepository<LoadAnalytics, St
       @Param("tenantId") String tenantId, @Param("startDate") OffsetDateTime startDate);
 
   @Query(
-      "SELECT AVG(EXTRACT(EPOCH FROM (la.claimedAt - la.postedAt))) "
-          + "FROM LoadAnalytics la "
-          + "WHERE la.tenantId = :tenantId AND la.claimedAt IS NOT NULL AND la.deletedAt IS NULL "
-          + "AND la.postedAt >= :startDate")
+      value = "SELECT AVG(EXTRACT(EPOCH FROM (claimed_at - posted_at))) "
+          + "FROM freightclub.load_analytics "
+          + "WHERE tenant_id = :tenantId AND claimed_at IS NOT NULL AND deleted_at IS NULL "
+          + "AND posted_at >= :startDate",
+      nativeQuery = true)
   Double avgClaimTimeSecondsSince(
       @Param("tenantId") String tenantId, @Param("startDate") OffsetDateTime startDate);
 }

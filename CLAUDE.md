@@ -113,6 +113,14 @@ When asked to update documentation, manage the backlog, or finalize a story:
 3. **Refactor:** Clean up code while maintaining green tests.
 4. **Verify:** Ensure 80%+ branch coverage via JaCoCo.
 
+## Build & Maven Setup
+- **Maven Location:** `C:\tools\apache-maven-3.9.9\bin\mvn.cmd` (local installation, not wrapper)
+- **Build Directory:** Always run Maven from `backend/` directory
+- **VS Code Tasks:** `.vscode/tasks.json` defines all build tasks (BuildBackend, BuildBackend + Tests, Test Backend, Coverage Report)
+- **Command Line:** `C:\tools\apache-maven-3.9.9\bin\mvn.cmd clean verify` from backend directory
+- **Test Coverage:** Enforced at 70%+ via JaCoCo; use task "Coverage Report" to verify before PR
+- **No Wrapper Jar:** Maven Wrapper excluded (use local installation instead to avoid network issues)
+
 ---
 
 ## ☁️ Cloud Run Deployment Standards

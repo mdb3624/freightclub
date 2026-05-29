@@ -5,7 +5,7 @@ test.describe('Carrier Public Profile - US-710', () => {
     // Login as shipper
     await page.goto('/login');
     await page.fill('input[type="email"]', 'shipper@test.com');
-    await page.fill('input[type="password"]', 'ShipperPassword123!');
+    await page.fill('input[type="password"]', 'N1kk101!');
     await page.click('button:has-text("Sign In")');
 
     // Wait for dashboard

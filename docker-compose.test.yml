@@ -41,6 +41,7 @@ services:
       JWT_SECRET: test-secret-32-chars-minimum-required-here
       CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:9090
       STORAGE_PATH: /app/uploads
+      app.cookie.secure: "false"
     volumes:
       - uploads_test_data:/app/uploads
 

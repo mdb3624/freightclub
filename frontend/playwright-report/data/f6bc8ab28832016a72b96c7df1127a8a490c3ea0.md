@@ -36,7 +36,7 @@ waiting for navigation to "**/dashboard" until "load"
       - textbox "Email" [ref=e13]: admin@test.com
     - generic [ref=e14]:
       - generic [ref=e15]: Password
-      - textbox "Password" [ref=e16]: AdminPassword123!
+      - textbox "Password" [ref=e16]: N1kk101!
     - button "Sign in" [ref=e17] [cursor=pointer]
     - paragraph [ref=e18]:
       - text: Don't have an account?
@@ -54,7 +54,7 @@ waiting for navigation to "**/dashboard" until "load"
   5   |     // Login as admin
   6   |     await page.goto('/login');
   7   |     await page.fill('input[type="email"]', 'admin@test.com');
-  8   |     await page.fill('input[type="password"]', 'AdminPassword123!');
+  8   |     await page.fill('input[type="password"]', 'N1kk101!');
   9   |     await page.click('button:has-text("Sign In")');
   10  | 
   11  |     // Wait for navigation and go to analytics

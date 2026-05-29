@@ -96,14 +96,13 @@
 
 ---
 
-## Phase 7: Carrier Management (13 stories)
+## Phase 7: Carrier Management & Shipper MVP (11 stories)
 
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
 | US-701 | Carrier Profiles (Truck/Trailer/Capacity) | ✅ COMPLETED | 7 | US-101 | ✅ NFR-504 (1h TTL), ✅ RLS, ✅ No-Lombok |
 | US-702 | Trucker Preferred Lanes (Region-Based) | ✅ COMPLETED | 7 | US-701 | ✅ NFR-504 (1h TTL), ✅ RLS, ✅ No-Lombok |
 | US-703 | Trucker Availability (Days/Hours)    | ✅ COMPLETED | 7 | US-701 | ✅ NFR-504 (5m TTL), ✅ RLS, ✅ No-Lombok |
-| US-704 | **Load Board Analytics & Insights (Admin + Shipper Dashboards)** | **REVIEWER_APPROVED_PENDING_E2E** | **7** | **US-702** | **✅ Backend: 84% coverage, 86 tests PASS | ⏳ E2E tests not executed (CODER implements UI, then runs E2E)** |
 | US-705 | Load Board Filters (Weight, Min Pay) | PARTIAL | 7 | US-701 | ✅ NFR-504 (5m TTL) |
 | US-706 | Load Posting Validation Prompts (Shipper) | PARTIAL | 7 | US-101 | ✅ No NFR-504 (form only) |
 | US-707 | **Shipper Preferred Carrier List** | **REVIEWER_APPROVED_PENDING_E2E** | **7** | **US-101** | **✅ Backend: 7 tests PASS, HFD design + E2E specs | ⏳ E2E tests not executed** |
@@ -118,7 +117,7 @@
 
 ---
 
-## Phase 7A: DOT Compliance & Documentation (5 stories)
+## Phase 7A: DOT Compliance & Documentation (4 stories)
 
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
@@ -126,7 +125,6 @@
 | US-721 | Insurance Certificate Tracking       | MIGRATION_PENDING | 7A | US-701, US-303 | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (2h TTL) |
 | US-722 | CDL & Medical Card Documentation    | MIGRATION_PENDING | 7A | US-701 | ✅ RLS, ✅ No-Lombok |
 | US-723 | Equipment Condition Monitoring       | MIGRATION_PENDING | 7A | US-701 | ✅ RLS, ✅ No-Lombok |
-| US-724 | DOT Compliance Dashboard (Admin)     | MIGRATION_PENDING | 7A | US-720–723 | ✅ NFR-504 (1h TTL) |
 
 ---
 

@@ -80,7 +80,7 @@ export function LoginForm({ onSubmit, error, isLoading }: LoginFormProps) {
             cursor: isLoading ? 'not-allowed' : 'pointer',
           }}
         >
-          {isLoading ? 'Submitting...' : 'Submit'}
+          {isLoading ? 'Signing in...' : 'Sign In'}
         </button>
       </form>
     </div>

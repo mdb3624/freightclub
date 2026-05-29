@@ -50,3 +50,19 @@ SELECT
   'Carrier',
   CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
 WHERE NOT EXISTS (SELECT 1 FROM freightclub.users WHERE email = 'carrier@test.com');
+
+-- Admin test user
+INSERT INTO freightclub.users (
+  id, tenant_id, email, password_hash, role, first_name, last_name,
+  created_at, updated_at
+)
+SELECT
+  '10000000-0000-0000-0000-000000000003',
+  '00000000-0000-0000-0000-000000000001',
+  'admin@test.com',
+  '$2a$10$slYQmyNdGzin7olVH0EqzuO8kdxQyPob9Y1YqZW3Yq2Jw4iEu2JNa',
+  'ADMIN',
+  'Test',
+  'Admin',
+  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+WHERE NOT EXISTS (SELECT 1 FROM freightclub.users WHERE email = 'admin@test.com');

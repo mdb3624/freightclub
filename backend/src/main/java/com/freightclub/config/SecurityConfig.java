@@ -24,15 +24,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
 import java.util.List;
 
 @Configuration
@@ -72,7 +63,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
-            .cors(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -120,30 +110,6 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    @Bean
-    public FilterRegistrationBean<SimpleOptionsFilter> simpleOptionsFilterRegistration() {
-        FilterRegistrationBean<SimpleOptionsFilter> registration = new FilterRegistrationBean<>(new SimpleOptionsFilter());
-        registration.setOrder(Integer.MIN_VALUE);
-        return registration;
-    }
-
-    public static class SimpleOptionsFilter implements Filter {
-        @Override
-        public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-            HttpServletResponse response = (HttpServletResponse) res;
-            jakarta.servlet.http.HttpServletRequest request = (jakarta.servlet.http.HttpServletRequest) req;
-
-            if (request.getMethod().equals("OPTIONS")) {
-                response.setStatus(200);
-                response.addHeader("Access-Control-Allow-Origin", "*");
-                response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-                response.addHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, X-Requested-With");
-                response.addHeader("Access-Control-Allow-Credentials", "true");
-                return;
-            }
-            chain.doFilter(req, res);
-        }
-    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

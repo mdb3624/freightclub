@@ -20,14 +20,15 @@ DO $$ BEGIN
     id VARCHAR(36) PRIMARY KEY,
     tenant_id VARCHAR(36) NOT NULL,
     shipper_id VARCHAR(36) NOT NULL,
-    trucker_id VARCHAR(36) NOT NULL,
-    blocked_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    unblocked_at TIMESTAMPTZ,
+    carrier_id VARCHAR(36) NOT NULL,
+    reason TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMPTZ,
 
     CONSTRAINT fk_shipper FOREIGN KEY (shipper_id) REFERENCES freightclub.users(id),
-    CONSTRAINT fk_trucker FOREIGN KEY (trucker_id) REFERENCES freightclub.users(id),
-    CONSTRAINT fk_tenant FOREIGN KEY (tenant_id) REFERENCES freightclub.tenants(id)
+    CONSTRAINT fk_carrier FOREIGN KEY (carrier_id) REFERENCES freightclub.users(id),
+    CONSTRAINT fk_tenant FOREIGN KEY (tenant_id) REFERENCES freightclub.tenants(id),
+    CONSTRAINT unique_blocked_carrier UNIQUE(tenant_id, shipper_id, carrier_id)
   );
 
   -- Indexes for query performance

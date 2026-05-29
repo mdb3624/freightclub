@@ -10,14 +10,15 @@ RUN mvn package -DskipTests -q
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
-RUN groupadd --system appgroup && useradd --system --gid appgroup appuser
+RUN groupadd --system appgroup && useradd --system --gid appgroup --home-dir /app appuser
+RUN mkdir -p /app/uploads && chown -R appuser:appgroup /app
 USER appuser
 
 COPY --from=build /app/target/freightclub-backend-*.jar app.jar
 
-EXPOSE 8080
+EXPOSE 9090
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8080/actuator/health || exit 1
+HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=5 \
+  CMD curl -f http://localhost:9091/actuator/health || curl -f http://localhost:9090/actuator/health || exit 1
 
-ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=${SPRING_PROFILES_ACTIVE:prod}"]
+ENTRYPOINT exec java -jar app.jar

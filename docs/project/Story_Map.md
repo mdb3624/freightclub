@@ -103,13 +103,13 @@
 | US-701 | Carrier Profiles (Truck/Trailer/Capacity) | ✅ COMPLETED | 7 | US-101 | ✅ NFR-504 (1h TTL), ✅ RLS, ✅ No-Lombok |
 | US-702 | Trucker Preferred Lanes (Region-Based) | ✅ COMPLETED | 7 | US-701 | ✅ NFR-504 (1h TTL), ✅ RLS, ✅ No-Lombok |
 | US-703 | Trucker Availability (Days/Hours)    | ✅ COMPLETED | 7 | US-701 | ✅ NFR-504 (5m TTL), ✅ RLS, ✅ No-Lombok |
-| US-704 | Suggested Loads (By Preferred Lanes) | PARTIAL | 7 | US-702 | ✅ NFR-504 (2m TTL) |
+| US-704 | **Load Board Analytics & Insights (Admin + Shipper Dashboards)** | **REVIEWER_APPROVED_PENDING_E2E** | **7** | **US-702** | **✅ Backend: 84% coverage, 86 tests PASS | ⏳ E2E tests not executed (CODER implements UI, then runs E2E)** |
 | US-705 | Load Board Filters (Weight, Min Pay) | PARTIAL | 7 | US-701 | ✅ NFR-504 (5m TTL) |
 | US-706 | Load Posting Validation Prompts (Shipper) | PARTIAL | 7 | US-101 | ✅ No NFR-504 (form only) |
-| US-707 | Shipper Preferred Carrier List       | MIGRATION_PENDING | 7 | US-101 | ✅ NFR-504 (1h TTL) |
+| US-707 | **Shipper Preferred Carrier List** | **REVIEWER_APPROVED_PENDING_E2E** | **7** | **US-101** | **✅ Backend: 7 tests PASS, HFD design + E2E specs | ⏳ E2E tests not executed** |
 | US-708 | Direct Load Assignment to Carrier    | MIGRATION_PENDING | 7 | US-707 | ✅ Event-driven invalidation |
 | US-709 | Block Carrier (Prevent Visibility)   | MIGRATION_PENDING | 7 | US-101 | ✅ Event-driven invalidation |
-| US-710 | View Carrier Public Profile (History) | MIGRATION_PENDING | 7 | US-402 | ✅ NFR-504 (1h TTL) |
+| US-710 | **View Carrier Public Profile** | **REVIEWER_APPROVED_PENDING_E2E** | **7** | **US-402** | **✅ Backend: 100% branch coverage, 8 tests PASS | ⏳ E2E tests not executed** |
 | US-711 | Load Interest / View Count Tracking  | MIGRATION_PENDING | 7 | US-101 | ✅ NFR-504 (5m TTL) |
 | US-713 | Shipper Company Profile Setup (Post-Registration) | ✅ COMPLETED | 7 | US-101 | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (5m TTL) |
 | US-715 | **Shipper Dashboard (Load Summary & Management)** | **✅ COMPLETED** | **7** | **US-101, US-103** | **✅ RLS, ✅ No-Lombok, ✅ NFR-504 (2m TTL)** |

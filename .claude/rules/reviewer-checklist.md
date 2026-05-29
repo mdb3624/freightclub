@@ -19,6 +19,8 @@ This checklist defines the mandatory "Hard Gates" for any code merge. Failure to
 ## 3. Data & Security (Enon Gate)
 * [ ] **Implicit Tenancy**: Is the code free of manual `WHERE tenant_id = ...` filters? (Must rely on PostgreSQL RLS).
 * [ ] **Database Migrations**: Does the Flyway script include the mandatory `tenant_id` column and the `ENABLE ROW LEVEL SECURITY` command?
+* [ ] **Entity-Migration Parity**: Does this PR add any new `@Entity` classes? If yes, verify corresponding Flyway migrations exist (VYYYYMMDD_HHMM format). Orphaned entities without migrations violate schema consistency and block test execution.
+* [ ] **Schema Type Consistency**: All string ID/code columns must use `VARCHAR` or `TEXT`, never `CHAR(n)`. Verify no `CHAR(36)`, `VARVARCHAR`, or similar type violations in migrations.
 * [ ] **PostGIS Usage**: Are geographic queries utilizing indexed spatial functions for performance?
 
 ## 4. Reliability & Testing (Coder Gate)

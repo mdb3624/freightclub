@@ -11,7 +11,7 @@ CREATE TABLE shipper_profiles (
   mc_number VARCHAR(8),
   usdot_number VARCHAR(8),
   logo_url VARCHAR(500),
-  completeness_pct SMALLINT DEFAULT 0 CHECK (completeness_pct >= 0 AND completeness_pct <= 100),
+  completeness_pct INTEGER DEFAULT 0 CHECK (completeness_pct >= 0 AND completeness_pct <= 100),
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   deleted_at TIMESTAMPTZ,

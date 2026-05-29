@@ -1,18 +1,19 @@
 -- Carrier profiles table: Extended trucker profile data
 DO $$ BEGIN
   CREATE TABLE freightclub.carrier_profiles (
-      id CHAR(36) PRIMARY KEY,
-      tenant_id CHAR(36) NOT NULL REFERENCES freightclub.tenants(id),
-      user_id CHAR(36) NOT NULL UNIQUE REFERENCES freightclub.users(id),
-      usdot_number VARCHAR(20) UNIQUE,
-      is_active BOOLEAN NOT NULL DEFAULT TRUE,
-      created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+      id VARCHAR(36) PRIMARY KEY,
+      tenant_id VARCHAR(36) NOT NULL REFERENCES freightclub.tenants(id),
+      preferred_equipment VARCHAR(20) NOT NULL,
+      service_area VARCHAR(100) NOT NULL,
+      deleted_at TIMESTAMPTZ
   );
 
   CREATE INDEX idx_carrier_profiles_tenant_id ON freightclub.carrier_profiles(tenant_id);
-  CREATE INDEX idx_carrier_profiles_user_id ON freightclub.carrier_profiles(user_id);
-  CREATE INDEX idx_carrier_profiles_usdot ON freightclub.carrier_profiles(usdot_number);
+  ALTER TABLE freightclub.carrier_profiles ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "carrier_profiles_tenant"
+    ON freightclub.carrier_profiles
+    USING (tenant_id = current_setting('app.current_tenant')::varchar)
+    WITH CHECK (tenant_id = current_setting('app.current_tenant')::varchar);
 EXCEPTION WHEN duplicate_table THEN
   NULL;
 END $$;

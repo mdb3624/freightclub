@@ -4,7 +4,7 @@ ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP WITH TIME ZONE;
 
 -- Add missing columns for document audit tracking
 ALTER TABLE freightclub.load_documents
-ADD COLUMN IF NOT EXISTS uploaded_by CHAR(36),
+ADD COLUMN IF NOT EXISTS uploaded_by VARCHAR(36),
 ADD COLUMN IF NOT EXISTS storage_key VARCHAR(500),
 ADD COLUMN IF NOT EXISTS original_filename VARCHAR(255),
 ADD COLUMN IF NOT EXISTS file_size_bytes BIGINT,

@@ -4,26 +4,28 @@
 DO $$ BEGIN
   CREATE TABLE freightclub.carrier_performance (
     id VARCHAR(36) PRIMARY KEY,
-    carrier_id VARCHAR(36) NOT NULL,
     tenant_id VARCHAR(36) NOT NULL,
-    load_assigned INT NOT NULL,
-    load_accepted INT NOT NULL,
-    load_declined INT NOT NULL,
-    acceptance_rate DECIMAL(5,2) NOT NULL,
-    on_time_count INT NOT NULL,
-    late_count INT NOT NULL,
-    on_time_rate DECIMAL(5,2) NOT NULL,
-    avg_delivery_time INT,
-    quality_score DECIMAL(3,2),
-    rating_count INT DEFAULT 0,
-    recorded_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    carrier_id VARCHAR(36) NOT NULL,
+    load_assigned BIGINT DEFAULT 0,
+    load_accepted BIGINT DEFAULT 0,
+    load_declined BIGINT DEFAULT 0,
+    acceptance_rate NUMERIC(5, 2) DEFAULT 0,
+    on_time_rate NUMERIC(5, 2) DEFAULT 0,
+    avg_delivery_time_hours NUMERIC(10, 2),
+    quality_score NUMERIC(5, 2) DEFAULT 0,
+    rating_count BIGINT DEFAULT 0,
+    preferred_by_count BIGINT DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMPTZ,
 
     CONSTRAINT fk_carrier FOREIGN KEY (carrier_id) REFERENCES freightclub.users(id),
-    CONSTRAINT fk_tenant FOREIGN KEY (tenant_id) REFERENCES freightclub.tenants(id)
+    CONSTRAINT fk_tenant FOREIGN KEY (tenant_id) REFERENCES freightclub.tenants(id),
+    UNIQUE(tenant_id, carrier_id)
   );
 
-  CREATE INDEX idx_performance_carrier ON freightclub.carrier_performance(tenant_id, carrier_id);
-  CREATE INDEX idx_performance_date ON freightclub.carrier_performance(recorded_at DESC);
+  CREATE INDEX idx_carrier_performance_tenant_deleted ON freightclub.carrier_performance(tenant_id, deleted_at);
+  CREATE INDEX idx_carrier_performance_quality_score ON freightclub.carrier_performance(tenant_id, quality_score DESC);
 
   ALTER TABLE freightclub.carrier_performance ENABLE ROW LEVEL SECURITY;
   CREATE POLICY "carrier_performance_tenant"

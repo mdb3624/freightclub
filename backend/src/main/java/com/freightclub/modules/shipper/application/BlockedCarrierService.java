@@ -42,7 +42,9 @@ public class BlockedCarrierService {
         shipperId,
         carrierId,
         tenantId,
-        reason);
+        reason,
+        OffsetDateTime.now(),
+        null);
 
     return repository.save(blocked);
   }

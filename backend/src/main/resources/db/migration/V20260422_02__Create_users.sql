@@ -1,8 +1,8 @@
 -- Users table: Authentication & profile data
 DO $$ BEGIN
   CREATE TABLE freightclub.users (
-      id CHAR(36) PRIMARY KEY,
-      tenant_id CHAR(36) NOT NULL REFERENCES freightclub.tenants(id),
+      id VARCHAR(36) PRIMARY KEY,
+      tenant_id VARCHAR(36) NOT NULL REFERENCES freightclub.tenants(id),
       email VARCHAR(255) NOT NULL,
       password_hash VARCHAR(255) NOT NULL,
       role VARCHAR(20) NOT NULL,
@@ -13,12 +13,12 @@ DO $$ BEGIN
       billing_address_1 VARCHAR(500),
       billing_address_2 VARCHAR(500),
       billing_city VARCHAR(100),
-      billing_state CHAR(2),
+      billing_state VARCHAR(2),
       billing_zip VARCHAR(10),
       default_pickup_address_1 VARCHAR(500),
       default_pickup_address_2 VARCHAR(500),
       default_pickup_city VARCHAR(100),
-      default_pickup_state CHAR(2),
+      default_pickup_state VARCHAR(2),
       default_pickup_zip VARCHAR(10),
       mc_number VARCHAR(20),
       dot_number VARCHAR(20),

@@ -132,4 +132,157 @@ class LoadFinancialServiceTest {
     // Net = $100 - $2 = $98
     assertEquals(0, BigDecimal.valueOf(98.00).compareTo(result.getNetRevenue()));
   }
+
+  @Test
+  void testGetRevenueSummary_WithPartialData() {
+    when(repository.getTotalRevenue(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(50000L);
+    when(repository.getTotalCommission(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(null); // Missing commission data
+    when(repository.getLoadCount(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(100L);
+    when(repository.getAverageRevenuePerLoad(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(null); // Missing avg data
+
+    LoadFinancialService.RevenueSummaryResponse response =
+        service.getRevenueSummary(TEST_SHIPPER_ID, 30);
+
+    assertNotNull(response);
+    assertEquals(BigDecimal.valueOf(50000), response.totalRevenue());
+    assertEquals(BigDecimal.ZERO, response.totalCommission());
+    assertEquals(BigDecimal.valueOf(50000), response.netRevenue());
+    assertEquals(100, response.loadCount());
+  }
+
+  @Test
+  void testGetRevenueSummary_With90Days() {
+    when(repository.getTotalRevenue(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(100000L);
+    when(repository.getTotalCommission(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(2000L);
+    when(repository.getLoadCount(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(200L);
+    when(repository.getAverageRevenuePerLoad(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(500.0);
+
+    LoadFinancialService.RevenueSummaryResponse response =
+        service.getRevenueSummary(TEST_SHIPPER_ID, 90);
+
+    assertNotNull(response);
+    assertEquals(BigDecimal.valueOf(100000), response.totalRevenue());
+    assertEquals(BigDecimal.valueOf(2000), response.totalCommission());
+    assertEquals(BigDecimal.valueOf(98000), response.netRevenue());
+    assertEquals(200, response.loadCount());
+  }
+
+  @Test
+  void testGetRevenueSummary_With7Days() {
+    when(repository.getTotalRevenue(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(5000L);
+    when(repository.getTotalCommission(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(100L);
+    when(repository.getLoadCount(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(10L);
+    when(repository.getAverageRevenuePerLoad(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(500.0);
+
+    LoadFinancialService.RevenueSummaryResponse response =
+        service.getRevenueSummary(TEST_SHIPPER_ID, 7);
+
+    assertNotNull(response);
+    assertEquals(BigDecimal.valueOf(5000), response.totalRevenue());
+    assertEquals(BigDecimal.valueOf(100), response.totalCommission());
+    assertEquals(BigDecimal.valueOf(4900), response.netRevenue());
+    assertEquals(10, response.loadCount());
+  }
+
+  @Test
+  void testRecordLoadSettlement_LargeRevenue() {
+    OffsetDateTime postedAt = OffsetDateTime.now(ZoneOffset.UTC);
+    BigDecimal ratePerMile = BigDecimal.valueOf(3.50);
+    BigDecimal totalRevenue = BigDecimal.valueOf(10000.00);
+
+    when(repository.save(any(LoadFinancial.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    LoadFinancial result = service.recordLoadSettlement(
+        TEST_LOAD_ID,
+        TEST_SHIPPER_ID,
+        TEST_CARRIER_ID,
+        postedAt,
+        ratePerMile,
+        totalRevenue);
+
+    // 2% of $10,000 = $200
+    assertEquals(0, BigDecimal.valueOf(200.00).compareTo(result.getCommission()));
+    // Net = $10,000 - $200 = $9,800
+    assertEquals(0, BigDecimal.valueOf(9800.00).compareTo(result.getNetRevenue()));
+  }
+
+  @Test
+  void testRecordLoadSettlement_SmallRevenue() {
+    OffsetDateTime postedAt = OffsetDateTime.now(ZoneOffset.UTC);
+    BigDecimal ratePerMile = BigDecimal.valueOf(1.00);
+    BigDecimal totalRevenue = BigDecimal.valueOf(50.00);
+
+    when(repository.save(any(LoadFinancial.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    LoadFinancial result = service.recordLoadSettlement(
+        TEST_LOAD_ID,
+        TEST_SHIPPER_ID,
+        TEST_CARRIER_ID,
+        postedAt,
+        ratePerMile,
+        totalRevenue);
+
+    // 2% of $50 = $1
+    assertEquals(0, BigDecimal.valueOf(1.00).compareTo(result.getCommission()));
+    // Net = $50 - $1 = $49
+    assertEquals(0, BigDecimal.valueOf(49.00).compareTo(result.getNetRevenue()));
+  }
+
+  @Test
+  void testRecordLoadSettlement_StoresCorrectTenantId() {
+    OffsetDateTime postedAt = OffsetDateTime.now(ZoneOffset.UTC);
+    BigDecimal ratePerMile = BigDecimal.valueOf(2.00);
+    BigDecimal totalRevenue = BigDecimal.valueOf(100.00);
+
+    when(repository.save(any(LoadFinancial.class)))
+        .thenAnswer(invocation -> {
+          LoadFinancial arg = invocation.getArgument(0);
+          assertEquals(TEST_TENANT_ID, arg.getTenantId());
+          return arg;
+        });
+
+    LoadFinancial result = service.recordLoadSettlement(
+        TEST_LOAD_ID,
+        TEST_SHIPPER_ID,
+        TEST_CARRIER_ID,
+        postedAt,
+        ratePerMile,
+        totalRevenue);
+
+    assertNotNull(result);
+    assertEquals(TEST_TENANT_ID, result.getTenantId());
+  }
+
+  @Test
+  void testGetRevenueSummary_LargeLoadCount() {
+    when(repository.getTotalRevenue(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(500000L);
+    when(repository.getTotalCommission(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(10000L);
+    when(repository.getLoadCount(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(1000L);
+    when(repository.getAverageRevenuePerLoad(eq(TEST_TENANT_ID), eq(TEST_SHIPPER_ID), any(OffsetDateTime.class)))
+        .thenReturn(500.0);
+
+    LoadFinancialService.RevenueSummaryResponse response =
+        service.getRevenueSummary(TEST_SHIPPER_ID, 30);
+
+    assertNotNull(response);
+    assertEquals(1000, response.loadCount());
+    assertEquals(BigDecimal.valueOf(490000), response.netRevenue());
+  }
 }

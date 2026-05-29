@@ -1,10 +1,10 @@
 -- Claims table: Load claims by truckers
 DO $$ BEGIN
   CREATE TABLE freightclub.claims (
-      id CHAR(36) PRIMARY KEY,
-      tenant_id CHAR(36) NOT NULL REFERENCES freightclub.tenants(id),
-      load_id CHAR(36) NOT NULL REFERENCES freightclub.loads(id),
-      trucker_id CHAR(36) NOT NULL REFERENCES freightclub.users(id),
+      id VARCHAR(36) PRIMARY KEY,
+      tenant_id VARCHAR(36) NOT NULL REFERENCES freightclub.tenants(id),
+      load_id VARCHAR(36) NOT NULL REFERENCES freightclub.loads(id),
+      trucker_id VARCHAR(36) NOT NULL REFERENCES freightclub.users(id),
       status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
       claimed_at TIMESTAMP WITH TIME ZONE NOT NULL,
       released_at TIMESTAMP WITH TIME ZONE,

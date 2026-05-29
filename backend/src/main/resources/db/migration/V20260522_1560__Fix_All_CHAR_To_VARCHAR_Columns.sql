@@ -1,5 +1,5 @@
--- Fix ALL CHAR(36) columns to VARCHAR(36) to prevent padding issues
--- CHAR(36) pads with spaces, causing mismatches in queries across all multi-tenancy filters
+-- Fix ALL VARCHAR(36) columns to VARCHAR(36) to prevent padding issues
+-- VARCHAR(36) pads with spaces, causing mismatches in queries across all multi-tenancy filters
 -- This migration converts all ID and tenant_id columns in all core entities
 
 DO $$ BEGIN
@@ -68,6 +68,13 @@ DO $$ BEGIN
   IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'users' AND table_schema = 'freightclub') THEN
     ALTER TABLE freightclub.users ALTER COLUMN id TYPE VARCHAR(36) USING RTRIM(id);
     ALTER TABLE freightclub.users ALTER COLUMN tenant_id TYPE VARCHAR(36) USING RTRIM(tenant_id);
+  END IF;
+
+  -- Carrier profiles table
+  IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'carrier_profiles' AND table_schema = 'freightclub') THEN
+    ALTER TABLE freightclub.carrier_profiles ALTER COLUMN id TYPE VARCHAR(36) USING RTRIM(id);
+    ALTER TABLE freightclub.carrier_profiles ALTER COLUMN tenant_id TYPE VARCHAR(36) USING RTRIM(tenant_id);
+    ALTER TABLE freightclub.carrier_profiles ALTER COLUMN user_id TYPE VARCHAR(36) USING RTRIM(user_id);
   END IF;
 
 EXCEPTION WHEN OTHERS THEN

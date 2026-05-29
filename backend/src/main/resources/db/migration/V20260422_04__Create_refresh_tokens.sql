@@ -1,8 +1,8 @@
 -- Refresh tokens table: Session management
 DO $$ BEGIN
   CREATE TABLE freightclub.refresh_tokens (
-      id CHAR(36) PRIMARY KEY,
-      user_id CHAR(36) NOT NULL REFERENCES freightclub.users(id),
+      id VARCHAR(36) PRIMARY KEY,
+      user_id VARCHAR(36) NOT NULL REFERENCES freightclub.users(id),
       token_hash VARCHAR(255) NOT NULL UNIQUE,
       expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
       revoked BOOLEAN NOT NULL DEFAULT FALSE,

@@ -38,13 +38,16 @@ public class BlockedCarrier {
       String shipperId,
       String carrierId,
       String tenantId,
-      String reason) {
+      String reason,
+      OffsetDateTime createdAt,
+      OffsetDateTime deletedAt) {
     this.id = id;
     this.shipperId = shipperId;
     this.carrierId = carrierId;
     this.tenantId = tenantId;
     this.reason = reason;
-    this.createdAt = OffsetDateTime.now();
+    this.createdAt = createdAt;
+    this.deletedAt = deletedAt;
   }
 
   public String getId() {

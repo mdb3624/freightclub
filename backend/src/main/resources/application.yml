@@ -11,8 +11,11 @@ spring:
     baseline-on-migrate: true
 
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
+    properties:
+      hibernate.hbm2ddl.auto: none
 
 server:
   port: ${PORT:9090}

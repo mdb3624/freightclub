@@ -1,9 +1,9 @@
 -- Load documents table: Proof of delivery, BOL, etc.
 DO $$ BEGIN
   CREATE TABLE freightclub.load_documents (
-      id CHAR(36) PRIMARY KEY,
-      tenant_id CHAR(36) NOT NULL REFERENCES freightclub.tenants(id),
-      load_id CHAR(36) NOT NULL REFERENCES freightclub.loads(id),
+      id VARCHAR(36) PRIMARY KEY,
+      tenant_id VARCHAR(36) NOT NULL REFERENCES freightclub.tenants(id),
+      load_id VARCHAR(36) NOT NULL REFERENCES freightclub.loads(id),
       document_type VARCHAR(50) NOT NULL,
       file_url VARCHAR(1000) NOT NULL,
       created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP

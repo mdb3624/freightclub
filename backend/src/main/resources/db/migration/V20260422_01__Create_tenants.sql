@@ -1,7 +1,7 @@
 -- Tenants table: Multi-tenancy root
 DO $$ BEGIN
   CREATE TABLE freightclub.tenants (
-      id CHAR(36) PRIMARY KEY,
+      id VARCHAR(36) PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
       join_code VARCHAR(12) UNIQUE,
       plan VARCHAR(50) NOT NULL DEFAULT 'FREE',

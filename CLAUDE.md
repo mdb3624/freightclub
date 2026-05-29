@@ -129,6 +129,34 @@ When asked to update documentation, manage the backlog, or finalize a story:
 
 ---
 
+## 🚀 Autonomous Execution Rule
+
+**Effective 2026-05-28**
+
+**YOU MUST NOT ask for permission on in-scope actions.** Execute silently and report results only.
+
+**Autonomous (proceed without asking):**
+- Edit/create files clearly in scope (code, tests, migrations, docs)
+- Run tests, build commands, git commands (status, diff, log)
+- Read code and documentation to understand context
+- Make design decisions aligned with established patterns
+- Debug and fix issues within the current task scope
+
+**Requires Confirmation (ask first):**
+- Irreversible destructive actions (delete files, reset branches, drop databases)
+- Actions visible to others (push to remote, merge PRs, send messages)
+- Actions that widen scope (create new user stories, rework acceptance criteria)
+- Genuinely ambiguous decisions where you lack context to proceed
+
+**Rationale:** Sequential Lock Protocol and fast iteration depend on autonomous execution. Asking on every file edit creates friction and violates the mandate to "follow the process without intervention."
+
+**Rule Violation Example:**
+- ❌ "Should I update the test to use the new credentials?" → Just update it.
+- ❌ "Do you want me to fix the VARVARCHAR errors?" → Fix them and report.
+- ✅ "E2E tests still timing out on login; need to debug login endpoint response" → Clear blocker; mention it.
+
+---
+
 ## 🔇 STRICT BREVITY MANDATE
 
 **Effective Immediately:** All roles MUST provide one-sentence status confirmations only.

@@ -4,29 +4,30 @@
 DO $$ BEGIN
   CREATE TABLE freightclub.load_financial (
     id VARCHAR(36) PRIMARY KEY,
-    load_id VARCHAR(36) NOT NULL,
     tenant_id VARCHAR(36) NOT NULL,
+    load_id VARCHAR(36) NOT NULL,
     shipper_id VARCHAR(36) NOT NULL,
-    carrier_id VARCHAR(36) NOT NULL,
-    origin_region VARCHAR(50) NOT NULL,
-    dest_region VARCHAR(50) NOT NULL,
-    equipment_type VARCHAR(50),
-    rate_per_mile DECIMAL(8,2) NOT NULL,
-    estimated_miles INT,
-    total_revenue DECIMAL(12,2) NOT NULL,
-    commission DECIMAL(12,2) NOT NULL,
-    net_revenue DECIMAL(12,2) NOT NULL,
-    settled_at TIMESTAMPTZ NOT NULL,
-    recorded_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    carrier_id VARCHAR(36),
+    posted_at TIMESTAMPTZ NOT NULL,
+    claimed_at TIMESTAMPTZ,
+    completed_at TIMESTAMPTZ,
+    rate_per_mile NUMERIC(10, 2) NOT NULL,
+    total_revenue NUMERIC(12, 2) NOT NULL,
+    commission NUMERIC(12, 2) NOT NULL,
+    net_revenue NUMERIC(12, 2) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMPTZ,
 
     CONSTRAINT fk_load FOREIGN KEY (load_id) REFERENCES freightclub.loads(id),
     CONSTRAINT fk_tenant FOREIGN KEY (tenant_id) REFERENCES freightclub.tenants(id),
     CONSTRAINT fk_shipper FOREIGN KEY (shipper_id) REFERENCES freightclub.users(id),
-    CONSTRAINT fk_carrier FOREIGN KEY (carrier_id) REFERENCES freightclub.users(id)
+    CONSTRAINT fk_carrier FOREIGN KEY (carrier_id) REFERENCES freightclub.users(id),
+    UNIQUE(tenant_id, load_id)
   );
 
-  CREATE INDEX idx_financial_shipper ON freightclub.load_financial(tenant_id, shipper_id, settled_at);
-  CREATE INDEX idx_financial_date ON freightclub.load_financial(recorded_at DESC);
+  CREATE INDEX idx_load_financial_tenant_deleted ON freightclub.load_financial(tenant_id, deleted_at);
+  CREATE INDEX idx_load_financial_shipper ON freightclub.load_financial(tenant_id, shipper_id, posted_at);
+  CREATE INDEX idx_load_financial_carrier ON freightclub.load_financial(tenant_id, carrier_id, posted_at);
 
   ALTER TABLE freightclub.load_financial ENABLE ROW LEVEL SECURITY;
   CREATE POLICY "load_financial_tenant"

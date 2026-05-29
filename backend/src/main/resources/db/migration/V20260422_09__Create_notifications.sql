@@ -1,10 +1,10 @@
 -- Notifications table: In-app notifications
 DO $$ BEGIN
   CREATE TABLE freightclub.notifications (
-      id CHAR(36) PRIMARY KEY,
-      tenant_id CHAR(36) NOT NULL REFERENCES freightclub.tenants(id),
-      user_id CHAR(36) NOT NULL REFERENCES freightclub.users(id),
-      load_id CHAR(36) REFERENCES freightclub.loads(id),
+      id VARCHAR(36) PRIMARY KEY,
+      tenant_id VARCHAR(36) NOT NULL REFERENCES freightclub.tenants(id),
+      user_id VARCHAR(36) NOT NULL REFERENCES freightclub.users(id),
+      load_id VARCHAR(36) REFERENCES freightclub.loads(id),
       message TEXT NOT NULL,
       notification_type VARCHAR(50) NOT NULL,
       is_read BOOLEAN NOT NULL DEFAULT FALSE,

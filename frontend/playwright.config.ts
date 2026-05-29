@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:9096',
+    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:9090',
     trace: 'on-first-retry',
   },
   projects: [
@@ -19,7 +19,7 @@ export default defineConfig({
   ],
   webServer: process.env.PLAYWRIGHT_TEST_BASE_URL ? undefined : {
     command: 'npm run dev',
-    url: 'http://localhost:9096',
+    url: 'http://localhost:9090',
     reuseExistingServer: !process.env.CI,
   },
 });

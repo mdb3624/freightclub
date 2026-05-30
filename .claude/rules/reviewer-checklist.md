@@ -42,6 +42,9 @@ This checklist defines the mandatory "Hard Gates" for any code merge. Failure to
 * [ ] **No double registration**: Any filter that is both `@Component` AND added via `addFilterBefore`/`addFilterAfter` in `SecurityConfig` MUST have a `FilterRegistrationBean` with `setEnabled(false)` to prevent it running outside the security chain. Without this, `SecurityContextHolderFilter` clears the auth set by the pre-chain run, causing 401 on all protected endpoints.
 * [ ] **Cache names registered**: Every `@Cacheable("name")` annotation references a cache name declared in `CacheConfig`. Missing names cause 500 errors at runtime.
 * [ ] **JJWT audience validation**: Do not use `requireAudience(String)` on the JJWT parser builder (0.12.x bug — compares String against Set). Validate audience manually after `parseSignedClaims`.
+* [ ] **@PermitAll on auth endpoints**: Public auth endpoints (`/auth/register`, `/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/debug/*`) MUST have `@PermitAll` annotation. Missing annotation causes 401 Unauthorized before endpoint logic executes.
+* [ ] **JWT filter skiplist**: Does `JwtAuthenticationFilter.doFilterInternal()` skip entire `/api/v1/auth/` path? Validate that public endpoints are not subjected to token validation. Missing skiplist causes public endpoint rejection.
+* [ ] **Form field registration (Frontend)**: If the PR modifies `ProfilePage.tsx` or form components, verify that all form fields appear in BOTH (1) Zod schema definition AND (2) useForm({ defaultValues: { ... } }). Missing fields are silently stripped from form submission (no error in console). Test with Network tab inspection of PUT payload.
 
 ---
 

@@ -9,6 +9,5 @@ COPY . .
 EXPOSE 9090
 
 ENV VITE_PORT=9090
-ENV VITE_API_URL=http://localhost:8080
 
 CMD ["npm", "run", "dev", "--", "--host"]

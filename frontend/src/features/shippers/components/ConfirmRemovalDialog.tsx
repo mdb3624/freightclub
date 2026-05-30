@@ -63,7 +63,7 @@ export function ConfirmRemovalDialog({
           <Button
             onClick={handleConfirm}
             isLoading={isPending}
-            variant="destructive"
+            variant="danger"
             className="flex-1"
           >
             Remove

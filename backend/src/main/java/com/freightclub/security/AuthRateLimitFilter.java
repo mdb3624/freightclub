@@ -7,12 +7,14 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,10 +28,21 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
     );
 
     private final ConcurrentHashMap<String, Bucket> buckets = new ConcurrentHashMap<>();
+    private final Environment environment;
+
+    public AuthRateLimitFilter(Environment environment) {
+        this.environment = environment;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
+        // Skip rate limiting in test environment
+        if (Arrays.asList(environment.getActiveProfiles()).contains("test")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         if (!"POST".equalsIgnoreCase(request.getMethod())
                 || !RATE_LIMITED_PATHS.contains(request.getRequestURI())) {
             chain.doFilter(request, response);

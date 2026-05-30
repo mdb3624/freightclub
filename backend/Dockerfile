@@ -6,6 +6,15 @@ RUN mvn dependency:go-offline -q
 COPY src ./src
 RUN mvn package -DskipTests -q
 
+# Stage 1.5: Test
+FROM maven:3.9-eclipse-temurin-21 AS test
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline -q
+COPY src ./src
+RUN mvn clean test -q --fail-at-end
+RUN mvn jacoco:report -q
+
 # Stage 2: Runtime
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app

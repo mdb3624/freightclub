@@ -7,9 +7,11 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
+  globalSetup: './playwright-global-setup.ts',
   use: {
     baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:9090',
     trace: 'on-first-retry',
+    storageState: 'auth.json', // Loaded from globalSetup
   },
   projects: [
     {
@@ -17,9 +19,5 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  webServer: process.env.PLAYWRIGHT_TEST_BASE_URL ? undefined : {
-    command: 'npm run dev',
-    url: 'http://localhost:9090',
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: undefined, // Use existing Docker containers instead of starting new servers
 });

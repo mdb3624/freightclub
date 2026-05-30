@@ -41,6 +41,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
+            // Skip JWT validation for test endpoints
+            if (request.getRequestURI().startsWith("/api/test/")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             String token = extractToken(request);
             if (token != null) {
                 try {

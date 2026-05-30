@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/api/apiClient';
+import axios from 'axios';
 
 export interface PreferredCarrier {
   id: string;
@@ -16,7 +16,7 @@ export const usePreferredCarriers = (shipperId: string, page: number = 0) => {
   return useQuery({
     queryKey: ['preferredCarriers', shipperId, page],
     queryFn: async () => {
-      const { data } = await apiClient.get(
+      const { data } = await axios.get(
         `/api/v1/shippers/${shipperId}/preferred-carriers`,
         { params: { page } }
       );
@@ -30,7 +30,7 @@ export const usePreferredCarrierCount = (shipperId: string) => {
   return useQuery({
     queryKey: ['preferredCarrierCount', shipperId],
     queryFn: async () => {
-      const { data } = await apiClient.get<PreferredCarrierCountResponse>(
+      const { data } = await axios.get<PreferredCarrierCountResponse>(
         `/api/v1/shippers/${shipperId}/preferred-carriers/count`
       );
       return data.count;
@@ -44,7 +44,7 @@ export const useAddPreferredCarrier = (shipperId: string) => {
 
   return useMutation({
     mutationFn: async (variables: { carrierId: string; notes?: string }) => {
-      const { data } = await apiClient.post(
+      const { data } = await axios.post(
         `/api/v1/shippers/${shipperId}/preferred-carriers`,
         null,
         { params: { carrierId: variables.carrierId, notes: variables.notes } }
@@ -67,7 +67,7 @@ export const useRemovePreferredCarrier = (shipperId: string) => {
 
   return useMutation({
     mutationFn: async (carrierId: string) => {
-      await apiClient.delete(
+      await axios.delete(
         `/api/v1/shippers/${shipperId}/preferred-carriers/${carrierId}`
       );
     },

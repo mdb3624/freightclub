@@ -11,6 +11,7 @@ import com.freightclub.repository.LoadRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
 import com.freightclub.storage.LocalStorageService;
+import com.freightclub.modules.document.application.DocumentAuditService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,6 +24,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -40,6 +42,7 @@ class DocumentServiceTest {
     @Mock private UserRepository userRepository;
     @Mock private LocalStorageService storageService;
     @Mock private BolGeneratorService bolGeneratorService;
+    @Mock private DocumentAuditService auditService;
 
     @InjectMocks
     private DocumentService documentService;
@@ -133,7 +136,11 @@ class DocumentServiceTest {
             when(loadRepository.findByIdAndDeletedAtIsNull(LOAD_ID)).thenReturn(Optional.of(load));
             when(storageService.store(any(), any(), any(), any(), any(), any()))
                     .thenReturn("storage/photo.jpg");
-            when(documentRepository.save(any())).thenReturn(new LoadDocument());
+            LoadDocument saved = new LoadDocument();
+            saved.setId(UUID.randomUUID().toString());
+            saved.setOriginalFilename("photo.jpg");
+            saved.setFileSizeBytes(25 * 1024 * 1024L);
+            when(documentRepository.save(any())).thenReturn(saved);
 
             byte[] exactLimit = new byte[25 * 1024 * 1024];
             MockMultipartFile file = new MockMultipartFile("file", "photo.jpg", "image/jpeg", exactLimit);
@@ -159,7 +166,11 @@ class DocumentServiceTest {
             when(loadRepository.findByIdAndDeletedAtIsNull(LOAD_ID)).thenReturn(Optional.of(load));
             when(storageService.store(any(), any(), any(), any(), any(), any()))
                     .thenReturn("storage/delivery.webp");
-            when(documentRepository.save(any())).thenReturn(new LoadDocument());
+            LoadDocument saved = new LoadDocument();
+            saved.setId(UUID.randomUUID().toString());
+            saved.setOriginalFilename("delivery.webp");
+            saved.setFileSizeBytes(1000L);
+            when(documentRepository.save(any())).thenReturn(saved);
 
             MockMultipartFile file = new MockMultipartFile("file", "delivery.webp", "image/webp", new byte[1000]);
             assertThatNoException().isThrownBy(() -> documentService.uploadBolPhoto(LOAD_ID, TRUCKER_ID, file));
@@ -181,8 +192,10 @@ class DocumentServiceTest {
                     .thenReturn("storage/bol.jpg");
 
             LoadDocument saved = new LoadDocument();
+            saved.setId(UUID.randomUUID().toString());
             saved.setDocumentType(DocumentType.BOL_PHOTO);
             saved.setLoadId(LOAD_ID);
+            saved.setOriginalFilename("bol.jpg");
             saved.setFileSizeBytes(500L);
             when(documentRepository.save(any())).thenReturn(saved);
 
@@ -227,8 +240,10 @@ class DocumentServiceTest {
                     .thenReturn("storage/pod.jpg");
 
             LoadDocument saved = new LoadDocument();
+            saved.setId(UUID.randomUUID().toString());
             saved.setDocumentType(DocumentType.POD_PHOTO);
             saved.setLoadId(LOAD_ID);
+            saved.setOriginalFilename("pod.jpg");
             saved.setFileSizeBytes(600L);
             when(documentRepository.save(any())).thenReturn(saved);
 

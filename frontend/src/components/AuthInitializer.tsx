@@ -36,7 +36,14 @@ export function AuthInitializer({ children }: Props) {
           equipmentType: profile.equipmentType ?? undefined,
         })
       })
-      .catch(() => {
+      .catch((error) => {
+        if (typeof window !== 'undefined') {
+          console.error('AuthInitializer: Refresh failed', {
+            status: error.response?.status,
+            message: error.message,
+            url: error.config?.url,
+          })
+        }
         // No valid session — ProtectedRoute will redirect to login
       })
       .finally(() => {

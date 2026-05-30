@@ -56,6 +56,7 @@ class JwtAuthenticationFilterTest {
 
         @Test
         void setsAuthentication_forValidToken() throws Exception {
+            when(request.getRequestURI()).thenReturn("/api/v1/auth/login");
             when(request.getHeader("Authorization")).thenReturn("Bearer valid-token");
             Claims claims = makeClaims("user-1", "SHIPPER", "tenant-1");
             when(jwtService.validateAndGetClaims("valid-token")).thenReturn(claims);
@@ -71,6 +72,7 @@ class JwtAuthenticationFilterTest {
 
         @Test
         void setsTenantContext_forValidToken() throws Exception {
+            when(request.getRequestURI()).thenReturn("/api/v1/loads");
             when(request.getHeader("Authorization")).thenReturn("Bearer valid-token");
             Claims claims = makeClaims("user-1", "SHIPPER", "tenant-abc");
             when(jwtService.validateAndGetClaims("valid-token")).thenReturn(claims);
@@ -92,6 +94,7 @@ class JwtAuthenticationFilterTest {
 
         @Test
         void continuesChain_withNoAuthentication_whenHeaderAbsent() throws Exception {
+            when(request.getRequestURI()).thenReturn("/api/v1/loads");
             when(request.getHeader("Authorization")).thenReturn(null);
 
             filter.doFilter(request, response, filterChain);
@@ -102,6 +105,7 @@ class JwtAuthenticationFilterTest {
 
         @Test
         void continuesChain_withNoAuthentication_whenPrefixMissing() throws Exception {
+            when(request.getRequestURI()).thenReturn("/api/v1/auth/login");
             when(request.getHeader("Authorization")).thenReturn("Basic dXNlcjpwYXNz");
 
             filter.doFilter(request, response, filterChain);
@@ -112,6 +116,7 @@ class JwtAuthenticationFilterTest {
 
         @Test
         void rejectsWithUnauthorized_whenTokenInvalid() throws Exception {
+            when(request.getRequestURI()).thenReturn("/api/v1/loads");
             when(request.getHeader("Authorization")).thenReturn("Bearer bad-token");
             when(jwtService.validateAndGetClaims("bad-token"))
                     .thenThrow(new io.jsonwebtoken.security.SignatureException("bad sig"));
@@ -126,6 +131,7 @@ class JwtAuthenticationFilterTest {
 
         @Test
         void rejectsWithForbidden_whenTenantIdMissing() throws Exception {
+            when(request.getRequestURI()).thenReturn("/api/v1/loads");
             when(request.getHeader("Authorization")).thenReturn("Bearer valid-token");
             Claims claims = makeClaims("user-1", "SHIPPER", null);
             when(jwtService.validateAndGetClaims("valid-token")).thenReturn(claims);
@@ -139,6 +145,7 @@ class JwtAuthenticationFilterTest {
 
         @Test
         void rejectsWithForbidden_whenTenantIdBlank() throws Exception {
+            when(request.getRequestURI()).thenReturn("/api/v1/loads");
             when(request.getHeader("Authorization")).thenReturn("Bearer valid-token");
             Claims claims = makeClaims("user-1", "SHIPPER", "   ");
             when(jwtService.validateAndGetClaims("valid-token")).thenReturn(claims);

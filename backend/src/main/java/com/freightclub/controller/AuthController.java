@@ -83,7 +83,7 @@ public class AuthController {
                 .httpOnly(true)
                 .secure(cookieSecure)
                 .sameSite(cookieSecure ? "Strict" : "Lax")
-                .path("/api/v1/auth")
+                .path("/")
                 .maxAge(Duration.ofSeconds(maxAgeSeconds))
                 .build();
     }

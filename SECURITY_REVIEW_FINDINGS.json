@@ -1,0 +1,137 @@
+[
+  {
+    "id": 1,
+    "file": "backend/src/main/java/com/freightclub/service/ProfileService.java",
+    "severity": "CRITICAL",
+    "issue": "Soft-delete filter missing in ProfileService queries",
+    "detail": "findAll() and findById() do not filter deleted_at IS NULL, allowing deleted profiles to be returned",
+    "failure_scenario": "User deletes profile; it reappears in list view or on edit because findAll() includes soft-deleted rows",
+    "lines": "findAll(), findById()"
+  },
+  {
+    "id": 6,
+    "file": "backend/src/main/java/com/freightclub/controller/AuthController.java",
+    "severity": "CRITICAL",
+    "issue": "Some endpoints may be missing @PermitAll or @PreAuthorize",
+    "detail": "logout, refresh must have @PermitAll or explicit auth check; register, login require @PermitAll",
+    "failure_scenario": "If logout lacks @PermitAll, user cannot log out (401 Unauthorized on logout call)",
+    "lines": "logout(), refresh() method annotations"
+  },
+  {
+    "id": 9,
+    "file": "backend/src/main/java/com/freightclub/repository/ProfileRepository.java or service methods",
+    "severity": "CRITICAL",
+    "issue": "Repository queries may not enforce tenant_id filter",
+    "detail": "All JPA findById, findAll queries must be scoped to TenantContextHolder.getTenantId()",
+    "failure_scenario": "Cross-tenant data leak: User A views User B's profile by guessing ID; findById returns record outside tenant scope",
+    "lines": "custom query methods in repository"
+  },
+  {
+    "id": 2,
+    "file": "backend/src/main/java/com/freightclub/controller/AuthController.java",
+    "severity": "HIGH",
+    "issue": "Refresh cookie missing SameSite=Strict and Secure flags",
+    "detail": "HTTP-only cookie rotated but no SameSite=Strict prevents CSRF; Secure flag may be missing in dev",
+    "failure_scenario": "CSRF attack injects fake refresh request from another domain; cookie sent due to missing SameSite",
+    "lines": "buildRefreshCookie()"
+  },
+  {
+    "id": 3,
+    "file": "backend/src/main/java/com/freightclub/security/JwtAuthenticationFilter.java",
+    "severity": "HIGH",
+    "issue": "JWT filter skiplist may be incomplete or missing",
+    "detail": "Filter must skip /auth/register, /auth/login, /actuator/health but skiplist not visible in provided code",
+    "failure_scenario": "If /auth/login requires JWT, login fails with 401 because user has no token yet",
+    "lines": "doFilterInternal()"
+  },
+  {
+    "id": 5,
+    "file": "frontend/src/lib/apiClient.ts",
+    "severity": "HIGH",
+    "issue": "Authorization header may not be set on all requests",
+    "detail": "apiClient must inject Authorization: Bearer <token> on every protected endpoint; missing check if token exists",
+    "failure_scenario": "Protected API call made without token header; backend returns 401 Unauthorized",
+    "lines": "axios instance creation, interceptor setup"
+  },
+  {
+    "id": 11,
+    "file": "backend/src/main/java/com/freightclub/config/SecurityConfig.java or CorsConfig.java",
+    "severity": "HIGH",
+    "issue": "CORS allowed-origins may be hardcoded or missing validation",
+    "detail": "Must use env var (not hardcoded); must validate Origin header matches whitelist",
+    "failure_scenario": "Hardcoded CORS breaks in Cloud Run; attacker's origin not rejected; CSRF via preflight bypass",
+    "lines": "CORS configuration beans"
+  },
+  {
+    "id": 13,
+    "file": "backend/src/main/java/com/freightclub/service/AuthService.java",
+    "severity": "HIGH",
+    "issue": "Password strength validation may be missing or weak",
+    "detail": "Password must enforce minimum 12 chars, uppercase, digit, special char via regex or custom validator",
+    "failure_scenario": "User registers with password '123456'; accepted by system; account easily compromised",
+    "lines": "register() method, password encoding"
+  },
+  {
+    "id": 14,
+    "file": "backend/src/main/java/com/freightclub/security/AuthRateLimitFilter.java",
+    "severity": "HIGH",
+    "issue": "Rate limiting may not cover all sensitive endpoints",
+    "detail": "register, login, refresh, logout must be rate-limited per IP/user; password reset must be protected",
+    "failure_scenario": "Brute-force attack: attacker tries 10,000 passwords in 1 min; no rate limit; account compromised",
+    "lines": "AuthRateLimitFilter configuration"
+  },
+  {
+    "id": 4,
+    "file": "frontend/src/pages/ProfilePage.tsx",
+    "severity": "MEDIUM",
+    "issue": "Form fields may not match Zod schema",
+    "detail": "useForm hook registers fields; schema validation must include all fields (companyName, billingEmail, phoneNumber, city, state, zipCode, mcNumber, usdotNumber, logoUrl)",
+    "failure_scenario": "User submits form; Zod validation fails on unregistered field, form submission hangs with validation error",
+    "lines": "useForm hook, Zod schema definition"
+  },
+  {
+    "id": 7,
+    "file": "frontend/src/pages/ProfilePage.tsx or any hook using axios",
+    "severity": "MEDIUM",
+    "issue": "Direct axios calls not using apiClient",
+    "detail": "If any code uses import axios from 'axios' directly instead of apiClient, headers are not injected",
+    "failure_scenario": "Direct axios call bypasses apiClient interceptor; Authorization header missing; request fails 401",
+    "lines": "any axios.post/get call"
+  },
+  {
+    "id": 8,
+    "file": "frontend/src/lib/apiClient.ts",
+    "severity": "MEDIUM",
+    "issue": "API path construction may duplicate /api/v1",
+    "detail": "If baseURL is /api/v1 and endpoint strings also contain /api/v1, final URL becomes /api/v1/api/v1/...",
+    "failure_scenario": "Frontend calls POST /api/v1/profile; apiClient concatenates to /api/v1/api/v1/profile (404 Not Found)",
+    "lines": "baseURL setup, endpoint paths in hooks"
+  },
+  {
+    "id": 10,
+    "file": "backend/src/main/java/com/freightclub/service/ProfileService.java",
+    "severity": "MEDIUM",
+    "issue": "Cache not invalidated when profile is soft-deleted",
+    "detail": "@Cacheable on getProfile may return stale data if profile is soft-deleted; cache key does not include deleted_at",
+    "failure_scenario": "User deletes profile; old cached profile still returned on subsequent getProfile() calls for 5+ min",
+    "lines": "@Cacheable annotation, soft delete method"
+  },
+  {
+    "id": 12,
+    "file": "backend/src/main/java/com/freightclub/dto/RegisterRequest.java or AuthController.register()",
+    "severity": "MEDIUM",
+    "issue": "Email and password validation may be incomplete",
+    "detail": "@Valid @RequestBody RegisterRequest must enforce @Email, password strength, password != email",
+    "failure_scenario": "User registers with invalid email (no @ sign); validation passes; system sends confirmation to malformed address",
+    "lines": "RegisterRequest DTO annotations, register() validation"
+  },
+  {
+    "id": 15,
+    "file": "backend/src/main/java/com/freightclub/service/ProfileService.java",
+    "severity": "MEDIUM",
+    "issue": "TenantContextHolder.getTenantId() may return null; no null-safety check",
+    "detail": "All ProfileService methods using getTenantId() must null-check or throw IllegalStateException",
+    "failure_scenario": "Multi-tenant context not initialized (e.g., background job without TenantContextFilter); getTenantId() returns null; NullPointerException at runtime",
+    "lines": "getTenantId() calls"
+  }
+]

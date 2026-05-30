@@ -6,6 +6,7 @@ import com.freightclub.security.TenantContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ public class ShipperPreferredCarrierController {
   }
 
   @PostMapping("/preferred-carriers")
+  @PreAuthorize("hasRole('SHIPPER')")
   public ResponseEntity<PreferredCarrierResponse> addPreferredCarrier(
       @RequestParam String carrierId,
       @RequestParam(required = false) String notes) {
@@ -35,6 +37,7 @@ public class ShipperPreferredCarrierController {
   }
 
   @GetMapping("/preferred-carriers")
+  @PreAuthorize("hasRole('SHIPPER')")
   public ResponseEntity<?> getPreferredCarriers(
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "20") int limit) {
@@ -52,6 +55,7 @@ public class ShipperPreferredCarrierController {
   }
 
   @GetMapping("/preferred-carriers/count")
+  @PreAuthorize("hasRole('SHIPPER')")
   public ResponseEntity<PreferredCarrierCountResponse> getPreferredCarrierCount() {
     String shipperId = TenantContextHolder.getCurrentUserId();
     long count = service.getPreferredCarrierCount(shipperId);
@@ -59,6 +63,7 @@ public class ShipperPreferredCarrierController {
   }
 
   @DeleteMapping("/preferred-carriers/{carrierId}")
+  @PreAuthorize("hasRole('SHIPPER')")
   public ResponseEntity<Void> removePreferredCarrier(
       @PathVariable String carrierId) {
     String shipperId = TenantContextHolder.getCurrentUserId();

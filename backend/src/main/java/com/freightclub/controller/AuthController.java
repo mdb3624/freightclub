@@ -2,6 +2,8 @@ package com.freightclub.controller;
 
 import com.freightclub.dto.*;
 import com.freightclub.service.AuthService;
+import jakarta.annotation.security.PermitAll;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +14,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -28,6 +32,7 @@ public class AuthController {
         this.cookieSecure = cookieSecure;
     }
 
+    @PermitAll
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         AuthService.AuthResult result = authService.register(request);
@@ -42,6 +47,7 @@ public class AuthController {
                 .body(body);
     }
 
+    @PermitAll
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthService.AuthResult result = authService.login(request);
@@ -56,6 +62,7 @@ public class AuthController {
                 .body(body);
     }
 
+    @PermitAll
     @PostMapping("/refresh")
     public ResponseEntity<RefreshResponse> refresh(
             @CookieValue(name = REFRESH_COOKIE_NAME, required = false) String rawToken) {
@@ -69,13 +76,27 @@ public class AuthController {
                 .body(RefreshResponse.of(result.accessToken(), authService.accessTokenExpirySeconds()));
     }
 
+    @PermitAll
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@AuthenticationPrincipal String userId) {
-        authService.logout(userId);
+        if (userId != null) {
+            authService.logout(userId);
+        }
         ResponseCookie expiredCookie = buildRefreshCookie("", 0);
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, expiredCookie.toString())
                 .build();
+    }
+
+    @PermitAll
+    @GetMapping("/debug/cookies")
+    public ResponseEntity<Map<String, Object>> debugCookies(HttpServletRequest request) {
+        Map<String, Object> debug = new java.util.HashMap<>();
+        debug.put("cookies", Arrays.stream(request.getCookies() != null ? request.getCookies() : new jakarta.servlet.http.Cookie[0])
+                .collect(java.util.stream.Collectors.toMap(jakarta.servlet.http.Cookie::getName, jakarta.servlet.http.Cookie::getValue)));
+        debug.put("headers", java.util.Collections.list(request.getHeaderNames()).stream()
+                .collect(java.util.stream.Collectors.toMap(h -> h, request::getHeader)));
+        return ResponseEntity.ok(debug);
     }
 
     private ResponseCookie buildRefreshCookie(String value, long maxAgeSeconds) {

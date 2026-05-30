@@ -40,12 +40,17 @@ const schema = z.object({
   mcNumber: z.string().max(20).optional().default(''),
   dotNumber: z.string().max(20).optional().default(''),
   equipmentType: z.enum(['DRY_VAN', 'FLATBED', 'REEFER', 'STEP_DECK', '']).optional().default(''),
-  monthlyFixedCosts:      z.preprocess((v) => v === '' ? undefined : Number(v), z.number().positive().optional()),
-  fuelCostPerGallon:      z.preprocess((v) => v === '' ? undefined : Number(v), z.number().positive().optional()),
-  milesPerGallon:         z.preprocess((v) => v === '' ? undefined : Number(v), z.number().positive().optional()),
-  maintenanceCostPerMile: z.preprocess((v) => v === '' ? undefined : Number(v), z.number().min(0).optional()),
-  monthlyMilesTarget:     z.preprocess((v) => v === '' ? undefined : Number(v), z.number().int().positive().optional()),
-  targetMarginPerMile:    z.preprocess((v) => v === '' ? undefined : Number(v), z.number().min(0).optional()),
+  truckPaymentLease:      z.union([z.string(), z.number()]).optional(),
+  insurance:              z.union([z.string(), z.number()]).optional(),
+  iftaIrpPermits:         z.union([z.string(), z.number()]).optional(),
+  phoneEldMisc:           z.union([z.string(), z.number()]).optional(),
+  perDiemDailyRate:       z.union([z.string(), z.number()]).optional(),
+  perDiemDaysPerMonth:    z.union([z.string(), z.number()]).optional(),
+  fuelCostPerGallon:      z.union([z.string(), z.number()]).optional(),
+  milesPerGallon:         z.union([z.string(), z.number()]).optional(),
+  maintenanceCostPerMile: z.union([z.string(), z.number()]).optional(),
+  monthlyMilesTarget:     z.union([z.string(), z.number()]).optional(),
+  targetMarginPerMile:    z.union([z.string(), z.number()]).optional(),
 })
 
 export function ProfilePage() {
@@ -57,40 +62,50 @@ export function ProfilePage() {
   const { data: ratingSummary } = useMyRatingSummary()
   const [saved, setSaved] = useState(false)
 
-  const { register, handleSubmit, reset, control, formState: { errors } } = useForm<UpdateProfileValues>({
+  const { register, handleSubmit, reset, control, formState: { errors }, watch } = useForm<UpdateProfileValues>({
     resolver: zodResolver(schema),
     defaultValues: { notifyEmail: true, notifySms: false, notifyInApp: true },
   })
+  const formData = watch()
 
   useEffect(() => {
     if (profile) {
+      // Check for optimistic updates in localStorage
+      const optimistic = localStorage.getItem('freightclub_profile_optimistic')
+      const optimisticData = optimistic ? JSON.parse(optimistic) : {}
+
       reset({
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        businessName: profile.businessName ?? '',
-        phone: profile.phone ?? '',
-        billingAddress1: profile.billingAddress1 ?? '',
-        billingAddress2: profile.billingAddress2 ?? '',
-        billingCity: profile.billingCity ?? '',
-        billingState: profile.billingState ?? '',
-        billingZip: profile.billingZip ?? '',
-        defaultPickupAddress1: profile.defaultPickupAddress1 ?? '',
-        defaultPickupAddress2: profile.defaultPickupAddress2 ?? '',
-        defaultPickupCity: profile.defaultPickupCity ?? '',
-        defaultPickupState: profile.defaultPickupState ?? '',
-        defaultPickupZip: profile.defaultPickupZip ?? '',
-        notifyEmail: profile.notifyEmail,
-        notifySms: profile.notifySms,
-        notifyInApp: profile.notifyInApp,
-        mcNumber: profile.mcNumber ?? '',
-        dotNumber: profile.dotNumber ?? '',
-        equipmentType: profile.equipmentType ?? '',
-        monthlyFixedCosts:      profile.monthlyFixedCosts      ?? '',
-        fuelCostPerGallon:      profile.fuelCostPerGallon      ?? '',
-        milesPerGallon:         profile.milesPerGallon         ?? '',
-        maintenanceCostPerMile: profile.maintenanceCostPerMile ?? '',
-        monthlyMilesTarget:     profile.monthlyMilesTarget     ?? '',
-        targetMarginPerMile:    profile.targetMarginPerMile    ?? '',
+        firstName: optimisticData.firstName ?? profile.firstName,
+        lastName: optimisticData.lastName ?? profile.lastName,
+        businessName: optimisticData.businessName ?? profile.businessName ?? '',
+        phone: optimisticData.phone ?? profile.phone ?? '',
+        billingAddress1: optimisticData.billingAddress1 ?? profile.billingAddress1 ?? '',
+        billingAddress2: optimisticData.billingAddress2 ?? profile.billingAddress2 ?? '',
+        billingCity: optimisticData.billingCity ?? profile.billingCity ?? '',
+        billingState: optimisticData.billingState ?? profile.billingState ?? '',
+        billingZip: optimisticData.billingZip ?? profile.billingZip ?? '',
+        defaultPickupAddress1: optimisticData.defaultPickupAddress1 ?? profile.defaultPickupAddress1 ?? '',
+        defaultPickupAddress2: optimisticData.defaultPickupAddress2 ?? profile.defaultPickupAddress2 ?? '',
+        defaultPickupCity: optimisticData.defaultPickupCity ?? profile.defaultPickupCity ?? '',
+        defaultPickupState: optimisticData.defaultPickupState ?? profile.defaultPickupState ?? '',
+        defaultPickupZip: optimisticData.defaultPickupZip ?? profile.defaultPickupZip ?? '',
+        notifyEmail: optimisticData.notifyEmail ?? profile.notifyEmail,
+        notifySms: optimisticData.notifySms ?? profile.notifySms,
+        notifyInApp: optimisticData.notifyInApp ?? profile.notifyInApp,
+        mcNumber: optimisticData.mcNumber ?? profile.mcNumber ?? '',
+        dotNumber: optimisticData.dotNumber ?? profile.dotNumber ?? '',
+        equipmentType: optimisticData.equipmentType ?? profile.equipmentType ?? '',
+        truckPaymentLease:      optimisticData.truckPaymentLease ?? profile.truckPaymentLease ?? '',
+        insurance:              optimisticData.insurance ?? profile.insurance ?? '',
+        iftaIrpPermits:         optimisticData.iftaIrpPermits ?? profile.iftaIrpPermits ?? '',
+        phoneEldMisc:           optimisticData.phoneEldMisc ?? profile.phoneEldMisc ?? '',
+        perDiemDailyRate:       optimisticData.perDiemDailyRate ?? profile.perDiemDailyRate ?? '',
+        perDiemDaysPerMonth:    optimisticData.perDiemDaysPerMonth ?? profile.perDiemDaysPerMonth ?? '',
+        fuelCostPerGallon:      optimisticData.fuelCostPerGallon ?? profile.fuelCostPerGallon ?? '',
+        milesPerGallon:         optimisticData.milesPerGallon ?? profile.milesPerGallon ?? '',
+        maintenanceCostPerMile: optimisticData.maintenanceCostPerMile ?? profile.maintenanceCostPerMile ?? '',
+        monthlyMilesTarget:     optimisticData.monthlyMilesTarget ?? profile.monthlyMilesTarget ?? '',
+        targetMarginPerMile:    optimisticData.targetMarginPerMile ?? profile.targetMarginPerMile ?? '',
       })
     }
   }, [profile, reset])
@@ -122,6 +137,12 @@ export function ProfilePage() {
             Profile saved successfully.
           </div>
         )}
+        <pre className="bg-gray-100 p-2 text-xs overflow-auto max-h-40">{JSON.stringify({
+          truckPaymentLease: formData.truckPaymentLease,
+          insurance: formData.insurance,
+          iftaIrpPermits: formData.iftaIrpPermits,
+          phoneEldMisc: formData.phoneEldMisc,
+        }, null, 2)}</pre>
 
         {isTrucker && ratingSummary && (
           <section className="rounded-xl border border-gray-200 bg-white p-6">

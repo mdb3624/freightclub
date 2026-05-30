@@ -9,6 +9,7 @@ import com.freightclub.service.LoadService;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class LoadBoardController {
     }
 
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public Page<LoadSummaryResponse> listOpenLoads(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -43,6 +45,7 @@ public class LoadBoardController {
     }
 
     @GetMapping("/available-states")
+    @PreAuthorize("isAuthenticated()")
     public Map<String, List<String>> getAvailableStates(@AuthenticationPrincipal String userId) {
         return loadService.getAvailableStates(userId);
     }

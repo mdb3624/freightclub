@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import apiClient from '@/lib/apiClient'
 
 export interface CarrierEquipmentDTO {
   id: string
@@ -28,8 +28,8 @@ export function useCarrierProfile(carrierId: string) {
   return useQuery({
     queryKey: ['carrierProfile', carrierId],
     queryFn: async () => {
-      const response = await axios.get<PublicCarrierProfileDTO>(
-        `/api/v1/carriers/${carrierId}/public-profile`
+      const response = await apiClient.get<PublicCarrierProfileDTO>(
+        `/carriers/${carrierId}/public-profile`
       )
       return response.data
     },

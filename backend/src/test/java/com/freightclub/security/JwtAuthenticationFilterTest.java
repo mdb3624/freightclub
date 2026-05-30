@@ -56,7 +56,7 @@ class JwtAuthenticationFilterTest {
 
         @Test
         void setsAuthentication_forValidToken() throws Exception {
-            when(request.getRequestURI()).thenReturn("/api/v1/auth/login");
+            when(request.getRequestURI()).thenReturn("/api/v1/loads");
             when(request.getHeader("Authorization")).thenReturn("Bearer valid-token");
             Claims claims = makeClaims("user-1", "SHIPPER", "tenant-1");
             when(jwtService.validateAndGetClaims("valid-token")).thenReturn(claims);
@@ -105,7 +105,7 @@ class JwtAuthenticationFilterTest {
 
         @Test
         void continuesChain_withNoAuthentication_whenPrefixMissing() throws Exception {
-            when(request.getRequestURI()).thenReturn("/api/v1/auth/login");
+            when(request.getRequestURI()).thenReturn("/api/v1/loads");
             when(request.getHeader("Authorization")).thenReturn("Basic dXNlcjpwYXNz");
 
             filter.doFilter(request, response, filterChain);

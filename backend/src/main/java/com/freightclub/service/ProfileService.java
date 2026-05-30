@@ -10,6 +10,8 @@ import com.freightclub.security.TenantContextHolder;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,6 +20,7 @@ import java.util.Optional;
 @Service
 @Transactional
 public class ProfileService {
+    private static final Logger logger = LoggerFactory.getLogger(ProfileService.class);
 
     private final UserRepository userRepository;
     private final TenantRepository tenantRepository;
@@ -35,10 +38,12 @@ public class ProfileService {
     }
 
     public ProfileResponse updateProfile(String userId, UpdateProfileRequest request) {
+        logger.info("Updating profile for user: {} with businessName: {}", userId, request.businessName());
         User user = findUser(userId);
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());
         user.setBusinessName(request.businessName());
+        logger.info("After setting businessName: {}", user.getBusinessName());
         user.setPhone(request.phone());
         user.setBillingAddress1(request.billingAddress1());
         user.setBillingAddress2(request.billingAddress2());
@@ -68,6 +73,7 @@ public class ProfileService {
         user.setMonthlyMilesTarget(request.monthlyMilesTarget());
         user.setTargetMarginPerMile(request.targetMarginPerMile());
         User saved = userRepository.save(user);
+        logger.info("Profile saved. BusinessName in response: {}", saved.getBusinessName());
         Tenant tenant = resolveTenant(saved.getTenantId());
         return ProfileResponse.from(saved, tenant);
     }

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import apiClient from '@/lib/apiClient';
 
 export interface PreferredCarrier {
   id: string;
@@ -16,13 +16,15 @@ export const usePreferredCarriers = (shipperId: string, page: number = 0) => {
   return useQuery({
     queryKey: ['preferredCarriers', shipperId, page],
     queryFn: async () => {
-      const { data } = await axios.get(
-        `/api/v1/shippers/${shipperId}/preferred-carriers`,
-        { params: { page } }
+      console.log('[usePreferredCarriers] Calling API for shipperId:', shipperId)
+      const { data } = await apiClient.get(
+        `/shippers/preferred-carriers`,
+        { params: { page: page + 1, limit: 20 } }
       );
       return data;
     },
     staleTime: 60 * 60 * 1000, // 1 hour
+    enabled: !!shipperId,
   });
 };
 
@@ -30,12 +32,13 @@ export const usePreferredCarrierCount = (shipperId: string) => {
   return useQuery({
     queryKey: ['preferredCarrierCount', shipperId],
     queryFn: async () => {
-      const { data } = await axios.get<PreferredCarrierCountResponse>(
-        `/api/v1/shippers/${shipperId}/preferred-carriers/count`
+      const { data } = await apiClient.get<PreferredCarrierCountResponse>(
+        `/shippers/preferred-carriers/count`
       );
       return data.count;
     },
     staleTime: 60 * 60 * 1000, // 1 hour
+    enabled: !!shipperId,
   });
 };
 
@@ -44,8 +47,8 @@ export const useAddPreferredCarrier = (shipperId: string) => {
 
   return useMutation({
     mutationFn: async (variables: { carrierId: string; notes?: string }) => {
-      const { data } = await axios.post(
-        `/api/v1/shippers/${shipperId}/preferred-carriers`,
+      const { data } = await apiClient.post(
+        `/shippers/preferred-carriers`,
         null,
         { params: { carrierId: variables.carrierId, notes: variables.notes } }
       );
@@ -67,8 +70,8 @@ export const useRemovePreferredCarrier = (shipperId: string) => {
 
   return useMutation({
     mutationFn: async (carrierId: string) => {
-      await axios.delete(
-        `/api/v1/shippers/${shipperId}/preferred-carriers/${carrierId}`
+      await apiClient.delete(
+        `/shippers/preferred-carriers/${carrierId}`
       );
     },
     onSuccess: () => {

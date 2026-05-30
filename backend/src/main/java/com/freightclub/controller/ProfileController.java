@@ -30,6 +30,7 @@ public class ProfileController {
     }
 
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ProfileResponse> getProfile(@AuthenticationPrincipal String userId) {
         return ResponseEntity.ok(profileService.getProfile(userId));
     }
@@ -45,11 +46,13 @@ public class ProfileController {
     // --- Equipment ---
 
     @GetMapping("/equipment")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<CarrierEquipmentDTO>> getEquipment(@AuthenticationPrincipal String userId) {
         return ResponseEntity.ok(carrierProfileService.getEquipment(userId));
     }
 
     @PostMapping("/equipment")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CarrierEquipmentDTO> addEquipment(
             @AuthenticationPrincipal String userId,
             @RequestBody CarrierEquipmentDTO dto) {
@@ -80,11 +83,13 @@ public class ProfileController {
     // --- Lanes ---
 
     @GetMapping("/lanes")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<CarrierLaneDTO>> getLanes(@AuthenticationPrincipal String userId) {
         return ResponseEntity.ok(carrierProfileService.getLanes(userId));
     }
 
     @PostMapping("/lanes")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CarrierLaneDTO> addLane(
             @AuthenticationPrincipal String userId,
             @RequestBody CarrierLaneDTO dto) {
@@ -115,6 +120,7 @@ public class ProfileController {
     // --- Availability ---
 
     @GetMapping("/availability")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CarrierAvailabilityDTO> getAvailability(@AuthenticationPrincipal String userId) {
         CarrierAvailabilityDTO result = carrierProfileService.getAvailability(userId);
         return result != null ? ResponseEntity.ok(result) : ResponseEntity.noContent().build();

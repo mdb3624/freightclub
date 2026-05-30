@@ -7,6 +7,7 @@ import com.freightclub.modules.shipper.infrastructure.rest.dto.ShipperProfileRes
 import com.freightclub.modules.shipper.infrastructure.rest.dto.CompletenessResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -22,6 +23,7 @@ public class ProfileController {
   }
 
   @GetMapping("/company-info")
+  @PreAuthorize("isAuthenticated()")
   public ResponseEntity<ShipperProfileResponse> getCompanyInfo() {
     return service.getProfile()
         .map(ShipperProfileResponse::from)
@@ -30,6 +32,7 @@ public class ProfileController {
   }
 
   @PostMapping("/company-info")
+  @PreAuthorize("isAuthenticated()")
   public ResponseEntity<ShipperProfileResponse> saveCompanyInfo(@Valid @RequestBody ShipperProfileRequest request) {
     ShipperProfile profile = service.saveProfile(request);
     return ResponseEntity
@@ -38,12 +41,14 @@ public class ProfileController {
   }
 
   @PutMapping("/company-info")
+  @PreAuthorize("isAuthenticated()")
   public ResponseEntity<ShipperProfileResponse> updateCompanyInfo(@Valid @RequestBody ShipperProfileRequest request) {
     ShipperProfile profile = service.saveProfile(request);
     return ResponseEntity.ok(ShipperProfileResponse.from(profile));
   }
 
   @GetMapping("/completeness")
+  @PreAuthorize("isAuthenticated()")
   public ResponseEntity<CompletenessResponse> getCompleteness() {
     var profileOptional = service.getProfile();
     if (profileOptional.isPresent()) {

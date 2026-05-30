@@ -1,24 +1,16 @@
-// @ts-nocheck
 import { useState } from 'react';
-// @ts-nocheck
 import { useAuthStore } from '@/store/authStore';
-// @ts-nocheck
 import {
-// @ts-nocheck
   usePreferredCarriers,
-// @ts-nocheck
   usePreferredCarrierCount,
-// @ts-nocheck
   useAddPreferredCarrier,
-// @ts-nocheck
   useRemovePreferredCarrier,
-// @ts-nocheck
+  type PreferredCarrier,
 } from '../hooks/usePreferredCarriers';
-// @ts-nocheck
 
-// @ts-nocheck
 export const PreferredCarriersList = () => {
   const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [newCarrierId, setNewCarrierId] = useState('');
   const [newCarrierNotes, setNewCarrierNotes] = useState('');
   const [page, setPage] = useState(0);
@@ -31,7 +23,12 @@ export const PreferredCarriersList = () => {
   const addMutation = useAddPreferredCarrier(user?.id || '');
   const removeMutation = useRemovePreferredCarrier(user?.id || '');
 
-  if (!user?.id) {
+  if (!isAuthenticated) {
+    return (
+      <div className="bg-white rounded-lg shadow p-6 text-center text-gray-600">
+        <p>Please log in to view your preferred carriers.</p>
+      </div>
+    );
   }
 
   const handleAdd = async (e: React.FormEvent) => {
@@ -59,9 +56,20 @@ export const PreferredCarriersList = () => {
   };
 
   if (isLoading) {
+    return (
+      <div className="bg-white rounded-lg shadow p-6 text-center text-gray-600">
+        <p>Loading preferred carriers...</p>
+      </div>
+    );
   }
 
   if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+        <p className="text-red-800 font-medium">Failed to load preferred carriers</p>
+        <p className="text-red-600 text-sm mt-1">{error instanceof Error ? error.message : 'Please try again'}</p>
+      </div>
+    );
   }
 
   return (
@@ -134,7 +142,7 @@ export const PreferredCarriersList = () => {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {carriers.content.map((carrier) => (
+              {carriers.content.map((carrier: PreferredCarrier) => (
                 <tr key={carrier.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     {carrier.carrierId}

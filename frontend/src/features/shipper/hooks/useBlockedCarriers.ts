@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import apiClient from '@/lib/apiClient';
 
 export interface BlockedCarrier {
   id: string;
@@ -11,15 +11,11 @@ export interface BlockedCarrier {
   deletedAt?: string;
 }
 
-const api = axios.create({
-  baseURL: '/api/v1',
-});
-
 export const useBlockedCarriers = (shipperId: string, page: number = 0) => {
   return useQuery({
     queryKey: ['blockedCarriers', shipperId, page],
     queryFn: async () => {
-      const { data } = await api.get(`/shippers/${shipperId}/blocked-carriers`, {
+      const { data } = await apiClient.get(`/shippers/${shipperId}/blocked-carriers`, {
         params: { page },
       });
       return data;
@@ -33,7 +29,7 @@ export const useBlockedCarrierCount = (shipperId: string) => {
   return useQuery({
     queryKey: ['blockedCarrierCount', shipperId],
     queryFn: async () => {
-      const { data } = await api.get(`/shippers/${shipperId}/blocked-carriers/count`);
+      const { data } = await apiClient.get(`/shippers/${shipperId}/blocked-carriers/count`);
       return data.count;
     },
     staleTime: 5 * 60 * 1000,
@@ -45,7 +41,7 @@ export const useIsCarrierBlocked = (shipperId: string, carrierId: string) => {
   return useQuery({
     queryKey: ['carrierBlocked', shipperId, carrierId],
     queryFn: async () => {
-      const { data } = await api.get(`/shippers/${shipperId}/blocked-carriers/check`, {
+      const { data } = await apiClient.get(`/shippers/${shipperId}/blocked-carriers/check`, {
         params: { carrierId },
       });
       return data.blocked;
@@ -68,7 +64,7 @@ export const useBlockCarrier = () => {
       carrierId: string;
       reason?: string;
     }) => {
-      const { data } = await api.post(
+      const { data } = await apiClient.post(
         `/shippers/${shipperId}/blocked-carriers`,
         null,
         {
@@ -92,7 +88,7 @@ export const useUnblockCarrier = () => {
 
   return useMutation({
     mutationFn: async ({ shipperId, carrierId }: { shipperId: string; carrierId: string }) => {
-      await api.delete(`/shippers/${shipperId}/blocked-carriers/${carrierId}`);
+      await apiClient.delete(`/shippers/${shipperId}/blocked-carriers/${carrierId}`);
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['blockedCarriers', variables.shipperId] });

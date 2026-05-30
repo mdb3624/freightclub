@@ -80,12 +80,20 @@ export function ShipperDashboard() {
               All Loads
             </button>
           </div>
-          <button
-            onClick={() => navigate('/shipper/loads/new')}
-            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700"
-          >
-            + Post Load
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => navigate('/settings/preferred-carriers')}
+              className="px-4 py-2 bg-gray-200 text-gray-900 text-sm font-medium rounded hover:bg-gray-300"
+            >
+              Preferred Carriers
+            </button>
+            <button
+              onClick={() => navigate('/shipper/loads/new')}
+              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700"
+            >
+              + Post Load
+            </button>
+          </div>
         </div>
 
         {statsData && (

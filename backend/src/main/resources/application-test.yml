@@ -1,4 +1,6 @@
 spring:
+  test:
+    enabled: true # Enables TestAuthController for E2E test authentication
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/freightclub_test?currentSchema=freightclub}
     username: ${DB_USERNAME:postgres}
@@ -31,6 +33,8 @@ server:
   port: ${PORT:9091}
 
 app:
+  cookie:
+    secure: false  # Tests run on HTTP localhost
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8081,http://localhost:3000}
   jwt:

@@ -24,39 +24,44 @@ public class ShipperPreferredCarrierController {
     this.service = service;
   }
 
-  @PostMapping("/{shipperId}/preferred-carriers")
+  @PostMapping("/preferred-carriers")
   public ResponseEntity<PreferredCarrierResponse> addPreferredCarrier(
-      @PathVariable String shipperId,
       @RequestParam String carrierId,
       @RequestParam(required = false) String notes) {
-    String tenantId = TenantContextHolder.getTenantId();
-
+    String shipperId = TenantContextHolder.getCurrentUserId();
     ShipperPreferredCarrier result = service.addPreferredCarrier(shipperId, carrierId, notes);
-
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(mapToResponse(result));
   }
 
-  @GetMapping("/{shipperId}/preferred-carriers")
-  public ResponseEntity<Page<PreferredCarrierResponse>> getPreferredCarriers(
-      @PathVariable String shipperId,
-      @RequestParam(defaultValue = "0") int page) {
-    Page<ShipperPreferredCarrier> carriers = service.getPreferredCarriers(shipperId, page);
-    return ResponseEntity.ok(
-        carriers.map(this::mapToResponse));
+  @GetMapping("/preferred-carriers")
+  public ResponseEntity<?> getPreferredCarriers(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "20") int limit) {
+    String shipperId = TenantContextHolder.getCurrentUserId();
+    Page<ShipperPreferredCarrier> carriers = service.getPreferredCarriers(shipperId, page - 1);
+
+    return ResponseEntity.ok(java.util.Map.of(
+        "data", carriers.getContent().stream().map(this::mapToResponse).toList(),
+        "pagination", java.util.Map.of(
+            "page", page,
+            "limit", limit,
+            "total", carriers.getTotalElements()
+        )
+    ));
   }
 
-  @GetMapping("/{shipperId}/preferred-carriers/count")
-  public ResponseEntity<PreferredCarrierCountResponse> getPreferredCarrierCount(
-      @PathVariable String shipperId) {
+  @GetMapping("/preferred-carriers/count")
+  public ResponseEntity<PreferredCarrierCountResponse> getPreferredCarrierCount() {
+    String shipperId = TenantContextHolder.getCurrentUserId();
     long count = service.getPreferredCarrierCount(shipperId);
     return ResponseEntity.ok(new PreferredCarrierCountResponse(count));
   }
 
-  @DeleteMapping("/{shipperId}/preferred-carriers/{carrierId}")
+  @DeleteMapping("/preferred-carriers/{carrierId}")
   public ResponseEntity<Void> removePreferredCarrier(
-      @PathVariable String shipperId,
       @PathVariable String carrierId) {
+    String shipperId = TenantContextHolder.getCurrentUserId();
     service.removePreferredCarrier(shipperId, carrierId);
     return ResponseEntity.noContent().build();
   }

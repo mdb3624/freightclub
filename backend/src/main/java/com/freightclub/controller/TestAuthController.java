@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -86,6 +88,18 @@ public class TestAuthController {
       return ResponseEntity.ok()
           .header(HttpHeaders.SET_COOKIE, cookie.toString())
           .body(body);
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+  @DeleteMapping("/users/{userId}")
+  public ResponseEntity<Void> deleteTestUser(@PathVariable String userId) {
+    try {
+      // Note: In production-like scenarios, implement soft-delete via deleted_at column
+      // For now, this is a no-op placeholder for E2E test cleanup
+      // Tests using this endpoint should handle cleanup via the auth service if needed
+      return ResponseEntity.noContent().build();
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }

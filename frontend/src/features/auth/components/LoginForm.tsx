@@ -46,7 +46,7 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate data-testid="login-form">
       {apiErrorMessage && <ErrorBanner message={apiErrorMessage} />}
 
       <Input
@@ -56,6 +56,7 @@ export function LoginForm() {
         value={email}
         onChange={handleEmailChange}
         error={validationErrors.email}
+        testId="email-input"
       />
 
       <Input
@@ -65,9 +66,10 @@ export function LoginForm() {
         value={password}
         onChange={handlePasswordChange}
         error={validationErrors.password}
+        testId="password-input"
       />
 
-      <Button type="submit" isLoading={isPending} className="w-full mt-2">
+      <Button type="submit" isLoading={isPending} className="w-full mt-2" data-testid="login-submit-btn">
         Sign in
       </Button>
 

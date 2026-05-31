@@ -56,7 +56,7 @@ export function ShipperDashboard() {
 
   return (
     <AppShell maxWidth="5xl">
-      <div className="space-y-6">
+      <div className="space-y-6" data-testid="dashboard-container">
         <div className="mb-6 flex items-center justify-between border-b border-gray-200">
           <div className="flex gap-2">
             <button

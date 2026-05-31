@@ -20,10 +20,9 @@ test.describe('Carrier Cost Profile Setup — US-757', () => {
     const user = await seeder.createTestUser({
       email: 'carrier-cost@test.com',
       password: 'N1kk101!',
-      role: 'TRUCKER',
+      role: 'CARRIER',
       firstName: 'Cost',
-      lastName: 'Tester',
-      companyName: 'Test Carrier'
+      lastName: 'Tester'
     })
 
     try {
@@ -81,7 +80,7 @@ test.describe('Carrier Cost Profile Setup — US-757', () => {
     const user = await seeder.createTestUser({
       email: 'carrier-cpm@test.com',
       password: 'N1kk101!',
-      role: 'TRUCKER',
+      role: 'CARRIER',
       firstName: 'CPM',
       lastName: 'Tester',
       companyName: 'Test CPM Carrier'
@@ -122,7 +121,7 @@ test.describe('Carrier Cost Profile Setup — US-757', () => {
     const user = await seeder.createTestUser({
       email: 'carrier-zero-mpg@test.com',
       password: 'N1kk101!',
-      role: 'TRUCKER',
+      role: 'CARRIER',
       firstName: 'ZeroMPG',
       lastName: 'Tester',
       companyName: 'Test Zero MPG Carrier'

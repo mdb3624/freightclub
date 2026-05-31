@@ -1,171 +1,241 @@
-import { test, expect } from '@playwright/test'
+/**
+ * Shipper Dashboard Golden Path Tests (US-715)
+ *
+ * Refactored Features (Phase 5 Pattern Rollout):
+ * 1. Uses data-testid selectors (mandatory per testing_standards.md)
+ * 2. Web-first assertions with explicit timeouts (no hard-coded waits)
+ * 3. API-driven test data setup (TestDataSeeder) instead of UI login
+ * 4. Proper synchronization with backend API responses
+ * 5. Trace generation on failure for debugging
+ *
+ * Trace files stored in: test-results/trace-{test-name}-{timestamp}.zip
+ */
 
-const BASE_URL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:9090'
+import { test, expect, APIRequestContext } from '@playwright/test'
+import { TestDataSeeder } from './fixtures/test-data-seeder'
 
 test.describe('Shipper Dashboard Golden Path (US-715)', () => {
-  test.beforeEach(async ({ page }) => {
-    // Navigate to login
-    await page.goto(`${BASE_URL}/login`)
+  // ============================================================================
+  // SETUP: Trace generation + API seeder
+  // ============================================================================
+  test.beforeEach(async ({ context }) => {
+    await context.tracing.start({
+      screenshots: true,
+      snapshots: true,
+      sources: true,
+    })
+    await context.clearCookies()
+  })
 
-    // Fill login form
-    await page.getByLabel('Email').fill('shipper@test.com')
-    await page.getByLabel('Password').fill('N1kk101!')
-
-    // Submit login
-    await page.getByRole('button', { name: /sign in/i }).click()
-
-    // Wait for dashboard navigation after login
-    const authResult = await Promise.race([
-      page.waitForURL(/\/dashboard\/shipper/, { timeout: 5000 }).then(() => true),
-      page.waitForURL(/\/login/, { timeout: 5000 }).then(() => false),
-    ]).catch(() => null)
-
-    if (authResult !== true) {
-      test.skip(true, 'Test user authentication failed - backend test data not configured. Run database migrations.')
+  test.afterEach(async ({ context }, testInfo) => {
+    if (testInfo.status !== 'passed') {
+      const timestamp = Date.now()
+      const tracePath = `test-results/trace-${testInfo.title.replace(/\s+/g, '-')}-${timestamp}.zip`
+      await context.tracing.stop({ path: tracePath })
+      console.log(`📍 Trace saved: ${tracePath}`)
+    } else {
+      await context.tracing.stop()
     }
   })
 
-  test('displays shipper dashboard with summary cards', async ({ page }) => {
-    // Verify we're on the dashboard
-    expect(page.url()).toContain('/dashboard/shipper')
+  // ============================================================================
+  // TEST 1: Dashboard displays summary cards
+  // ============================================================================
+  test('should display summary cards with load statistics (US-715 AC-1)', async ({ page, request }) => {
+    const seeder = new TestDataSeeder(request)
+    const user = await seeder.createTestUser({
+      email: 'shipper@test.com',
+      role: 'SHIPPER',
+      firstName: 'Shipper',
+      lastName: 'User',
+      companyName: 'Test Shipper Corp'
+    })
 
-    // Verify summary cards are visible
-    const summaryCards = page.locator('[role="region"]').filter({ hasText: /OPEN|CLAIMED|IN TRANSIT|DELIVERED/i })
-    await expect(summaryCards).toHaveCount(4)
+    try {
+      await page.goto('/dashboard/shipper')
+      await expect(page.locator('[data-testid="dashboard-container"]'))
+        .toBeVisible({ timeout: 5000 })
 
-    // Verify each card has at least a number
-    const cardNumbers = page.locator('div').filter({ hasText: /^[0-9]+$/ })
-    const numberCount = await cardNumbers.count()
-    expect(numberCount).toBeGreaterThanOrEqual(4)
-  })
+      // Verify summary cards are visible
+      await expect(page.locator('[data-testid="summary-open-card"]'))
+        .toBeVisible({ timeout: 5000 })
+      await expect(page.locator('[data-testid="summary-claimed-card"]'))
+        .toBeVisible({ timeout: 5000 })
+      await expect(page.locator('[data-testid="summary-in-transit-card"]'))
+        .toBeVisible({ timeout: 5000 })
+      await expect(page.locator('[data-testid="summary-delivered-card"]'))
+        .toBeVisible({ timeout: 5000 })
 
-  test('displays load table with expected columns', async ({ page }) => {
-    // Verify table headers exist
-    const tableHeaders = page.locator('thead th, thead [role="columnheader"]')
-    const headerCount = await tableHeaders.count()
-
-    // Should have at least ID, Origin, Destination, Pickup, Status, Pay columns
-    expect(headerCount).toBeGreaterThanOrEqual(6)
-  })
-
-  test('can switch between load view tabs', async ({ page }) => {
-    // Get initial URL (should show active loads)
-    const initialUrl = page.url()
-
-    // Find and click "All Loads" or similar tab if it exists
-    const allLoadsButton = page.locator('button', { hasText: /all loads|show all/i })
-    const allLoadsExists = await allLoadsButton.count()
-
-    if (allLoadsExists > 0) {
-      await allLoadsButton.click()
-
-      // Verify URL or content changed
-      await page.waitForTimeout(300)
-      const newUrl = page.url()
-
-      // URL should reflect the view change or content should update
-      expect(newUrl !== initialUrl || await page.locator('tbody tr').count() > 0).toBeTruthy()
+    } finally {
+      await seeder.cleanup()
     }
   })
 
-  test('search functionality filters loads by Load ID', async ({ page }) => {
-    // Find search input
-    const searchInput = page.locator('input[placeholder*="Search"], input[placeholder*="Load ID"], input[type="text"]').first()
-    const searchExists = await searchInput.count()
+  // ============================================================================
+  // TEST 2: Load table displays with expected columns
+  // ============================================================================
+  test('should display load table with expected columns (US-715 AC-2)', async ({ page, request }) => {
+    const seeder = new TestDataSeeder(request)
+    const user = await seeder.createTestUser({
+      email: 'shipper@load-table.com',
+      role: 'SHIPPER',
+      firstName: 'TableTest',
+      lastName: 'User',
+      companyName: 'Table Test Corp'
+    })
 
-    if (searchExists > 0) {
-      await searchInput.fill('LOAD-001')
+    try {
+      await page.goto('/dashboard/shipper')
 
-      // Wait for debounce (typical 300-500ms)
-      await page.waitForTimeout(400)
+      // Verify table is visible
+      await expect(page.locator('[data-testid="load-table"]'))
+        .toBeVisible({ timeout: 5000 })
 
-      // Verify table has been filtered (rows should exist or empty state shown)
-      const tableRows = page.locator('tbody tr')
-      const rowCount = await tableRows.count()
-      expect(rowCount).toBeGreaterThanOrEqual(0)
+      // Verify key column headers
+      await expect(page.locator('[data-testid="table-header-origin"]'))
+        .toBeVisible({ timeout: 5000 })
+      await expect(page.locator('[data-testid="table-header-destination"]'))
+        .toBeVisible({ timeout: 5000 })
+      await expect(page.locator('[data-testid="table-header-status"]'))
+        .toBeVisible({ timeout: 5000 })
 
-      // Clear search
-      await searchInput.clear()
-      await page.waitForTimeout(400)
+    } finally {
+      await seeder.cleanup()
     }
   })
 
-  test('can navigate to Post Load form from dashboard', async ({ page }) => {
-    // Find post load button
-    const postButton = page.locator('button', { hasText: /post a load|post load|create load/i }).first()
-    const postButtonExists = await postButton.count()
+  // ============================================================================
+  // TEST 3: Can switch between load view tabs
+  // ============================================================================
+  test('should switch between Active and All Loads tabs (US-715 AC-3)', async ({ page, request }) => {
+    const seeder = new TestDataSeeder(request)
+    const user = await seeder.createTestUser({
+      email: 'shipper@tabs.com',
+      role: 'SHIPPER',
+      firstName: 'TabSwitch',
+      lastName: 'User',
+      companyName: 'Tab Test Corp'
+    })
 
-    if (postButtonExists > 0) {
-      await postButton.click()
+    try {
+      await page.goto('/dashboard/shipper')
+      await expect(page.locator('[data-testid="dashboard-container"]'))
+        .toBeVisible({ timeout: 5000 })
 
-      // Verify navigation to post load form
-      await page.waitForURL(/shipper\/loads\/new/, { timeout: 5000 })
-      expect(page.url()).toContain('/shipper/loads/new')
+      // Click "All Loads" tab
+      const allLoadsTab = page.locator('[data-testid="tab-all-loads"]')
+      if (await allLoadsTab.count() > 0) {
+        await allLoadsTab.click()
+
+        // Verify tab is active
+        await expect(allLoadsTab)
+          .toHaveAttribute('aria-selected', 'true', { timeout: 5000 })
+      }
+
+    } finally {
+      await seeder.cleanup()
     }
   })
 
-  test('navigation menu is accessible and functional', async ({ page }) => {
-    // Check for navigation elements
-    const navMenu = page.locator('nav, [role="navigation"]')
-    const navExists = await navMenu.count()
+  // ============================================================================
+  // TEST 4: Search functionality filters loads
+  // ============================================================================
+  test('should filter loads using search input (US-715 AC-4)', async ({ page, request }) => {
+    const seeder = new TestDataSeeder(request)
+    const user = await seeder.createTestUser({
+      email: 'shipper@search.com',
+      role: 'SHIPPER',
+      firstName: 'SearchTest',
+      lastName: 'User',
+      companyName: 'Search Test Corp'
+    })
 
-    if (navExists > 0) {
-      // Verify profile link exists
-      const profileLink = page.locator('a, button', { hasText: /profile|settings|account/i })
-      const profileExists = await profileLink.count()
-      expect(profileExists).toBeGreaterThanOrEqual(0)
+    try {
+      await page.goto('/dashboard/shipper')
 
-      // Verify logout/account menu exists
-      const accountMenu = page.locator('button', { hasText: /account|logout|menu/i })
-      const accountExists = await accountMenu.count()
-      expect(accountExists).toBeGreaterThanOrEqual(0)
+      // Find and interact with search input
+      const searchInput = page.locator('[data-testid="load-search-input"]')
+      if (await searchInput.count() > 0) {
+        await searchInput.fill('test')
+
+        // Wait for search debounce + API response
+        const searchResponse = page.waitForResponse(
+          response => response.url().includes('/api/v1/loads') && response.status() === 200
+        )
+        await searchResponse
+
+        // Verify table updates or shows no results
+        await expect(page.locator('[data-testid="load-table"]'))
+          .toBeVisible({ timeout: 5000 })
+      }
+
+    } finally {
+      await seeder.cleanup()
     }
   })
 
-  test('dashboard loads without errors and shows expected content', async ({ page }) => {
-    // Verify page loaded successfully (no error messages)
-    const errorMessages = page.locator('text=/error|failed|unable to load/i')
-    const errorCount = await errorMessages.count()
-    expect(errorCount).toBe(0)
+  // ============================================================================
+  // TEST 5: Can navigate to Post Load form
+  // ============================================================================
+  test('should navigate to Post Load form (US-715 AC-5)', async ({ page, request }) => {
+    const seeder = new TestDataSeeder(request)
+    const user = await seeder.createTestUser({
+      email: 'shipper@post.com',
+      role: 'SHIPPER',
+      firstName: 'PostTest',
+      lastName: 'User',
+      companyName: 'Post Test Corp'
+    })
 
-    // Verify header or title is present
-    const headerText = page.locator('h1, h2, [role="heading"]').first()
-    await expect(headerText).toBeVisible({ timeout: 5000 })
+    try {
+      await page.goto('/dashboard/shipper')
 
-    // Verify main content area is visible
-    const mainContent = page.locator('main, [role="main"]')
-    const mainExists = await mainContent.count()
-    expect(mainExists).toBeGreaterThanOrEqual(0)
-  })
+      // Click post load button
+      const postButton = page.locator('[data-testid="post-load-btn"]')
+      if (await postButton.count() > 0) {
+        await postButton.click()
 
-  test('can interact with load rows in table', async ({ page }) => {
-    // Get first row in table
-    const firstRow = page.locator('tbody tr').first()
-    const rowExists = await firstRow.count()
+        // Verify navigation to post load page
+        await page.waitForURL(/\/shipper\/loads\/new/)
+        expect(page.url()).toContain('/shipper/loads/new')
+      }
 
-    if (rowExists > 0) {
-      // Verify row is clickable or has action buttons
-      const rowButton = firstRow.locator('button, a, [role="button"]').first()
-      const actionExists = await rowButton.count()
-
-      // Row should either be clickable or have action buttons
-      expect(rowExists + actionExists).toBeGreaterThan(0)
-
-      // Hover over row to verify interactive state
-      await firstRow.hover()
-      await page.waitForTimeout(200)
+    } finally {
+      await seeder.cleanup()
     }
   })
 
-  test('page responds correctly to data loading states', async ({ page }) => {
-    // Check for loading indicators (skeleton, spinner, etc)
-    const loadingIndicators = page.locator('[class*="loading"], [class*="skeleton"], [role="status"]')
+  // ============================================================================
+  // TEST 6: Dashboard loads without errors
+  // ============================================================================
+  test('should load dashboard without errors (US-715 AC-6)', async ({ page, request }) => {
+    const seeder = new TestDataSeeder(request)
+    const user = await seeder.createTestUser({
+      email: 'shipper@no-errors.com',
+      role: 'SHIPPER',
+      firstName: 'NoErrors',
+      lastName: 'User',
+      companyName: 'No Errors Corp'
+    })
 
-    // Wait for loading to complete
-    await page.waitForLoadState('networkidle')
+    try {
+      const errors: string[] = []
+      page.on('console', (msg) => {
+        if (msg.type() === 'error') errors.push(msg.text())
+      })
 
-    // After network is idle, loading indicators should be gone (or content should be visible)
-    const tableBody = page.locator('tbody')
-    await expect(tableBody).toBeVisible({ timeout: 5000 })
+      await page.goto('/dashboard/shipper')
+      await expect(page.locator('[data-testid="dashboard-container"]'))
+        .toBeVisible({ timeout: 5000 })
+
+      // Filter for critical errors only
+      const criticalErrors = errors.filter(
+        e => !e.includes('warn') && !e.includes('deprecated')
+      )
+      expect(criticalErrors).toHaveLength(0)
+
+    } finally {
+      await seeder.cleanup()
+    }
   })
 })

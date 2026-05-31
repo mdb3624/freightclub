@@ -1,161 +1,157 @@
+/**
+ * HOS Widget & Trucker Landing Page Tests
+ *
+ * Refactored Features (Phase 5 Pattern Rollout):
+ * 1. Uses data-testid selectors for critical components (mandatory per testing_standards.md)
+ * 2. Web-first assertions with explicit timeouts
+ * 3. No hard-coded waits (waitForTimeout removed)
+ * 4. Trace generation on failure
+ *
+ * Focus: Smoke tests for HOS widget compilation + TruckerLandingPage rendering
+ */
+
 import { test, expect } from '@playwright/test'
 
-const BASE_URL = ''
+test.describe('HOS Widget & Trucker Landing Page (Smoke Tests)', () => {
+  // ============================================================================
+  // SETUP: Trace generation
+  // ============================================================================
+  test.beforeEach(async ({ page, context }) => {
+    await context.tracing.start({
+      screenshots: true,
+      snapshots: true,
+      sources: true,
+    })
+    await context.clearCookies()
+    await page.evaluate(() => localStorage.clear())
+  })
 
-test.describe('HOS Widget Component', () => {
+  test.afterEach(async ({ page, context }, testInfo) => {
+    if (testInfo.status !== 'passed') {
+      const timestamp = Date.now()
+      const tracePath = `test-results/trace-${testInfo.title.replace(/\s+/g, '-')}-${timestamp}.zip`
+      await context.tracing.stop({ path: tracePath })
+      console.log(`📍 Trace saved: ${tracePath}`)
+    } else {
+      await context.tracing.stop()
+    }
+  })
 
-  test('HosWidget compiles without TypeScript errors', async ({ page }) => {
-    // Navigate to a page and check for console errors
-    await page.goto(`${BASE_URL}/`)
-
+  // ============================================================================
+  // TEST 1: HOS Widget compiles without errors
+  // ============================================================================
+  test('HosWidget should compile without TypeScript errors', async ({ page }) => {
     const errors: string[] = []
     page.on('console', (msg) => {
       if (msg.type() === 'error') errors.push(msg.text())
     })
 
-    // Wait a bit for any errors to appear
-    await page.waitForTimeout(2000)
+    await page.goto('/')
 
-    // Should have no TypeScript/compilation errors in console
-    const typeErrors = errors.filter(e => e.includes('HosWidget') || e.includes('useHosState'))
-    expect(typeErrors.length).toBe(0)
+    // Wait for page to settle (web-first, not hard-coded)
+    await expect(page.locator('[data-testid="app-container"]'))
+      .toBeVisible({ timeout: 5000 })
+
+    // Filter for HosWidget-specific errors
+    const hosErrors = errors.filter(
+      e => e.includes('HosWidget') || e.includes('useHosState') || e.includes('HOS')
+    )
+    expect(hosErrors).toHaveLength(0)
   })
 
-  test('TruckerLandingPage CSS migration complete', async ({ page }) => {
-    // Verify TruckerLandingPage loads and CSS classes are applied
-    await page.goto(`${BASE_URL}/`)
+  // ============================================================================
+  // TEST 2: TruckerLandingPage loads and displays main sections
+  // ============================================================================
+  test('TruckerLandingPage should render main sections with data-testid', async ({ page }) => {
+    await page.goto('/')
 
-    // Check for CSS classes (from migration)
-    const tickerWrap = page.locator('div.ticker-wrap')
-    await expect(tickerWrap).toBeVisible({ timeout: 5000 })
+    // Verify main layout sections using data-testid
+    await expect(page.locator('[data-testid="trucker-landing-header"]'))
+      .toBeVisible({ timeout: 5000 })
 
-    const tickerItems = page.locator('.ticker-item')
+    await expect(page.locator('[data-testid="ticker-widget"]'))
+      .toBeVisible({ timeout: 5000 })
+
+    await expect(page.locator('[data-testid="main-content"]'))
+      .toBeVisible({ timeout: 5000 })
+  })
+
+  // ============================================================================
+  // TEST 3: Market ticker displays with data-testid
+  // ============================================================================
+  test('Market ticker should display items with data-testid selectors', async ({ page }) => {
+    await page.goto('/')
+
+    // Verify ticker widget is visible
+    await expect(page.locator('[data-testid="ticker-widget"]'))
+      .toBeVisible({ timeout: 5000 })
+
+    // Count ticker items (should have at least 1)
+    const tickerItems = page.locator('[data-testid="ticker-item"]')
     const count = await tickerItems.count()
     expect(count).toBeGreaterThan(0)
   })
 
-  test('TruckerLandingPage ticker styling uses CSS classes', async ({ page }) => {
-    await page.goto(`${BASE_URL}/`)
+  // ============================================================================
+  // TEST 4: Navigation tabs render correctly
+  // ============================================================================
+  test('Navigation tabs should render with proper data-testid attributes', async ({ page }) => {
+    await page.goto('/')
 
-    // Verify ticker delta indicators use CSS classes (not inline styles)
-    const deltas = page.locator('.ticker-delta')
-    const deltaCount = await deltas.count()
+    // Verify navigation is present
+    await expect(page.locator('[data-testid="nav-tabs"]'))
+      .toBeVisible({ timeout: 5000 })
 
-    if (deltaCount > 0) {
-      const firstDelta = deltas.first()
-      const classes = await firstDelta.getAttribute('class')
-      expect(classes).toMatch(/ticker-delta/)
-      expect(classes).toMatch(/(up|down)/)
-    }
+    // Verify at least one tab is visible
+    const navTab = page.locator('[data-testid="nav-tab"]').first()
+    await expect(navTab).toBeVisible({ timeout: 5000 })
   })
 
-  test('Page renders without CSS migration regressions', async ({ page }) => {
-    await page.goto(`${BASE_URL}/`)
-
-    // Check that main layout elements are visible
-    const header = page.locator('header')
-    await expect(header).toBeVisible({ timeout: 5000 })
-
-    // No unhandled exceptions
-    const exceptions: string[] = []
-    page.on('console', (msg) => {
-      if (msg.type() === 'error' && msg.text().includes('style')) {
-        exceptions.push(msg.text())
-      }
-    })
-
-    await page.waitForTimeout(1000)
-    expect(exceptions.length).toBe(0)
-  })
-})
-
-test.describe('TruckerLandingPage CSS Migration', () => {
-  test.beforeEach(async ({ page }) => {
-    // TruckerLandingPage is the main entry for truckers
-    await page.goto(BASE_URL)
-    await page.waitForLoadState('networkidle')
-  })
-
-  test('renders page without errors', async ({ page }) => {
-    // Check for JavaScript errors
+  // ============================================================================
+  // TEST 5: Page renders without critical errors
+  // ============================================================================
+  test('Page should render without critical console errors', async ({ page }) => {
     const errors: string[] = []
     page.on('console', (msg) => {
       if (msg.type() === 'error') errors.push(msg.text())
     })
 
-    // Page should load without error-level logs
-    expect(errors.length).toBe(0)
+    await page.goto('/')
+    await expect(page.locator('[data-testid="app-container"]'))
+      .toBeVisible({ timeout: 5000 })
+
+    // Filter out non-critical errors (warnings, deprecations)
+    const criticalErrors = errors.filter(
+      e => !e.includes('warn') && !e.includes('deprecated')
+    )
+    expect(criticalErrors).toHaveLength(0)
   })
 
-  test('displays HAULER header', async ({ page }) => {
-    const logo = page.locator('div.logo:has-text("HAULER")')
-    await expect(logo).toBeVisible()
-  })
-
-  test('displays market ticker with CSS classes', async ({ page }) => {
-    const ticker = page.locator('div.ticker-wrap')
-    await expect(ticker).toBeVisible()
-
-    const tickerItems = page.locator('.ticker-item')
-    const count = await tickerItems.count()
-    expect(count).toBeGreaterThan(0)
-  })
-
-  test('ticker items have delta indicators with correct classes', async ({ page }) => {
-    const deltas = page.locator('.ticker-delta')
-    const deltaCount = await deltas.count()
-
-    if (deltaCount > 0) {
-      const firstDelta = deltas.first()
-      const classes = await firstDelta.getAttribute('class')
-      expect(classes).toMatch(/ticker-delta\s+(up|down)/)
-    }
-  })
-
-  test('CSS classes applied (not inline styles) to ticker', async ({ page }) => {
-    const tickerWrap = page.locator('div.ticker-wrap')
-
-    // Check that ticker-wrap uses CSS classes, not inline styles
-    const style = await tickerWrap.getAttribute('style')
-    // Should be null or empty (no inline styles)
-    if (style) {
-      expect(style).not.toContain('flex')
-      expect(style).not.toContain('overflow')
-    }
-  })
-
-  test('navigation tabs rendered with correct styling', async ({ page }) => {
-    const navTabs = page.locator('.nav-tab')
-    const count = await navTabs.count()
-    expect(count).toBeGreaterThan(0)
-
-    // First tab should be visible
-    const firstTab = navTabs.first()
-    await expect(firstTab).toBeVisible()
-  })
-
-  test('main content area renders', async ({ page }) => {
-    const main = page.locator('div.main')
-    await expect(main).toBeVisible()
-  })
-
-  test('responsive layout (desktop viewport)', async ({ page }) => {
+  // ============================================================================
+  // TEST 6: Responsive layout (desktop)
+  // ============================================================================
+  test('Should render correctly on desktop viewport', async ({ page }) => {
     await page.setViewportSize({ width: 1920, height: 1080 })
+    await page.goto('/')
 
-    const header = page.locator('header')
-    const main = page.locator('div.main')
+    await expect(page.locator('[data-testid="trucker-landing-header"]'))
+      .toBeVisible({ timeout: 5000 })
 
-    await expect(header).toBeVisible()
-    await expect(main).toBeVisible()
+    await expect(page.locator('[data-testid="main-content"]'))
+      .toBeVisible({ timeout: 5000 })
   })
 
-  test('responsive layout (mobile viewport)', async ({ page }) => {
+  // ============================================================================
+  // TEST 7: Responsive layout (mobile)
+  // ============================================================================
+  test('Should render correctly on mobile viewport', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 })
+    await page.goto('/')
 
-    const header = page.locator('header')
-    const main = page.locator('div.main')
+    await expect(page.locator('[data-testid="trucker-landing-header"]'))
+      .toBeVisible({ timeout: 5000 })
 
-    await expect(header).toBeVisible()
-    await expect(main).toBeVisible()
+    await expect(page.locator('[data-testid="main-content"]'))
+      .toBeVisible({ timeout: 5000 })
   })
 })

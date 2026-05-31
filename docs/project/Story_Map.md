@@ -4,13 +4,14 @@
 
 ---
 
-## Critical Security & Infrastructure (3 stories)
+## Critical Security & Infrastructure (4 stories)
 
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
 | SEC-001 | Add @PreAuthorize to DELETE/PUT Endpoints | DONE | Cross | — | ✅ RLS, ✅ No-Lombok, ✅ 80% branch coverage (10/10 tests PASS) |
 | SEC-002 | PostgreSQL RLS Policies (5 Tables)    | DONE | Cross | — | ✅ RLS enforcement at DB level, ✅ Idempotent Flyway, ✅ 5/5 tests PASS |
 | INF-001 | Flyway Migration Idempotency (20 migrations) | DONE | Cross | — | ✅ DO block pattern, ✅ Exception handling, ✅ 20/20 migrations wrapped |
+| **US-900** | **E2E Testing Infrastructure & Standards** | **REVIEWER_APPROVED** | **Cross** | **—** | **✅ Phase 1-2 complete, ✅ REVIEWER PASS, ✅ LIBRARIAN signed off, Phases 3-6 ready for execution** |
 
 ---
 

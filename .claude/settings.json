@@ -11,6 +11,8 @@
       "Bash(curl *)"
     ]
   },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["browser-use"],
   "hooks": {
     "PostToolUse": [
       {

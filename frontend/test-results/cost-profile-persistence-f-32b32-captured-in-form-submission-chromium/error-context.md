@@ -6,8 +6,8 @@
 
 # Test info
 
-- Name: cost-profile-persistence-fix.spec.ts >> Cost Profile Persistence Fix Verification >> cost profile fields should persist after page navigation
-- Location: e2e\cost-profile-persistence-fix.spec.ts:80:3
+- Name: cost-profile-persistence-fix.spec.ts >> Cost Profile Persistence Fix Verification >> cost profile fields should be captured in form submission
+- Location: e2e\cost-profile-persistence-fix.spec.ts:11:3
 
 # Error details
 
@@ -69,7 +69,8 @@ Call log:
   18  |       await page.waitForTimeout(1000)
   19  | 
   20  |       // Wait for Cost Profile section to load (specific to TRUCKER users)
-  21  |       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })
+> 21  |       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })
+      |                                                       ^ Error: expect(locator).toBeVisible() failed
   22  | 
   23  |       // Fill multiple cost profile fields
   24  |       await page.fill('input[placeholder="e.g. 1800"]', '1800')  // Truck Payment
@@ -134,8 +135,7 @@ Call log:
   83  |       await page.goto('/profile', { waitUntil: 'networkidle' })
   84  |       await page.waitForLoadState('networkidle')
   85  |       await page.waitForTimeout(1000)
-> 86  |       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })
-      |                                                       ^ Error: expect(locator).toBeVisible() failed
+  86  |       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })
   87  | 
   88  |       // Fill fields
   89  |       await page.fill('input[placeholder="e.g. 1800"]', '2500')
@@ -171,60 +171,4 @@ Call log:
   119 |       expect(insuranceAfter).toBe('1200')
   120 | 
   121 |       console.log('✓ Cost fields persisted after navigation')
-  122 |     } catch (error) {
-  123 |       console.error('Test failed:', error)
-  124 |       throw error
-  125 |     }
-  126 |   })
-  127 | 
-  128 |   test('cost profile CPM calculations should work with persisted values', async ({ page }) => {
-  129 |     try {
-  130 |       // Navigate to profile page (already authenticated via auth.json)
-  131 |       await page.goto('/profile', { waitUntil: 'networkidle' })
-  132 |       await page.waitForLoadState('networkidle')
-  133 |       await page.waitForTimeout(1000)
-  134 |       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })
-  135 | 
-  136 |       // Fill complete cost profile for CPM calculation
-  137 |       await page.fill('input[placeholder="e.g. 1800"]', '1800')  // Truck Payment
-  138 |       await page.fill('input[placeholder="e.g. 900"]', '900')    // Insurance
-  139 |       await page.fill('input[placeholder="e.g. 200"]', '200')    // IFTA/IRP
-  140 |       await page.fill('input[placeholder="e.g. 150"]', '150')    // Phone/ELD
-  141 |       await page.fill('input[placeholder="e.g. 3.89"]', '3.50')  // Fuel Price
-  142 |       await page.fill('input[placeholder="e.g. 6.5"]', '6.5')    // MPG
-  143 |       await page.fill('input[placeholder="e.g. 8000"]', '8000')  // Monthly Miles
-  144 | 
-  145 |       // Wait for CPM calculations to appear (CostProfileSummary should update)
-  146 |       await expect(page.locator('text=Fixed CPM')).toBeVisible({ timeout: 5000 })
-  147 |       await expect(page.locator('text=Variable CPM')).toBeVisible({ timeout: 5000 })
-  148 |       await expect(page.locator('text=Total CPM')).toBeVisible({ timeout: 5000 })
-  149 |       await expect(page.locator('text=Minimum RPM')).toBeVisible({ timeout: 5000 })
-  150 | 
-  151 |       console.log('✓ CPM calculations displayed')
-  152 | 
-  153 |       // Save and verify
-  154 |       const savePromise = page.waitForResponse(
-  155 |         response => response.url().includes('/api/v1/profile') && response.status() === 200
-  156 |       )
-  157 |       await page.click('button:has-text("Save Changes")')
-  158 |       const response = await savePromise
-  159 |       const payload = await response.request().postDataJSON()
-  160 | 
-  161 |       // Verify all cost fields in payload
-  162 |       expect(payload.truckPaymentLease).toBe(1800)
-  163 |       expect(payload.insurance).toBe(900)
-  164 |       expect(payload.iftaIrpPermits).toBe(200)
-  165 |       expect(payload.phoneEldMisc).toBe(150)
-  166 |       expect(payload.fuelCostPerGallon).toBe(3.50)
-  167 |       expect(payload.milesPerGallon).toBe(6.5)
-  168 |       expect(payload.monthlyMilesTarget).toBe(8000)
-  169 | 
-  170 |       console.log('✓ All cost fields in API payload for CPM calculations')
-  171 |     } catch (error) {
-  172 |       console.error('Test failed:', error)
-  173 |       throw error
-  174 |     }
-  175 |   })
-  176 | })
-  177 | 
 ```

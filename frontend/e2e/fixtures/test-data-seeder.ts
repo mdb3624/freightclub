@@ -11,7 +11,7 @@
  *   const load = await seeder.createLoad({ tenantId: tenant.id, carrierId: carrier.id });
  */
 
-import { APIRequestContext, Page } from '@playwright/test';
+import { APIRequestContext, Page, request as playwrightRequest } from '@playwright/test';
 
 interface TestUser {
   id: string;
@@ -19,8 +19,10 @@ interface TestUser {
   password: string;
   firstName: string;
   lastName: string;
-  role: 'SHIPPER' | 'CARRIER' | 'ADMIN';
+  role: 'SHIPPER' | 'TRUCKER' | 'ADMIN';
   tenantId: string;
+  refreshToken?: string;
+  accessToken?: string;
 }
 
 interface TestTenant {
@@ -55,6 +57,7 @@ export class TestDataSeeder {
   private apiContext: APIRequestContext;
   private backendUrl: string;
   private createdResources: Map<string, any[]> = new Map(); // Track created resources for cleanup
+  private accessToken: string | null = null;
 
   constructor(apiContext: APIRequestContext, backendUrl: string = 'http://localhost:9091') {
     this.apiContext = apiContext;
@@ -64,6 +67,7 @@ export class TestDataSeeder {
   /**
    * Create a test user via /api/test/auth/register endpoint
    * DEPENDS ON: None (root entity)
+   * NOTE: Creates a fresh APIRequestContext to avoid auth state interference
    */
   async createTestUser(overrides: Partial<TestUser> = {}): Promise<TestUser> {
     const uniqueId = Date.now();
@@ -79,31 +83,63 @@ export class TestDataSeeder {
 
     const userData = { ...defaults, ...overrides };
 
-    const response = await this.apiContext.post(
-      `${this.backendUrl}/api/test/auth/register`,
-      {
-        data: {
-          email: userData.email,
-          password: userData.password,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          role: userData.role,
-          companyName: `E2ETest-${uniqueId}`,
-        },
-      }
-    );
+    // Create a fresh APIRequestContext without auth state to avoid interference
+    const freshContext = await playwrightRequest.newContext();
+    try {
+      const requestBody = {
+        email: userData.email,
+        password: userData.password,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        role: userData.role,
+        companyName: `E2ETest-${uniqueId}`,
+      };
 
-    if (!response.ok()) {
-      throw new Error(
-        `Failed to create test user: ${response.status()} ${await response.text()}`
+      console.log('[TestDataSeeder] Creating test user with request body:', requestBody);
+
+      const response = await freshContext.post(
+        `${this.backendUrl}/api/test/auth/register`,
+        {
+          data: requestBody,
+        }
       );
+
+      if (!response.ok()) {
+        const text = await response.text();
+        console.error(`[TestDataSeeder] Test user creation failed:`, {
+          status: response.status(),
+          body: text,
+          url: `${this.backendUrl}/api/test/auth/register`,
+          headers: response.headers()
+        });
+        throw new Error(
+          `Failed to create test user: ${response.status()} ${text}`
+        );
+      }
+
+      const body = await response.json();
+      this.accessToken = body.accessToken;
+
+      // Extract refresh token from Set-Cookie header
+      const setCookieHeader = response.headers()['set-cookie'];
+      let refreshToken = '';
+      if (setCookieHeader) {
+        refreshToken = setCookieHeader.split(';')[0].split('=')[1] || '';
+      }
+
+      const user: TestUser = {
+        ...userData,
+        id: body.user.id,
+        tenantId: body.user.tenantId,
+        accessToken: body.accessToken,
+        refreshToken
+      };
+
+      this.trackResource('users', user);
+      return user;
+    } finally {
+      await freshContext.dispose();
     }
-
-    const body = await response.json();
-    const user: TestUser = { ...userData, id: body.userId, tenantId: body.tenantId };
-
-    this.trackResource('users', user);
-    return user;
   }
 
   /**
@@ -220,12 +256,28 @@ export class TestDataSeeder {
   }
 
   /**
+   * Get the access token from the last created user
+   */
+  getAccessToken(): string | null {
+    return this.accessToken;
+  }
+
+  /**
    * Get tenant context headers for multi-tenancy
    */
   private getTenantHeaders(tenantId: string): Record<string, string> {
     return {
       'X-Tenant-ID': tenantId, // If your backend uses header-based tenant context
     };
+  }
+
+  /**
+   * Get authorization headers with access token
+   */
+  private getAuthHeaders(): Record<string, string> {
+    return this.accessToken
+      ? { Authorization: `Bearer ${this.accessToken}` }
+      : {};
   }
 
   /**

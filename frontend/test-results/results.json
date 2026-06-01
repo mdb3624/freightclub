@@ -76,11 +76,11 @@
         {
           "title": "Cost Profile Persistence Fix Verification",
           "file": "cost-profile-persistence-fix.spec.ts",
-          "line": 11,
+          "line": 10,
           "column": 6,
           "specs": [
             {
-              "title": "cost profile fields should be captured in form submission (TestDataSeeder)",
+              "title": "cost profile fields should be captured in form submission",
               "ok": false,
               "tags": [],
               "tests": [
@@ -95,67 +95,71 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 285,
+                      "duration": 12422,
                       "error": {
-                        "message": "Error: Failed to create test user: 500 ",
-                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:14:18",
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=Cost Profile')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=Cost Profile')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=Cost Profile')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=Cost Profile')\u001b[22m\n\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:21:55",
                         "location": {
-                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
-                          "column": 13,
-                          "line": 97
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts",
+                          "column": 55,
+                          "line": 21
                         },
-                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                        "snippet": "\u001b[0m \u001b[90m 19 |\u001b[39m\n \u001b[90m 20 |\u001b[39m       \u001b[90m// Wait for Cost Profile section to load (specific to TRUCKER users)\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 21 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'text=Cost Profile'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\n \u001b[90m    |\u001b[39m                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 22 |\u001b[39m\n \u001b[90m 23 |\u001b[39m       \u001b[90m// Fill multiple cost profile fields\u001b[39m\n \u001b[90m 24 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[placeholder=\"e.g. 1800\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'1800'\u001b[39m)  \u001b[90m// Truck Payment\u001b[39m\u001b[0m"
                       },
                       "errors": [
                         {
                           "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
-                            "column": 13,
-                            "line": 97
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts",
+                            "column": 55,
+                            "line": 21
                           },
-                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:14:18"
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=Cost Profile')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=Cost Profile')\u001b[22m\n\n\n  19 |\n  20 |       // Wait for Cost Profile section to load (specific to TRUCKER users)\n> 21 |       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })\n     |                                                       ^\n  22 |\n  23 |       // Fill multiple cost profile fields\n  24 |       await page.fill('input[placeholder=\"e.g. 1800\"]', '1800')  // Truck Payment\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:21:55"
                         }
                       ],
                       "stdout": [],
-                      "stderr": [],
+                      "stderr": [
+                        {
+                          "text": "Test failed: ExpectError: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=Cost Profile')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=Cost Profile')\u001b[22m\n\n    at \u001b[90mC:\\projects\\freightclub\\frontend\\\u001b[39me2e\\cost-profile-persistence-fix.spec.ts:21:55 {\n  matcherResult: {\n    message: \u001b[32m'\\x1B[2mexpect(\\x1B[22m\\x1B[31mlocator\\x1B[39m\\x1B[2m).\\x1B[22mtoBeVisible\\x1B[2m(\\x1B[22m\\x1B[2m)\\x1B[22m failed\\n'\u001b[39m +\n      \u001b[32m'\\n'\u001b[39m +\n      \u001b[32m\"Locator: locator('text=Cost Profile')\\n\"\u001b[39m +\n      \u001b[32m'Expected: visible\\n'\u001b[39m +\n      \u001b[32m'Timeout: 10000ms\\n'\u001b[39m +\n      \u001b[32m'Error: element(s) not found\\n'\u001b[39m +\n      \u001b[32m'\\n'\u001b[39m +\n      \u001b[32m'Call log:\\n'\u001b[39m +\n      \u001b[32m'\\x1B[2m  - Expect \"toBeVisible\" with timeout 10000ms\\x1B[22m\\n'\u001b[39m +\n      \u001b[32m\"\\x1B[2m  - waiting for locator('text=Cost Profile')\\x1B[22m\\n\"\u001b[39m,\n    pass: \u001b[33mfalse\u001b[39m,\n    actual: \u001b[90mundefined\u001b[39m,\n    name: \u001b[32m'toBeVisible'\u001b[39m,\n    expected: \u001b[32m'visible'\u001b[39m,\n    log: [\n      \u001b[32m'  - Expect \"toBeVisible\" with timeout 10000ms'\u001b[39m,\n      \u001b[32m\"  - waiting for locator('text=Cost Profile')\"\u001b[39m\n    ],\n    timeout: \u001b[33m10000\u001b[39m\n  },\n  \u001b[32mSymbol(step)\u001b[39m: {\n    category: \u001b[32m'expect'\u001b[39m,\n    apiName: \u001b[32m'expect.toBeVisible'\u001b[39m,\n    title: \u001b[32m`Expect \"toBeVisible\" locator('text=Cost Profile')`\u001b[39m,\n    shortTitle: \u001b[32m'Expect \"toBeVisible\"'\u001b[39m,\n    params: { expected: \u001b[36m[Object]\u001b[39m },\n    infectParentStepsWithError: \u001b[90mundefined\u001b[39m,\n    stepId: \u001b[32m'expect@37'\u001b[39m,\n    group: \u001b[90mundefined\u001b[39m,\n    boxedStack: \u001b[90mundefined\u001b[39m,\n    location: {\n      file: \u001b[32m'C:\\\\projects\\\\freightclub\\\\frontend\\\\e2e\\\\cost-profile-persistence-fix.spec.ts'\u001b[39m,\n      line: \u001b[33m21\u001b[39m,\n      column: \u001b[33m55\u001b[39m\n    },\n    steps: [],\n    attachmentIndices: [],\n    info: TestStepInfoImpl {\n      annotations: [],\n      _testInfo: \u001b[36m[TestInfoImpl]\u001b[39m,\n      _stepId: \u001b[32m'expect@37'\u001b[39m,\n      _title: \u001b[32m`Expect \"toBeVisible\" locator('text=Cost Profile')`\u001b[39m,\n      _parentStep: \u001b[90mundefined\u001b[39m,\n      skip: \u001b[36m[Function (anonymous)]\u001b[39m\n    },\n    complete: \u001b[36m[Function: complete]\u001b[39m,\n    endWallTime: \u001b[33m1780277123198\u001b[39m,\n    error: {\n      message: \u001b[32m'Error: \\x1B[2mexpect(\\x1B[22m\\x1B[31mlocator\\x1B[39m\\x1B[2m).\\x1B[22mtoBeVisible\\x1B[2m(\\x1B[22m\\x1B[2m)\\x1B[22m failed\\n'\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m\"Locator: locator('text=Cost Profile')\\n\"\u001b[39m +\n        \u001b[32m'Expected: visible\\n'\u001b[39m +\n        \u001b[32m'Timeout: 10000ms\\n'\u001b[39m +\n        \u001b[32m'Error: element(s) not found\\n'\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m'Call log:\\n'\u001b[39m +\n        \u001b[32m'\\x1B[2m  - Expect \"toBeVisible\" with timeout 10000ms\\x1B[22m\\n'\u001b[39m +\n        \u001b[32m\"\\x1B[2m  - waiting for locator('text=Cost Profile')\\x1B[22m\\n\"\u001b[39m,\n      stack: \u001b[32m'Error: \\x1B[2mexpect(\\x1B[22m\\x1B[31mlocator\\x1B[39m\\x1B[2m).\\x1B[22mtoBeVisible\\x1B[2m(\\x1B[22m\\x1B[2m)\\x1B[22m failed\\n'\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m\"Locator: locator('text=Cost Profile')\\n\"\u001b[39m +\n        \u001b[32m'Expected: visible\\n'\u001b[39m +\n        \u001b[32m'Timeout: 10000ms\\n'\u001b[39m +\n        \u001b[32m'Error: element(s) not found\\n'\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m'Call log:\\n'\u001b[39m +\n        \u001b[32m'\\x1B[2m  - Expect \"toBeVisible\" with timeout 10000ms\\x1B[22m\\n'\u001b[39m +\n        \u001b[32m\"\\x1B[2m  - waiting for locator('text=Cost Profile')\\x1B[22m\\n\"\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m'    at C:\\\\projects\\\\freightclub\\\\frontend\\\\e2e\\\\cost-profile-persistence-fix.spec.ts:21:55'\u001b[39m,\n      cause: \u001b[90mundefined\u001b[39m\n    }\n  }\n}\n"
+                        }
+                      ],
                       "retry": 0,
-                      "startTime": "2026-06-01T01:15:57.993Z",
+                      "startTime": "2026-06-01T01:25:11.327Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-persistence-f-1ce81--submission-TestDataSeeder--chromium\\test-failed-1.png"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-persistence-f-32b32-captured-in-form-submission-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-persistence-f-1ce81--submission-TestDataSeeder--chromium\\video.webm"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-persistence-f-32b32-captured-in-form-submission-chromium\\video.webm"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-persistence-f-1ce81--submission-TestDataSeeder--chromium\\error-context.md"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-persistence-f-32b32-captured-in-form-submission-chromium\\error-context.md"
                         },
                         {
                           "name": "trace",
                           "contentType": "application/zip",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-persistence-f-1ce81--submission-TestDataSeeder--chromium\\trace.zip"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-persistence-f-32b32-captured-in-form-submission-chromium\\trace.zip"
                         }
                       ],
                       "errorLocation": {
-                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
-                        "column": 13,
-                        "line": 97
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts",
+                        "column": 55,
+                        "line": 21
                       }
                     }
                   ],
                   "status": "unexpected"
                 }
               ],
-              "id": "8aa9731de4bed95193cd-34a2cc32437504663886",
+              "id": "8aa9731de4bed95193cd-df263a1edd619b3cb01a",
               "file": "cost-profile-persistence-fix.spec.ts",
-              "line": 12,
+              "line": 11,
               "column": 3
             },
             {
@@ -174,31 +178,35 @@
                       "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 279,
+                      "duration": 12335,
                       "error": {
-                        "message": "Error: Failed to create test user: 500 ",
-                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:87:18",
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=Cost Profile')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=Cost Profile')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=Cost Profile')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=Cost Profile')\u001b[22m\n\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:86:55",
                         "location": {
-                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
-                          "column": 13,
-                          "line": 97
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts",
+                          "column": 55,
+                          "line": 86
                         },
-                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                        "snippet": "\u001b[0m \u001b[90m 84 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForLoadState(\u001b[32m'networkidle'\u001b[39m)\n \u001b[90m 85 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m1000\u001b[39m)\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 86 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'text=Cost Profile'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\n \u001b[90m    |\u001b[39m                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 87 |\u001b[39m\n \u001b[90m 88 |\u001b[39m       \u001b[90m// Fill fields\u001b[39m\n \u001b[90m 89 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[placeholder=\"e.g. 1800\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'2500'\u001b[39m)\u001b[0m"
                       },
                       "errors": [
                         {
                           "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
-                            "column": 13,
-                            "line": 97
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts",
+                            "column": 55,
+                            "line": 86
                           },
-                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:87:18"
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=Cost Profile')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=Cost Profile')\u001b[22m\n\n\n  84 |       await page.waitForLoadState('networkidle')\n  85 |       await page.waitForTimeout(1000)\n> 86 |       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })\n     |                                                       ^\n  87 |\n  88 |       // Fill fields\n  89 |       await page.fill('input[placeholder=\"e.g. 1800\"]', '2500')\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:86:55"
                         }
                       ],
                       "stdout": [],
-                      "stderr": [],
+                      "stderr": [
+                        {
+                          "text": "Test failed: ExpectError: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=Cost Profile')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=Cost Profile')\u001b[22m\n\n    at \u001b[90mC:\\projects\\freightclub\\frontend\\\u001b[39me2e\\cost-profile-persistence-fix.spec.ts:86:55 {\n  matcherResult: {\n    message: \u001b[32m'\\x1B[2mexpect(\\x1B[22m\\x1B[31mlocator\\x1B[39m\\x1B[2m).\\x1B[22mtoBeVisible\\x1B[2m(\\x1B[22m\\x1B[2m)\\x1B[22m failed\\n'\u001b[39m +\n      \u001b[32m'\\n'\u001b[39m +\n      \u001b[32m\"Locator: locator('text=Cost Profile')\\n\"\u001b[39m +\n      \u001b[32m'Expected: visible\\n'\u001b[39m +\n      \u001b[32m'Timeout: 10000ms\\n'\u001b[39m +\n      \u001b[32m'Error: element(s) not found\\n'\u001b[39m +\n      \u001b[32m'\\n'\u001b[39m +\n      \u001b[32m'Call log:\\n'\u001b[39m +\n      \u001b[32m'\\x1B[2m  - Expect \"toBeVisible\" with timeout 10000ms\\x1B[22m\\n'\u001b[39m +\n      \u001b[32m\"\\x1B[2m  - waiting for locator('text=Cost Profile')\\x1B[22m\\n\"\u001b[39m,\n    pass: \u001b[33mfalse\u001b[39m,\n    actual: \u001b[90mundefined\u001b[39m,\n    name: \u001b[32m'toBeVisible'\u001b[39m,\n    expected: \u001b[32m'visible'\u001b[39m,\n    log: [\n      \u001b[32m'  - Expect \"toBeVisible\" with timeout 10000ms'\u001b[39m,\n      \u001b[32m\"  - waiting for locator('text=Cost Profile')\"\u001b[39m\n    ],\n    timeout: \u001b[33m10000\u001b[39m\n  },\n  \u001b[32mSymbol(step)\u001b[39m: {\n    category: \u001b[32m'expect'\u001b[39m,\n    apiName: \u001b[32m'expect.toBeVisible'\u001b[39m,\n    title: \u001b[32m`Expect \"toBeVisible\" locator('text=Cost Profile')`\u001b[39m,\n    shortTitle: \u001b[32m'Expect \"toBeVisible\"'\u001b[39m,\n    params: { expected: \u001b[36m[Object]\u001b[39m },\n    infectParentStepsWithError: \u001b[90mundefined\u001b[39m,\n    stepId: \u001b[32m'expect@37'\u001b[39m,\n    group: \u001b[90mundefined\u001b[39m,\n    boxedStack: \u001b[90mundefined\u001b[39m,\n    location: {\n      file: \u001b[32m'C:\\\\projects\\\\freightclub\\\\frontend\\\\e2e\\\\cost-profile-persistence-fix.spec.ts'\u001b[39m,\n      line: \u001b[33m86\u001b[39m,\n      column: \u001b[33m55\u001b[39m\n    },\n    steps: [],\n    attachmentIndices: [],\n    info: TestStepInfoImpl {\n      annotations: [],\n      _testInfo: \u001b[36m[TestInfoImpl]\u001b[39m,\n      _stepId: \u001b[32m'expect@37'\u001b[39m,\n      _title: \u001b[32m`Expect \"toBeVisible\" locator('text=Cost Profile')`\u001b[39m,\n      _parentStep: \u001b[90mundefined\u001b[39m,\n      skip: \u001b[36m[Function (anonymous)]\u001b[39m\n    },\n    complete: \u001b[36m[Function: complete]\u001b[39m,\n    endWallTime: \u001b[33m1780277136366\u001b[39m,\n    error: {\n      message: \u001b[32m'Error: \\x1B[2mexpect(\\x1B[22m\\x1B[31mlocator\\x1B[39m\\x1B[2m).\\x1B[22mtoBeVisible\\x1B[2m(\\x1B[22m\\x1B[2m)\\x1B[22m failed\\n'\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m\"Locator: locator('text=Cost Profile')\\n\"\u001b[39m +\n        \u001b[32m'Expected: visible\\n'\u001b[39m +\n        \u001b[32m'Timeout: 10000ms\\n'\u001b[39m +\n        \u001b[32m'Error: element(s) not found\\n'\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m'Call log:\\n'\u001b[39m +\n        \u001b[32m'\\x1B[2m  - Expect \"toBeVisible\" with timeout 10000ms\\x1B[22m\\n'\u001b[39m +\n        \u001b[32m\"\\x1B[2m  - waiting for locator('text=Cost Profile')\\x1B[22m\\n\"\u001b[39m,\n      stack: \u001b[32m'Error: \\x1B[2mexpect(\\x1B[22m\\x1B[31mlocator\\x1B[39m\\x1B[2m).\\x1B[22mtoBeVisible\\x1B[2m(\\x1B[22m\\x1B[2m)\\x1B[22m failed\\n'\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m\"Locator: locator('text=Cost Profile')\\n\"\u001b[39m +\n        \u001b[32m'Expected: visible\\n'\u001b[39m +\n        \u001b[32m'Timeout: 10000ms\\n'\u001b[39m +\n        \u001b[32m'Error: element(s) not found\\n'\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m'Call log:\\n'\u001b[39m +\n        \u001b[32m'\\x1B[2m  - Expect \"toBeVisible\" with timeout 10000ms\\x1B[22m\\n'\u001b[39m +\n        \u001b[32m\"\\x1B[2m  - waiting for locator('text=Cost Profile')\\x1B[22m\\n\"\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m'    at C:\\\\projects\\\\freightclub\\\\frontend\\\\e2e\\\\cost-profile-persistence-fix.spec.ts:86:55'\u001b[39m,\n      cause: \u001b[90mundefined\u001b[39m\n    }\n  }\n}\n"
+                        }
+                      ],
                       "retry": 0,
-                      "startTime": "2026-06-01T01:15:59.037Z",
+                      "startTime": "2026-06-01T01:25:24.520Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -223,9 +231,9 @@
                         }
                       ],
                       "errorLocation": {
-                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
-                        "column": 13,
-                        "line": 97
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts",
+                        "column": 55,
+                        "line": 86
                       }
                     }
                   ],
@@ -234,7 +242,7 @@
               ],
               "id": "8aa9731de4bed95193cd-7a6ecf3acae0edd27deb",
               "file": "cost-profile-persistence-fix.spec.ts",
-              "line": 85,
+              "line": 80,
               "column": 3
             },
             {
@@ -253,31 +261,35 @@
                       "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 277,
+                      "duration": 12386,
                       "error": {
-                        "message": "Error: Failed to create test user: 500 ",
-                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:141:18",
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=Cost Profile')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=Cost Profile')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=Cost Profile')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=Cost Profile')\u001b[22m\n\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:134:55",
                         "location": {
-                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
-                          "column": 13,
-                          "line": 97
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts",
+                          "column": 55,
+                          "line": 134
                         },
-                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                        "snippet": "\u001b[0m \u001b[90m 132 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForLoadState(\u001b[32m'networkidle'\u001b[39m)\n \u001b[90m 133 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m1000\u001b[39m)\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 134 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'text=Cost Profile'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\n \u001b[90m     |\u001b[39m                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 135 |\u001b[39m\n \u001b[90m 136 |\u001b[39m       \u001b[90m// Fill complete cost profile for CPM calculation\u001b[39m\n \u001b[90m 137 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[placeholder=\"e.g. 1800\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'1800'\u001b[39m)  \u001b[90m// Truck Payment\u001b[39m\u001b[0m"
                       },
                       "errors": [
                         {
                           "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
-                            "column": 13,
-                            "line": 97
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts",
+                            "column": 55,
+                            "line": 134
                           },
-                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:141:18"
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=Cost Profile')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=Cost Profile')\u001b[22m\n\n\n  132 |       await page.waitForLoadState('networkidle')\n  133 |       await page.waitForTimeout(1000)\n> 134 |       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })\n      |                                                       ^\n  135 |\n  136 |       // Fill complete cost profile for CPM calculation\n  137 |       await page.fill('input[placeholder=\"e.g. 1800\"]', '1800')  // Truck Payment\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:134:55"
                         }
                       ],
                       "stdout": [],
-                      "stderr": [],
+                      "stderr": [
+                        {
+                          "text": "Test failed: ExpectError: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('text=Cost Profile')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=Cost Profile')\u001b[22m\n\n    at \u001b[90mC:\\projects\\freightclub\\frontend\\\u001b[39me2e\\cost-profile-persistence-fix.spec.ts:134:55 {\n  matcherResult: {\n    message: \u001b[32m'\\x1B[2mexpect(\\x1B[22m\\x1B[31mlocator\\x1B[39m\\x1B[2m).\\x1B[22mtoBeVisible\\x1B[2m(\\x1B[22m\\x1B[2m)\\x1B[22m failed\\n'\u001b[39m +\n      \u001b[32m'\\n'\u001b[39m +\n      \u001b[32m\"Locator: locator('text=Cost Profile')\\n\"\u001b[39m +\n      \u001b[32m'Expected: visible\\n'\u001b[39m +\n      \u001b[32m'Timeout: 10000ms\\n'\u001b[39m +\n      \u001b[32m'Error: element(s) not found\\n'\u001b[39m +\n      \u001b[32m'\\n'\u001b[39m +\n      \u001b[32m'Call log:\\n'\u001b[39m +\n      \u001b[32m'\\x1B[2m  - Expect \"toBeVisible\" with timeout 10000ms\\x1B[22m\\n'\u001b[39m +\n      \u001b[32m\"\\x1B[2m  - waiting for locator('text=Cost Profile')\\x1B[22m\\n\"\u001b[39m,\n    pass: \u001b[33mfalse\u001b[39m,\n    actual: \u001b[90mundefined\u001b[39m,\n    name: \u001b[32m'toBeVisible'\u001b[39m,\n    expected: \u001b[32m'visible'\u001b[39m,\n    log: [\n      \u001b[32m'  - Expect \"toBeVisible\" with timeout 10000ms'\u001b[39m,\n      \u001b[32m\"  - waiting for locator('text=Cost Profile')\"\u001b[39m\n    ],\n    timeout: \u001b[33m10000\u001b[39m\n  },\n  \u001b[32mSymbol(step)\u001b[39m: {\n    category: \u001b[32m'expect'\u001b[39m,\n    apiName: \u001b[32m'expect.toBeVisible'\u001b[39m,\n    title: \u001b[32m`Expect \"toBeVisible\" locator('text=Cost Profile')`\u001b[39m,\n    shortTitle: \u001b[32m'Expect \"toBeVisible\"'\u001b[39m,\n    params: { expected: \u001b[36m[Object]\u001b[39m },\n    infectParentStepsWithError: \u001b[90mundefined\u001b[39m,\n    stepId: \u001b[32m'expect@37'\u001b[39m,\n    group: \u001b[90mundefined\u001b[39m,\n    boxedStack: \u001b[90mundefined\u001b[39m,\n    location: {\n      file: \u001b[32m'C:\\\\projects\\\\freightclub\\\\frontend\\\\e2e\\\\cost-profile-persistence-fix.spec.ts'\u001b[39m,\n      line: \u001b[33m134\u001b[39m,\n      column: \u001b[33m55\u001b[39m\n    },\n    steps: [],\n    attachmentIndices: [],\n    info: TestStepInfoImpl {\n      annotations: [],\n      _testInfo: \u001b[36m[TestInfoImpl]\u001b[39m,\n      _stepId: \u001b[32m'expect@37'\u001b[39m,\n      _title: \u001b[32m`Expect \"toBeVisible\" locator('text=Cost Profile')`\u001b[39m,\n      _parentStep: \u001b[90mundefined\u001b[39m,\n      skip: \u001b[36m[Function (anonymous)]\u001b[39m\n    },\n    complete: \u001b[36m[Function: complete]\u001b[39m,\n    endWallTime: \u001b[33m1780277149539\u001b[39m,\n    error: {\n      message: \u001b[32m'Error: \\x1B[2mexpect(\\x1B[22m\\x1B[31mlocator\\x1B[39m\\x1B[2m).\\x1B[22mtoBeVisible\\x1B[2m(\\x1B[22m\\x1B[2m)\\x1B[22m failed\\n'\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m\"Locator: locator('text=Cost Profile')\\n\"\u001b[39m +\n        \u001b[32m'Expected: visible\\n'\u001b[39m +\n        \u001b[32m'Timeout: 10000ms\\n'\u001b[39m +\n        \u001b[32m'Error: element(s) not found\\n'\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m'Call log:\\n'\u001b[39m +\n        \u001b[32m'\\x1B[2m  - Expect \"toBeVisible\" with timeout 10000ms\\x1B[22m\\n'\u001b[39m +\n        \u001b[32m\"\\x1B[2m  - waiting for locator('text=Cost Profile')\\x1B[22m\\n\"\u001b[39m,\n      stack: \u001b[32m'Error: \\x1B[2mexpect(\\x1B[22m\\x1B[31mlocator\\x1B[39m\\x1B[2m).\\x1B[22mtoBeVisible\\x1B[2m(\\x1B[22m\\x1B[2m)\\x1B[22m failed\\n'\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m\"Locator: locator('text=Cost Profile')\\n\"\u001b[39m +\n        \u001b[32m'Expected: visible\\n'\u001b[39m +\n        \u001b[32m'Timeout: 10000ms\\n'\u001b[39m +\n        \u001b[32m'Error: element(s) not found\\n'\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m'Call log:\\n'\u001b[39m +\n        \u001b[32m'\\x1B[2m  - Expect \"toBeVisible\" with timeout 10000ms\\x1B[22m\\n'\u001b[39m +\n        \u001b[32m\"\\x1B[2m  - waiting for locator('text=Cost Profile')\\x1B[22m\\n\"\u001b[39m +\n        \u001b[32m'\\n'\u001b[39m +\n        \u001b[32m'    at C:\\\\projects\\\\freightclub\\\\frontend\\\\e2e\\\\cost-profile-persistence-fix.spec.ts:134:55'\u001b[39m,\n      cause: \u001b[90mundefined\u001b[39m\n    }\n  }\n}\n"
+                        }
+                      ],
                       "retry": 0,
-                      "startTime": "2026-06-01T01:16:00.149Z",
+                      "startTime": "2026-06-01T01:25:37.649Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -302,9 +314,9 @@
                         }
                       ],
                       "errorLocation": {
-                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
-                        "column": 13,
-                        "line": 97
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts",
+                        "column": 55,
+                        "line": 134
                       }
                     }
                   ],
@@ -313,7 +325,7 @@
               ],
               "id": "8aa9731de4bed95193cd-5ef9acec29a46ad4d748",
               "file": "cost-profile-persistence-fix.spec.ts",
-              "line": 139,
+              "line": 128,
               "column": 3
             }
           ]
@@ -323,8 +335,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-01T01:15:51.727Z",
-    "duration": 8887.517,
+    "startTime": "2026-06-01T01:25:08.024Z",
+    "duration": 42246.74,
     "expected": 0,
     "skipped": 0,
     "unexpected": 3,

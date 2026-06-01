@@ -6,24 +6,19 @@
  */
 
 import { test, expect } from '@playwright/test'
-import { TestDataSeeder } from './fixtures/test-data-seeder'
 
 test.describe('Cost Profile Persistence Fix Verification', () => {
-  test('cost profile fields should be captured in form submission (TestDataSeeder)', async ({ page, request }) => {
-    const seeder = new TestDataSeeder(request)
-    const user = await seeder.createTestUser({
-      email: 'cost-profile-test@test.com',
-      role: 'CARRIER',
-      firstName: 'Cost',
-      lastName: 'Tester'
-    })
-
+  test('cost profile fields should be captured in form submission', async ({ page }) => {
     try {
-      // Navigate to profile page (authenticated)
-      await page.goto('/profile')
+      // Navigate to profile page (already authenticated via auth.json from global setup)
+      await page.goto('/profile', { waitUntil: 'networkidle' })
 
-      // Wait for Cost Profile section to load
-      await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 5000 })
+      // Wait for page to fully load including auth initialization
+      await page.waitForLoadState('networkidle')
+      await page.waitForTimeout(1000)
+
+      // Wait for Cost Profile section to load (specific to TRUCKER users)
+      await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })
 
       // Fill multiple cost profile fields
       await page.fill('input[placeholder="e.g. 1800"]', '1800')  // Truck Payment
@@ -76,25 +71,19 @@ test.describe('Cost Profile Persistence Fix Verification', () => {
         .toBeVisible({ timeout: 5000 })
 
       console.log('✓ Profile save successful')
-
-    } finally {
-      await seeder.cleanup()
+    } catch (error) {
+      console.error('Test failed:', error)
+      throw error
     }
   })
 
-  test('cost profile fields should persist after page navigation', async ({ page, request }) => {
-    const seeder = new TestDataSeeder(request)
-    const user = await seeder.createTestUser({
-      email: 'cost-persist-test@test.com',
-      role: 'CARRIER',
-      firstName: 'Persist',
-      lastName: 'Tester'
-    })
-
+  test('cost profile fields should persist after page navigation', async ({ page }) => {
     try {
-      // Navigate to profile and fill cost fields
-      await page.goto('/profile')
-      await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 5000 })
+      // Navigate to profile and fill cost fields (already authenticated via auth.json)
+      await page.goto('/profile', { waitUntil: 'networkidle' })
+      await page.waitForLoadState('networkidle')
+      await page.waitForTimeout(1000)
+      await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })
 
       // Fill fields
       await page.fill('input[placeholder="e.g. 1800"]', '2500')
@@ -130,22 +119,19 @@ test.describe('Cost Profile Persistence Fix Verification', () => {
       expect(insuranceAfter).toBe('1200')
 
       console.log('✓ Cost fields persisted after navigation')
-
-    } finally {
-      await seeder.cleanup()
+    } catch (error) {
+      console.error('Test failed:', error)
+      throw error
     }
   })
 
-  test('cost profile CPM calculations should work with persisted values', async ({ page, request }) => {
-    const seeder = new TestDataSeeder(request)
-    const user = await seeder.createTestUser({
-      email: 'cpm-calc-test@test.com',
-      role: 'CARRIER'
-    })
-
+  test('cost profile CPM calculations should work with persisted values', async ({ page }) => {
     try {
-      await page.goto('/profile')
-      await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 5000 })
+      // Navigate to profile page (already authenticated via auth.json)
+      await page.goto('/profile', { waitUntil: 'networkidle' })
+      await page.waitForLoadState('networkidle')
+      await page.waitForTimeout(1000)
+      await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })
 
       // Fill complete cost profile for CPM calculation
       await page.fill('input[placeholder="e.g. 1800"]', '1800')  // Truck Payment
@@ -182,9 +168,9 @@ test.describe('Cost Profile Persistence Fix Verification', () => {
       expect(payload.monthlyMilesTarget).toBe(8000)
 
       console.log('✓ All cost fields in API payload for CPM calculations')
-
-    } finally {
-      await seeder.cleanup()
+    } catch (error) {
+      console.error('Test failed:', error)
+      throw error
     }
   })
 })

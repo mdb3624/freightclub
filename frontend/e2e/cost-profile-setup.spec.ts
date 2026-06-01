@@ -26,8 +26,8 @@ test.describe('Carrier Cost Profile Setup — US-757', () => {
     })
 
     try {
-      // Navigate to cost profile page (API-created user, no UI login needed)
-      await page.goto('/profile/cost')
+      // Navigate to profile page (cost profile is a section within profile)
+      await page.goto('/profile')
 
       // Verify cost profile section is visible
       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 5000 })
@@ -87,8 +87,8 @@ test.describe('Carrier Cost Profile Setup — US-757', () => {
     })
 
     try {
-      // Navigate to cost profile page
-      await page.goto('/profile/cost')
+      // Navigate to profile page (cost profile section)
+      await page.goto('/profile')
 
       // Verify cost profile section is visible
       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 5000 })
@@ -128,8 +128,8 @@ test.describe('Carrier Cost Profile Setup — US-757', () => {
     })
 
     try {
-      // Navigate to cost profile page
-      await page.goto('/profile/cost')
+      // Navigate to profile page (cost profile section)
+      await page.goto('/profile')
 
       // Verify cost profile section is visible
       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 5000 })

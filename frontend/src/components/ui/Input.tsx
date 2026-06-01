@@ -11,7 +11,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const { label, error, id, testId, className = '', ref: registerRef, ...inputProps } = props as any
     const inputId = id ?? (label ? label.toLowerCase().replace(/\s+/g, '-') : '')
     const errorId = `${inputId}-error`
-    // Use registerRef (from react-hook-form) if available, otherwise use forwardedRef
+    // CRITICAL: Use registerRef (from react-hook-form) if available, otherwise use forwardedRef
+    // React Hook Form passes the ref through props.ref, not as a separate parameter
     const finalRef = registerRef || forwardedRef
 
     return (
@@ -31,7 +32,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             error ? 'border-red-500' : 'border-gray-300'
           } ${className}`}
           {...inputProps}
-          data-test-id={testId}
         />
         {error && (
           <p id={errorId} role="alert" className="text-xs text-red-600" data-testid={testId ? `${testId}-error` : undefined}>

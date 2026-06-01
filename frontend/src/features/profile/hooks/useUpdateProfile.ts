@@ -3,6 +3,13 @@ import { profileApi } from '../api'
 import { __clearCache } from './useProfile'
 import type { UpdateProfileValues } from '../types'
 
+// Helper to convert empty strings to null, handle both string and number inputs
+const normalizeNumber = (value: unknown): number | null => {
+  if (value === '' || value === undefined || value === null) return null
+  const num = Number(value)
+  return isNaN(num) ? null : num
+}
+
 export function useUpdateProfile() {
   return useMutation({
     mutationFn: (data: UpdateProfileValues) => {
@@ -12,17 +19,18 @@ export function useUpdateProfile() {
       return profileApi.update({
         ...data,
         equipmentType: data.equipmentType || undefined,
-        truckPaymentLease:       (data.truckPaymentLease === '' || data.truckPaymentLease === undefined) ? null : data.truckPaymentLease,
-        insurance:               (data.insurance === '' || data.insurance === undefined) ? null : data.insurance,
-        iftaIrpPermits:          (data.iftaIrpPermits === '' || data.iftaIrpPermits === undefined) ? null : data.iftaIrpPermits,
-        phoneEldMisc:            (data.phoneEldMisc === '' || data.phoneEldMisc === undefined) ? null : data.phoneEldMisc,
-        perDiemDailyRate:        (data.perDiemDailyRate === '' || data.perDiemDailyRate === undefined) ? null : data.perDiemDailyRate,
-        perDiemDaysPerMonth:     (data.perDiemDaysPerMonth === '' || data.perDiemDaysPerMonth === undefined) ? null : data.perDiemDaysPerMonth,
-        fuelCostPerGallon:       (data.fuelCostPerGallon === '' || data.fuelCostPerGallon === undefined) ? null : data.fuelCostPerGallon,
-        milesPerGallon:          (data.milesPerGallon === '' || data.milesPerGallon === undefined) ? null : data.milesPerGallon,
-        maintenanceCostPerMile:  (data.maintenanceCostPerMile === '' || data.maintenanceCostPerMile === undefined) ? null : data.maintenanceCostPerMile,
-        monthlyMilesTarget:      (data.monthlyMilesTarget === '' || data.monthlyMilesTarget === undefined) ? null : data.monthlyMilesTarget,
-        targetMarginPerMile:     (data.targetMarginPerMile === '' || data.targetMarginPerMile === undefined) ? null : data.targetMarginPerMile,
+        // Convert all cost fields: empty string → null, string number → number, invalid → null
+        truckPaymentLease:       normalizeNumber(data.truckPaymentLease),
+        insurance:               normalizeNumber(data.insurance),
+        iftaIrpPermits:          normalizeNumber(data.iftaIrpPermits),
+        phoneEldMisc:            normalizeNumber(data.phoneEldMisc),
+        perDiemDailyRate:        normalizeNumber(data.perDiemDailyRate),
+        perDiemDaysPerMonth:     normalizeNumber(data.perDiemDaysPerMonth),
+        fuelCostPerGallon:       normalizeNumber(data.fuelCostPerGallon),
+        milesPerGallon:          normalizeNumber(data.milesPerGallon),
+        maintenanceCostPerMile:  normalizeNumber(data.maintenanceCostPerMile),
+        monthlyMilesTarget:      normalizeNumber(data.monthlyMilesTarget),
+        targetMarginPerMile:     normalizeNumber(data.targetMarginPerMile),
       })
     },
     onSuccess: () => {

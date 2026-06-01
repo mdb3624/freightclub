@@ -64,7 +64,24 @@ export function ProfilePage() {
 
   const { register, handleSubmit, reset, control, formState: { errors }, watch } = useForm<UpdateProfileValues>({
     resolver: zodResolver(schema),
-    defaultValues: { notifyEmail: true, notifySms: false, notifyInApp: true },
+    defaultValues: {
+      notifyEmail: true,
+      notifySms: false,
+      notifyInApp: true,
+      // Initialize all cost profile fields to prevent unregistered field issues
+      truckPaymentLease: '',
+      insurance: '',
+      iftaIrpPermits: '',
+      phoneEldMisc: '',
+      perDiemDailyRate: '',
+      perDiemDaysPerMonth: '',
+      fuelCostPerGallon: '',
+      milesPerGallon: '',
+      maintenanceCostPerMile: '',
+      monthlyMilesTarget: '',
+      targetMarginPerMile: '',
+    },
+    mode: 'onBlur', // Only validate on blur to prevent form instability
   })
   const formData = watch()
 

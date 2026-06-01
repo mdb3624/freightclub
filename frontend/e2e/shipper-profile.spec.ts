@@ -16,26 +16,15 @@ import { TestDataSeeder } from './fixtures/test-data-seeder'
 
 test.describe('Shipper Profile Setup - Golden Path (US-713)', () => {
   // ============================================================================
-  // TEST SETUP: Trace generation + auth state
+  // TEST SETUP: Per-test state cleanup
   // ============================================================================
   test.beforeEach(async ({ page, context }) => {
-    await context.tracing.start({
-      screenshots: true,
-      snapshots: true,
-      sources: true,
-    })
+    // Traces are managed by playwright.config.ts (trace: 'retain-on-failure')
     await context.clearCookies()
-    await page.evaluate(() => localStorage.clear())
-  })
-
-  test.afterEach(async ({ page, context }, testInfo) => {
-    if (testInfo.status !== 'passed') {
-      const timestamp = Date.now()
-      const tracePath = `test-results/trace-${testInfo.title.replace(/\s+/g, '-')}-${timestamp}.zip`
-      await context.tracing.stop({ path: tracePath })
-      console.log(`📍 Trace saved: ${tracePath}`)
-    } else {
-      await context.tracing.stop()
+    try {
+      await page.evaluate(() => localStorage.clear())
+    } catch {
+      // localStorage may not be accessible on certain pages
     }
   })
 

@@ -14,27 +14,12 @@ import { test, expect } from '@playwright/test'
 
 test.describe('HOS Widget & Trucker Landing Page (Smoke Tests)', () => {
   // ============================================================================
-  // SETUP: Trace generation
+  // SETUP: Per-test state cleanup
   // ============================================================================
   test.beforeEach(async ({ page, context }) => {
-    await context.tracing.start({
-      screenshots: true,
-      snapshots: true,
-      sources: true,
-    })
+    // Traces are managed by playwright.config.ts (trace: 'retain-on-failure')
     await context.clearCookies()
     await page.evaluate(() => localStorage.clear())
-  })
-
-  test.afterEach(async ({ page, context }, testInfo) => {
-    if (testInfo.status !== 'passed') {
-      const timestamp = Date.now()
-      const tracePath = `test-results/trace-${testInfo.title.replace(/\s+/g, '-')}-${timestamp}.zip`
-      await context.tracing.stop({ path: tracePath })
-      console.log(`📍 Trace saved: ${tracePath}`)
-    } else {
-      await context.tracing.stop()
-    }
   })
 
   // ============================================================================

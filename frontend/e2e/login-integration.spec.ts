@@ -17,30 +17,16 @@ import { TestDataSeeder } from './fixtures/test-data-seeder';
 
 test.describe('Login Integration Tests (US-756)', () => {
   // ============================================================================
-  // TEST SETUP: Trace generation on failure
+  // TEST SETUP: Per-test state cleanup
   // ============================================================================
   test.beforeEach(async ({ page, context }) => {
-    // Start trace collection BEFORE navigation
-    await context.tracing.start({
-      screenshots: true,
-      snapshots: true,
-      sources: true,
-    });
-
-    // Clear auth state before each test
+    // Traces are managed by playwright.config.ts (trace: 'retain-on-failure')
+    // Just clear auth state before each test
     await context.clearCookies();
-    await page.evaluate(() => localStorage.clear());
-  });
-
-  test.afterEach(async ({ page, context }, testInfo) => {
-    // Stop trace and save on failure
-    if (testInfo.status !== 'passed') {
-      const timestamp = Date.now();
-      const tracePath = `test-results/trace-${testInfo.title.replace(/\s+/g, '-')}-${timestamp}.zip`;
-      await context.tracing.stop({ path: tracePath });
-      console.log(`📍 Trace saved: ${tracePath}`);
-    } else {
-      await context.tracing.stop();
+    try {
+      await page.evaluate(() => localStorage.clear());
+    } catch {
+      // localStorage may not be accessible on certain pages (e.g., login page before auth)
     }
   });
 

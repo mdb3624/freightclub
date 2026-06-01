@@ -1,0 +1,1222 @@
+<testsuites id="" name="" tests="53" failures="0" skipped="21" errors="21" time="40.462692000000004">
+<testsuite name="carrier-public-profile.spec.ts" timestamp="2026-06-01T00:55:56.844Z" hostname="chromium" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testcase name="Carrier Public Profile - US-710 › AC-1: Shipper views carrier performance profile" classname="carrier-public-profile.spec.ts">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Carrier Public Profile - US-710 › AC-2: Benchmark comparison displays correctly" classname="carrier-public-profile.spec.ts">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Carrier Public Profile - US-710 › AC-3: Carrier interest count displays social proof" classname="carrier-public-profile.spec.ts">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Carrier Public Profile - US-710 › AC-4: Multi-tenancy isolation message displays" classname="carrier-public-profile.spec.ts">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Carrier Public Profile - US-710 › Service areas and equipment types display" classname="carrier-public-profile.spec.ts">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Carrier Public Profile - US-710 › Shipper can add carrier to preferred list from profile" classname="carrier-public-profile.spec.ts">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Carrier Public Profile - US-710 › Profile styling complies with Style Guide (colors, typography)" classname="carrier-public-profile.spec.ts">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Carrier Public Profile - US-710 › Profile is accessible (keyboard navigation)" classname="carrier-public-profile.spec.ts">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Carrier Public Profile - US-710 › Profile loads within 2 seconds (performance)" classname="carrier-public-profile.spec.ts">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="cost-profile-setup.spec.ts" timestamp="2026-06-01T00:55:56.844Z" hostname="chromium" tests="3" failures="0" skipped="0" time="0.912" errors="3">
+<testcase name="Carrier Cost Profile Setup — US-757 › should save cost profile and persist after reload (US-757 AC-1)" classname="cost-profile-setup.spec.ts" time="0.321">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|cost-profile-setup-Carrier-c6e31-t-after-reload-US-757-AC-1--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|cost-profile-setup-Carrier-c6e31-t-after-reload-US-757-AC-1--chromium\video.webm]]
+
+[[ATTACHMENT|cost-profile-setup-Carrier-c6e31-t-after-reload-US-757-AC-1--chromium\error-context.md]]
+
+[[ATTACHMENT|cost-profile-setup-Carrier-c6e31-t-after-reload-US-757-AC-1--chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Failed to create test user: 500" type="Error">
+<![CDATA[  [chromium] › cost-profile-setup.spec.ts:18:3 › Carrier Cost Profile Setup — US-757 › should save cost profile and persist after reload (US-757 AC-1) 
+
+    Error: Failed to create test user: 500 
+
+       at fixtures\test-data-seeder.ts:97
+
+       95 |
+       96 |     if (!response.ok()) {
+    >  97 |       throw new Error(
+          |             ^
+       98 |         `Failed to create test user: ${response.status()} ${await response.text()}`
+       99 |       );
+      100 |     }
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:97:13)
+        at C:\projects\freightclub\frontend\e2e\cost-profile-setup.spec.ts:20:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\cost-profile-setup-Carrier-c6e31-t-after-reload-US-757-AC-1--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\cost-profile-setup-Carrier-c6e31-t-after-reload-US-757-AC-1--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\cost-profile-setup-Carrier-c6e31-t-after-reload-US-757-AC-1--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\cost-profile-setup-Carrier-c6e31-t-after-reload-US-757-AC-1--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\cost-profile-setup-Carrier-c6e31-t-after-reload-US-757-AC-1--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="Carrier Cost Profile Setup — US-757 › should calculate CPM with partial entry (US-757 AC-2)" classname="cost-profile-setup.spec.ts" time="0.297">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|cost-profile-setup-Carrier-4d009--partial-entry-US-757-AC-2--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|cost-profile-setup-Carrier-4d009--partial-entry-US-757-AC-2--chromium\video.webm]]
+
+[[ATTACHMENT|cost-profile-setup-Carrier-4d009--partial-entry-US-757-AC-2--chromium\error-context.md]]
+
+[[ATTACHMENT|cost-profile-setup-Carrier-4d009--partial-entry-US-757-AC-2--chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Failed to create test user: 500" type="Error">
+<![CDATA[  [chromium] › cost-profile-setup.spec.ts:78:3 › Carrier Cost Profile Setup — US-757 › should calculate CPM with partial entry (US-757 AC-2) 
+
+    Error: Failed to create test user: 500 
+
+       at fixtures\test-data-seeder.ts:97
+
+       95 |
+       96 |     if (!response.ok()) {
+    >  97 |       throw new Error(
+          |             ^
+       98 |         `Failed to create test user: ${response.status()} ${await response.text()}`
+       99 |       );
+      100 |     }
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:97:13)
+        at C:\projects\freightclub\frontend\e2e\cost-profile-setup.spec.ts:80:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\cost-profile-setup-Carrier-4d009--partial-entry-US-757-AC-2--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\cost-profile-setup-Carrier-4d009--partial-entry-US-757-AC-2--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\cost-profile-setup-Carrier-4d009--partial-entry-US-757-AC-2--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\cost-profile-setup-Carrier-4d009--partial-entry-US-757-AC-2--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\cost-profile-setup-Carrier-4d009--partial-entry-US-757-AC-2--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="Carrier Cost Profile Setup — US-757 › should handle zero MPG without division by zero error (US-757 AC-3)" classname="cost-profile-setup.spec.ts" time="0.294">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|cost-profile-setup-Carrier-11eee--by-zero-error-US-757-AC-3--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|cost-profile-setup-Carrier-11eee--by-zero-error-US-757-AC-3--chromium\video.webm]]
+
+[[ATTACHMENT|cost-profile-setup-Carrier-11eee--by-zero-error-US-757-AC-3--chromium\error-context.md]]
+
+[[ATTACHMENT|cost-profile-setup-Carrier-11eee--by-zero-error-US-757-AC-3--chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Failed to create test user: 500" type="Error">
+<![CDATA[  [chromium] › cost-profile-setup.spec.ts:119:3 › Carrier Cost Profile Setup — US-757 › should handle zero MPG without division by zero error (US-757 AC-3) 
+
+    Error: Failed to create test user: 500 
+
+       at fixtures\test-data-seeder.ts:97
+
+       95 |
+       96 |     if (!response.ok()) {
+    >  97 |       throw new Error(
+          |             ^
+       98 |         `Failed to create test user: ${response.status()} ${await response.text()}`
+       99 |       );
+      100 |     }
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:97:13)
+        at C:\projects\freightclub\frontend\e2e\cost-profile-setup.spec.ts:121:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\cost-profile-setup-Carrier-11eee--by-zero-error-US-757-AC-3--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\cost-profile-setup-Carrier-11eee--by-zero-error-US-757-AC-3--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\cost-profile-setup-Carrier-11eee--by-zero-error-US-757-AC-3--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\cost-profile-setup-Carrier-11eee--by-zero-error-US-757-AC-3--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\cost-profile-setup-Carrier-11eee--by-zero-error-US-757-AC-3--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="hos-widget.spec.ts" timestamp="2026-06-01T00:55:56.844Z" hostname="chromium" tests="7" failures="0" skipped="0" time="2.089" errors="7">
+<testcase name="HOS Widget &amp; Trucker Landing Page (Smoke Tests) › HosWidget should compile without TypeScript errors" classname="hos-widget.spec.ts" time="0.301">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-ee28d-e-without-TypeScript-errors-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-ee28d-e-without-TypeScript-errors-chromium\video.webm]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-ee28d-e-without-TypeScript-errors-chromium\error-context.md]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-ee28d-e-without-TypeScript-errors-chromium\trace.zip]]
+]]>
+</system-out>
+<error message="page.evaluate: SecurityError: Failed to read the &apos;localStorage&apos; property from &apos;Window&apos;: Access is denied for this document." type="Error">
+<![CDATA[  [chromium] › hos-widget.spec.ts:28:3 › HOS Widget & Trucker Landing Page (Smoke Tests) › HosWidget should compile without TypeScript errors 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at C:\projects\freightclub\frontend\e2e\hos-widget.spec.ts:22:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-ee28d-e-without-TypeScript-errors-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-ee28d-e-without-TypeScript-errors-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\hos-widget-HOS-Widget-Truc-ee28d-e-without-TypeScript-errors-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-ee28d-e-without-TypeScript-errors-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\hos-widget-HOS-Widget-Truc-ee28d-e-without-TypeScript-errors-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="HOS Widget &amp; Trucker Landing Page (Smoke Tests) › TruckerLandingPage should render main sections with data-testid" classname="hos-widget.spec.ts" time="0.282">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-0345e-n-sections-with-data-testid-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-0345e-n-sections-with-data-testid-chromium\video.webm]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-0345e-n-sections-with-data-testid-chromium\error-context.md]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-0345e-n-sections-with-data-testid-chromium\trace.zip]]
+]]>
+</system-out>
+<error message="page.evaluate: SecurityError: Failed to read the &apos;localStorage&apos; property from &apos;Window&apos;: Access is denied for this document." type="Error">
+<![CDATA[  [chromium] › hos-widget.spec.ts:50:3 › HOS Widget & Trucker Landing Page (Smoke Tests) › TruckerLandingPage should render main sections with data-testid 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at C:\projects\freightclub\frontend\e2e\hos-widget.spec.ts:22:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-0345e-n-sections-with-data-testid-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-0345e-n-sections-with-data-testid-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\hos-widget-HOS-Widget-Truc-0345e-n-sections-with-data-testid-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-0345e-n-sections-with-data-testid-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\hos-widget-HOS-Widget-Truc-0345e-n-sections-with-data-testid-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="HOS Widget &amp; Trucker Landing Page (Smoke Tests) › Market ticker should display items with data-testid selectors" classname="hos-widget.spec.ts" time="0.327">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-98191--with-data-testid-selectors-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-98191--with-data-testid-selectors-chromium\video.webm]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-98191--with-data-testid-selectors-chromium\error-context.md]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-98191--with-data-testid-selectors-chromium\trace.zip]]
+]]>
+</system-out>
+<error message="page.evaluate: SecurityError: Failed to read the &apos;localStorage&apos; property from &apos;Window&apos;: Access is denied for this document." type="Error">
+<![CDATA[  [chromium] › hos-widget.spec.ts:67:3 › HOS Widget & Trucker Landing Page (Smoke Tests) › Market ticker should display items with data-testid selectors 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at C:\projects\freightclub\frontend\e2e\hos-widget.spec.ts:22:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-98191--with-data-testid-selectors-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-98191--with-data-testid-selectors-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\hos-widget-HOS-Widget-Truc-98191--with-data-testid-selectors-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-98191--with-data-testid-selectors-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\hos-widget-HOS-Widget-Truc-98191--with-data-testid-selectors-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="HOS Widget &amp; Trucker Landing Page (Smoke Tests) › Navigation tabs should render with proper data-testid attributes" classname="hos-widget.spec.ts" time="0.36">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-c0a6a-oper-data-testid-attributes-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-c0a6a-oper-data-testid-attributes-chromium\video.webm]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-c0a6a-oper-data-testid-attributes-chromium\error-context.md]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-c0a6a-oper-data-testid-attributes-chromium\trace.zip]]
+]]>
+</system-out>
+<error message="page.evaluate: SecurityError: Failed to read the &apos;localStorage&apos; property from &apos;Window&apos;: Access is denied for this document." type="Error">
+<![CDATA[  [chromium] › hos-widget.spec.ts:83:3 › HOS Widget & Trucker Landing Page (Smoke Tests) › Navigation tabs should render with proper data-testid attributes 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at C:\projects\freightclub\frontend\e2e\hos-widget.spec.ts:22:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-c0a6a-oper-data-testid-attributes-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-c0a6a-oper-data-testid-attributes-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\hos-widget-HOS-Widget-Truc-c0a6a-oper-data-testid-attributes-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-c0a6a-oper-data-testid-attributes-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\hos-widget-HOS-Widget-Truc-c0a6a-oper-data-testid-attributes-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="HOS Widget &amp; Trucker Landing Page (Smoke Tests) › Page should render without critical console errors" classname="hos-widget.spec.ts" time="0.28">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-3f24e-out-critical-console-errors-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-3f24e-out-critical-console-errors-chromium\video.webm]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-3f24e-out-critical-console-errors-chromium\error-context.md]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-3f24e-out-critical-console-errors-chromium\trace.zip]]
+]]>
+</system-out>
+<error message="page.evaluate: SecurityError: Failed to read the &apos;localStorage&apos; property from &apos;Window&apos;: Access is denied for this document." type="Error">
+<![CDATA[  [chromium] › hos-widget.spec.ts:98:3 › HOS Widget & Trucker Landing Page (Smoke Tests) › Page should render without critical console errors 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at C:\projects\freightclub\frontend\e2e\hos-widget.spec.ts:22:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-3f24e-out-critical-console-errors-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-3f24e-out-critical-console-errors-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\hos-widget-HOS-Widget-Truc-3f24e-out-critical-console-errors-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-3f24e-out-critical-console-errors-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\hos-widget-HOS-Widget-Truc-3f24e-out-critical-console-errors-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="HOS Widget &amp; Trucker Landing Page (Smoke Tests) › Should render correctly on desktop viewport" classname="hos-widget.spec.ts" time="0.277">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-b39de-rrectly-on-desktop-viewport-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-b39de-rrectly-on-desktop-viewport-chromium\video.webm]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-b39de-rrectly-on-desktop-viewport-chromium\error-context.md]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-b39de-rrectly-on-desktop-viewport-chromium\trace.zip]]
+]]>
+</system-out>
+<error message="page.evaluate: SecurityError: Failed to read the &apos;localStorage&apos; property from &apos;Window&apos;: Access is denied for this document." type="Error">
+<![CDATA[  [chromium] › hos-widget.spec.ts:118:3 › HOS Widget & Trucker Landing Page (Smoke Tests) › Should render correctly on desktop viewport 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at C:\projects\freightclub\frontend\e2e\hos-widget.spec.ts:22:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-b39de-rrectly-on-desktop-viewport-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-b39de-rrectly-on-desktop-viewport-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\hos-widget-HOS-Widget-Truc-b39de-rrectly-on-desktop-viewport-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-b39de-rrectly-on-desktop-viewport-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\hos-widget-HOS-Widget-Truc-b39de-rrectly-on-desktop-viewport-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="HOS Widget &amp; Trucker Landing Page (Smoke Tests) › Should render correctly on mobile viewport" classname="hos-widget.spec.ts" time="0.262">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-d881b-orrectly-on-mobile-viewport-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-d881b-orrectly-on-mobile-viewport-chromium\video.webm]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-d881b-orrectly-on-mobile-viewport-chromium\error-context.md]]
+
+[[ATTACHMENT|hos-widget-HOS-Widget-Truc-d881b-orrectly-on-mobile-viewport-chromium\trace.zip]]
+]]>
+</system-out>
+<error message="page.evaluate: SecurityError: Failed to read the &apos;localStorage&apos; property from &apos;Window&apos;: Access is denied for this document." type="Error">
+<![CDATA[  [chromium] › hos-widget.spec.ts:132:3 › HOS Widget & Trucker Landing Page (Smoke Tests) › Should render correctly on mobile viewport 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at C:\projects\freightclub\frontend\e2e\hos-widget.spec.ts:22:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-d881b-orrectly-on-mobile-viewport-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-d881b-orrectly-on-mobile-viewport-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\hos-widget-HOS-Widget-Truc-d881b-orrectly-on-mobile-viewport-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\hos-widget-HOS-Widget-Truc-d881b-orrectly-on-mobile-viewport-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\hos-widget-HOS-Widget-Truc-d881b-orrectly-on-mobile-viewport-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="login-integration.spec.ts" timestamp="2026-06-01T00:55:56.844Z" hostname="chromium" tests="7" failures="0" skipped="0" time="4.944" errors="1">
+<testcase name="Login Integration Tests (US-756) › should render login form in &lt;100ms on initial load" classname="login-integration.spec.ts" time="0.927">
+<system-out>
+<![CDATA[✓ Page loaded in 630ms
+]]>
+</system-out>
+</testcase>
+<testcase name="Login Integration Tests (US-756) › should display error message on failed login" classname="login-integration.spec.ts" time="0.678">
+<system-out>
+<![CDATA[✓ Backend returned 401 for invalid credentials
+✓ Error message displayed: "Invalid email or password"
+]]>
+</system-out>
+</testcase>
+<testcase name="Login Integration Tests (US-756) › should handle network throttling gracefully" classname="login-integration.spec.ts" time="1.277">
+<system-out>
+<![CDATA[✓ Page loaded with 3G throttling in 1053ms, form interactive
+]]>
+</system-out>
+</testcase>
+<testcase name="Login Integration Tests (US-756) › should maintain auth state on page refresh" classname="login-integration.spec.ts" time="0.963">
+<system-out>
+<![CDATA[✓ Auth state: redirected to login (expected for fresh test)
+✓ Auth state persists across page refresh
+]]>
+</system-out>
+</testcase>
+<testcase name="Login Integration Tests (US-756) › should validate required fields on submit" classname="login-integration.spec.ts" time="0.415">
+<system-out>
+<![CDATA[✓ Validation error displayed: "Email is required"
+]]>
+</system-out>
+</testcase>
+<testcase name="Login Integration Tests (US-756) › should validate email format before submission" classname="login-integration.spec.ts" time="0.441">
+<system-out>
+<![CDATA[✓ Email validation error displayed: "Enter a valid email"
+]]>
+</system-out>
+</testcase>
+<testcase name="Login Integration Tests (US-756) › should successfully login with valid credentials" classname="login-integration.spec.ts" time="0.243">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|login-integration-Login-In-c6213-ogin-with-valid-credentials-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|login-integration-Login-In-c6213-ogin-with-valid-credentials-chromium\video.webm]]
+
+[[ATTACHMENT|login-integration-Login-In-c6213-ogin-with-valid-credentials-chromium\error-context.md]]
+
+[[ATTACHMENT|login-integration-Login-In-c6213-ogin-with-valid-credentials-chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Failed to create test user: 500" type="Error">
+<![CDATA[  [chromium] › login-integration.spec.ts:224:3 › Login Integration Tests (US-756) › should successfully login with valid credentials 
+
+    Error: Failed to create test user: 500 
+
+       at fixtures\test-data-seeder.ts:97
+
+       95 |
+       96 |     if (!response.ok()) {
+    >  97 |       throw new Error(
+          |             ^
+       98 |         `Failed to create test user: ${response.status()} ${await response.text()}`
+       99 |       );
+      100 |     }
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:97:13)
+        at C:\projects\freightclub\frontend\e2e\login-integration.spec.ts:227:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\login-integration-Login-In-c6213-ogin-with-valid-credentials-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\login-integration-Login-In-c6213-ogin-with-valid-credentials-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\login-integration-Login-In-c6213-ogin-with-valid-credentials-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\login-integration-Login-In-c6213-ogin-with-valid-credentials-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\login-integration-Login-In-c6213-ogin-with-valid-credentials-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="shipper-dashboard.spec.ts" timestamp="2026-06-01T00:55:56.844Z" hostname="chromium" tests="6" failures="0" skipped="0" time="1.916" errors="6">
+<testcase name="Shipper Dashboard Golden Path (US-715) › should display summary cards with load statistics (US-715 AC-1)" classname="shipper-dashboard.spec.ts" time="0.308">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Failed to create test user: 500" type="Error">
+<![CDATA[  [chromium] › shipper-dashboard.spec.ts:29:3 › Shipper Dashboard Golden Path (US-715) › should display summary cards with load statistics (US-715 AC-1) 
+
+    Error: Failed to create test user: 500 
+
+       at fixtures\test-data-seeder.ts:97
+
+       95 |
+       96 |     if (!response.ok()) {
+    >  97 |       throw new Error(
+          |             ^
+       98 |         `Failed to create test user: ${response.status()} ${await response.text()}`
+       99 |       );
+      100 |     }
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:97:13)
+        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:31:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="Shipper Dashboard Golden Path (US-715) › should display load table with expected columns (US-715 AC-2)" classname="shipper-dashboard.spec.ts" time="0.307">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Failed to create test user: 500" type="Error">
+<![CDATA[  [chromium] › shipper-dashboard.spec.ts:62:3 › Shipper Dashboard Golden Path (US-715) › should display load table with expected columns (US-715 AC-2) 
+
+    Error: Failed to create test user: 500 
+
+       at fixtures\test-data-seeder.ts:97
+
+       95 |
+       96 |     if (!response.ok()) {
+    >  97 |       throw new Error(
+          |             ^
+       98 |         `Failed to create test user: ${response.status()} ${await response.text()}`
+       99 |       );
+      100 |     }
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:97:13)
+        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:64:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="Shipper Dashboard Golden Path (US-715) › should switch between Active and All Loads tabs (US-715 AC-3)" classname="shipper-dashboard.spec.ts" time="0.309">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Failed to create test user: 500" type="Error">
+<![CDATA[  [chromium] › shipper-dashboard.spec.ts:95:3 › Shipper Dashboard Golden Path (US-715) › should switch between Active and All Loads tabs (US-715 AC-3) 
+
+    Error: Failed to create test user: 500 
+
+       at fixtures\test-data-seeder.ts:97
+
+       95 |
+       96 |     if (!response.ok()) {
+    >  97 |       throw new Error(
+          |             ^
+       98 |         `Failed to create test user: ${response.status()} ${await response.text()}`
+       99 |       );
+      100 |     }
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:97:13)
+        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:97:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="Shipper Dashboard Golden Path (US-715) › should filter loads using search input (US-715 AC-4)" classname="shipper-dashboard.spec.ts" time="0.311">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Failed to create test user: 500" type="Error">
+<![CDATA[  [chromium] › shipper-dashboard.spec.ts:128:3 › Shipper Dashboard Golden Path (US-715) › should filter loads using search input (US-715 AC-4) 
+
+    Error: Failed to create test user: 500 
+
+       at fixtures\test-data-seeder.ts:97
+
+       95 |
+       96 |     if (!response.ok()) {
+    >  97 |       throw new Error(
+          |             ^
+       98 |         `Failed to create test user: ${response.status()} ${await response.text()}`
+       99 |       );
+      100 |     }
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:97:13)
+        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:130:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="Shipper Dashboard Golden Path (US-715) › should navigate to Post Load form (US-715 AC-5)" classname="shipper-dashboard.spec.ts" time="0.365">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Failed to create test user: 500" type="Error">
+<![CDATA[  [chromium] › shipper-dashboard.spec.ts:165:3 › Shipper Dashboard Golden Path (US-715) › should navigate to Post Load form (US-715 AC-5) 
+
+    Error: Failed to create test user: 500 
+
+       at fixtures\test-data-seeder.ts:97
+
+       95 |
+       96 |     if (!response.ok()) {
+    >  97 |       throw new Error(
+          |             ^
+       98 |         `Failed to create test user: ${response.status()} ${await response.text()}`
+       99 |       );
+      100 |     }
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:97:13)
+        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:167:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="Shipper Dashboard Golden Path (US-715) › should load dashboard without errors (US-715 AC-6)" classname="shipper-dashboard.spec.ts" time="0.316">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Failed to create test user: 500" type="Error">
+<![CDATA[  [chromium] › shipper-dashboard.spec.ts:196:3 › Shipper Dashboard Golden Path (US-715) › should load dashboard without errors (US-715 AC-6) 
+
+    Error: Failed to create test user: 500 
+
+       at fixtures\test-data-seeder.ts:97
+
+       95 |
+       96 |     if (!response.ok()) {
+    >  97 |       throw new Error(
+          |             ^
+       98 |         `Failed to create test user: ${response.status()} ${await response.text()}`
+       99 |       );
+      100 |     }
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:97:13)
+        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:198:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="shipper-post-load.spec.ts" timestamp="2026-06-01T00:55:56.844Z" hostname="chromium" tests="2" failures="0" skipped="0" time="0.609" errors="2">
+<testcase name="Shipper Post Load — US-714 › should pre-populate origin fields from shipper profile defaults (US-714 AC-1)" classname="shipper-post-load.spec.ts" time="0.305">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|shipper-post-load-Shipper--54772-ofile-defaults-US-714-AC-1--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-post-load-Shipper--54772-ofile-defaults-US-714-AC-1--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-post-load-Shipper--54772-ofile-defaults-US-714-AC-1--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-post-load-Shipper--54772-ofile-defaults-US-714-AC-1--chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Failed to create test user: 500" type="Error">
+<![CDATA[  [chromium] › shipper-post-load.spec.ts:18:3 › Shipper Post Load — US-714 › should pre-populate origin fields from shipper profile defaults (US-714 AC-1) 
+
+    Error: Failed to create test user: 500 
+
+       at fixtures\test-data-seeder.ts:97
+
+       95 |
+       96 |     if (!response.ok()) {
+    >  97 |       throw new Error(
+          |             ^
+       98 |         `Failed to create test user: ${response.status()} ${await response.text()}`
+       99 |       );
+      100 |     }
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:97:13)
+        at C:\projects\freightclub\frontend\e2e\shipper-post-load.spec.ts:20:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-post-load-Shipper--54772-ofile-defaults-US-714-AC-1--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-post-load-Shipper--54772-ofile-defaults-US-714-AC-1--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-post-load-Shipper--54772-ofile-defaults-US-714-AC-1--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-post-load-Shipper--54772-ofile-defaults-US-714-AC-1--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-post-load-Shipper--54772-ofile-defaults-US-714-AC-1--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="Shipper Post Load — US-714 › should match origin city to saved profile default (US-714 AC-2)" classname="shipper-post-load.spec.ts" time="0.304">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|shipper-post-load-Shipper--ee9e7-rofile-default-US-714-AC-2--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-post-load-Shipper--ee9e7-rofile-default-US-714-AC-2--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-post-load-Shipper--ee9e7-rofile-default-US-714-AC-2--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-post-load-Shipper--ee9e7-rofile-default-US-714-AC-2--chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Failed to create test user: 500" type="Error">
+<![CDATA[  [chromium] › shipper-post-load.spec.ts:49:3 › Shipper Post Load — US-714 › should match origin city to saved profile default (US-714 AC-2) 
+
+    Error: Failed to create test user: 500 
+
+       at fixtures\test-data-seeder.ts:97
+
+       95 |
+       96 |     if (!response.ok()) {
+    >  97 |       throw new Error(
+          |             ^
+       98 |         `Failed to create test user: ${response.status()} ${await response.text()}`
+       99 |       );
+      100 |     }
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:97:13)
+        at C:\projects\freightclub\frontend\e2e\shipper-post-load.spec.ts:51:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-post-load-Shipper--ee9e7-rofile-default-US-714-AC-2--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-post-load-Shipper--ee9e7-rofile-default-US-714-AC-2--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-post-load-Shipper--ee9e7-rofile-default-US-714-AC-2--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-post-load-Shipper--ee9e7-rofile-default-US-714-AC-2--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-post-load-Shipper--ee9e7-rofile-default-US-714-AC-2--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="shipper-preferred-carriers.spec.ts" timestamp="2026-06-01T00:55:56.844Z" hostname="chromium" tests="4" failures="0" skipped="4" time="0" errors="0">
+<testcase name="Shipper Preferred Carrier List - US-707 › AC-707-1: Shipper can add carrier to preferred list" classname="shipper-preferred-carriers.spec.ts">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Shipper Preferred Carrier List - US-707 › AC-707-2: Shipper can view preferred carriers list" classname="shipper-preferred-carriers.spec.ts">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Shipper Preferred Carrier List - US-707 › AC-707-3: Shipper can remove carrier from preferred list" classname="shipper-preferred-carriers.spec.ts">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Shipper Preferred Carrier List - US-707 › Form is accessible (keyboard navigation)" classname="shipper-preferred-carriers.spec.ts">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="shipper-profile-multi-tenant.spec.ts" timestamp="2026-06-01T00:55:56.844Z" hostname="chromium" tests="2" failures="0" skipped="2" time="1.123" errors="0">
+<testcase name="Shipper Profile - Multi-Tenancy Verification › shipper1 profile is isolated from shipper2" classname="shipper-profile-multi-tenant.spec.ts">
+<properties>
+<property name="skip" value="Shipper1 authentication failed - backend test data not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Shipper Profile - Multi-Tenancy Verification › shipper1 loads are isolated from shipper2 loads" classname="shipper-profile-multi-tenant.spec.ts">
+<properties>
+<property name="skip" value="Test user authentication failed">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="shipper-profile-setup.spec.ts" timestamp="2026-06-01T00:55:56.844Z" hostname="chromium" tests="6" failures="0" skipped="6" time="3.604" errors="0">
+<testcase name="Shipper Profile Setup — US-713 › golden path: shipper completes profile and reaches 80% threshold" classname="shipper-profile-setup.spec.ts">
+<properties>
+<property name="skip" value="Test user authentication failed - backend test data not configured. Run database migrations.">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Shipper Profile Setup — US-713 › displays completion banner on dashboard when incomplete" classname="shipper-profile-setup.spec.ts">
+<properties>
+<property name="skip" value="Test user authentication failed - backend test data not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Shipper Profile Setup — US-713 › hides banner when profile is ≥80% complete" classname="shipper-profile-setup.spec.ts">
+<properties>
+<property name="skip" value="Test user authentication failed - backend test data not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Shipper Profile Setup — US-713 › validates required fields" classname="shipper-profile-setup.spec.ts">
+<properties>
+<property name="skip" value="Test user authentication failed - backend test data not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Shipper Profile Setup — US-713 › validates email format" classname="shipper-profile-setup.spec.ts">
+<properties>
+<property name="skip" value="Test user authentication failed - backend test data not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Shipper Profile Setup — US-713 › validates phone format" classname="shipper-profile-setup.spec.ts">
+<properties>
+<property name="skip" value="Test user authentication failed - backend test data not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="shipper-profile.spec.ts" timestamp="2026-06-01T00:55:56.844Z" hostname="chromium" tests="2" failures="0" skipped="0" time="0.554" errors="2">
+<testcase name="Shipper Profile Setup - Golden Path (US-713) › should complete shipper profile and allow load publication (US-713 AC-1)" classname="shipper-profile.spec.ts" time="0.234">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|shipper-profile-Shipper-Pr-2c8ca-ad-publication-US-713-AC-1--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-profile-Shipper-Pr-2c8ca-ad-publication-US-713-AC-1--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-profile-Shipper-Pr-2c8ca-ad-publication-US-713-AC-1--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-profile-Shipper-Pr-2c8ca-ad-publication-US-713-AC-1--chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Failed to create test user: 500" type="Error">
+<![CDATA[  [chromium] › shipper-profile.spec.ts:34:3 › Shipper Profile Setup - Golden Path (US-713) › should complete shipper profile and allow load publication (US-713 AC-1) 
+
+    Error: Failed to create test user: 500 
+
+       at fixtures\test-data-seeder.ts:97
+
+       95 |
+       96 |     if (!response.ok()) {
+    >  97 |       throw new Error(
+          |             ^
+       98 |         `Failed to create test user: ${response.status()} ${await response.text()}`
+       99 |       );
+      100 |     }
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:97:13)
+        at C:\projects\freightclub\frontend\e2e\shipper-profile.spec.ts:37:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-profile-Shipper-Pr-2c8ca-ad-publication-US-713-AC-1--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-profile-Shipper-Pr-2c8ca-ad-publication-US-713-AC-1--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-profile-Shipper-Pr-2c8ca-ad-publication-US-713-AC-1--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-profile-Shipper-Pr-2c8ca-ad-publication-US-713-AC-1--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-profile-Shipper-Pr-2c8ca-ad-publication-US-713-AC-1--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="Shipper Profile Setup - Golden Path (US-713) › should persist profile data after page reload (US-713 AC-2)" classname="shipper-profile.spec.ts" time="0.32">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|shipper-profile-Shipper-Pr-84c32-er-page-reload-US-713-AC-2--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-profile-Shipper-Pr-84c32-er-page-reload-US-713-AC-2--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-profile-Shipper-Pr-84c32-er-page-reload-US-713-AC-2--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-profile-Shipper-Pr-84c32-er-page-reload-US-713-AC-2--chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Failed to create test user: 500" type="Error">
+<![CDATA[  [chromium] › shipper-profile.spec.ts:93:3 › Shipper Profile Setup - Golden Path (US-713) › should persist profile data after page reload (US-713 AC-2) 
+
+    Error: Failed to create test user: 500 
+
+       at fixtures\test-data-seeder.ts:97
+
+       95 |
+       96 |     if (!response.ok()) {
+    >  97 |       throw new Error(
+          |             ^
+       98 |         `Failed to create test user: ${response.status()} ${await response.text()}`
+       99 |       );
+      100 |     }
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:97:13)
+        at C:\projects\freightclub\frontend\e2e\shipper-profile.spec.ts:95:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-profile-Shipper-Pr-84c32-er-page-reload-US-713-AC-2--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-profile-Shipper-Pr-84c32-er-page-reload-US-713-AC-2--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-profile-Shipper-Pr-84c32-er-page-reload-US-713-AC-2--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-profile-Shipper-Pr-84c32-er-page-reload-US-713-AC-2--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-profile-Shipper-Pr-84c32-er-page-reload-US-713-AC-2--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="smoke.spec.ts" timestamp="2026-06-01T00:55:56.844Z" hostname="chromium" tests="3" failures="0" skipped="0" time="1.414" errors="0">
+<testcase name="home page loads with correct title" classname="smoke.spec.ts" time="0.711">
+</testcase>
+<testcase name="unauthenticated user visiting protected route is redirected to login" classname="smoke.spec.ts" time="0.351">
+</testcase>
+<testcase name="login page renders" classname="smoke.spec.ts" time="0.352">
+</testcase>
+</testsuite>
+<testsuite name="trucker-pod-upload.spec.ts" timestamp="2026-06-01T00:55:56.844Z" hostname="chromium" tests="2" failures="0" skipped="0" time="1.943" errors="0">
+<testcase name="Trucker POD upload — golden path › POD upload gates Mark as Delivered and refreshes document list" classname="trucker-pod-upload.spec.ts" time="0.974">
+</testcase>
+<testcase name="Trucker POD upload — golden path › Export PDF button is not visible for TRUCKER role" classname="trucker-pod-upload.spec.ts" time="0.969">
+</testcase>
+</testsuite>
+</testsuites>

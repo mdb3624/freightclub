@@ -1,0 +1,3438 @@
+{
+  "config": {
+    "configFile": "C:\\projects\\freightclub\\frontend\\playwright.config.ts",
+    "rootDir": "C:/projects/freightclub/frontend/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\global-setup.ts",
+    "globalTeardown": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\global-teardown.ts",
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/projects/freightclub/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/projects/freightclub/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-results/junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "carrier-public-profile.spec.ts",
+      "file": "carrier-public-profile.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Carrier Public Profile - US-710",
+          "file": "carrier-public-profile.spec.ts",
+          "line": 17,
+          "column": 15,
+          "specs": [
+            {
+              "title": "AC-1: Shipper views carrier performance profile",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                        "line": 17,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:55:56.844Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                            "line": 17,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dd12306c18a79c21f0ac-57a5dabce7caacf9e17a",
+              "file": "carrier-public-profile.spec.ts",
+              "line": 62,
+              "column": 3
+            },
+            {
+              "title": "AC-2: Benchmark comparison displays correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                        "line": 17,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:55:56.845Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                            "line": 17,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dd12306c18a79c21f0ac-2a91cad424c099fc8966",
+              "file": "carrier-public-profile.spec.ts",
+              "line": 91,
+              "column": 3
+            },
+            {
+              "title": "AC-3: Carrier interest count displays social proof",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                        "line": 17,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:55:56.845Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                            "line": 17,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dd12306c18a79c21f0ac-05516381cd0dcb1c5bb6",
+              "file": "carrier-public-profile.spec.ts",
+              "line": 106,
+              "column": 3
+            },
+            {
+              "title": "AC-4: Multi-tenancy isolation message displays",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                        "line": 17,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:55:56.845Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                            "line": 17,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dd12306c18a79c21f0ac-86b5d271faf5ce4259c5",
+              "file": "carrier-public-profile.spec.ts",
+              "line": 124,
+              "column": 3
+            },
+            {
+              "title": "Service areas and equipment types display",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                        "line": 17,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:55:56.845Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                            "line": 17,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dd12306c18a79c21f0ac-ff0b50fe080f81770f01",
+              "file": "carrier-public-profile.spec.ts",
+              "line": 139,
+              "column": 3
+            },
+            {
+              "title": "Shipper can add carrier to preferred list from profile",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                        "line": 17,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:55:56.845Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                            "line": 17,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dd12306c18a79c21f0ac-92d37655238b2ecfb9aa",
+              "file": "carrier-public-profile.spec.ts",
+              "line": 162,
+              "column": 3
+            },
+            {
+              "title": "Profile styling complies with Style Guide (colors, typography)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                        "line": 17,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:55:56.845Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                            "line": 17,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dd12306c18a79c21f0ac-312048c34b4881d9b6d6",
+              "file": "carrier-public-profile.spec.ts",
+              "line": 184,
+              "column": 3
+            },
+            {
+              "title": "Profile is accessible (keyboard navigation)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                        "line": 17,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:55:56.845Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                            "line": 17,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dd12306c18a79c21f0ac-95b64c45e0eaf4862e7c",
+              "file": "carrier-public-profile.spec.ts",
+              "line": 204,
+              "column": 3
+            },
+            {
+              "title": "Profile loads within 2 seconds (performance)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                        "line": 17,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:55:56.845Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\carrier-public-profile.spec.ts",
+                            "line": 17,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dd12306c18a79c21f0ac-d1222fcc766f4be7afb8",
+              "file": "carrier-public-profile.spec.ts",
+              "line": 222,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "cost-profile-setup.spec.ts",
+      "file": "cost-profile-setup.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Carrier Cost Profile Setup — US-757",
+          "file": "cost-profile-setup.spec.ts",
+          "line": 14,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should save cost profile and persist after reload (US-757 AC-1)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 321,
+                      "error": {
+                        "message": "Error: Failed to create test user: 500 ",
+                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-setup.spec.ts:20:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 13,
+                          "line": 97
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 13,
+                            "line": 97
+                          },
+                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-setup.spec.ts:20:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:55:57.451Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-setup-Carrier-c6e31-t-after-reload-US-757-AC-1--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-setup-Carrier-c6e31-t-after-reload-US-757-AC-1--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-setup-Carrier-c6e31-t-after-reload-US-757-AC-1--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-setup-Carrier-c6e31-t-after-reload-US-757-AC-1--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 13,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "53897a38bf169a07ce6f-e611fea6fdadff5da96d",
+              "file": "cost-profile-setup.spec.ts",
+              "line": 18,
+              "column": 3
+            },
+            {
+              "title": "should calculate CPM with partial entry (US-757 AC-2)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 297,
+                      "error": {
+                        "message": "Error: Failed to create test user: 500 ",
+                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-setup.spec.ts:80:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 13,
+                          "line": 97
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 13,
+                            "line": 97
+                          },
+                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-setup.spec.ts:80:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:55:58.605Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-setup-Carrier-4d009--partial-entry-US-757-AC-2--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-setup-Carrier-4d009--partial-entry-US-757-AC-2--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-setup-Carrier-4d009--partial-entry-US-757-AC-2--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-setup-Carrier-4d009--partial-entry-US-757-AC-2--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 13,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "53897a38bf169a07ce6f-e191e831e68a0da33313",
+              "file": "cost-profile-setup.spec.ts",
+              "line": 78,
+              "column": 3
+            },
+            {
+              "title": "should handle zero MPG without division by zero error (US-757 AC-3)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 294,
+                      "error": {
+                        "message": "Error: Failed to create test user: 500 ",
+                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-setup.spec.ts:121:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 13,
+                          "line": 97
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 13,
+                            "line": 97
+                          },
+                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-setup.spec.ts:121:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:55:59.696Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-setup-Carrier-11eee--by-zero-error-US-757-AC-3--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-setup-Carrier-11eee--by-zero-error-US-757-AC-3--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-setup-Carrier-11eee--by-zero-error-US-757-AC-3--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\cost-profile-setup-Carrier-11eee--by-zero-error-US-757-AC-3--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 13,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "53897a38bf169a07ce6f-c3283c601b1a0a8db1ca",
+              "file": "cost-profile-setup.spec.ts",
+              "line": 119,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "hos-widget.spec.ts",
+      "file": "hos-widget.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "HOS Widget & Trucker Landing Page (Smoke Tests)",
+          "file": "hos-widget.spec.ts",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "HosWidget should compile without TypeScript errors",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 301,
+                      "error": {
+                        "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                        "stack": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\projects\\freightclub\\frontend\\e2e\\hos-widget.spec.ts:22:16",
+                        "location": {
+                          "file": "<anonymous>",
+                          "column": 16,
+                          "line": 304
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "<anonymous>",
+                            "column": 16,
+                            "line": 304
+                          },
+                          "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\projects\\freightclub\\frontend\\e2e\\hos-widget.spec.ts:22:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:00.776Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-ee28d-e-without-TypeScript-errors-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-ee28d-e-without-TypeScript-errors-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-ee28d-e-without-TypeScript-errors-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-ee28d-e-without-TypeScript-errors-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "<anonymous>",
+                        "column": 16,
+                        "line": 304
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6dd7476c4a2ae2198e53-db521911d6900348ffae",
+              "file": "hos-widget.spec.ts",
+              "line": 28,
+              "column": 3
+            },
+            {
+              "title": "TruckerLandingPage should render main sections with data-testid",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 282,
+                      "error": {
+                        "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                        "stack": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\projects\\freightclub\\frontend\\e2e\\hos-widget.spec.ts:22:16",
+                        "location": {
+                          "file": "<anonymous>",
+                          "column": 16,
+                          "line": 304
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "<anonymous>",
+                            "column": 16,
+                            "line": 304
+                          },
+                          "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\projects\\freightclub\\frontend\\e2e\\hos-widget.spec.ts:22:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:01.885Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-0345e-n-sections-with-data-testid-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-0345e-n-sections-with-data-testid-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-0345e-n-sections-with-data-testid-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-0345e-n-sections-with-data-testid-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "<anonymous>",
+                        "column": 16,
+                        "line": 304
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6dd7476c4a2ae2198e53-dc06510ee2ca36735c34",
+              "file": "hos-widget.spec.ts",
+              "line": 50,
+              "column": 3
+            },
+            {
+              "title": "Market ticker should display items with data-testid selectors",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 327,
+                      "error": {
+                        "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                        "stack": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\projects\\freightclub\\frontend\\e2e\\hos-widget.spec.ts:22:16",
+                        "location": {
+                          "file": "<anonymous>",
+                          "column": 16,
+                          "line": 304
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "<anonymous>",
+                            "column": 16,
+                            "line": 304
+                          },
+                          "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\projects\\freightclub\\frontend\\e2e\\hos-widget.spec.ts:22:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:02.993Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-98191--with-data-testid-selectors-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-98191--with-data-testid-selectors-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-98191--with-data-testid-selectors-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-98191--with-data-testid-selectors-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "<anonymous>",
+                        "column": 16,
+                        "line": 304
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6dd7476c4a2ae2198e53-1ebb7cca07e6224e1e33",
+              "file": "hos-widget.spec.ts",
+              "line": 67,
+              "column": 3
+            },
+            {
+              "title": "Navigation tabs should render with proper data-testid attributes",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 360,
+                      "error": {
+                        "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                        "stack": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\projects\\freightclub\\frontend\\e2e\\hos-widget.spec.ts:22:16",
+                        "location": {
+                          "file": "<anonymous>",
+                          "column": 16,
+                          "line": 304
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "<anonymous>",
+                            "column": 16,
+                            "line": 304
+                          },
+                          "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\projects\\freightclub\\frontend\\e2e\\hos-widget.spec.ts:22:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:04.130Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-c0a6a-oper-data-testid-attributes-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-c0a6a-oper-data-testid-attributes-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-c0a6a-oper-data-testid-attributes-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-c0a6a-oper-data-testid-attributes-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "<anonymous>",
+                        "column": 16,
+                        "line": 304
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6dd7476c4a2ae2198e53-235778499593bb01ea37",
+              "file": "hos-widget.spec.ts",
+              "line": 83,
+              "column": 3
+            },
+            {
+              "title": "Page should render without critical console errors",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 280,
+                      "error": {
+                        "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                        "stack": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\projects\\freightclub\\frontend\\e2e\\hos-widget.spec.ts:22:16",
+                        "location": {
+                          "file": "<anonymous>",
+                          "column": 16,
+                          "line": 304
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "<anonymous>",
+                            "column": 16,
+                            "line": 304
+                          },
+                          "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\projects\\freightclub\\frontend\\e2e\\hos-widget.spec.ts:22:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:05.271Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-3f24e-out-critical-console-errors-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-3f24e-out-critical-console-errors-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-3f24e-out-critical-console-errors-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-3f24e-out-critical-console-errors-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "<anonymous>",
+                        "column": 16,
+                        "line": 304
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6dd7476c4a2ae2198e53-3f0f8bbc98fc499afc8a",
+              "file": "hos-widget.spec.ts",
+              "line": 98,
+              "column": 3
+            },
+            {
+              "title": "Should render correctly on desktop viewport",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 277,
+                      "error": {
+                        "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                        "stack": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\projects\\freightclub\\frontend\\e2e\\hos-widget.spec.ts:22:16",
+                        "location": {
+                          "file": "<anonymous>",
+                          "column": 16,
+                          "line": 304
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "<anonymous>",
+                            "column": 16,
+                            "line": 304
+                          },
+                          "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\projects\\freightclub\\frontend\\e2e\\hos-widget.spec.ts:22:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:06.461Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-b39de-rrectly-on-desktop-viewport-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-b39de-rrectly-on-desktop-viewport-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-b39de-rrectly-on-desktop-viewport-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-b39de-rrectly-on-desktop-viewport-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "<anonymous>",
+                        "column": 16,
+                        "line": 304
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6dd7476c4a2ae2198e53-59147285fdf145589a64",
+              "file": "hos-widget.spec.ts",
+              "line": 118,
+              "column": 3
+            },
+            {
+              "title": "Should render correctly on mobile viewport",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 262,
+                      "error": {
+                        "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                        "stack": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\projects\\freightclub\\frontend\\e2e\\hos-widget.spec.ts:22:16",
+                        "location": {
+                          "file": "<anonymous>",
+                          "column": 16,
+                          "line": 304
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "<anonymous>",
+                            "column": 16,
+                            "line": 304
+                          },
+                          "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\projects\\freightclub\\frontend\\e2e\\hos-widget.spec.ts:22:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:07.521Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-d881b-orrectly-on-mobile-viewport-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-d881b-orrectly-on-mobile-viewport-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-d881b-orrectly-on-mobile-viewport-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\hos-widget-HOS-Widget-Truc-d881b-orrectly-on-mobile-viewport-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "<anonymous>",
+                        "column": 16,
+                        "line": 304
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6dd7476c4a2ae2198e53-63cc23ab83d9a29cb50e",
+              "file": "hos-widget.spec.ts",
+              "line": 132,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "login-integration.spec.ts",
+      "file": "login-integration.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Login Integration Tests (US-756)",
+          "file": "login-integration.spec.ts",
+          "line": 18,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should render login form in <100ms on initial load",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 927,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✓ Page loaded in 630ms\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:08.609Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fd88483612b18514b09-ade8506bc8f093c30698",
+              "file": "login-integration.spec.ts",
+              "line": 36,
+              "column": 3
+            },
+            {
+              "title": "should display error message on failed login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 678,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✓ Backend returned 401 for invalid credentials\n"
+                        },
+                        {
+                          "text": "✓ Error message displayed: \"Invalid email or password\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:09.644Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fd88483612b18514b09-6c31a07e52622d539006",
+              "file": "login-integration.spec.ts",
+              "line": 62,
+              "column": 3
+            },
+            {
+              "title": "should handle network throttling gracefully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1277,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✓ Page loaded with 3G throttling in 1053ms, form interactive\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:10.336Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fd88483612b18514b09-afb4c05361687fbf7d73",
+              "file": "login-integration.spec.ts",
+              "line": 106,
+              "column": 3
+            },
+            {
+              "title": "should maintain auth state on page refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 963,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✓ Auth state: redirected to login (expected for fresh test)\n"
+                        },
+                        {
+                          "text": "✓ Auth state persists across page refresh\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:11.628Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fd88483612b18514b09-514f2bc2d2ef6dbeda23",
+              "file": "login-integration.spec.ts",
+              "line": 133,
+              "column": 3
+            },
+            {
+              "title": "should validate required fields on submit",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 415,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✓ Validation error displayed: \"Email is required\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:12.601Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fd88483612b18514b09-a53ce9fbcd2afb959807",
+              "file": "login-integration.spec.ts",
+              "line": 171,
+              "column": 3
+            },
+            {
+              "title": "should validate email format before submission",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 441,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✓ Email validation error displayed: \"Enter a valid email\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:13.027Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6fd88483612b18514b09-4d6928680973e3d4d1a2",
+              "file": "login-integration.spec.ts",
+              "line": 194,
+              "column": 3
+            },
+            {
+              "title": "should successfully login with valid credentials",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 243,
+                      "error": {
+                        "message": "Error: Failed to create test user: 500 ",
+                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\login-integration.spec.ts:227:22",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 13,
+                          "line": 97
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 13,
+                            "line": 97
+                          },
+                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\login-integration.spec.ts:227:22"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:13.478Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\login-integration-Login-In-c6213-ogin-with-valid-credentials-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\login-integration-Login-In-c6213-ogin-with-valid-credentials-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\login-integration-Login-In-c6213-ogin-with-valid-credentials-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\login-integration-Login-In-c6213-ogin-with-valid-credentials-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 13,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6fd88483612b18514b09-91761e15030053088d84",
+              "file": "login-integration.spec.ts",
+              "line": 224,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "shipper-dashboard.spec.ts",
+      "file": "shipper-dashboard.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Shipper Dashboard Golden Path (US-715)",
+          "file": "shipper-dashboard.spec.ts",
+          "line": 17,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should display summary cards with load statistics (US-715 AC-1)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 308,
+                      "error": {
+                        "message": "Error: Failed to create test user: 500 ",
+                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:31:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 13,
+                          "line": 97
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 13,
+                            "line": 97
+                          },
+                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:31:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:14.539Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 13,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "67a118b7c59db60eac84-6a52e9f1a0195482520b",
+              "file": "shipper-dashboard.spec.ts",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "title": "should display load table with expected columns (US-715 AC-2)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 307,
+                      "error": {
+                        "message": "Error: Failed to create test user: 500 ",
+                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:64:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 13,
+                          "line": 97
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 13,
+                            "line": 97
+                          },
+                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:64:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:15.634Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 13,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "67a118b7c59db60eac84-e7009632cdb5eee0fc61",
+              "file": "shipper-dashboard.spec.ts",
+              "line": 62,
+              "column": 3
+            },
+            {
+              "title": "should switch between Active and All Loads tabs (US-715 AC-3)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 309,
+                      "error": {
+                        "message": "Error: Failed to create test user: 500 ",
+                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:97:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 13,
+                          "line": 97
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 13,
+                            "line": 97
+                          },
+                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:97:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:16.845Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 13,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "67a118b7c59db60eac84-fd60817090ac8ebf569d",
+              "file": "shipper-dashboard.spec.ts",
+              "line": 95,
+              "column": 3
+            },
+            {
+              "title": "should filter loads using search input (US-715 AC-4)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 311,
+                      "error": {
+                        "message": "Error: Failed to create test user: 500 ",
+                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:130:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 13,
+                          "line": 97
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 13,
+                            "line": 97
+                          },
+                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:130:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:17.947Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 13,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "67a118b7c59db60eac84-abc96da3ebe73561bf18",
+              "file": "shipper-dashboard.spec.ts",
+              "line": 128,
+              "column": 3
+            },
+            {
+              "title": "should navigate to Post Load form (US-715 AC-5)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 15,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 365,
+                      "error": {
+                        "message": "Error: Failed to create test user: 500 ",
+                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:167:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 13,
+                          "line": 97
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 13,
+                            "line": 97
+                          },
+                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:167:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:19.049Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 13,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "67a118b7c59db60eac84-629c34671af9b3064fbe",
+              "file": "shipper-dashboard.spec.ts",
+              "line": 165,
+              "column": 3
+            },
+            {
+              "title": "should load dashboard without errors (US-715 AC-6)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 316,
+                      "error": {
+                        "message": "Error: Failed to create test user: 500 ",
+                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:198:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 13,
+                          "line": 97
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 13,
+                            "line": 97
+                          },
+                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:198:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:20.202Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 13,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "67a118b7c59db60eac84-cb175ec82c2d7bf20c2b",
+              "file": "shipper-dashboard.spec.ts",
+              "line": 196,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "shipper-post-load.spec.ts",
+      "file": "shipper-post-load.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Shipper Post Load — US-714",
+          "file": "shipper-post-load.spec.ts",
+          "line": 14,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should pre-populate origin fields from shipper profile defaults (US-714 AC-1)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 17,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 305,
+                      "error": {
+                        "message": "Error: Failed to create test user: 500 ",
+                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-post-load.spec.ts:20:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 13,
+                          "line": 97
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 13,
+                            "line": 97
+                          },
+                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-post-load.spec.ts:20:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:21.355Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-post-load-Shipper--54772-ofile-defaults-US-714-AC-1--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-post-load-Shipper--54772-ofile-defaults-US-714-AC-1--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-post-load-Shipper--54772-ofile-defaults-US-714-AC-1--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-post-load-Shipper--54772-ofile-defaults-US-714-AC-1--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 13,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b700bea197d28ff7a000-976810a41d60d5a7d1c1",
+              "file": "shipper-post-load.spec.ts",
+              "line": 18,
+              "column": 3
+            },
+            {
+              "title": "should match origin city to saved profile default (US-714 AC-2)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 18,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 304,
+                      "error": {
+                        "message": "Error: Failed to create test user: 500 ",
+                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-post-load.spec.ts:51:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 13,
+                          "line": 97
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 13,
+                            "line": 97
+                          },
+                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-post-load.spec.ts:51:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:22.477Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-post-load-Shipper--ee9e7-rofile-default-US-714-AC-2--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-post-load-Shipper--ee9e7-rofile-default-US-714-AC-2--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-post-load-Shipper--ee9e7-rofile-default-US-714-AC-2--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-post-load-Shipper--ee9e7-rofile-default-US-714-AC-2--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 13,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b700bea197d28ff7a000-f27985b63041695aa550",
+              "file": "shipper-post-load.spec.ts",
+              "line": 49,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "shipper-preferred-carriers.spec.ts",
+      "file": "shipper-preferred-carriers.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Shipper Preferred Carrier List - US-707",
+          "file": "shipper-preferred-carriers.spec.ts",
+          "line": 17,
+          "column": 15,
+          "specs": [
+            {
+              "title": "AC-707-1: Shipper can add carrier to preferred list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-preferred-carriers.spec.ts",
+                        "line": 17,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:22.949Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-preferred-carriers.spec.ts",
+                            "line": 17,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "570a38fe9cbb440fb837-ee76939eeddaa0237898",
+              "file": "shipper-preferred-carriers.spec.ts",
+              "line": 31,
+              "column": 3
+            },
+            {
+              "title": "AC-707-2: Shipper can view preferred carriers list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-preferred-carriers.spec.ts",
+                        "line": 17,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:22.949Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-preferred-carriers.spec.ts",
+                            "line": 17,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "570a38fe9cbb440fb837-4f2d58616c01b0079d8b",
+              "file": "shipper-preferred-carriers.spec.ts",
+              "line": 69,
+              "column": 3
+            },
+            {
+              "title": "AC-707-3: Shipper can remove carrier from preferred list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-preferred-carriers.spec.ts",
+                        "line": 17,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:22.949Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-preferred-carriers.spec.ts",
+                            "line": 17,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "570a38fe9cbb440fb837-9622ecb4ab942c1c438c",
+              "file": "shipper-preferred-carriers.spec.ts",
+              "line": 87,
+              "column": 3
+            },
+            {
+              "title": "Form is accessible (keyboard navigation)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-preferred-carriers.spec.ts",
+                        "line": 17,
+                        "column": 15
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:22.949Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-preferred-carriers.spec.ts",
+                            "line": 17,
+                            "column": 15
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "570a38fe9cbb440fb837-635b1c442f92cd847e97",
+              "file": "shipper-preferred-carriers.spec.ts",
+              "line": 107,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "shipper-profile-multi-tenant.spec.ts",
+      "file": "shipper-profile-multi-tenant.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Shipper Profile - Multi-Tenancy Verification",
+          "file": "shipper-profile-multi-tenant.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "shipper1 profile is isolated from shipper2",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Shipper1 authentication failed - backend test data not configured",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-multi-tenant.spec.ts",
+                        "line": 27,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 587,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:23.618Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Shipper1 authentication failed - backend test data not configured",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-multi-tenant.spec.ts",
+                            "line": 27,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b1bd5155bcc55737b3ad-db7dcbd98d768b88793d",
+              "file": "shipper-profile-multi-tenant.spec.ts",
+              "line": 6,
+              "column": 3
+            },
+            {
+              "title": "shipper1 loads are isolated from shipper2 loads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Test user authentication failed",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-multi-tenant.spec.ts",
+                        "line": 132,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 536,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:24.306Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Test user authentication failed",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-multi-tenant.spec.ts",
+                            "line": 132,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b1bd5155bcc55737b3ad-e58149654f1004864eeb",
+              "file": "shipper-profile-multi-tenant.spec.ts",
+              "line": 112,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "shipper-profile-setup.spec.ts",
+      "file": "shipper-profile-setup.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Shipper Profile Setup — US-713",
+          "file": "shipper-profile-setup.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "golden path: shipper completes profile and reaches 80% threshold",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Test user authentication failed - backend test data not configured. Run database migrations.",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-setup.spec.ts",
+                        "line": 30,
+                        "column": 12
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 597,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:24.875Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Test user authentication failed - backend test data not configured. Run database migrations.",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-setup.spec.ts",
+                            "line": 30,
+                            "column": 12
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3d695356a92c0740cc1a-c2153f7f7212cfec9952",
+              "file": "shipper-profile-setup.spec.ts",
+              "line": 16,
+              "column": 3
+            },
+            {
+              "title": "displays completion banner on dashboard when incomplete",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Test user authentication failed - backend test data not configured",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-setup.spec.ts",
+                        "line": 125,
+                        "column": 12
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 601,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:25.483Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Test user authentication failed - backend test data not configured",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-setup.spec.ts",
+                            "line": 125,
+                            "column": 12
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3d695356a92c0740cc1a-b9380e8297d7276d7ff2",
+              "file": "shipper-profile-setup.spec.ts",
+              "line": 112,
+              "column": 3
+            },
+            {
+              "title": "hides banner when profile is ≥80% complete",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Test user authentication failed - backend test data not configured",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-setup.spec.ts",
+                        "line": 169,
+                        "column": 12
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 659,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:26.095Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Test user authentication failed - backend test data not configured",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-setup.spec.ts",
+                            "line": 169,
+                            "column": 12
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3d695356a92c0740cc1a-7e5f06288c1ca7838587",
+              "file": "shipper-profile-setup.spec.ts",
+              "line": 156,
+              "column": 3
+            },
+            {
+              "title": "validates required fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Test user authentication failed - backend test data not configured",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-setup.spec.ts",
+                        "line": 206,
+                        "column": 12
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 573,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:26.764Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Test user authentication failed - backend test data not configured",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-setup.spec.ts",
+                            "line": 206,
+                            "column": 12
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3d695356a92c0740cc1a-0d09a8c7d75edbb48dfc",
+              "file": "shipper-profile-setup.spec.ts",
+              "line": 193,
+              "column": 3
+            },
+            {
+              "title": "validates email format",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Test user authentication failed - backend test data not configured",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-setup.spec.ts",
+                        "line": 236,
+                        "column": 12
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 574,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:27.349Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Test user authentication failed - backend test data not configured",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-setup.spec.ts",
+                            "line": 236,
+                            "column": 12
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3d695356a92c0740cc1a-3f58c99b4af011bb1d39",
+              "file": "shipper-profile-setup.spec.ts",
+              "line": 223,
+              "column": 3
+            },
+            {
+              "title": "validates phone format",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Test user authentication failed - backend test data not configured",
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-setup.spec.ts",
+                        "line": 270,
+                        "column": 12
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 600,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:27.936Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Test user authentication failed - backend test data not configured",
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile-setup.spec.ts",
+                            "line": 270,
+                            "column": 12
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3d695356a92c0740cc1a-ac11db7bb1327b94b4b1",
+              "file": "shipper-profile-setup.spec.ts",
+              "line": 257,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "shipper-profile.spec.ts",
+      "file": "shipper-profile.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Shipper Profile Setup - Golden Path (US-713)",
+          "file": "shipper-profile.spec.ts",
+          "line": 17,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should complete shipper profile and allow load publication (US-713 AC-1)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 234,
+                      "error": {
+                        "message": "Error: Failed to create test user: 500 ",
+                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile.spec.ts:37:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 13,
+                          "line": 97
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 13,
+                            "line": 97
+                          },
+                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile.spec.ts:37:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:28.581Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-profile-Shipper-Pr-2c8ca-ad-publication-US-713-AC-1--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-profile-Shipper-Pr-2c8ca-ad-publication-US-713-AC-1--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-profile-Shipper-Pr-2c8ca-ad-publication-US-713-AC-1--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-profile-Shipper-Pr-2c8ca-ad-publication-US-713-AC-1--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 13,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "298b6c3faf0cf6b0d597-954349d6f38cd74907b5",
+              "file": "shipper-profile.spec.ts",
+              "line": 34,
+              "column": 3
+            },
+            {
+              "title": "should persist profile data after page reload (US-713 AC-2)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 20,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 320,
+                      "error": {
+                        "message": "Error: Failed to create test user: 500 ",
+                        "stack": "Error: Failed to create test user: 500 \n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile.spec.ts:95:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 13,
+                          "line": 97
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 13,
+                            "line": 97
+                          },
+                          "message": "Error: Failed to create test user: 500 \n\n   at fixtures\\test-data-seeder.ts:97\n\n   95 |\n   96 |     if (!response.ok()) {\n>  97 |       throw new Error(\n      |             ^\n   98 |         `Failed to create test user: ${response.status()} ${await response.text()}`\n   99 |       );\n  100 |     }\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:97:13)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-profile.spec.ts:95:18"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:29.568Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-profile-Shipper-Pr-84c32-er-page-reload-US-713-AC-2--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-profile-Shipper-Pr-84c32-er-page-reload-US-713-AC-2--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-profile-Shipper-Pr-84c32-er-page-reload-US-713-AC-2--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-profile-Shipper-Pr-84c32-er-page-reload-US-713-AC-2--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 13,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "298b6c3faf0cf6b0d597-9469a486481a2c57265f",
+              "file": "shipper-profile.spec.ts",
+              "line": 93,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "smoke.spec.ts",
+      "file": "smoke.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "home page loads with correct title",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 21,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 711,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-06-01T00:56:30.736Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4219922fea2e2bd3c691-7aa149f184ca39d327ec",
+          "file": "smoke.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "unauthenticated user visiting protected route is redirected to login",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 21,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 351,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-06-01T00:56:31.550Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4219922fea2e2bd3c691-835dfdcb6b4fb4cec1d9",
+          "file": "smoke.spec.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "title": "login page renders",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 21,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 352,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-06-01T00:56:31.914Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4219922fea2e2bd3c691-1fd14d3516a88fdd0b28",
+          "file": "smoke.spec.ts",
+          "line": 13,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "trucker-pod-upload.spec.ts",
+      "file": "trucker-pod-upload.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Trucker POD upload — golden path",
+          "file": "trucker-pod-upload.spec.ts",
+          "line": 163,
+          "column": 6,
+          "specs": [
+            {
+              "title": "POD upload gates Mark as Delivered and refreshes document list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 21,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 974,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:32.287Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1f9c782fc8853fc11087-2047fe5b07bcd02be835",
+              "file": "trucker-pod-upload.spec.ts",
+              "line": 164,
+              "column": 3
+            },
+            {
+              "title": "Export PDF button is not visible for TRUCKER role",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 21,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 969,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-01T00:56:33.271Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1f9c782fc8853fc11087-6c579c3141870c661648",
+              "file": "trucker-pod-upload.spec.ts",
+              "line": 194,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-06-01T00:55:53.903Z",
+    "duration": 40462.692,
+    "expected": 11,
+    "skipped": 21,
+    "unexpected": 21,
+    "flaky": 0
+  }
+}

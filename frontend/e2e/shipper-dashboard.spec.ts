@@ -16,26 +16,11 @@ import { TestDataSeeder } from './fixtures/test-data-seeder'
 
 test.describe('Shipper Dashboard Golden Path (US-715)', () => {
   // ============================================================================
-  // SETUP: Trace generation + API seeder
+  // SETUP: Per-test state cleanup
   // ============================================================================
   test.beforeEach(async ({ context }) => {
-    await context.tracing.start({
-      screenshots: true,
-      snapshots: true,
-      sources: true,
-    })
+    // Traces are managed by playwright.config.ts (trace: 'retain-on-failure')
     await context.clearCookies()
-  })
-
-  test.afterEach(async ({ context }, testInfo) => {
-    if (testInfo.status !== 'passed') {
-      const timestamp = Date.now()
-      const tracePath = `test-results/trace-${testInfo.title.replace(/\s+/g, '-')}-${timestamp}.zip`
-      await context.tracing.stop({ path: tracePath })
-      console.log(`📍 Trace saved: ${tracePath}`)
-    } else {
-      await context.tracing.stop()
-    }
   })
 
   // ============================================================================

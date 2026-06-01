@@ -147,35 +147,13 @@ export function ProfilePage() {
         <h1 className="text-2xl font-semibold text-gray-900">My Profile</h1>
       </div>
 
-      <form onSubmit={handleSubmit((v) => {
-        console.log('[ProfilePage] Form submitted with values:', v)
-        console.log('[ProfilePage] Cost fields in payload:', {
-          truckPaymentLease: v.truckPaymentLease,
-          insurance: v.insurance,
-          iftaIrpPermits: v.iftaIrpPermits,
-          phoneEldMisc: v.phoneEldMisc,
-          perDiemDailyRate: v.perDiemDailyRate,
-          perDiemDaysPerMonth: v.perDiemDaysPerMonth,
-          fuelCostPerGallon: v.fuelCostPerGallon,
-          milesPerGallon: v.milesPerGallon,
-          maintenanceCostPerMile: v.maintenanceCostPerMile,
-          monthlyMilesTarget: v.monthlyMilesTarget,
-          targetMarginPerMile: v.targetMarginPerMile,
-        })
-        mutate(v)
-      })} className="space-y-8">
+      <form onSubmit={handleSubmit((v) => mutate(v))} className="space-y-8">
         {apiError && <ErrorBanner message={apiError} />}
         {saved && (
           <div className="rounded-md bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
             Profile saved successfully.
           </div>
         )}
-        <pre className="bg-gray-100 p-2 text-xs overflow-auto max-h-40">{JSON.stringify({
-          truckPaymentLease: formData.truckPaymentLease,
-          insurance: formData.insurance,
-          iftaIrpPermits: formData.iftaIrpPermits,
-          phoneEldMisc: formData.phoneEldMisc,
-        }, null, 2)}</pre>
 
         {isTrucker && ratingSummary && (
           <section className="rounded-xl border border-gray-200 bg-white p-6">

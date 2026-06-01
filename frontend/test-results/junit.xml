@@ -1,442 +1,57 @@
-<testsuites id="" name="" tests="3" failures="3" skipped="0" errors="0" time="42.246739999999996">
-<testsuite name="cost-profile-persistence-fix.spec.ts" timestamp="2026-06-01T01:25:10.732Z" hostname="chromium" tests="3" failures="3" skipped="0" time="37.143" errors="0">
-<testcase name="Cost Profile Persistence Fix Verification › cost profile fields should be captured in form submission" classname="cost-profile-persistence-fix.spec.ts" time="12.422">
+<testsuites id="" name="" tests="3" failures="0" skipped="0" errors="0" time="10.279397">
+<testsuite name="cost-profile-persistence-fix.spec.ts" timestamp="2026-06-01T01:34:51.201Z" hostname="chromium" tests="3" failures="0" skipped="0" time="6.764" errors="0">
+<testcase name="Cost Profile Persistence Fix Verification › cost profile fields should be captured in form submission" classname="cost-profile-persistence-fix.spec.ts" time="2.352">
 <system-out>
-<![CDATA[
-[[ATTACHMENT|cost-profile-persistence-f-32b32-captured-in-form-submission-chromium\test-failed-1.png]]
-
-[[ATTACHMENT|cost-profile-persistence-f-32b32-captured-in-form-submission-chromium\video.webm]]
-
-[[ATTACHMENT|cost-profile-persistence-f-32b32-captured-in-form-submission-chromium\error-context.md]]
-
-[[ATTACHMENT|cost-profile-persistence-f-32b32-captured-in-form-submission-chromium\trace.zip]]
+<![CDATA[✓ Cost fields captured in form
+✓ API request intercepted
+  Payload: {
+  "firstName": "E2E",
+  "lastName": "Test",
+  "businessName": "",
+  "phone": "",
+  "billingAddress1": "",
+  "billingAddress2": "",
+  "billingCity": "",
+  "billingState": "",
+  "billingZip": "",
+  "defaultPickupAddress1": "",
+  "defaultPickupAddress2": "",
+  "defaultPickupCity": "",
+  "defaultPickupState": "",
+  "defaultPickupZip": "",
+  "notifyEmail": true,
+  "notifySms": false,
+  "notifyInApp": true,
+  "mcNumber": "",
+  "dotNumber": "",
+  "truckPaymentLease": 1800,
+  "insurance": 900,
+  "iftaIrpPermits": null,
+  "phoneEldMisc": null,
+  "perDiemDailyRate": null,
+  "perDiemDaysPerMonth": null,
+  "fuelCostPerGallon": 3.5,
+  "milesPerGallon": 6.5,
+  "maintenanceCostPerMile": null,
+  "monthlyMilesTarget": null,
+  "targetMarginPerMile": null
+}
+✓ Cost fields present in API payload
+✓ Profile save successful
 ]]>
 </system-out>
-<system-err>
-<![CDATA[Test failed: ExpectError: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
-
-Locator: locator('text=Cost Profile')
-Expected: visible
-Timeout: 10000ms
-Error: element(s) not found
-
-Call log:
-[2m  - Expect "toBeVisible" with timeout 10000ms[22m
-[2m  - waiting for locator('text=Cost Profile')[22m
-
-    at [90mC:\projects\freightclub\frontend\[39me2e\cost-profile-persistence-fix.spec.ts:21:55 {
-  matcherResult: {
-    message: [32m'\x1B[2mexpect(\x1B[22m\x1B[31mlocator\x1B[39m\x1B[2m).\x1B[22mtoBeVisible\x1B[2m(\x1B[22m\x1B[2m)\x1B[22m failed\n'[39m +
-      [32m'\n'[39m +
-      [32m"Locator: locator('text=Cost Profile')\n"[39m +
-      [32m'Expected: visible\n'[39m +
-      [32m'Timeout: 10000ms\n'[39m +
-      [32m'Error: element(s) not found\n'[39m +
-      [32m'\n'[39m +
-      [32m'Call log:\n'[39m +
-      [32m'\x1B[2m  - Expect "toBeVisible" with timeout 10000ms\x1B[22m\n'[39m +
-      [32m"\x1B[2m  - waiting for locator('text=Cost Profile')\x1B[22m\n"[39m,
-    pass: [33mfalse[39m,
-    actual: [90mundefined[39m,
-    name: [32m'toBeVisible'[39m,
-    expected: [32m'visible'[39m,
-    log: [
-      [32m'  - Expect "toBeVisible" with timeout 10000ms'[39m,
-      [32m"  - waiting for locator('text=Cost Profile')"[39m
-    ],
-    timeout: [33m10000[39m
-  },
-  [32mSymbol(step)[39m: {
-    category: [32m'expect'[39m,
-    apiName: [32m'expect.toBeVisible'[39m,
-    title: [32m`Expect "toBeVisible" locator('text=Cost Profile')`[39m,
-    shortTitle: [32m'Expect "toBeVisible"'[39m,
-    params: { expected: [36m[Object][39m },
-    infectParentStepsWithError: [90mundefined[39m,
-    stepId: [32m'expect@37'[39m,
-    group: [90mundefined[39m,
-    boxedStack: [90mundefined[39m,
-    location: {
-      file: [32m'C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts'[39m,
-      line: [33m21[39m,
-      column: [33m55[39m
-    },
-    steps: [],
-    attachmentIndices: [],
-    info: TestStepInfoImpl {
-      annotations: [],
-      _testInfo: [36m[TestInfoImpl][39m,
-      _stepId: [32m'expect@37'[39m,
-      _title: [32m`Expect "toBeVisible" locator('text=Cost Profile')`[39m,
-      _parentStep: [90mundefined[39m,
-      skip: [36m[Function (anonymous)][39m
-    },
-    complete: [36m[Function: complete][39m,
-    endWallTime: [33m1780277123198[39m,
-    error: {
-      message: [32m'Error: \x1B[2mexpect(\x1B[22m\x1B[31mlocator\x1B[39m\x1B[2m).\x1B[22mtoBeVisible\x1B[2m(\x1B[22m\x1B[2m)\x1B[22m failed\n'[39m +
-        [32m'\n'[39m +
-        [32m"Locator: locator('text=Cost Profile')\n"[39m +
-        [32m'Expected: visible\n'[39m +
-        [32m'Timeout: 10000ms\n'[39m +
-        [32m'Error: element(s) not found\n'[39m +
-        [32m'\n'[39m +
-        [32m'Call log:\n'[39m +
-        [32m'\x1B[2m  - Expect "toBeVisible" with timeout 10000ms\x1B[22m\n'[39m +
-        [32m"\x1B[2m  - waiting for locator('text=Cost Profile')\x1B[22m\n"[39m,
-      stack: [32m'Error: \x1B[2mexpect(\x1B[22m\x1B[31mlocator\x1B[39m\x1B[2m).\x1B[22mtoBeVisible\x1B[2m(\x1B[22m\x1B[2m)\x1B[22m failed\n'[39m +
-        [32m'\n'[39m +
-        [32m"Locator: locator('text=Cost Profile')\n"[39m +
-        [32m'Expected: visible\n'[39m +
-        [32m'Timeout: 10000ms\n'[39m +
-        [32m'Error: element(s) not found\n'[39m +
-        [32m'\n'[39m +
-        [32m'Call log:\n'[39m +
-        [32m'\x1B[2m  - Expect "toBeVisible" with timeout 10000ms\x1B[22m\n'[39m +
-        [32m"\x1B[2m  - waiting for locator('text=Cost Profile')\x1B[22m\n"[39m +
-        [32m'\n'[39m +
-        [32m'    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:21:55'[39m,
-      cause: [90mundefined[39m
-    }
-  }
-}
-]]>
-</system-err>
-<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
-<![CDATA[  [chromium] › cost-profile-persistence-fix.spec.ts:11:3 › Cost Profile Persistence Fix Verification › cost profile fields should be captured in form submission 
-
-    Error: expect(locator).toBeVisible() failed
-
-    Locator: locator('text=Cost Profile')
-    Expected: visible
-    Timeout: 10000ms
-    Error: element(s) not found
-
-    Call log:
-      - Expect "toBeVisible" with timeout 10000ms
-      - waiting for locator('text=Cost Profile')
-
-
-      19 |
-      20 |       // Wait for Cost Profile section to load (specific to TRUCKER users)
-    > 21 |       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })
-         |                                                       ^
-      22 |
-      23 |       // Fill multiple cost profile fields
-      24 |       await page.fill('input[placeholder="e.g. 1800"]', '1800')  // Truck Payment
-        at C:\projects\freightclub\frontend\e2e\cost-profile-persistence-fix.spec.ts:21:55
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\cost-profile-persistence-f-32b32-captured-in-form-submission-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\test-results\cost-profile-persistence-f-32b32-captured-in-form-submission-chromium\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\test-results\cost-profile-persistence-f-32b32-captured-in-form-submission-chromium\error-context.md
-
-    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
-    ..\test-results\cost-profile-persistence-f-32b32-captured-in-form-submission-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace ..\test-results\cost-profile-persistence-f-32b32-captured-in-form-submission-chromium\trace.zip
-
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-]]>
-</failure>
 </testcase>
-<testcase name="Cost Profile Persistence Fix Verification › cost profile fields should persist after page navigation" classname="cost-profile-persistence-fix.spec.ts" time="12.335">
+<testcase name="Cost Profile Persistence Fix Verification › cost profile fields should persist to backend" classname="cost-profile-persistence-fix.spec.ts" time="2.136">
 <system-out>
-<![CDATA[
-[[ATTACHMENT|cost-profile-persistence-f-d01cc-rsist-after-page-navigation-chromium\test-failed-1.png]]
-
-[[ATTACHMENT|cost-profile-persistence-f-d01cc-rsist-after-page-navigation-chromium\video.webm]]
-
-[[ATTACHMENT|cost-profile-persistence-f-d01cc-rsist-after-page-navigation-chromium\error-context.md]]
-
-[[ATTACHMENT|cost-profile-persistence-f-d01cc-rsist-after-page-navigation-chromium\trace.zip]]
+<![CDATA[✓ Cost fields persisted to backend
 ]]>
 </system-out>
-<system-err>
-<![CDATA[Test failed: ExpectError: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
-
-Locator: locator('text=Cost Profile')
-Expected: visible
-Timeout: 10000ms
-Error: element(s) not found
-
-Call log:
-[2m  - Expect "toBeVisible" with timeout 10000ms[22m
-[2m  - waiting for locator('text=Cost Profile')[22m
-
-    at [90mC:\projects\freightclub\frontend\[39me2e\cost-profile-persistence-fix.spec.ts:86:55 {
-  matcherResult: {
-    message: [32m'\x1B[2mexpect(\x1B[22m\x1B[31mlocator\x1B[39m\x1B[2m).\x1B[22mtoBeVisible\x1B[2m(\x1B[22m\x1B[2m)\x1B[22m failed\n'[39m +
-      [32m'\n'[39m +
-      [32m"Locator: locator('text=Cost Profile')\n"[39m +
-      [32m'Expected: visible\n'[39m +
-      [32m'Timeout: 10000ms\n'[39m +
-      [32m'Error: element(s) not found\n'[39m +
-      [32m'\n'[39m +
-      [32m'Call log:\n'[39m +
-      [32m'\x1B[2m  - Expect "toBeVisible" with timeout 10000ms\x1B[22m\n'[39m +
-      [32m"\x1B[2m  - waiting for locator('text=Cost Profile')\x1B[22m\n"[39m,
-    pass: [33mfalse[39m,
-    actual: [90mundefined[39m,
-    name: [32m'toBeVisible'[39m,
-    expected: [32m'visible'[39m,
-    log: [
-      [32m'  - Expect "toBeVisible" with timeout 10000ms'[39m,
-      [32m"  - waiting for locator('text=Cost Profile')"[39m
-    ],
-    timeout: [33m10000[39m
-  },
-  [32mSymbol(step)[39m: {
-    category: [32m'expect'[39m,
-    apiName: [32m'expect.toBeVisible'[39m,
-    title: [32m`Expect "toBeVisible" locator('text=Cost Profile')`[39m,
-    shortTitle: [32m'Expect "toBeVisible"'[39m,
-    params: { expected: [36m[Object][39m },
-    infectParentStepsWithError: [90mundefined[39m,
-    stepId: [32m'expect@37'[39m,
-    group: [90mundefined[39m,
-    boxedStack: [90mundefined[39m,
-    location: {
-      file: [32m'C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts'[39m,
-      line: [33m86[39m,
-      column: [33m55[39m
-    },
-    steps: [],
-    attachmentIndices: [],
-    info: TestStepInfoImpl {
-      annotations: [],
-      _testInfo: [36m[TestInfoImpl][39m,
-      _stepId: [32m'expect@37'[39m,
-      _title: [32m`Expect "toBeVisible" locator('text=Cost Profile')`[39m,
-      _parentStep: [90mundefined[39m,
-      skip: [36m[Function (anonymous)][39m
-    },
-    complete: [36m[Function: complete][39m,
-    endWallTime: [33m1780277136366[39m,
-    error: {
-      message: [32m'Error: \x1B[2mexpect(\x1B[22m\x1B[31mlocator\x1B[39m\x1B[2m).\x1B[22mtoBeVisible\x1B[2m(\x1B[22m\x1B[2m)\x1B[22m failed\n'[39m +
-        [32m'\n'[39m +
-        [32m"Locator: locator('text=Cost Profile')\n"[39m +
-        [32m'Expected: visible\n'[39m +
-        [32m'Timeout: 10000ms\n'[39m +
-        [32m'Error: element(s) not found\n'[39m +
-        [32m'\n'[39m +
-        [32m'Call log:\n'[39m +
-        [32m'\x1B[2m  - Expect "toBeVisible" with timeout 10000ms\x1B[22m\n'[39m +
-        [32m"\x1B[2m  - waiting for locator('text=Cost Profile')\x1B[22m\n"[39m,
-      stack: [32m'Error: \x1B[2mexpect(\x1B[22m\x1B[31mlocator\x1B[39m\x1B[2m).\x1B[22mtoBeVisible\x1B[2m(\x1B[22m\x1B[2m)\x1B[22m failed\n'[39m +
-        [32m'\n'[39m +
-        [32m"Locator: locator('text=Cost Profile')\n"[39m +
-        [32m'Expected: visible\n'[39m +
-        [32m'Timeout: 10000ms\n'[39m +
-        [32m'Error: element(s) not found\n'[39m +
-        [32m'\n'[39m +
-        [32m'Call log:\n'[39m +
-        [32m'\x1B[2m  - Expect "toBeVisible" with timeout 10000ms\x1B[22m\n'[39m +
-        [32m"\x1B[2m  - waiting for locator('text=Cost Profile')\x1B[22m\n"[39m +
-        [32m'\n'[39m +
-        [32m'    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:86:55'[39m,
-      cause: [90mundefined[39m
-    }
-  }
-}
-]]>
-</system-err>
-<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
-<![CDATA[  [chromium] › cost-profile-persistence-fix.spec.ts:80:3 › Cost Profile Persistence Fix Verification › cost profile fields should persist after page navigation 
-
-    Error: expect(locator).toBeVisible() failed
-
-    Locator: locator('text=Cost Profile')
-    Expected: visible
-    Timeout: 10000ms
-    Error: element(s) not found
-
-    Call log:
-      - Expect "toBeVisible" with timeout 10000ms
-      - waiting for locator('text=Cost Profile')
-
-
-      84 |       await page.waitForLoadState('networkidle')
-      85 |       await page.waitForTimeout(1000)
-    > 86 |       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })
-         |                                                       ^
-      87 |
-      88 |       // Fill fields
-      89 |       await page.fill('input[placeholder="e.g. 1800"]', '2500')
-        at C:\projects\freightclub\frontend\e2e\cost-profile-persistence-fix.spec.ts:86:55
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\cost-profile-persistence-f-d01cc-rsist-after-page-navigation-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\test-results\cost-profile-persistence-f-d01cc-rsist-after-page-navigation-chromium\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\test-results\cost-profile-persistence-f-d01cc-rsist-after-page-navigation-chromium\error-context.md
-
-    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
-    ..\test-results\cost-profile-persistence-f-d01cc-rsist-after-page-navigation-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace ..\test-results\cost-profile-persistence-f-d01cc-rsist-after-page-navigation-chromium\trace.zip
-
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-]]>
-</failure>
 </testcase>
-<testcase name="Cost Profile Persistence Fix Verification › cost profile CPM calculations should work with persisted values" classname="cost-profile-persistence-fix.spec.ts" time="12.386">
+<testcase name="Cost Profile Persistence Fix Verification › all cost profile fields should persist to backend" classname="cost-profile-persistence-fix.spec.ts" time="2.276">
 <system-out>
-<![CDATA[
-[[ATTACHMENT|cost-profile-persistence-f-a3e4a--work-with-persisted-values-chromium\test-failed-1.png]]
-
-[[ATTACHMENT|cost-profile-persistence-f-a3e4a--work-with-persisted-values-chromium\video.webm]]
-
-[[ATTACHMENT|cost-profile-persistence-f-a3e4a--work-with-persisted-values-chromium\error-context.md]]
-
-[[ATTACHMENT|cost-profile-persistence-f-a3e4a--work-with-persisted-values-chromium\trace.zip]]
+<![CDATA[✓ All cost fields persisted to backend
 ]]>
 </system-out>
-<system-err>
-<![CDATA[Test failed: ExpectError: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
-
-Locator: locator('text=Cost Profile')
-Expected: visible
-Timeout: 10000ms
-Error: element(s) not found
-
-Call log:
-[2m  - Expect "toBeVisible" with timeout 10000ms[22m
-[2m  - waiting for locator('text=Cost Profile')[22m
-
-    at [90mC:\projects\freightclub\frontend\[39me2e\cost-profile-persistence-fix.spec.ts:134:55 {
-  matcherResult: {
-    message: [32m'\x1B[2mexpect(\x1B[22m\x1B[31mlocator\x1B[39m\x1B[2m).\x1B[22mtoBeVisible\x1B[2m(\x1B[22m\x1B[2m)\x1B[22m failed\n'[39m +
-      [32m'\n'[39m +
-      [32m"Locator: locator('text=Cost Profile')\n"[39m +
-      [32m'Expected: visible\n'[39m +
-      [32m'Timeout: 10000ms\n'[39m +
-      [32m'Error: element(s) not found\n'[39m +
-      [32m'\n'[39m +
-      [32m'Call log:\n'[39m +
-      [32m'\x1B[2m  - Expect "toBeVisible" with timeout 10000ms\x1B[22m\n'[39m +
-      [32m"\x1B[2m  - waiting for locator('text=Cost Profile')\x1B[22m\n"[39m,
-    pass: [33mfalse[39m,
-    actual: [90mundefined[39m,
-    name: [32m'toBeVisible'[39m,
-    expected: [32m'visible'[39m,
-    log: [
-      [32m'  - Expect "toBeVisible" with timeout 10000ms'[39m,
-      [32m"  - waiting for locator('text=Cost Profile')"[39m
-    ],
-    timeout: [33m10000[39m
-  },
-  [32mSymbol(step)[39m: {
-    category: [32m'expect'[39m,
-    apiName: [32m'expect.toBeVisible'[39m,
-    title: [32m`Expect "toBeVisible" locator('text=Cost Profile')`[39m,
-    shortTitle: [32m'Expect "toBeVisible"'[39m,
-    params: { expected: [36m[Object][39m },
-    infectParentStepsWithError: [90mundefined[39m,
-    stepId: [32m'expect@37'[39m,
-    group: [90mundefined[39m,
-    boxedStack: [90mundefined[39m,
-    location: {
-      file: [32m'C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts'[39m,
-      line: [33m134[39m,
-      column: [33m55[39m
-    },
-    steps: [],
-    attachmentIndices: [],
-    info: TestStepInfoImpl {
-      annotations: [],
-      _testInfo: [36m[TestInfoImpl][39m,
-      _stepId: [32m'expect@37'[39m,
-      _title: [32m`Expect "toBeVisible" locator('text=Cost Profile')`[39m,
-      _parentStep: [90mundefined[39m,
-      skip: [36m[Function (anonymous)][39m
-    },
-    complete: [36m[Function: complete][39m,
-    endWallTime: [33m1780277149539[39m,
-    error: {
-      message: [32m'Error: \x1B[2mexpect(\x1B[22m\x1B[31mlocator\x1B[39m\x1B[2m).\x1B[22mtoBeVisible\x1B[2m(\x1B[22m\x1B[2m)\x1B[22m failed\n'[39m +
-        [32m'\n'[39m +
-        [32m"Locator: locator('text=Cost Profile')\n"[39m +
-        [32m'Expected: visible\n'[39m +
-        [32m'Timeout: 10000ms\n'[39m +
-        [32m'Error: element(s) not found\n'[39m +
-        [32m'\n'[39m +
-        [32m'Call log:\n'[39m +
-        [32m'\x1B[2m  - Expect "toBeVisible" with timeout 10000ms\x1B[22m\n'[39m +
-        [32m"\x1B[2m  - waiting for locator('text=Cost Profile')\x1B[22m\n"[39m,
-      stack: [32m'Error: \x1B[2mexpect(\x1B[22m\x1B[31mlocator\x1B[39m\x1B[2m).\x1B[22mtoBeVisible\x1B[2m(\x1B[22m\x1B[2m)\x1B[22m failed\n'[39m +
-        [32m'\n'[39m +
-        [32m"Locator: locator('text=Cost Profile')\n"[39m +
-        [32m'Expected: visible\n'[39m +
-        [32m'Timeout: 10000ms\n'[39m +
-        [32m'Error: element(s) not found\n'[39m +
-        [32m'\n'[39m +
-        [32m'Call log:\n'[39m +
-        [32m'\x1B[2m  - Expect "toBeVisible" with timeout 10000ms\x1B[22m\n'[39m +
-        [32m"\x1B[2m  - waiting for locator('text=Cost Profile')\x1B[22m\n"[39m +
-        [32m'\n'[39m +
-        [32m'    at C:\\projects\\freightclub\\frontend\\e2e\\cost-profile-persistence-fix.spec.ts:134:55'[39m,
-      cause: [90mundefined[39m
-    }
-  }
-}
-]]>
-</system-err>
-<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
-<![CDATA[  [chromium] › cost-profile-persistence-fix.spec.ts:128:3 › Cost Profile Persistence Fix Verification › cost profile CPM calculations should work with persisted values 
-
-    Error: expect(locator).toBeVisible() failed
-
-    Locator: locator('text=Cost Profile')
-    Expected: visible
-    Timeout: 10000ms
-    Error: element(s) not found
-
-    Call log:
-      - Expect "toBeVisible" with timeout 10000ms
-      - waiting for locator('text=Cost Profile')
-
-
-      132 |       await page.waitForLoadState('networkidle')
-      133 |       await page.waitForTimeout(1000)
-    > 134 |       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })
-          |                                                       ^
-      135 |
-      136 |       // Fill complete cost profile for CPM calculation
-      137 |       await page.fill('input[placeholder="e.g. 1800"]', '1800')  // Truck Payment
-        at C:\projects\freightclub\frontend\e2e\cost-profile-persistence-fix.spec.ts:134:55
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\cost-profile-persistence-f-a3e4a--work-with-persisted-values-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\test-results\cost-profile-persistence-f-a3e4a--work-with-persisted-values-chromium\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\test-results\cost-profile-persistence-f-a3e4a--work-with-persisted-values-chromium\error-context.md
-
-    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
-    ..\test-results\cost-profile-persistence-f-a3e4a--work-with-persisted-values-chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace ..\test-results\cost-profile-persistence-f-a3e4a--work-with-persisted-values-chromium\trace.zip
-
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-]]>
-</failure>
 </testcase>
 </testsuite>
 </testsuites>

@@ -117,6 +117,26 @@ async function globalSetup(config: FullConfig) {
     console.log(`  Active cookies: ${cookies.map((c) => c.name).join(', ')}`);
 
     // ============================================================================
+    // STEP 4.5: Store Auth State in localStorage (for E2E tests)
+    // ============================================================================
+    // Extract user profile and access token from registration response
+    const registerBody = await registerResponse.json();
+    const userProfile = registerBody.user;
+    const accessToken = registerBody.accessToken;
+
+    console.log('📦 [Auth] Storing auth state in localStorage...');
+
+    // Set localStorage with BOTH access token and user profile
+    // AuthStore.hydrate() needs both to properly initialize
+    await page.evaluate((data) => {
+      localStorage.setItem('freightclub_access_token', data.accessToken);
+      localStorage.setItem('freightclub_user', JSON.stringify(data.userProfile));
+      console.log('[GlobalSetup] Auth state stored - access token + user profile');
+    }, { accessToken, userProfile });
+
+    console.log(`✅ [Auth] Auth state stored (user: ${userProfile.email}, role: ${userProfile.role})\n`);
+
+    // ============================================================================
     // STEP 5: Save Authenticated State
     // ============================================================================
     console.log('💾 [Setup] Saving authenticated state to auth.json...');

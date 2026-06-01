@@ -86,17 +86,6 @@ export class TestDataSeeder {
     // Create a fresh APIRequestContext without auth state to avoid interference
     const freshContext = await playwrightRequest.newContext();
     try {
-      const requestBody = {
-        email: userData.email,
-        password: userData.password,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        role: userData.role,
-        companyName: `E2ETest-${uniqueId}`,
-      };
-
-      console.log('[TestDataSeeder] Creating test user with request body:', requestBody);
-
       const response = await freshContext.post(
         `${this.backendUrl}/api/test/auth/register`,
         {
@@ -106,12 +95,6 @@ export class TestDataSeeder {
 
       if (!response.ok()) {
         const text = await response.text();
-        console.error(`[TestDataSeeder] Test user creation failed:`, {
-          status: response.status(),
-          body: text,
-          url: `${this.backendUrl}/api/test/auth/register`,
-          headers: response.headers()
-        });
         throw new Error(
           `Failed to create test user: ${response.status()} ${text}`
         );

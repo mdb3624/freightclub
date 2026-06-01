@@ -6,6 +6,7 @@ import com.freightclub.modules.shipper.infrastructure.ShipperProfileRepository;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.ShipperProfileRequest;
 import com.freightclub.security.TenantContextHolder;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -676,5 +677,313 @@ class ShipperProfileServiceTest {
             verify(repository, times(1)).findByTenantIdAndDeletedAtIsNull("tenant-1");
             verify(repository, never()).findByTenantIdAndDeletedAtIsNull("tenant-2");
         }
+    }
+
+    // =========================================================================
+    // GetCompletenessPercent — missing-profile branch
+    // =========================================================================
+
+    @Nested
+    class GetCompletenessPercent {
+
+        @Test
+        void returnsZero_whenNoProfileExists() {
+            try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+                mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-empty");
+                when(repository.findByTenantIdAndDeletedAtIsNull("tenant-empty"))
+                    .thenReturn(Optional.empty());
+
+                Integer result = service.getCompletenessPercent();
+
+                assertEquals(0, result);
+            }
+        }
+    }
+
+    // =========================================================================
+    // IsPublishReady — missing-profile branch
+    // =========================================================================
+
+    @Nested
+    class IsPublishReady {
+
+        @Test
+        void returnsFalse_whenNoProfileExists() {
+            try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+                mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-empty");
+                when(repository.findByTenantIdAndDeletedAtIsNull("tenant-empty"))
+                    .thenReturn(Optional.empty());
+
+                assertFalse(service.isPublishReady());
+            }
+        }
+
+        @Test
+        void returnsTrue_whenCompletenessExactlyEighty() {
+            ShipperProfile profile = profileWithCompleteness("tenant-x", "uuid-x", 80);
+            try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+                mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-x");
+                when(repository.findByTenantIdAndDeletedAtIsNull("tenant-x"))
+                    .thenReturn(Optional.of(profile));
+
+                assertTrue(service.isPublishReady());
+            }
+        }
+
+        @Test
+        void returnsFalse_whenCompletenessSeventynine() {
+            ShipperProfile profile = profileWithCompleteness("tenant-x", "uuid-x", 79);
+            try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+                mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-x");
+                when(repository.findByTenantIdAndDeletedAtIsNull("tenant-x"))
+                    .thenReturn(Optional.of(profile));
+
+                assertFalse(service.isPublishReady());
+            }
+        }
+    }
+
+    // =========================================================================
+    // IsOwner — all three branches
+    // =========================================================================
+
+    @Nested
+    class IsOwner {
+
+        @Test
+        void returnsTrue_whenProfileIdMatchesCurrentTenantProfile() {
+            ShipperProfile profile = profileWithCompleteness("tenant-1", "uuid-match", 80);
+            try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+                mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-1");
+                when(repository.findByTenantIdAndDeletedAtIsNull("tenant-1"))
+                    .thenReturn(Optional.of(profile));
+
+                assertTrue(service.isOwner("uuid-match"));
+            }
+        }
+
+        @Test
+        void returnsFalse_whenProfileIdDoesNotMatch() {
+            ShipperProfile profile = profileWithCompleteness("tenant-1", "uuid-real", 80);
+            try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+                mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-1");
+                when(repository.findByTenantIdAndDeletedAtIsNull("tenant-1"))
+                    .thenReturn(Optional.of(profile));
+
+                assertFalse(service.isOwner("uuid-other"));
+            }
+        }
+
+        @Test
+        void returnsFalse_whenNoProfileExistsForTenant() {
+            try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+                mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-none");
+                when(repository.findByTenantIdAndDeletedAtIsNull("tenant-none"))
+                    .thenReturn(Optional.empty());
+
+                assertFalse(service.isOwner("any-id"));
+            }
+        }
+    }
+
+    // =========================================================================
+    // SaveProfile — existing profile ID is preserved (update branch)
+    // =========================================================================
+
+    @Nested
+    class SaveProfileUpdateBranch {
+
+        @Test
+        void preservesExistingProfileId_whenProfileAlreadyExists() {
+            ShipperProfile existing = profileWithCompleteness("tenant-1", "existing-uuid", 80);
+
+            ShipperProfileRequest request = new ShipperProfileRequest(
+                "Updated Co", "new@email.com", "512-000-0000",
+                "Houston", "TX", "77001", null, null, null
+            );
+
+            try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+                mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-1");
+                when(repository.findByTenantIdAndDeletedAtIsNull("tenant-1"))
+                    .thenReturn(Optional.of(existing));
+                when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+                ShipperProfile result = service.saveProfile(request);
+
+                ArgumentCaptor<ShipperProfile> captor = ArgumentCaptor.forClass(ShipperProfile.class);
+                verify(repository).save(captor.capture());
+                assertEquals("existing-uuid", captor.getValue().getId(),
+                    "Update must reuse the existing profile ID");
+                assertEquals("Updated Co", result.getCompanyName());
+            }
+        }
+
+        @Test
+        void generatesNewId_whenNoExistingProfile() {
+            ShipperProfileRequest request = new ShipperProfileRequest(
+                "Brand New Co", "new@email.com", "512-000-0000",
+                "Houston", "TX", "77001", null, null, null
+            );
+
+            try (MockedStatic<TenantContextHolder> mockStatic = mockStatic(TenantContextHolder.class)) {
+                mockStatic.when(TenantContextHolder::getTenantId).thenReturn("tenant-new");
+                when(repository.findByTenantIdAndDeletedAtIsNull("tenant-new"))
+                    .thenReturn(Optional.empty());
+                when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+                service.saveProfile(request);
+
+                ArgumentCaptor<ShipperProfile> captor = ArgumentCaptor.forClass(ShipperProfile.class);
+                verify(repository).save(captor.capture());
+                assertNotNull(captor.getValue().getId(), "New profile must have a generated UUID");
+                assertFalse(captor.getValue().getId().isBlank());
+            }
+        }
+    }
+
+    // =========================================================================
+    // CalculateCompleteness(ShipperProfile) — public overload branch coverage
+    // =========================================================================
+
+    @Nested
+    class CalculateCompletenessFromProfile {
+
+        @Test
+        void returnsHundred_whenAllFieldsPresent() {
+            ShipperProfile p = fullProfile("t", "id");
+            assertEquals(100, service.calculateCompleteness(p));
+        }
+
+        @Test
+        void returnsZero_whenAllFieldsNull() {
+            ShipperProfile p = new ShipperProfile(
+                "id", "t", null, null, null, null, null, null, null, null, null,
+                0, null, null, null
+            );
+            assertEquals(0, service.calculateCompleteness(p));
+        }
+
+        @Test
+        void awardsAddressPoints_onlyWhenAllThreePartsPresent() {
+            // city + state present but zip missing → no address points
+            ShipperProfile missingZip = new ShipperProfile(
+                "id", "t",
+                "Co", "e@e.com", "555",
+                "Austin", "TX", null,   // zip is null
+                null, null, null,
+                0, null, null, null
+            );
+            int score = service.calculateCompleteness(missingZip);
+            // companyName(20) + email(20) + phone(15) = 55 (no address bonus)
+            assertEquals(55, score);
+        }
+
+        @Test
+        void awardsAddressPoints_whenAllThreePartsPresent() {
+            ShipperProfile complete = new ShipperProfile(
+                "id", "t",
+                "Co", "e@e.com", "555",
+                "Austin", "TX", "78701",
+                null, null, null,
+                0, null, null, null
+            );
+            int score = service.calculateCompleteness(complete);
+            // companyName(20) + email(20) + phone(15) + address(25) = 80
+            assertEquals(80, score);
+        }
+
+        @Test
+        void awardsMcUsdotPoints_whenOnlyUsdotPresent() {
+            ShipperProfile p = new ShipperProfile(
+                "id", "t",
+                null, null, null, null, null, null,
+                null, "DOT-999", null,  // only USDOT
+                0, null, null, null
+            );
+            int score = service.calculateCompleteness(p);
+            // only USDOT → 15 points
+            assertEquals(15, score);
+        }
+
+        @Test
+        void awardsMcUsdotPoints_whenOnlyMcPresent() {
+            ShipperProfile p = new ShipperProfile(
+                "id", "t",
+                null, null, null, null, null, null,
+                "MC-123", null, null,  // only MC
+                0, null, null, null
+            );
+            int score = service.calculateCompleteness(p);
+            assertEquals(15, score);
+        }
+
+        @Test
+        void awardsMcUsdotPoints_onceEvenWhenBothPresent() {
+            ShipperProfile p = new ShipperProfile(
+                "id", "t",
+                null, null, null, null, null, null,
+                "MC-123", "DOT-999", null,  // both present
+                0, null, null, null
+            );
+            int score = service.calculateCompleteness(p);
+            // still only 15 (not 30)
+            assertEquals(15, score);
+        }
+
+        @Test
+        void awardsLogoPoints_whenLogoUrlPresent() {
+            ShipperProfile p = new ShipperProfile(
+                "id", "t",
+                null, null, null, null, null, null,
+                null, null, "https://logo.png",
+                0, null, null, null
+            );
+            int score = service.calculateCompleteness(p);
+            assertEquals(5, score);
+        }
+
+        @Test
+        void doesNotExceedHundred_evenIfCalculationOverflows() {
+            // All fields filled → exactly 100; verify Math.min guard
+            ShipperProfile p = fullProfile("t", "id");
+            assertTrue(service.calculateCompleteness(p) <= 100);
+        }
+
+        @Test
+        void treatsBlankStringsAsEmpty_forCompanyName() {
+            ShipperProfile p = new ShipperProfile(
+                "id", "t",
+                "   ", null, null, null, null, null,
+                null, null, null,
+                0, null, null, null
+            );
+            assertEquals(0, service.calculateCompleteness(p));
+        }
+    }
+
+    // =========================================================================
+    // Helpers
+    // =========================================================================
+
+    private ShipperProfile profileWithCompleteness(String tenantId, String id, int completeness) {
+        return new ShipperProfile(
+            id, tenantId,
+            "Company", "email@company.com", "512-555-0000",
+            "Austin", "TX", "78701",
+            null, null, null,
+            completeness,
+            null, null, null
+        );
+    }
+
+    private ShipperProfile fullProfile(String tenantId, String id) {
+        return new ShipperProfile(
+            id, tenantId,
+            "Company", "email@company.com", "512-555-0000",
+            "Austin", "TX", "78701",
+            "MC-123", "DOT-999", "https://logo.png",
+            100,
+            null, null, null
+        );
     }
 }

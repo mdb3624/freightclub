@@ -51,12 +51,14 @@ public class LoadBoardController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public LoadResponse getLoad(@PathVariable String id,
                                 @AuthenticationPrincipal String userId) {
         return loadService.getOpenLoad(id);
     }
 
     @GetMapping("/my-history")
+    @PreAuthorize("isAuthenticated()")
     public Page<LoadSummaryResponse> getMyLoadHistory(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -65,6 +67,7 @@ public class LoadBoardController {
     }
 
     @GetMapping("/my-load")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<LoadResponse> getMyActiveLoad(@AuthenticationPrincipal String userId) {
         return loadService.getMyActiveLoad(userId)
                 .map(ResponseEntity::ok)
@@ -72,18 +75,21 @@ public class LoadBoardController {
     }
 
     @PostMapping("/{id}/pickup")
+    @PreAuthorize("hasRole('TRUCKER')")
     public LoadResponse markPickedUp(@PathVariable String id,
                                      @AuthenticationPrincipal String userId) {
         return loadService.markPickedUp(id, userId);
     }
 
     @PostMapping("/{id}/deliver")
+    @PreAuthorize("hasRole('TRUCKER')")
     public LoadResponse markDelivered(@PathVariable String id,
                                       @AuthenticationPrincipal String userId) {
         return loadService.markDelivered(id, userId);
     }
 
     @GetMapping("/{id}/events")
+    @PreAuthorize("isAuthenticated()")
     public List<LoadEventResponse> getEvents(@PathVariable String id,
                                              @AuthenticationPrincipal String userId) {
         return loadService.getLoadEvents(id, userId);

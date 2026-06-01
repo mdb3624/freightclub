@@ -8,6 +8,7 @@ import com.freightclub.service.RatingService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +26,7 @@ public class RatingController {
 
     /** Shipper rates the trucker for a completed load. */
     @PostMapping("/{loadId}/trucker")
+    @PreAuthorize("hasRole('SHIPPER')")
     public RatingResponse rateTrucker(@PathVariable String loadId,
                                       @Valid @RequestBody CreateRatingRequest req,
                                       @AuthenticationPrincipal String userId) {
@@ -33,6 +35,7 @@ public class RatingController {
 
     /** Trucker rates the shipper for a completed load. */
     @PostMapping("/{loadId}/shipper")
+    @PreAuthorize("hasRole('TRUCKER')")
     public RatingResponse rateShipper(@PathVariable String loadId,
                                       @Valid @RequestBody CreateRatingRequest req,
                                       @AuthenticationPrincipal String userId) {
@@ -41,6 +44,7 @@ public class RatingController {
 
     /** Check whether the current user has already rated a specific load. */
     @GetMapping("/{loadId}/mine")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<RatingResponse> getMyRating(@PathVariable String loadId,
                                                        @AuthenticationPrincipal String userId) {
         return ratingService.getMyRatingForLoad(loadId, userId)
@@ -50,6 +54,7 @@ public class RatingController {
 
     /** Paginated list of ratings the current user has received. */
     @GetMapping("/my-received")
+    @PreAuthorize("isAuthenticated()")
     public Page<RatingResponse> getMyReceived(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -59,6 +64,7 @@ public class RatingController {
 
     /** Rating summary for the currently authenticated user (role-aware). */
     @GetMapping("/my-summary")
+    @PreAuthorize("isAuthenticated()")
     public RatingSummaryResponse getMySummary(@AuthenticationPrincipal String userId) {
         boolean isTrucker = SecurityContextHolder.getContext().getAuthentication()
                 .getAuthorities().contains(new SimpleGrantedAuthority("ROLE_TRUCKER"));
@@ -69,12 +75,14 @@ public class RatingController {
 
     /** Public rating summary for any trucker (visible to shippers). */
     @GetMapping("/trucker/{userId}/summary")
+    @PreAuthorize("isAuthenticated()")
     public RatingSummaryResponse getTruckerSummary(@PathVariable String userId) {
         return ratingService.getTruckerSummary(userId);
     }
 
     /** Public reputation profile for any shipper (visible to truckers). */
     @GetMapping("/shipper/{userId}/profile")
+    @PreAuthorize("isAuthenticated()")
     public ShipperPublicProfileResponse getShipperProfile(@PathVariable String userId) {
         return ratingService.getShipperPublicProfile(userId);
     }

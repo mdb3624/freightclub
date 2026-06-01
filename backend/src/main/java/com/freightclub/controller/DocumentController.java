@@ -6,7 +6,9 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/documents")
+@Validated
 public class DocumentController {
 
     private final DocumentService documentService;
@@ -23,12 +26,14 @@ public class DocumentController {
     }
 
     @GetMapping("/{loadId}")
+    @PreAuthorize("isAuthenticated()")
     public List<DocumentResponse> listDocuments(@PathVariable String loadId,
                                                 @AuthenticationPrincipal String userId) {
         return documentService.getLoadDocuments(loadId, userId);
     }
 
     @PostMapping(value = "/{loadId}/bol-photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public DocumentResponse uploadBolPhoto(@PathVariable String loadId,
                                            @RequestPart("file") MultipartFile file,
                                            @AuthenticationPrincipal String userId) {
@@ -36,6 +41,7 @@ public class DocumentController {
     }
 
     @PostMapping(value = "/{loadId}/pod-photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public DocumentResponse uploadPodPhoto(@PathVariable String loadId,
                                            @RequestPart("file") MultipartFile file,
                                            @AuthenticationPrincipal String userId) {
@@ -43,6 +49,7 @@ public class DocumentController {
     }
 
     @PostMapping(value = "/{loadId}/issue", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> reportIssue(@PathVariable String loadId,
                                             @RequestParam String description,
                                             @RequestPart(name = "photo", required = false) MultipartFile photo,
@@ -52,6 +59,7 @@ public class DocumentController {
     }
 
     @GetMapping("/file/{documentId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<byte[]> downloadDocument(@PathVariable String documentId,
                                                    @AuthenticationPrincipal String userId) {
         DocumentService.DocumentContent content = documentService.getDocumentContent(documentId, userId);
@@ -63,6 +71,7 @@ public class DocumentController {
     }
 
     @GetMapping("/{loadId}/export")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<byte[]> exportLoadPdf(@PathVariable String loadId,
                                                 @AuthenticationPrincipal String userId) {
         byte[] pdf = documentService.exportLoadPdf(loadId, userId);

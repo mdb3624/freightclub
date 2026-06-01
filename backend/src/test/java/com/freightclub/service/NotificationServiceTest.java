@@ -34,6 +34,7 @@ class NotificationServiceTest {
     @Mock private NotificationRepository notificationRepository;
     @Mock private UserRepository userRepository;
     @Mock private EmailService emailService;
+    @Mock private SmsNotificationService smsNotificationService;
 
     @InjectMocks
     private NotificationService service;
@@ -221,6 +222,119 @@ class NotificationServiceTest {
             when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.empty());
             service.onLoadCancelled(new LoadCancelledEvent(buildLoad(), TRUCKER_ID, "reason"));
             verify(notificationRepository, never()).save(any());
+        }
+    }
+
+    @Nested
+    class MarkRead {
+
+        @BeforeEach void setup() { TenantContextHolder.setTenantId(TENANT_ID); }
+        @AfterEach  void teardown() { TenantContextHolder.clear(); }
+
+        @Test
+        @DisplayName("marks notification read when userId and tenant match")
+        void ownershipMatches_marksRead() {
+            Notification n = new Notification();
+            n.setUserId(SHIPPER_ID);
+            n.setTenantId(TENANT_ID);
+            when(notificationRepository.findById("notif-1")).thenReturn(Optional.of(n));
+
+            service.markRead("notif-1", SHIPPER_ID);
+
+            verify(notificationRepository).save(n);
+        }
+
+        @Test
+        @DisplayName("does not mark read when userId does not match")
+        void userMismatch_noOp() {
+            Notification n = new Notification();
+            n.setUserId("other-user");
+            n.setTenantId(TENANT_ID);
+            when(notificationRepository.findById("notif-1")).thenReturn(Optional.of(n));
+
+            service.markRead("notif-1", SHIPPER_ID);
+
+            verify(notificationRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("no-op when notification not found")
+        void notFound_noOp() {
+            when(notificationRepository.findById("notif-1")).thenReturn(Optional.empty());
+
+            service.markRead("notif-1", SHIPPER_ID);
+
+            verify(notificationRepository, never()).save(any());
+        }
+    }
+
+    @Nested
+    class MarkAllRead {
+
+        @BeforeEach void setup() { TenantContextHolder.setTenantId(TENANT_ID); }
+        @AfterEach  void teardown() { TenantContextHolder.clear(); }
+
+        @Test
+        @DisplayName("delegates to repository and returns count")
+        void delegatesToRepository() {
+            when(notificationRepository.markAllReadByUserIdAndTenantId(SHIPPER_ID, TENANT_ID)).thenReturn(5);
+
+            int result = service.markAllRead(SHIPPER_ID);
+
+            assertThat(result).isEqualTo(5);
+        }
+    }
+
+    @Nested
+    class SmsNotifications {
+
+        @Test
+        @DisplayName("sends SMS when notifySms=true and phone is set")
+        void smsEnabled_phoneSet_sendsSms() {
+            User shipper = buildUser(SHIPPER_ID, "Bob", "Jones");
+            shipper.setPhone("+15551234567");
+            shipper.setNotifySms(true);
+            shipper.setNotifyInApp(false);
+            shipper.setNotifyEmail(false);
+            when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(shipper));
+
+            service.onLoadPickedUp(new LoadPickedUpEvent(buildLoad()));
+
+            verify(smsNotificationService).send(eq("+15551234567"), anyString());
+        }
+
+        @Test
+        @DisplayName("truncates SMS body when message exceeds 160 chars")
+        void longMessage_truncated() {
+            User shipper = buildUser(SHIPPER_ID, "Bob", "Jones");
+            shipper.setPhone("+15551234567");
+            shipper.setNotifySms(true);
+            shipper.setNotifyInApp(false);
+            shipper.setNotifyEmail(false);
+            // Make origin/dest long to force SMS body > 160 chars
+            Load load = buildLoad();
+            load.setOriginCity("A".repeat(80));
+            load.setDestinationCity("B".repeat(80));
+            when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(shipper));
+
+            service.onLoadPickedUp(new LoadPickedUpEvent(load));
+
+            verify(smsNotificationService).send(eq("+15551234567"), argThat(s -> s.endsWith("...")));
+        }
+
+        @Test
+        @DisplayName("skips SMS when phone is null")
+        void nullPhone_noSms() {
+            User shipper = buildUser(SHIPPER_ID, "Bob", "Jones");
+            shipper.setPhone(null);
+            shipper.setNotifySms(true);
+            shipper.setNotifyInApp(false);
+            shipper.setNotifyEmail(false);
+            when(userRepository.findById(SHIPPER_ID)).thenReturn(Optional.of(shipper));
+
+            service.onLoadPickedUp(new LoadPickedUpEvent(buildLoad()));
+
+            verify(smsNotificationService, never()).send(any(), any());
         }
     }
 

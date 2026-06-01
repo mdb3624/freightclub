@@ -36,4 +36,40 @@ class SmsNotificationServiceTest {
         // Should not throw, should not attempt Twilio API call
         assertThatNoException().isThrownBy(() -> service.send("+12145551234", "Test message"));
     }
+
+    @Test
+    void shouldThrowWhenEnabledWithBlankAccountSid() {
+        assertThatThrownBy(() -> new SmsNotificationService("", "token", "+15550000000", true))
+            .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void shouldThrowWhenEnabledWithBlankAuthToken() {
+        assertThatThrownBy(() -> new SmsNotificationService("sid", "", "+15550000000", true))
+            .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void shouldThrowWhenEnabledWithBlankFromNumber() {
+        assertThatThrownBy(() -> new SmsNotificationService("sid", "token", "", true))
+            .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void shouldRejectNullPhoneNumber() {
+        SmsNotificationService service = new SmsNotificationService(
+            "test-sid", "test-token", "+15550000000", false
+        );
+        assertThatThrownBy(() -> service.validatePhoneNumber(null))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Invalid phone number");
+    }
+
+    @Test
+    void shouldSkipSendForInvalidPhone() {
+        SmsNotificationService service = new SmsNotificationService(
+            "test-sid", "test-token", "+15550000000", false
+        );
+        assertThatNoException().isThrownBy(() -> service.send("bad-phone", "message"));
+    }
 }

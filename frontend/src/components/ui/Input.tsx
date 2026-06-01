@@ -31,6 +31,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             error ? 'border-red-500' : 'border-gray-300'
           } ${className}`}
           {...inputProps}
+          data-test-id={testId}
         />
         {error && (
           <p id={errorId} role="alert" className="text-xs text-red-600" data-testid={testId ? `${testId}-error` : undefined}>

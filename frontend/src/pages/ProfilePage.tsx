@@ -130,7 +130,23 @@ export function ProfilePage() {
         <h1 className="text-2xl font-semibold text-gray-900">My Profile</h1>
       </div>
 
-      <form onSubmit={handleSubmit((v) => mutate(v))} className="space-y-8">
+      <form onSubmit={handleSubmit((v) => {
+        console.log('[ProfilePage] Form submitted with values:', v)
+        console.log('[ProfilePage] Cost fields in payload:', {
+          truckPaymentLease: v.truckPaymentLease,
+          insurance: v.insurance,
+          iftaIrpPermits: v.iftaIrpPermits,
+          phoneEldMisc: v.phoneEldMisc,
+          perDiemDailyRate: v.perDiemDailyRate,
+          perDiemDaysPerMonth: v.perDiemDaysPerMonth,
+          fuelCostPerGallon: v.fuelCostPerGallon,
+          milesPerGallon: v.milesPerGallon,
+          maintenanceCostPerMile: v.maintenanceCostPerMile,
+          monthlyMilesTarget: v.monthlyMilesTarget,
+          targetMarginPerMile: v.targetMarginPerMile,
+        })
+        mutate(v)
+      })} className="space-y-8">
         {apiError && <ErrorBanner message={apiError} />}
         {saved && (
           <div className="rounded-md bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">

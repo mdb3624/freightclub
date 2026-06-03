@@ -70,6 +70,7 @@ export function ShipperDashboard() {
               Active Loads
             </button>
             <button
+              data-testid="tab-all-loads"
               onClick={() => handleViewToggle('all')}
               className={`px-4 py-2 text-sm font-medium ${
                 view === 'all'
@@ -88,6 +89,7 @@ export function ShipperDashboard() {
               Preferred Carriers
             </button>
             <button
+              data-testid="post-load-btn"
               onClick={() => navigate('/shipper/loads/new')}
               className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700"
             >
@@ -105,7 +107,9 @@ export function ShipperDashboard() {
           />
         )}
 
-        <SearchBar onSearch={handleSearch} />
+        <div data-testid="load-search-input">
+          <SearchBar onSearch={handleSearch} />
+        </div>
 
         {isEmpty ? (
           <EmptyState onPostLoad={() => navigate('/shipper/loads/new')} />
@@ -113,12 +117,14 @@ export function ShipperDashboard() {
           <>
             {loadsData && (
               <>
+                <div data-testid="load-table">
                 <LoadTable
                   loads={loadsData.loads}
                   onViewDetails={(id) => navigate(`/shipper/loads/${id}`)}
                   onEdit={(id) => navigate(`/shipper/loads/${id}/edit`)}
                   onCancel={() => {}}
                 />
+                </div>
                 <Pagination
                   currentPage={page}
                   totalPages={Math.ceil((loadsData.pagination.total || 1) / 20)}

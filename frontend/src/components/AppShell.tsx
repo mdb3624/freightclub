@@ -67,7 +67,7 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
             <span className="text-sm text-gray-600 hidden sm:inline">
               {user?.firstName} {user?.lastName}
             </span>
-            <Button variant="secondary" onClick={logout}>
+            <Button variant="secondary" onClick={logout} data-testid="logout-btn">
               Sign out
             </Button>
           </div>

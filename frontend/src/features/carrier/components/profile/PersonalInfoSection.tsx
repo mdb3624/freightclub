@@ -24,8 +24,8 @@ export function PersonalInfoSection({ register, errors, isTrucker }: Props) {
           <Input label="First Name" error={errors.firstName?.message} {...register('firstName')} />
           <Input label="Last Name" error={errors.lastName?.message} {...register('lastName')} />
         </div>
-        <Input label="Business Name" placeholder="Optional" {...register('businessName')} />
-        <Input label="Phone" type="tel" placeholder="e.g. 555-123-4567" maxLength={20} {...register('phone')} />
+        <Input data-testid="company-name-input" label="Business Name" placeholder="Optional" {...register('businessName')} />
+        <Input data-testid="phone-number-input" label="Phone" type="tel" placeholder="e.g. 555-123-4567" maxLength={20} {...register('phone')} />
       </section>
 
       {isTrucker && (

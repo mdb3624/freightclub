@@ -16,7 +16,7 @@ test.describe('Shipper Preferred Carrier List - US-707', () => {
     // Clear any prior auth state
     await context.clearCookies();
     try {
-      await page.evaluate(() => localStorage.clear());
+      try { await page.evaluate(() => localStorage.clear()); } catch {} // about:blank denies localStorage
     } catch {
       // localStorage may not be accessible on certain pages
     }

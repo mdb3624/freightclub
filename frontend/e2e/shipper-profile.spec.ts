@@ -35,7 +35,7 @@ test.describe('Shipper Profile Setup - Golden Path (US-713)', () => {
     // Step 1: API-driven setup (replaces UI-driven login)
     const seeder = new TestDataSeeder(request)
     const user = await seeder.createTestUser({
-      email: 'shipper@test.com',
+      email: `shipper-${Date.now()}@test.com`,
       password: 'N1kk101!',
       role: 'SHIPPER',
       firstName: 'Test',
@@ -93,7 +93,7 @@ test.describe('Shipper Profile Setup - Golden Path (US-713)', () => {
   test('should persist profile data after page reload (US-713 AC-2)', async ({ page, request }) => {
     const seeder = new TestDataSeeder(request)
     const user = await seeder.createTestUser({
-      email: 'shipper@persist.com',
+      email: `shipper-${Date.now()}@persist.com`,
       password: 'N1kk101!',
       role: 'SHIPPER',
       firstName: 'Persist',

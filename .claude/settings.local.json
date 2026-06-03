@@ -18,7 +18,20 @@
       "mcp__plugin_context-mode_context-mode__ctx_search",
       "mcp__plugin_context7_context7__resolve-library-id",
       "Bash(docker-compose -f docker-compose.test.yml ps backend-test)",
-      "mcp__plugin_context-mode_context-mode__ctx_fetch_and_index"
+      "mcp__plugin_context-mode_context-mode__ctx_fetch_and_index",
+      "mcp__browser-use__browser_screenshot",
+      "mcp__browser-use__browser_get_state",
+      "mcp__browser-use__browser_type",
+      "mcp__browser-use__browser_click",
+      "mcp__browser-use__browser_navigate",
+      "mcp__browser-use__browser_extract_content",
+      "mcp__browser-use__browser_get_html",
+      "mcp__neon__get_connection_string",
+      "mcp__neon__run_sql",
+      "mcp__browser-use__browser_close_all",
+      "mcp__browser-use__retry_with_browser_use_agent",
+      "mcp__browser-use__browser_list_sessions",
+      "mcp__neon__run_sql_transaction"
     ],
     "deny": [
       "Read(.env)",

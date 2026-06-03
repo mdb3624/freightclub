@@ -159,3 +159,39 @@ Each entry was added after systematic investigation. `/debug` checks this file f
   Add `"overweightAcknowledged": true` to the create/update load request body when weight > 80,000 lb.
   On the frontend, ensure the overweight acknowledgment checkbox is rendered and submitted when the weight field exceeds 80000.
 - **Date Added:** 2026-04-03
+
+---
+
+### [KI-011] Login returns 500 — backend health DOWN after GCP secret rename
+- **Symptom:** Login shows "An unexpected error occurred"; `/actuator/health` returns `{"status":"DOWN"}`; Hibernate logs `NullPointerException` in `JdbcIsolationDelegate` at startup
+- **Root Cause:** When GCP secrets were renamed (`freightclub-db-pass` → `DB_PASSWORD`), the new `DB_PASSWORD` was set with the wrong password. The NPE in Hibernate 6.4 is a known bug that obscures the underlying auth failure `SQLException`. `neondb_owner` password cannot be changed via SQL `ALTER ROLE` on Neon — use `freightclub_runtime` with a SQL-managed password instead.
+- **Environment Conditions:** Cloud Run prod; triggered when GCP Secret Manager secrets are renamed/recreated without preserving correct credential values.
+- **Fix Command / Steps:**
+  ```bash
+  # 1. Set new password on freightclub_runtime via Neon MCP SQL:
+  #    ALTER ROLE freightclub_runtime PASSWORD 'newpassword';
+  # 2. Update GCP secrets:
+  echo -n "freightclub_runtime" | gcloud secrets versions add DB_USERNAME --data-file=- --project=freight-club-495117
+  echo -n "newpassword" | gcloud secrets versions add DB_PASSWORD --data-file=- --project=freight-club-495117
+  # 3. Force new revision:
+  gcloud run services update freightclub-backend --region=us-central1 --project=freight-club-495117 --update-secrets="DB_USERNAME=DB_USERNAME:latest,DB_PASSWORD=DB_PASSWORD:latest"
+  ```
+- **Date Added:** 2026-06-01
+
+---
+
+### [KI-012] Login returns 500 — RLS policy throws on missing `app.current_tenant` during auth
+- **Symptom:** Login returns 500; Cloud Run logs show `ERROR: unrecognized configuration parameter "app.current_tenant"`. Health is UP, DB connection works.
+- **Root Cause:** RLS policy on `users` uses `current_setting('app.current_tenant')` without `missing_ok=true`. During login no JWT exists so the parameter is never set → PostgreSQL throws. Only triggered when using `freightclub_runtime` (non-owner, RLS enforced); `neondb_owner` bypasses RLS as table owner.
+- **Environment Conditions:** Cloud Run prod; `freightclub_runtime` as DB user; any table with RLS policies lacking `missing_ok=true` that is queried before tenant context is set.
+- **Fix Command / Steps:**
+  ```sql
+  -- Via Neon MCP (run as neondb_owner):
+  DROP POLICY users_tenant_isolation ON freightclub.users;
+  CREATE POLICY users_tenant_isolation ON freightclub.users FOR ALL
+    USING (current_setting('app.current_tenant', true) IS NULL
+        OR current_setting('app.current_tenant', true) = ''
+        OR tenant_id = current_setting('app.current_tenant', true)::VARCHAR);
+  ```
+  Safe: `users.email` is UNIQUE globally so login-by-email finds the correct user without tenant filtering.
+- **Date Added:** 2026-06-01

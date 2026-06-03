@@ -18,11 +18,12 @@ test.describe('Carrier Cost Profile Setup — US-757', () => {
   test('should save cost profile and persist after reload (US-757 AC-1)', async ({ page, request }) => {
     const seeder = new TestDataSeeder(request)
     const user = await seeder.createTestUser({
-      email: 'carrier-cost@test.com',
+      email: `carrier-cost-${Date.now()}@test.com`,
       password: 'N1kk101!',
-      role: 'CARRIER',
+      role: 'TRUCKER',
       firstName: 'Cost',
-      lastName: 'Tester'
+      lastName: 'Tester',
+      companyName: 'Test Cost Carrier'
     })
 
     try {
@@ -78,9 +79,9 @@ test.describe('Carrier Cost Profile Setup — US-757', () => {
   test('should calculate CPM with partial entry (US-757 AC-2)', async ({ page, request }) => {
     const seeder = new TestDataSeeder(request)
     const user = await seeder.createTestUser({
-      email: 'carrier-cpm@test.com',
+      email: `carrier-cpm-${Date.now()}@test.com`,
       password: 'N1kk101!',
-      role: 'CARRIER',
+      role: 'TRUCKER',
       firstName: 'CPM',
       lastName: 'Tester',
       companyName: 'Test CPM Carrier'
@@ -119,9 +120,9 @@ test.describe('Carrier Cost Profile Setup — US-757', () => {
   test('should handle zero MPG without division by zero error (US-757 AC-3)', async ({ page, request }) => {
     const seeder = new TestDataSeeder(request)
     const user = await seeder.createTestUser({
-      email: 'carrier-zero-mpg@test.com',
+      email: `carrier-zero-mpg-${Date.now()}@test.com`,
       password: 'N1kk101!',
-      role: 'CARRIER',
+      role: 'TRUCKER',
       firstName: 'ZeroMPG',
       lastName: 'Tester',
       companyName: 'Test Zero MPG Carrier'

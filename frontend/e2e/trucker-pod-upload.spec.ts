@@ -12,7 +12,7 @@ const mockAuthResponse = {
   expiresIn: 900,
   user: {
     id: 'trucker-user-1',
-    email: 'trucker@test.com',
+    email: `trucker-${Date.now()}@test.com`,
     firstName: 'Test',
     lastName: 'Trucker',
     role: 'TRUCKER',
@@ -72,7 +72,7 @@ const podDocument = {
 
 const mockProfile = {
   id: 'trucker-user-1',
-  email: 'trucker@test.com',
+  email: `trucker-${Date.now()}@test.com`,
   firstName: 'Test',
   lastName: 'Trucker',
   role: 'TRUCKER',

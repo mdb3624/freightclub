@@ -19,7 +19,7 @@ test.describe('HOS Widget & Trucker Landing Page (Smoke Tests)', () => {
   test.beforeEach(async ({ page, context }) => {
     // Traces are managed by playwright.config.ts (trace: 'retain-on-failure')
     await context.clearCookies()
-    await page.evaluate(() => localStorage.clear())
+    try { await page.evaluate(() => localStorage.clear()) } catch {} // about:blank denies localStorage
   })
 
   // ============================================================================

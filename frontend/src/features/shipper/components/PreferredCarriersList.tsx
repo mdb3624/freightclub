@@ -73,8 +73,8 @@ export const PreferredCarriersList = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div data-testid="preferred-carriers-page" className="space-y-6">
+      <div data-testid="carrier-list-header" className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Preferred Carriers</h2>
         {count !== undefined && (
           <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
@@ -92,6 +92,7 @@ export const PreferredCarriersList = () => {
               Carrier ID or Email
             </label>
             <input
+              data-testid="carrier-search-input"
               type="text"
               value={newCarrierId}
               onChange={(e) => setNewCarrierId(e.target.value)}
@@ -104,6 +105,7 @@ export const PreferredCarriersList = () => {
               Notes (optional)
             </label>
             <textarea
+              data-testid="carrier-notes-textarea"
               value={newCarrierNotes}
               onChange={(e) => setNewCarrierNotes(e.target.value)}
               placeholder="e.g., Negotiated 10% discount"
@@ -112,6 +114,7 @@ export const PreferredCarriersList = () => {
             />
           </div>
           <button
+            data-testid="add-carrier-btn"
             type="submit"
             disabled={!newCarrierId.trim() || addMutation.isPending}
             className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
@@ -123,7 +126,7 @@ export const PreferredCarriersList = () => {
 
       {/* Carriers List */}
       {carriers && carriers.content && carriers.content.length > 0 ? (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div data-testid="carrier-list-container" className="bg-white rounded-lg shadow overflow-hidden">
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
@@ -155,6 +158,7 @@ export const PreferredCarriersList = () => {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <button
+                      data-testid="remove-carrier-btn"
                       onClick={() => handleRemove(carrier.carrierId)}
                       disabled={removeMutation.isPending}
                       className="text-red-600 hover:text-red-800 text-sm font-medium disabled:text-gray-400"
@@ -189,7 +193,7 @@ export const PreferredCarriersList = () => {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow p-6 text-center text-gray-600">
+        <div data-testid="empty-carriers-message" className="bg-white rounded-lg shadow p-6 text-center text-gray-600">
           <p>No preferred carriers added yet.</p>
           <p className="text-sm mt-1">Add your first preferred carrier above.</p>
         </div>

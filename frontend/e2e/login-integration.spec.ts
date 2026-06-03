@@ -225,7 +225,6 @@ test.describe('Login Integration Tests (US-756)', () => {
     // Create test user via API fixture (not UI-driven)
     const seeder = new TestDataSeeder(request);
     const testUser = await seeder.createTestUser({
-      email: 'valid-test@freightclub.local',
       role: 'SHIPPER',
     });
 

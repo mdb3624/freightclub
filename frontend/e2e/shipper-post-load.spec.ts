@@ -18,7 +18,7 @@ test.describe('Shipper Post Load — US-714', () => {
   test('should pre-populate origin fields from shipper profile defaults (US-714 AC-1)', async ({ page, request }) => {
     const seeder = new TestDataSeeder(request)
     const user = await seeder.createTestUser({
-      email: 'shipper-post@test.com',
+      email: `shipper-post-${Date.now()}@test.com`,
       role: 'SHIPPER',
       firstName: 'Shipper',
       lastName: 'Poster'
@@ -49,7 +49,7 @@ test.describe('Shipper Post Load — US-714', () => {
   test('should match origin city to saved profile default (US-714 AC-2)', async ({ page, request }) => {
     const seeder = new TestDataSeeder(request)
     const user = await seeder.createTestUser({
-      email: 'shipper-profile@test.com',
+      email: `shipper-profile-${Date.now()}@test.com`,
       role: 'SHIPPER',
       firstName: 'Profile',
       lastName: 'Shipper'

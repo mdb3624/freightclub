@@ -163,7 +163,7 @@ export function TruckerDashboard() {
           {dieselData?.period && <span className="ml-auto text-gray-400">Week of {dieselData.period}</span>}
         </div>
       )}
-      <div className="space-y-8">
+      <div className="space-y-8" data-testid="trucker-dashboard">
         {activeLoad && (
           <section ref={activeLoadRef}>
             <h2 className="text-lg font-semibold text-gray-900 mb-3">Your Active Load</h2>

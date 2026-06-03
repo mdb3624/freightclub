@@ -29,7 +29,7 @@ test.describe('Shipper Dashboard Golden Path (US-715)', () => {
   test('should display summary cards with load statistics (US-715 AC-1)', async ({ page, request }) => {
     const seeder = new TestDataSeeder(request)
     const user = await seeder.createTestUser({
-      email: 'shipper@test.com',
+      email: `shipper-${Date.now()}@test.com`,
       role: 'SHIPPER',
       firstName: 'Shipper',
       lastName: 'User',
@@ -62,7 +62,7 @@ test.describe('Shipper Dashboard Golden Path (US-715)', () => {
   test('should display load table with expected columns (US-715 AC-2)', async ({ page, request }) => {
     const seeder = new TestDataSeeder(request)
     const user = await seeder.createTestUser({
-      email: 'shipper@load-table.com',
+      email: `shipper-${Date.now()}@load-table.com`,
       role: 'SHIPPER',
       firstName: 'TableTest',
       lastName: 'User',
@@ -95,7 +95,7 @@ test.describe('Shipper Dashboard Golden Path (US-715)', () => {
   test('should switch between Active and All Loads tabs (US-715 AC-3)', async ({ page, request }) => {
     const seeder = new TestDataSeeder(request)
     const user = await seeder.createTestUser({
-      email: 'shipper@tabs.com',
+      email: `shipper-${Date.now()}@tabs.com`,
       role: 'SHIPPER',
       firstName: 'TabSwitch',
       lastName: 'User',
@@ -128,7 +128,7 @@ test.describe('Shipper Dashboard Golden Path (US-715)', () => {
   test('should filter loads using search input (US-715 AC-4)', async ({ page, request }) => {
     const seeder = new TestDataSeeder(request)
     const user = await seeder.createTestUser({
-      email: 'shipper@search.com',
+      email: `shipper-${Date.now()}@search.com`,
       role: 'SHIPPER',
       firstName: 'SearchTest',
       lastName: 'User',
@@ -165,7 +165,7 @@ test.describe('Shipper Dashboard Golden Path (US-715)', () => {
   test('should navigate to Post Load form (US-715 AC-5)', async ({ page, request }) => {
     const seeder = new TestDataSeeder(request)
     const user = await seeder.createTestUser({
-      email: 'shipper@post.com',
+      email: `shipper-${Date.now()}@post.com`,
       role: 'SHIPPER',
       firstName: 'PostTest',
       lastName: 'User',
@@ -196,7 +196,7 @@ test.describe('Shipper Dashboard Golden Path (US-715)', () => {
   test('should load dashboard without errors (US-715 AC-6)', async ({ page, request }) => {
     const seeder = new TestDataSeeder(request)
     const user = await seeder.createTestUser({
-      email: 'shipper@no-errors.com',
+      email: `shipper-${Date.now()}@no-errors.com`,
       role: 'SHIPPER',
       firstName: 'NoErrors',
       lastName: 'User',

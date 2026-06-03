@@ -23,6 +23,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
 
   return (
     <input
+      data-testid="load-search-input"
       type="text"
       value={query}
       onChange={handleChange}

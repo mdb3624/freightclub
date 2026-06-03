@@ -16,7 +16,7 @@ test.describe('Shipper Profile Setup — US-713', () => {
     // Clear auth state
     await context.clearCookies();
     try {
-      await page.evaluate(() => localStorage.clear());
+      try { await page.evaluate(() => localStorage.clear()); } catch {} // about:blank denies localStorage
     } catch {
       // localStorage may not be accessible
     }

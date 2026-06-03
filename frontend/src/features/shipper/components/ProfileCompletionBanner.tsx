@@ -32,10 +32,14 @@ export function ProfileCompletionBanner({ completeness, onDismiss }: ProfileComp
   }
 
   return (
-    <div className={`${bgColor} ${textColor} p-4 mb-6 flex items-center justify-between`}>
-      <span className="text-sm font-medium">{message}</span>
+    <div data-testid="profile-incomplete-banner" className={`${bgColor} ${textColor} p-4 mb-6 flex items-center justify-between`}>
+      <div className="flex items-center gap-3">
+        <span data-testid="profile-incomplete-message" className="text-sm font-medium">{message}</span>
+        <span data-testid="completion-banner-percent" data-testid-alt="completion-percentage" className="text-xs font-semibold">{completeness}%</span>
+      </div>
       <div className="flex items-center gap-3">
         <Link
+          data-testid="complete-profile-btn"
           to="/profile"
           className="text-sm font-medium underline hover:no-underline"
         >

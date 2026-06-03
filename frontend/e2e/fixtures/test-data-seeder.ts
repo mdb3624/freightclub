@@ -21,6 +21,7 @@ interface TestUser {
   lastName: string;
   role: 'SHIPPER' | 'TRUCKER' | 'ADMIN';
   tenantId: string;
+  companyName?: string;
   refreshToken?: string;
   accessToken?: string;
 }
@@ -79,6 +80,7 @@ export class TestDataSeeder {
       lastName: 'Test',
       role: 'SHIPPER',
       tenantId: `tenant-${uniqueId}`,
+      companyName: `E2E Test Company ${uniqueId}`,
     };
 
     const userData = { ...defaults, ...overrides };
@@ -89,7 +91,7 @@ export class TestDataSeeder {
       const response = await freshContext.post(
         `${this.backendUrl}/api/test/auth/register`,
         {
-          data: requestBody,
+          data: userData,
         }
       );
 

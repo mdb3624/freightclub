@@ -62,7 +62,7 @@ export function ProfilePage() {
   const { data: ratingSummary } = useMyRatingSummary()
   const [saved, setSaved] = useState(false)
 
-  const { register, handleSubmit, reset, control, formState: { errors }, watch } = useForm<UpdateProfileValues>({
+  const { register, handleSubmit, reset, control, formState: { errors } } = useForm<UpdateProfileValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       notifyEmail: true,
@@ -83,7 +83,6 @@ export function ProfilePage() {
     },
     mode: 'onBlur', // Only validate on blur to prevent form instability
   })
-  const formData = watch()
 
   useEffect(() => {
     if (profile) {
@@ -143,14 +142,15 @@ export function ProfilePage() {
 
   return (
     <AppShell maxWidth="lg">
+      <div data-testid="profile-page" data-testid-alt="shipper-profile-page">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">My Profile</h1>
+        <h1 data-testid="profile-page-title" className="text-2xl font-semibold text-gray-900">My Profile</h1>
       </div>
 
       <form onSubmit={handleSubmit((v) => mutate(v))} className="space-y-8">
         {apiError && <ErrorBanner message={apiError} />}
         {saved && (
-          <div className="rounded-md bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
+          <div data-testid="profile-success-message" className="rounded-md bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
             Profile saved successfully.
           </div>
         )}
@@ -197,9 +197,10 @@ export function ProfilePage() {
         <NotificationsSection register={register} />
 
         <div className="flex justify-end">
-          <Button type="submit" isLoading={isPending}>Save Changes</Button>
+          <Button data-testid="save-profile-btn" type="submit" isLoading={isPending}>Save Changes</Button>
         </div>
       </form>
+      </div>
     </AppShell>
   )
 }

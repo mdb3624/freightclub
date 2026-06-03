@@ -23,25 +23,13 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
+    # Spring Security handles all CORS including OPTIONS preflight
     location /api/ {
-        if ($request_method = 'OPTIONS') {
-            add_header 'Access-Control-Allow-Origin' '*' always;
-            add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS' always;
-            add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With' always;
-            add_header 'Access-Control-Allow-Credentials' 'true' always;
-            add_header 'Access-Control-Max-Age' '3600' always;
-            add_header 'Content-Length' '0' always;
-            return 200;
-        }
-
         proxy_pass BACKEND_URL_PLACEHOLDER/api/;
         proxy_set_header Host BACKEND_HOST_PLACEHOLDER;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-
-        add_header 'Access-Control-Allow-Origin' '*' always;
-        add_header 'Access-Control-Allow-Credentials' 'true' always;
     }
 
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {

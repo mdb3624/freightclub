@@ -5,13 +5,13 @@ set -e
 # Deploys latest images from Google Artifact Registry to Cloud Run
 
 PROJECT_ID=$(grep GCP_PROJECT_ID .env.prod | cut -d'=' -f2)
+GCP_REGISTRY=$(grep GCP_REGISTRY .env.prod | cut -d'=' -f2)
 REGION="us-central1"
-REGISTRY="${REGION}-docker.pkg.dev"
 
 BACKEND_SERVICE="freightclub-backend"
 FRONTEND_SERVICE="freightclub-frontend"
-BACKEND_IMAGE="${REGISTRY}/${PROJECT_ID}/freightclub-backend:latest"
-FRONTEND_IMAGE="${REGISTRY}/${PROJECT_ID}/freightclub-frontend:latest"
+BACKEND_IMAGE="${GCP_REGISTRY}/freightclub-backend:latest"
+FRONTEND_IMAGE="${GCP_REGISTRY}/freightclub-frontend:latest"
 
 echo "Deploying to Cloud Run..."
 echo "Project: $PROJECT_ID"
@@ -27,7 +27,7 @@ gcloud run deploy $BACKEND_SERVICE \
   --project=$PROJECT_ID \
   --allow-unauthenticated \
   --set-env-vars="SPRING_PROFILES_ACTIVE=prod" \
-  --update-secrets="DB_URL=freightclub-db-url:latest,DB_USERNAME=freightclub-db-user:latest,DB_PASSWORD=freightclub-db-pass:latest,JWT_SECRET=freightclub-jwt-secret:latest" \
+  --update-secrets="DB_URL=DB_URL:latest,DB_USERNAME=DB_USERNAME:latest,DB_PASSWORD=DB_PASSWORD:latest,APP_JWT_SECRET=APP_JWT_SECRET:latest" \
   --memory=1Gi \
   --cpu=1 \
   --timeout=3600 \

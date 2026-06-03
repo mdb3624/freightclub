@@ -396,15 +396,15 @@ export function TruckerLandingPage() {
   const tickerItemsDoubled = useMemo(() => [...tickerItems, ...tickerItems], [tickerItems])
 
   return (
-    <div id="hauler-root">
+    <div id="hauler-root" data-testid="app-container">
 
       {/* TICKER */}
-      <div className="ticker">
+      <div data-testid="ticker-widget" className="ticker">
         <div className="ticker-label">MARKET LIVE</div>
         <div className="ticker-wrap">
           <div className="ticker-scroll">
             {tickerItemsDoubled.map((item, i) => (
-              <span key={i} className="ticker-item">
+              <span key={i} data-testid="ticker-item" className="ticker-item">
                 {item.label}: <span title={item.period ? `Week of ${item.period}` : undefined}>{item.stale ? '⚠ ' : ''}{item.value}</span>
                 {item.delta && (
                   <span className={`ticker-delta ${item.deltaUp ? 'up' : 'down'}`}>{item.delta}</span>
@@ -416,7 +416,7 @@ export function TruckerLandingPage() {
       </div>
 
       {/* HEADER */}
-      <header>
+      <header data-testid="trucker-landing-header">
         <div className="logo">HAULER<span>.</span></div>
         <div className="header-meta">
           <div><span className="live-dot" />FMCSA Compliant · HOS Tracking</div>
@@ -425,21 +425,21 @@ export function TruckerLandingPage() {
       </header>
 
       {/* NAV */}
-      <nav className="nav-tabs">
+      <nav data-testid="nav-tabs" className="nav-tabs">
         {[
           { id: 'load-analyzer', label: '📦 Load Analyzer' },
           { id: 'cpm-calc', label: '💰 CPM Calculator' },
           { id: 'broker-comm', label: '📋 Broker Comms' },
           { id: 'load-log', label: '📊 Load Log' },
         ].map(tab => (
-          <div key={tab.id} className={`nav-tab${activePage === tab.id ? ' active' : ''}`} onClick={() => setActivePage(tab.id)}>
+          <div key={tab.id} data-testid="nav-tab" className={`nav-tab${activePage === tab.id ? ' active' : ''}`} onClick={() => setActivePage(tab.id)}>
             {tab.label}
           </div>
         ))}
       </nav>
 
       {/* MAIN */}
-      <div className="main">
+      <div data-testid="main-content" className="main">
 
         {activePage === 'load-analyzer' && (
           <LoadAnalyzer dieselData={dieselData} onAddLogEntry={addLogEntry} />

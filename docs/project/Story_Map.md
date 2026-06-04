@@ -106,7 +106,7 @@
 | US-703 | Trucker Availability (Days/Hours)    | ✅ COMPLETED | 7 | US-701 | ✅ NFR-504 (5m TTL), ✅ RLS, ✅ No-Lombok |
 | US-705 | Load Board Filters (Weight, Min Pay) | PARTIAL | 7 | US-701 | ✅ NFR-504 (5m TTL) |
 | US-706 | Load Posting Validation Prompts (Shipper) | PARTIAL | 7 | US-101 | ✅ No NFR-504 (form only) |
-| US-707 | **Shipper Preferred Carrier List** | **✅ COMPLETED** | **7** | **US-101** | **✅ Backend: 7 tests PASS, HFD design + E2E specs | ✅ E2E: 4/4 PASS (2026-06-04)** |
+| US-707 | **Shipper Preferred Carrier List** | **NEEDS_REWORK** | **7** | **US-101** | **✅ Backend: 7 tests PASS | ✅ E2E: 4/4 PASS | ⚠️ CHG-001 OPEN: missing AppShell nav + mock carrier search** |
 | US-708 | Direct Load Assignment to Carrier    | MIGRATION_PENDING | 7 | US-707 | ✅ Event-driven invalidation |
 | US-709 | Block Carrier (Prevent Visibility)   | MIGRATION_PENDING | 7 | US-101 | ✅ Event-driven invalidation |
 | US-710 | **View Carrier Public Profile** | **✅ COMPLETED** | **7** | **US-402** | **✅ Backend: 100% branch coverage, 8 tests PASS | ✅ E2E: 6/6 PASS (2026-06-04)** |

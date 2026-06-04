@@ -37,6 +37,7 @@
 ## 📊 Technical Debt Ledger
 
 | Priority | Category | Description | Risk | Mitigation Path |
+| **High** [DEBT:AUTO] | Feature Gap | US-707: `AddCarrierModal.handleSearch()` uses hardcoded mock carriers; no backend search endpoint exists. Page also missing `AppShell` nav wrapper. CHG-001 OPEN. | Preferred carrier "Add" flow is non-functional in production. | CHG-001 → US-707-v2: add `GET /api/v1/shippers/carriers/search`, UserRepository search query, replace mock in modal, wrap page in AppShell. |
 | :--- | :--- | :--- | :--- | :--- |
 | ~~**Medium** [DEBT:AUTO]~~ **RESOLVED** | Performance | ~~`LoadSpecification` leading-wildcard `LIKE '%city%'` prevented B-tree index usage.~~ Fixed: changed to trailing-wildcard `LIKE 'city%'`, enabling B-tree prefix scan. Full-text search (`tsvector` + GIN index) remains a future optimisation for fuzzy matching. | — | Fixed in `architectural-changes` branch, 2026-04-21. |
 | **Low** [DEBT:AUTO] | Architecture | `LoadSearchCriteria` and `LoadSummary` (modules/load application layer) import `com.freightclub.domain.EquipmentType` from the legacy root domain package. This couples the module's application layer to the legacy domain. | Creates a dependency on the legacy domain that will need cleanup when the legacy domain is retired. | Define `EquipmentType` in `com.freightclub.modules.load.domain` (or a shared kernel) and migrate all references. |

@@ -66,7 +66,7 @@ export function AddCarrierModal({ isOpen, onClose, onSuccess }: AddCarrierModalP
     setIsSearching(true)
     setSearchError(null)
     try {
-      const { data } = await api.get('/api/v1/shippers/carriers/search', { params: { q: term } })
+      const { data } = await api.get('/api/v1/carriers/search', { params: { q: term } })
       setResults(data ?? [])
     } catch {
       setSearchError('Search failed. Please try again.')

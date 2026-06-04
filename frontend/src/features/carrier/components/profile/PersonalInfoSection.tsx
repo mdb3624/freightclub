@@ -33,6 +33,7 @@ export function PersonalInfoSection({ register, errors, isTrucker }: Props) {
           <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Carrier Information</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input
+              data-testid="mc-number-input"
               label="MC Number"
               placeholder="e.g. MC-123456"
               maxLength={20}
@@ -40,6 +41,7 @@ export function PersonalInfoSection({ register, errors, isTrucker }: Props) {
               {...register('mcNumber')}
             />
             <Input
+              data-testid="usdot-number-input"
               label="DOT Number"
               placeholder="e.g. 1234567"
               maxLength={20}

@@ -114,6 +114,7 @@ export function AddCarrierModal({ isOpen, onClose, onSuccess }: AddCarrierModalP
             </label>
             <div className="relative">
               <input
+                data-testid="carrier-search-input"
                 type="text"
                 placeholder="Type to search..."
                 value={searchTerm}

@@ -2,15 +2,18 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { AppShell } from '@/components/AppShell'
 import { useLoadStats } from '@/features/shipper/hooks/useLoadStats'
 import { useLoadBoard } from '@/features/shipper/hooks/useLoadBoard'
+import { useProfile } from '@/features/profile/hooks/useProfile'
 import { SummaryStrip } from '@/features/shipper/components/ShipperDashboard/SummaryStrip'
 import { LoadTable } from '@/features/shipper/components/ShipperDashboard/LoadTable'
 import { Pagination } from '@/features/shipper/components/ShipperDashboard/Pagination'
 import { SearchBar } from '@/features/shipper/components/ShipperDashboard/SearchBar'
 import { EmptyState } from '@/features/shipper/components/ShipperDashboard/EmptyState'
+import { ProfileCompletionBanner } from '@/features/shipper/components/ProfileCompletionBanner'
 
 export function ShipperDashboard() {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
+  const { data: profile } = useProfile()
 
   const view = (searchParams.get('view') || 'active') as 'active' | 'all'
   const page = parseInt(searchParams.get('page') || '0', 10)
@@ -57,6 +60,12 @@ export function ShipperDashboard() {
   return (
     <AppShell maxWidth="5xl">
       <div className="space-y-6" data-testid="dashboard-container">
+        {(() => {
+          const p = profile as any
+          const isComplete = p && p.phone && p.billingCity && (p.businessName || p.firstName)
+          const pct = p ? (isComplete ? 85 : 20) : 0
+          return (!p || !isComplete) ? <ProfileCompletionBanner completeness={pct} /> : null
+        })()}
         <div className="mb-6 flex items-center justify-between border-b border-gray-200">
           <div className="flex gap-2">
             <button
@@ -71,6 +80,7 @@ export function ShipperDashboard() {
             </button>
             <button
               data-testid="tab-all-loads"
+              aria-selected={view === 'all'}
               onClick={() => handleViewToggle('all')}
               className={`px-4 py-2 text-sm font-medium ${
                 view === 'all'

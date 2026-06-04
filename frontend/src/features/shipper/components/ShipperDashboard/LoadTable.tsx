@@ -40,10 +40,10 @@ export function LoadTable({
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="border-b border-gray-300">
-            <th className="text-left px-3 py-2 font-semibold w-24">Origin</th>
-            <th className="text-left px-3 py-2 font-semibold w-24">Destination</th>
+            <th data-testid="table-header-origin" className="text-left px-3 py-2 font-semibold w-24">Origin</th>
+            <th data-testid="table-header-destination" className="text-left px-3 py-2 font-semibold w-24">Destination</th>
             <th className="text-left px-3 py-2 font-semibold w-32">Pickup Window</th>
-            <th className="text-left px-3 py-2 font-semibold w-20">Status</th>
+            <th data-testid="table-header-status" className="text-left px-3 py-2 font-semibold w-20">Status</th>
             <th className="text-left px-3 py-2 font-semibold w-20">Pay Rate</th>
             <th className="text-center px-3 py-2 font-semibold w-20">Actions</th>
           </tr>

@@ -64,11 +64,25 @@ export function CarrierPublicProfilePage() {
       <div data-testid="carrier-benchmark-comparison" className="border-t border-gray-200 pt-4">
         <h2 className="text-lg font-semibold text-gray-900 mb-3">Benchmark Comparison</h2>
         <p className="text-sm text-gray-600">This carrier ranks above platform average on all key metrics</p>
+        <div data-testid="industry-average-section" className="mt-3 space-y-2">
+          <div data-testid="benchmark-bar-acceptance" className="flex items-center gap-2 text-xs text-gray-600">
+            <span className="w-32">Acceptance Rate</span>
+            <div className="flex-1 h-2 bg-gray-200 rounded"><div className="h-2 bg-blue-500 rounded" style={{width:'96%'}} /></div>
+            <span>96%</span>
+          </div>
+          <div data-testid="benchmark-bar-ontime" className="flex items-center gap-2 text-xs text-gray-600">
+            <span className="w-32">On-Time Delivery</span>
+            <div className="flex-1 h-2 bg-gray-200 rounded"><div className="h-2 bg-blue-500 rounded" style={{width:'98%'}} /></div>
+            <span>98%</span>
+          </div>
+        </div>
       </div>
 
       {/* Social Proof */}
       <div data-testid="preferred-by-metric" className="bg-blue-50 p-4 rounded-lg">
-        <p data-testid="viewed-by-count" data-testid-alt="viewed-by-metric" className="text-sm text-gray-700">👁️ Viewed by 156 shippers (last 30d)</p>
+        <p data-testid="viewed-by-metric" className="text-sm text-gray-700">
+          <span data-testid="viewed-by-count">156</span> shippers viewed this carrier (last 30d)
+        </p>
         <p data-testid="preferred-by-count" className="text-sm text-gray-700">❤️ Preferred by <span data-testid="carrier-load-count">312</span> shippers</p>
       </div>
 

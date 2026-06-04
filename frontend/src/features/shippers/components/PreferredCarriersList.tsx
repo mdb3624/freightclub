@@ -38,9 +38,9 @@ export function PreferredCarriersList() {
   const totalPages = pagination ? Math.ceil(pagination.total / pagination.limit) : 0
 
   return (
-    <div className="space-y-6">
+    <div data-testid="preferred-carriers-page" className="space-y-6">
       {/* Header */}
-      <div className="border-b border-gray-200 pb-4">
+      <div data-testid="carrier-list-header" className="border-b border-gray-200 pb-4">
         <h1 className="text-2xl font-bold text-gray-900">Preferred Carriers</h1>
         <p className="mt-1 text-sm text-gray-600">
           Manage carriers who can access your loads
@@ -49,7 +49,7 @@ export function PreferredCarriersList() {
 
       {/* Add Carrier Button */}
       <div className="flex justify-end">
-        <Button onClick={() => setShowAddModal(true)}>
+        <Button data-testid="add-carrier-btn" onClick={() => setShowAddModal(true)}>
           + Add Carrier
         </Button>
       </div>
@@ -63,7 +63,7 @@ export function PreferredCarriersList() {
 
       {/* Empty State - AC-707-2 */}
       {!isLoading && carriers.length === 0 && (
-        <div className="text-center py-12">
+        <div data-testid="empty-carriers-message" className="text-center py-12">
           <div className="text-4xl mb-2">📭</div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             No Preferred Carriers Yet
@@ -80,7 +80,7 @@ export function PreferredCarriersList() {
       {/* Carriers Table - AC-707-2 */}
       {!isLoading && carriers.length > 0 && (
         <>
-          <div className="rounded-lg border border-gray-200 overflow-hidden">
+          <div data-testid="carrier-list-container" className="rounded-lg border border-gray-200 overflow-hidden">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
@@ -112,6 +112,7 @@ export function PreferredCarriersList() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <button
+                        data-testid="remove-carrier-btn"
                         onClick={() => handleRemoveClick(carrier.carrierId, carrier.carrierName)}
                         className="text-sm text-red-600 hover:text-red-700 font-medium"
                       >

@@ -127,7 +127,8 @@ export default function App() {
         }
       />
 
-      <Route
+      
+<Route
         path="/profile"
         element={
           <ProtectedRoute>
@@ -180,6 +181,17 @@ export default function App() {
           <ProtectedRoute role="SHIPPER">
             <Suspense fallback={<PageLoader />}>
               <CarrierPublicProfilePage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/shipper/profile"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<PageLoader />}>
+              <ProfilePage />
             </Suspense>
           </ProtectedRoute>
         }

@@ -1,6 +1,6 @@
 # Resilience Logistics: Story Map (Global Hardening Edition)
 
-**Last Updated:** 2026-05-31 | **Scope:** 83 stories mapped | **Unmapped Requirements:** 0 | **Compliance Status:** ✅ RLS, No-Lombok, VARCHAR(36), **Test Coverage 50.6%** enforced as hard gates | **US-900 (E2E Testing):** ✅ ALL 6 PHASES COMPLETE (2026-05-31) | **Phase 1 Governance:** ✅ COMPLETE | **Phase 2 Governance:** ✅ COMPLETE | **Phase 3 Governance:** ✅ COMPLETE (story files + sign-offs 2026-05-14) | **Phase 3 US-308:** ✅ COMPLETED (audit logging + integration, 2026-05-25) | **Phase 4 Governance:** ✅ COMPLETE (story files + status synced 2026-05-25) | **Backend Coverage Phase A:** ✅ COMPLETE (49.5% → 50.6%, 54 tests) | **Security & Infrastructure Hardening:** ✅ ALL 3 P1 stories DONE (SEC-001, SEC-002, INF-001)
+**Last Updated:** 2026-06-04 | **Scope:** 83 stories mapped | **Unmapped Requirements:** 0 | **Compliance Status:** ✅ RLS, No-Lombok, VARCHAR(36), **Test Coverage 50.6%** enforced as hard gates | **US-900 (E2E Testing):** ✅ ALL 6 PHASES COMPLETE (2026-05-31) | **Phase 1 Governance:** ✅ COMPLETE | **Phase 2 Governance:** ✅ COMPLETE | **Phase 3 Governance:** ✅ COMPLETE (story files + sign-offs 2026-05-14) | **Phase 3 US-308:** ✅ COMPLETED (audit logging + integration, 2026-05-25) | **Phase 4 Governance:** ✅ COMPLETE (story files + status synced 2026-05-25) | **Backend Coverage Phase A:** ✅ COMPLETE (49.5% → 50.6%, 54 tests) | **Security & Infrastructure Hardening:** ✅ ALL 3 P1 stories DONE (SEC-001, SEC-002, INF-001)
 
 ---
 
@@ -106,7 +106,7 @@
 | US-703 | Trucker Availability (Days/Hours)    | ✅ COMPLETED | 7 | US-701 | ✅ NFR-504 (5m TTL), ✅ RLS, ✅ No-Lombok |
 | US-705 | Load Board Filters (Weight, Min Pay) | PARTIAL | 7 | US-701 | ✅ NFR-504 (5m TTL) |
 | US-706 | Load Posting Validation Prompts (Shipper) | PARTIAL | 7 | US-101 | ✅ No NFR-504 (form only) |
-| US-707 | **Shipper Preferred Carrier List** | **REVIEWER_APPROVED_PENDING_E2E** | **7** | **US-101** | **✅ Backend: 7 tests PASS, HFD design + E2E specs | ⏳ E2E tests not executed** |
+| US-707 | **Shipper Preferred Carrier List** | **✅ COMPLETED** | **7** | **US-101** | **✅ Backend: 7 tests PASS, HFD design + E2E specs | ✅ E2E: 4/4 PASS (2026-06-04)** |
 | US-708 | Direct Load Assignment to Carrier    | MIGRATION_PENDING | 7 | US-707 | ✅ Event-driven invalidation |
 | US-709 | Block Carrier (Prevent Visibility)   | MIGRATION_PENDING | 7 | US-101 | ✅ Event-driven invalidation |
 | US-710 | **View Carrier Public Profile** | **REVIEWER_APPROVED_PENDING_E2E** | **7** | **US-402** | **✅ Backend: 100% branch coverage, 8 tests PASS | ⏳ E2E tests not executed** |

@@ -59,6 +59,11 @@ services:
       VITE_PORT: 9090
       VITE_API_URL: http://backend-test:9091
       NODE_ENV: development
+    volumes:
+      # Live-mount source so Vite HMR picks up changes instantly — no image rebuild needed
+      - ./frontend:/app
+      # Keep the container's node_modules (built during image build) intact
+      - /app/node_modules
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/"]
       interval: 10s

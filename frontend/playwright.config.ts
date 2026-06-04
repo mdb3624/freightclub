@@ -4,10 +4,13 @@ import path from 'path';
 export default defineConfig({
   testDir: './e2e',
   testMatch: '**/*.spec.ts',
-  fullyParallel: false, // Serial execution for auth state consistency
+  fullyParallel: false, // Tests within a spec file run serially (auth state consistency)
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : 1, // Serial: avoid race conditions on shared test DB
+  // 3 spec files run in parallel — each test creates its own user so no DB race conditions.
+  // Each spec file still runs serially internally (fullyParallel: false).
+  // Use PLAYWRIGHT_WORKERS=1 to force serial when debugging a flaky test.
+  workers: process.env.PLAYWRIGHT_WORKERS ? parseInt(process.env.PLAYWRIGHT_WORKERS) : (process.env.CI ? 1 : 3),
   reporter: [
     ['html', { open: 'never' }],
     ['json', { outputFile: 'test-results/results.json' }],

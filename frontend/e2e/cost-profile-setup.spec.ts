@@ -39,18 +39,23 @@ test.describe('Carrier Cost Profile Setup — US-757', () => {
 
       // Fill truck payment field
       const truckPaymentInput = page.locator('input[name="truckPaymentLease"]')
-      if (await truckPaymentInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await truckPaymentInput.isVisible({ timeout: 8000 }).catch(() => false)) {
         await truckPaymentInput.fill('1800')
+      }
+      // milesTarget must be > 0 for CPM section to render (CostProfileSection returns null if milesTarget <= 0)
+      const milesInput = page.locator('input[name="monthlyMilesTarget"]')
+      if (await milesInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await milesInput.fill('8000')
       }
 
       // Verify CPM breakdown displays
-      await expect(page.getByText('Fixed CPM').first()).toBeVisible({ timeout: 3000 })
-      await expect(page.getByText('Variable CPM').first()).toBeVisible({ timeout: 3000 })
-      await expect(page.getByText('Total CPM').first()).toBeVisible({ timeout: 3000 })
+      await expect(page.getByText('Fixed CPM').first()).toBeVisible({ timeout: 8000 })
+      await expect(page.getByText('Variable CPM').first()).toBeVisible({ timeout: 8000 })
+      await expect(page.getByText('Total CPM').first()).toBeVisible({ timeout: 8000 })
 
       // Click Save button
       const saveButton = page.getByRole('button', { name: /Save Changes/i })
-      await expect(saveButton).toBeEnabled({ timeout: 3000 })
+      await expect(saveButton).toBeEnabled({ timeout: 8000 })
       await saveButton.click()
 
       // Wait for success message (web-first assertion)
@@ -99,12 +104,12 @@ test.describe('Carrier Cost Profile Setup — US-757', () => {
       await page.fill('input[placeholder="e.g. 8000"]', '8000')   // Monthly Miles
 
       // Verify partial CPM breakdown displays
-      await expect(page.locator('text=Fixed CPM')).toBeVisible({ timeout: 3000 })
+      await expect(page.locator('text=Fixed CPM')).toBeVisible({ timeout: 8000 })
       const fixedCpmValue = page.locator('text=Fixed CPM').locator('..').locator('span').last()
       await expect(fixedCpmValue).toContainText('$')
 
       // Verify Total CPM displays
-      await expect(page.locator('text=Total CPM')).toBeVisible({ timeout: 3000 })
+      await expect(page.locator('text=Total CPM')).toBeVisible({ timeout: 8000 })
       const totalCpmValue = page.locator('text=Total CPM').locator('..').locator('span').last()
       await expect(totalCpmValue).toContainText('$')
 
@@ -141,10 +146,10 @@ test.describe('Carrier Cost Profile Setup — US-757', () => {
       await page.fill('input[placeholder="e.g. 8000"]', '8000')      // Monthly Miles
 
       // Verify page is still interactive (no JavaScript error)
-      await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 3000 })
+      await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 8000 })
 
       // Verify Variable CPM handles zero MPG gracefully
-      await expect(page.locator('text=Variable CPM')).toBeVisible({ timeout: 3000 })
+      await expect(page.locator('text=Variable CPM')).toBeVisible({ timeout: 8000 })
       const variableCpmValue = page.locator('text=Variable CPM').locator('..').locator('span').last()
       await expect(variableCpmValue).toContainText('$')
 

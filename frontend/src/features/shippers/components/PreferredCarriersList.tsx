@@ -4,6 +4,7 @@ import { AddCarrierModal } from './AddCarrierModal'
 import { ConfirmRemovalDialog } from './ConfirmRemovalDialog'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
+import { AppShell } from '@/components/AppShell'
 
 // AC-707-2: Shipper can view preferred carriers list
 export function PreferredCarriersList() {
@@ -30,7 +31,7 @@ export function PreferredCarriersList() {
   }
 
   if (error) {
-    return <ErrorBanner message="Failed to load preferred carriers" />
+    return <AppShell><ErrorBanner message="Failed to load preferred carriers" /></AppShell>
   }
 
   const carriers = data?.data || []
@@ -38,6 +39,7 @@ export function PreferredCarriersList() {
   const totalPages = pagination ? Math.ceil(pagination.total / pagination.limit) : 0
 
   return (
+    <AppShell>
     <div data-testid="preferred-carriers-page" className="space-y-6">
       {/* Header */}
       <div data-testid="carrier-list-header" className="border-b border-gray-200 pb-4">
@@ -179,5 +181,6 @@ export function PreferredCarriersList() {
         />
       )}
     </div>
+    </AppShell>
   )
 }

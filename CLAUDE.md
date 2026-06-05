@@ -144,9 +144,15 @@ This rule applies to: BA, ARCH, HFD, CODER, REVIEWER, LIBRARIAN, and all automat
 - **Service URLs:** Never hardcode Cloud Run service URLs in config files (nginx.conf, docker entrypoint, etc). Use environment variables instead — Cloud Run generates new URLs on each deploy.
 - **Proxy Configuration:** Frontend nginx.conf must use `${BACKEND_URL}` placeholder + `envsubst` at startup to inject backend service URL.
 - **Deployment command:** Pass `--set-env-vars="BACKEND_URL=https://...,BACKEND_HOST=..."` to gcloud run deploy.
+- **Preferred deploy method:** Use local Docker build + push + `--image` flag. `gcloud run deploy --source` silently fails in Cloud Build without useful logs and `gcloud builds list` does not capture these failures. Correct sequence:
+  1. `mvn clean package -DskipTests` (backend) + `npm run build` (frontend)
+  2. `docker build -t us-central1-docker.pkg.dev/freight-club-495117/freightclub-repo/<service>:latest ./<dir>`
+  3. `docker push us-central1-docker.pkg.dev/freight-club-495117/freightclub-repo/<service>:latest`
+  4. `gcloud run deploy <service> --image us-central1-docker.pkg.dev/... --region us-central1 --project freight-club-495117`
+- **Dual URLs:** Cloud Run services get two URLs — old (`5gecbdg27a-uc.a.run.app`) and new (`404925591110.us-central1.run.app`). Both must be in `CORS_ALLOWED_ORIGINS`. Use `--env-vars-file` (not `--set-env-vars`) to set values containing commas.
 - **Smoke test:** After deployment, verify proxy works with `curl https://frontend-url/api/v1/actuator/health` (should reach backend).
 - **CORS Testing:** When verifying auth flows work, ALWAYS test CORS preflight separately (direct API calls bypass browser CORS checks). Test: `curl -X OPTIONS https://backend/auth/login -H "Origin: frontend-url"` should return 200 with Access-Control-Allow-Origin header. Verify frontend URL is in backend's CORS allowed-origins config (never hardcoded — use env var).
-- See `memory/feedback_hardcoded_service_urls.md` and `memory/feedback_cors_testing.md` for full solutions.
+- See `memory/feedback_hardcoded_service_urls.md`, `memory/feedback_cors_testing.md`, and `memory/feedback_cloud_run_dual_urls.md` for full solutions.
 
 ## ⚠️ Enforcement
 - Role documents override user convenience.

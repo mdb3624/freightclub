@@ -34,7 +34,10 @@ This checklist defines the mandatory "Hard Gates" for any code merge. Failure to
 ## 5. API Contract Gate (Integration Gate)
 * [ ] **Version Consistency**: If a new backend controller is added, its `@RequestMapping` version prefix matches `apiClient.ts` baseURL — or the mismatch is explicitly justified and all callers are updated.
 * [ ] **Full Endpoint Audit**: If `apiClient.ts` baseURL is changed, ALL frontend `api.ts` files and hooks using direct `axios` calls have been checked for breakage — not just the feature under review.
-* [ ] **Golden Path Smoke Test**: The reviewer has confirmed (or the PR author has documented) that login → primary feature → adjacent flows (load board, profile, notifications) → logout all work without network errors in a running dev environment.
+* [ ] **@RequestParam vs @RequestBody**: For every new POST/PUT endpoint, verify the frontend hook sends data in the format the backend expects. `@RequestParam` requires `params: { key: val }` (null body); `@RequestBody` requires a JSON body object. A mismatch causes a 400 with no obvious error.
+* [ ] **apiClient URL prefix**: Frontend calls using `apiClient` must NOT include `/api/v1/` in the path — `apiClient` already has `baseURL: '/api/v1'`. Passing `/api/v1/path` results in a double-prefix 404.
+* [ ] **Response DTO completeness**: Verify that every field the frontend list/table component renders (`carrierName`, `carrierEmail`, etc.) is actually present in the backend response DTO. A missing field renders silently as blank — not an error.
+* [ ] **Golden Path Smoke Test**: The reviewer has confirmed (or the PR author has documented) that login → primary feature → adjacent flows (load board, profile, notifications) → logout all work without network errors in a **running browser** (not just API calls). Backend tests passing ≠ frontend working.
 
 ---
 

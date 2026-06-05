@@ -5,7 +5,7 @@ import { useAddPreferredCarrier } from '../hooks/usePreferredCarriers'
 import { addPreferredCarrierSchema, type AddPreferredCarrierFormValues } from '../validation/preferredCarrierSchema'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
-import api from '@/api/apiClient'
+import api from '@/lib/apiClient'
 
 interface CarrierResult {
   id: string
@@ -66,7 +66,7 @@ export function AddCarrierModal({ isOpen, onClose, onSuccess }: AddCarrierModalP
     setIsSearching(true)
     setSearchError(null)
     try {
-      const { data } = await api.get('/api/v1/carriers/search', { params: { q: term } })
+      const { data } = await api.get('/carriers/search', { params: { q: term } })
       setResults(data ?? [])
     } catch {
       setSearchError('Search failed. Please try again.')

@@ -21,7 +21,7 @@ The `AddCarrierModal` needs to search for registered TRUCKER users within the sa
 
 **Rationale:** `CarrierPublicProfileController` is already the shipper-facing carrier view layer. Adding search here is cohesive, requires no new controller, and keeps the route namespace clean.
 
-**Frontend update required:** `AddCarrierModal` must use `/api/v1/carriers/search` (not `/api/v1/shippers/carriers/search`).
+**Frontend update required:** `AddCarrierModal` must use `/carriers/search` (relative to apiClient baseURL `/api/v1`; full path is `/api/v1/carriers/search`).
 
 ---
 

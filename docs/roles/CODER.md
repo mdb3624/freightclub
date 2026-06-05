@@ -20,11 +20,11 @@ Implement features based on validated story AC + ARCHITECT design + HFD UI specs
 - [ ] Soft delete pattern is documented
 - [ ] Multi-tenancy filters (tenant_id) are specified
 
-**From HFD (UI Design):**
-- [ ] Component structure is clear
-- [ ] State management is specified
-- [ ] Interaction flows are documented
-- [ ] Mobile responsiveness requirements stated
+**From HFD (Field Contract Table):**
+- [ ] Field Contract Table sign-off chain complete for story Scope:
+  - `FULL_STACK` → BA ✅ + ARCH ✅ + HFD ✅
+  - `UI_ONLY` → BA ✅ + HFD ✅
+  - `BACKEND_ONLY` → BA ✅ + ARCH ✅
 
 **Verdict:**
 - ✅ **ACCEPT** → All inputs LOCKED. Begin Red-Green-Refactor immediately.

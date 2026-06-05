@@ -13,6 +13,9 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 ## 🛑 Hard Gates (Automatic REJECT)
 
 * ❌ **Sequential Lock Protocol Violation:** CODER made backward requests to BA or ARCHITECT (instead of escalating to LIBRARIAN). PR must reference CHG ticket if inputs were reworked mid-implementation.
+* ❌ **Contract Table Violation:** Any `UI Field` in the story's Field Contract Table does not have its value rendered from the corresponding `API Param` in the implementation.
+* ❌ **Orphaned API Param:** Any `API Param` in the contract table is not sourced from its `DB Column` in the repository/query layer.
+* ❌ **PowerShell Violation:** Any command in a merged script, README, or agent output uses Bash/Unix syntax (e.g., `export`, `kill -9`, Unix paths) — this is a Windows 11 PowerShell environment.
 * ❌ **Missing Evidence:** No screenshot artifact found for the current Story ID in `test-results/evidence/`.
 * ❌ **E2E Failure:** `npm run test:e2e` (Playwright) has failures or was skipped.
 * ❌ **Coverage Gap:** Any UI feature shipped without a passing Playwright e2e test for the golden path.
@@ -31,6 +34,17 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 * [ ] **No Circular Loops:** PR history shows linear progression (no BA/ARCH/CODER back-and-forth).
 
 **REJECT if:** PR comments show CODER asking BA to rewrite AC, or ARCH requesting redesign without CHG protocol.
+
+### 📋 Field Contract Table Verification
+
+* [ ] **Table Present:** Story file contains a Field Contract Table with Scope flag set.
+* [ ] **Sign-Offs Complete:** All sign-offs required by Scope are checked (BA/ARCH/HFD as applicable).
+* [ ] **UI→API Traced:** For each `UI Field` row, confirm the rendered value in the UI comes from the `API Param` — check network tab evidence or test assertions.
+* [ ] **API→DB Traced:** For each `API Param` row, confirm the value is sourced from the `DB Column` in the repository query.
+* [ ] **N/A Justified:** Any N/A cell has a written justification in the table.
+* [ ] **PowerShell-Safe:** No Bash/Unix commands in any file touched by this PR.
+
+**REJECT if:** Any UI Field renders a hardcoded value, a wrong field, or nothing — when the contract table specifies a data source.
 
 ### 🖼️ Visual & Frontend Evidence
 

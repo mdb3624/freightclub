@@ -1,7 +1,9 @@
 package com.freightclub.modules.shipper.presentation;
 
+import com.freightclub.domain.User;
 import com.freightclub.modules.shipper.application.ShipperPreferredCarrierService;
 import com.freightclub.modules.shipper.domain.ShipperPreferredCarrier;
+import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -20,9 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class ShipperPreferredCarrierController {
 
   private final ShipperPreferredCarrierService service;
+  private final UserRepository userRepository;
 
-  public ShipperPreferredCarrierController(ShipperPreferredCarrierService service) {
+  public ShipperPreferredCarrierController(ShipperPreferredCarrierService service,
+                                            UserRepository userRepository) {
     this.service = service;
+    this.userRepository = userRepository;
   }
 
   @PostMapping("/preferred-carriers")
@@ -72,9 +77,17 @@ public class ShipperPreferredCarrierController {
   }
 
   private PreferredCarrierResponse mapToResponse(ShipperPreferredCarrier carrier) {
+    User user = userRepository.findById(carrier.getCarrierId()).orElse(null);
+    String carrierName = user != null
+        ? user.getFirstName() + " " + user.getLastName()
+        : carrier.getCarrierId();
+    String carrierEmail = user != null ? user.getEmail() : null;
+
     return new PreferredCarrierResponse(
         carrier.getId(),
         carrier.getCarrierId(),
+        carrierName,
+        carrierEmail,
         carrier.getNotes(),
         carrier.getCreatedAt().toString());
   }
@@ -82,6 +95,8 @@ public class ShipperPreferredCarrierController {
   public record PreferredCarrierResponse(
       String id,
       String carrierId,
+      String carrierName,
+      String carrierEmail,
       String notes,
       String createdAt) {}
 

@@ -252,6 +252,7 @@ public class LoadService {
                     "A BOL photo is required before marking the load as picked up. Upload a photo of the Bill of Lading first.");
         }
         load.setStatus(LoadStatus.IN_TRANSIT);
+        load.setPickedUpAt(LocalDateTime.now());
         Load saved = loadRepository.save(load);
         writeEvent(saved, "PICKED_UP", truckerId);
         eventPublisher.publishEvent(new LoadPickedUpEvent(saved));
@@ -268,6 +269,7 @@ public class LoadService {
                     "A POD photo is required before marking the load as delivered. Upload a photo of the Proof of Delivery first.");
         }
         load.setStatus(LoadStatus.DELIVERED);
+        load.setDeliveredAt(LocalDateTime.now());
         Load saved = loadRepository.save(load);
         writeEvent(saved, "DELIVERED", truckerId);
         eventPublisher.publishEvent(new LoadDeliveredEvent(saved, truckerId));
@@ -291,6 +293,35 @@ public class LoadService {
             }
         }
 
+        return buildResponse(saved);
+    }
+
+    public LoadResponse settleLoad(String id, String shipperId) {
+        Load load = loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(id, TenantContextHolder.getTenantId())
+                .orElseThrow(() -> new LoadNotFoundException(id));
+        if (load.getStatus() != LoadStatus.DELIVERED) {
+            throw new LoadStatusTransitionException("Load must be DELIVERED to settle");
+        }
+        load.setStatus(LoadStatus.SETTLED);
+        load.setSettledAt(LocalDateTime.now());
+        Load saved = loadRepository.save(load);
+        writeEvent(saved, "SETTLED", shipperId);
+        eventPublisher.publishEvent(new LoadSettledEvent(saved, shipperId));
+        return buildResponse(saved);
+    }
+
+    public LoadResponse disputeLoad(String id, String shipperId, String reason) {
+        Load load = loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(id, TenantContextHolder.getTenantId())
+                .orElseThrow(() -> new LoadNotFoundException(id));
+        if (load.getStatus() != LoadStatus.DELIVERED) {
+            throw new LoadStatusTransitionException("Load must be DELIVERED to dispute");
+        }
+        load.setStatus(LoadStatus.DISPUTED);
+        load.setDisputedAt(LocalDateTime.now());
+        load.setDisputeReason(reason);
+        Load saved = loadRepository.save(load);
+        writeEvent(saved, "DISPUTED", shipperId);
+        eventPublisher.publishEvent(new LoadDisputedEvent(saved, shipperId));
         return buildResponse(saved);
     }
 

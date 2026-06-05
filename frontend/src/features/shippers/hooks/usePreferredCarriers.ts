@@ -54,7 +54,8 @@ export function useAddPreferredCarrier() {
     mutationFn: async (data: { carrierId: string; notes?: string }) => {
       const response = await apiClient.post<ShipperPreferredCarrier>(
         '/shippers/preferred-carriers',
-        data
+        null,
+        { params: { carrierId: data.carrierId, notes: data.notes } }
       )
       return response.data
     },

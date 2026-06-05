@@ -52,6 +52,26 @@ Once you **ACCEPT** a story with the checklist above:
 
 ---
 
+## 📋 Field Contract Table Duties
+
+After accepting a story (checklist passed), ARCH must fill the Field Contract Table before handing off to HFD:
+
+1. For each row BA populated with a `UI Field`, fill:
+   - `API Param` — exact query/body parameter name the endpoint accepts (e.g., `q`, `carrierId`)
+   - `DB Column` — exact column name in the migration (e.g., `users.first_name`)
+   - `Type` — data type consistent with DB schema (e.g., `VARCHAR`, `TIMESTAMPTZ`, `BOOLEAN`)
+   - `Required` — Yes / No
+
+2. Add rows for API params or DB columns that have **no UI field** (backend-only data like `tenant_id`, `deleted_at`) — set `UI Field` = N/A with justification.
+
+3. For `UI_ONLY` scope: mark all `API Param` / `DB Column` / `Type` cells as N/A. Skip ARCH sign-off.
+
+4. **Check the ARCH sign-off box** before handing to HFD.
+
+**Rejection rule:** If BA's `UI Field` column is empty or contains placeholder text, REJECT the story back to BA before filling any columns.
+
+---
+
 ## Deliverables
 
 When handing off to CODER:

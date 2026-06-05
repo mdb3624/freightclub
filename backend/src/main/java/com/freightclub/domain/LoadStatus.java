@@ -7,5 +7,6 @@ public enum LoadStatus {
     IN_TRANSIT,
     DELIVERED,
     SETTLED,
+    DISPUTED,
     CANCELLED
 }

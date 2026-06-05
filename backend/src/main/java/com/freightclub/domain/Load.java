@@ -121,6 +121,21 @@ public class Load {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Column(name = "picked_up_at")
+    private LocalDateTime pickedUpAt;
+
+    @Column(name = "delivered_at")
+    private LocalDateTime deliveredAt;
+
+    @Column(name = "settled_at")
+    private LocalDateTime settledAt;
+
+    @Column(name = "disputed_at")
+    private LocalDateTime disputedAt;
+
+    @Column(name = "dispute_reason", columnDefinition = "TEXT")
+    private String disputeReason;
+
     @PrePersist
     private void assignId() {
         if (this.id == null) {
@@ -193,6 +208,21 @@ public class Load {
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public LocalDateTime getDeletedAt() { return deletedAt; }
     public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
+
+    public LocalDateTime getPickedUpAt() { return pickedUpAt; }
+    public void setPickedUpAt(LocalDateTime pickedUpAt) { this.pickedUpAt = pickedUpAt; }
+
+    public LocalDateTime getDeliveredAt() { return deliveredAt; }
+    public void setDeliveredAt(LocalDateTime deliveredAt) { this.deliveredAt = deliveredAt; }
+
+    public LocalDateTime getSettledAt() { return settledAt; }
+    public void setSettledAt(LocalDateTime settledAt) { this.settledAt = settledAt; }
+
+    public LocalDateTime getDisputedAt() { return disputedAt; }
+    public void setDisputedAt(LocalDateTime disputedAt) { this.disputedAt = disputedAt; }
+
+    public String getDisputeReason() { return disputeReason; }
+    public void setDisputeReason(String disputeReason) { this.disputeReason = disputeReason; }
 
     public String getOriginRegion() {
         return stateToRegion(originState);

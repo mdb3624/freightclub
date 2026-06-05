@@ -107,7 +107,7 @@
 | US-705 | Load Board Filters (Weight, Min Pay) | PARTIAL | 7 | US-701 | ✅ NFR-504 (5m TTL) |
 | US-706 | Load Posting Validation Prompts (Shipper) | PARTIAL | 7 | US-101 | ✅ No NFR-504 (form only) |
 | US-707 | **Shipper Preferred Carrier List** | **✅ COMPLETED** | **7** | **US-101** | **✅ Backend: 7 tests PASS | ✅ E2E: 4/4 PASS | ✅ CHG-001 resolved via US-707-v2** |
-| US-707-v2 | **Preferred Carriers: Nav + Search Redesign** | **✅ COMPLETED** | **7** | **US-707** | **✅ AppShell wrapper | ✅ GET /api/v1/carriers/search | ✅ 8 backend tests PASS (2026-06-04)** |
+| US-707-v2 | **Preferred Carriers: Nav + Search Redesign** | **✅ COMPLETED** | **7** | **US-707** | **✅ AppShell wrapper | ✅ GET /api/v1/carriers/search | ✅ 8 backend tests PASS | ✅ Browser verified: search, select, add, list with name+email (2026-06-05)** |
 | US-708 | Direct Load Assignment to Carrier    | MIGRATION_PENDING | 7 | US-707 | ✅ Event-driven invalidation |
 | US-709 | Block Carrier (Prevent Visibility)   | MIGRATION_PENDING | 7 | US-101 | ✅ Event-driven invalidation |
 | US-710 | **View Carrier Public Profile** | **✅ COMPLETED** | **7** | **US-402** | **✅ Backend: 100% branch coverage, 8 tests PASS | ✅ E2E: 6/6 PASS (2026-06-04)** |

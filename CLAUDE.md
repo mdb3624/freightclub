@@ -95,6 +95,23 @@ When asked to update documentation, manage the backlog, or finalize a story:
 
 # 🛠️ Technical Standards (The Constitution)
 
+## 💻 Platform: Windows 11 / PowerShell
+
+**All commands in agent outputs, scripts, and documentation MUST use PowerShell syntax. Bash/Unix commands are prohibited.**
+
+| Prohibited (Bash) | Required (PowerShell) |
+|-------------------|-----------------------|
+| `export VAR=value` | `$env:VAR = "value"` |
+| `kill -9 <pid>` | `taskkill //F //PID <pid>` |
+| `cmd1 && cmd2` | `cmd1; cmd2` or separate lines |
+| `rm -rf dir` | `Remove-Item -Recurse -Force dir` |
+| `./script.sh` | `.\script.ps1` |
+| `/dev/null` | `$null` |
+
+This rule applies to: BA, ARCH, HFD, CODER, REVIEWER, LIBRARIAN, and all automated agent outputs.
+
+---
+
 ## Database & Persistence
 - **ID Standard:** All Primary/Foreign Keys MUST be `VARCHAR(36)`.
 - **Security:** Every table MUST have Row-Level Security (RLS) enabled.

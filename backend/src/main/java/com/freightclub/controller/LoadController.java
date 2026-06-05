@@ -1,6 +1,7 @@
 package com.freightclub.controller;
 
 import com.freightclub.dto.CancelLoadRequest;
+import com.freightclub.dto.DisputeRequest;
 import com.freightclub.dto.CreateLoadRequest;
 import com.freightclub.dto.LoadEventResponse;
 import com.freightclub.dto.LoadResponse;
@@ -103,5 +104,36 @@ public class LoadController {
     @GetMapping("/counts")
     public Map<String, Long> statusCounts(@AuthenticationPrincipal String userId) {
         return loadService.getLoadStatusCounts(userId);
+    }
+
+    @PatchMapping("/{id}/pickup")
+    @CacheEvict(cacheNames = "loads", allEntries = true)
+    public LoadResponse markPickedUp(@PathVariable String id,
+                                     @AuthenticationPrincipal String userId) {
+        return loadService.markPickedUp(id, userId);
+    }
+
+    @PatchMapping("/{id}/deliver")
+    @CacheEvict(cacheNames = "loads", allEntries = true)
+    public LoadResponse markDelivered(@PathVariable String id,
+                                      @AuthenticationPrincipal String userId) {
+        return loadService.markDelivered(id, userId);
+    }
+
+    @PatchMapping("/{id}/settle")
+    @PreAuthorize("hasRole('SHIPPER')")
+    @CacheEvict(cacheNames = "loads", allEntries = true)
+    public LoadResponse settleLoad(@PathVariable String id,
+                                   @AuthenticationPrincipal String userId) {
+        return loadService.settleLoad(id, userId);
+    }
+
+    @PatchMapping("/{id}/dispute")
+    @PreAuthorize("hasRole('SHIPPER')")
+    @CacheEvict(cacheNames = "loads", allEntries = true)
+    public LoadResponse disputeLoad(@PathVariable String id,
+                                    @AuthenticationPrincipal String userId,
+                                    @Valid @RequestBody DisputeRequest request) {
+        return loadService.disputeLoad(id, userId, request.reason());
     }
 }

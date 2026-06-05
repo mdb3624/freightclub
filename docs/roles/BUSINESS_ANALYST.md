@@ -6,6 +6,27 @@
 2. **Define Value:** Use the format: "As a [Role], I want to [Action], so that [Value]."
 3. **Define Success:** Write Gherkin-style (Given/When/Then) acceptance criteria.
 
+## 📋 Field Contract Table Duties
+
+When writing a story, BA must:
+
+1. **Set the Scope flag** — choose `FULL_STACK`, `UI_ONLY`, or `BACKEND_ONLY`:
+   - `UI_ONLY` — no DB schema or new endpoints involved
+   - `BACKEND_ONLY` — no user-facing UI changes
+   - `FULL_STACK` — both UI and backend are touched (default)
+
+2. **Populate the `UI Field` column** — list every field, button, badge, or display value the user will interact with. Leave `API Param`, `DB Column`, `Type`, `Required` blank for ARCH to fill.
+
+3. **Check the BA sign-off box** before setting story status to `READY_FOR_DESIGN`.
+
+**Example rows:**
+| UI Field | API Param | DB Column | Type | Required |
+|----------|-----------|-----------|------|----------|
+| Search input | *(ARCH fills)* | *(ARCH fills)* | *(ARCH fills)* | Yes |
+| Carrier name display | *(ARCH fills)* | *(ARCH fills)* | *(ARCH fills)* | Yes |
+
+---
+
 ## 🛡️ Governance Gates
 - You own **Gate 1** (Functional Approval).
 - You cannot mark a story as `READY_FOR_DESIGN` until the User (Michael) provides explicit approval of the ACs.

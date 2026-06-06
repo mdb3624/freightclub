@@ -50,6 +50,12 @@ export const loadsApi = {
   cancel: (id: string, reason: string) =>
     apiPatch<Load>(`/loads/${id}/cancel`, { reason }),
 
+  settle: (id: string) =>
+    apiPatch<Load>(`/loads/${id}/settle`),
+
+  dispute: (id: string, reason: string) =>
+    apiPatch<Load>(`/loads/${id}/dispute`, { reason }),
+
   getEvents: (id: string) =>
     apiGet<LoadEvent[]>(`/loads/${id}/events`),
 

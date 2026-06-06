@@ -153,6 +153,9 @@ This rule applies to: BA, ARCH, HFD, CODER, REVIEWER, LIBRARIAN, and all automat
 - **Smoke test:** After deployment, verify proxy works with `curl https://frontend-url/api/v1/actuator/health` (should reach backend).
 - **CORS Testing:** When verifying auth flows work, ALWAYS test CORS preflight separately (direct API calls bypass browser CORS checks). Test: `curl -X OPTIONS https://backend/auth/login -H "Origin: frontend-url"` should return 200 with Access-Control-Allow-Origin header. Verify frontend URL is in backend's CORS allowed-origins config (never hardcoded — use env var).
 - See `memory/feedback_hardcoded_service_urls.md`, `memory/feedback_cors_testing.md`, and `memory/feedback_cloud_run_dual_urls.md` for full solutions.
+- **Secret Manager writes from PowerShell**: NEVER use `echo "value" | gcloud secrets versions add`. PowerShell `echo` appends `\r\n` → password auth fails. Always use `[System.IO.File]::WriteAllText('C:\Windows\Temp\s.txt', 'value')` + `--data-file='C:\Windows\Temp\s.txt'`.
+- **Neon `neondb_owner` auth**: JDBC URL must include `channel_binding=require` for `neondb_owner` connections. Without it, authentication fails even with the correct password.
+- **Flyway vs runtime credentials**: Production uses `DB_USERNAME=neondb_owner` (required for `ALTER TABLE`). `spring.flyway.user/password/url` override properties allow Flyway to use admin credentials independently. All production secrets come from `.env.prod` → `.env.cloudrun.yaml` → Secret Manager (verify Secret Manager versions match `.env.prod`).
 
 ## ⚠️ Enforcement
 - Role documents override user convenience.

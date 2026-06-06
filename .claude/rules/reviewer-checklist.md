@@ -25,8 +25,10 @@ This checklist defines the mandatory "Hard Gates" for any code merge. Failure to
 
 ## 4. Reliability & Testing (Coder Gate)
 * [ ] **Backend Tests**: `mvn test` passes with 0 failures and JaCoCo ≥ 80% branch coverage.
+* [ ] **Backend Integration Tests**: Controller-level `@SpringBootTest` + `MockMvc` tests MUST exist for every new endpoint — unit tests alone are not sufficient evidence. Test class name must follow `*ControllerTest` convention. Evidence: log line `[INFO] Running com.freightclub.controller.*ControllerTest` in Docker tester output.
 * [ ] **Frontend Unit Tests**: `npm run test` passes with 0 failures.
 * [ ] **Frontend E2E Tests**: `npm run test:e2e` passes with 0 failures. Any UI feature touched by the story must have a Playwright golden-path test before sign-off.
+* [ ] **E2E Test Evidence**: The session must show actual test output (`ok 1 ... (1.4s)`) from running the spec file — not just "tests written". Reviewer must see pass/fail lines before signing off.
 * [ ] **Transactional Integrity**: Are Domain Events and Entity state changes wrapped in a single atomic transaction?
 * [ ] **Outbox Pattern**: Does the logic correctly use the `message_outbox` for asynchronous event propagation?
 * [ ] **Idempotency**: Is the system resilient to duplicate events or messages?

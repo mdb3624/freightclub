@@ -18,4 +18,14 @@ export const loadQueryInvalidations = {
     qc.invalidateQueries({ queryKey: ['shipper-loads-stats'] })
     qc.invalidateQueries({ queryKey: ['shipper-loads'] })
   },
+  onSettle: (qc: QueryClient, loadId: string) => {
+    qc.invalidateQueries({ queryKey: ['shipper-loads-stats'] })
+    qc.invalidateQueries({ queryKey: ['shipper-loads'] })
+    qc.invalidateQueries({ queryKey: ['load', loadId] })
+  },
+  onDispute: (qc: QueryClient, loadId: string) => {
+    qc.invalidateQueries({ queryKey: ['shipper-loads-stats'] })
+    qc.invalidateQueries({ queryKey: ['shipper-loads'] })
+    qc.invalidateQueries({ queryKey: ['load', loadId] })
+  },
 }

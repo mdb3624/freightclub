@@ -2,14 +2,14 @@ version: '3.9'
 
 services:
 
-  db-test:
+  test-db:
     image: postgis/postgis:16-3.4
     container_name: freightclub-test-db
     environment:
       POSTGRES_DB: freightclub_test
       POSTGRES_USER: freightclub_runtime
       POSTGRES_PASSWORD: freightclub
-      POSTGRES_INITDB_ARGS: "-c shared_preload_libraries=pgrowlocks"
+      POSTGRES_INITDB_ARGS: "-c shared_preload_libraries=pgrowlocks -c max_connections=200"
     volumes:
       - postgres_test_data:/var/lib/postgresql/data
     ports:
@@ -29,12 +29,12 @@ services:
     ports:
       - "9091:9091"
     depends_on:
-      db-test:
+      test-db:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: test
       PORT: 9091
-      DB_URL: jdbc:postgresql://db-test:5432/freightclub_test?currentSchema=freightclub
+      DB_URL: jdbc:postgresql://test-db:5432/freightclub_test?currentSchema=freightclub
       DB_USERNAME: freightclub_runtime
       DB_PASSWORD: freightclub
       APP_JWT_SECRET: test-secret-32-chars-minimum-required-here
@@ -44,6 +44,23 @@ services:
       app.cookie.secure: "false"
     volumes:
       - uploads_test_data:/app/uploads
+
+  backend-tester:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: freightclub-tester
+    depends_on:
+      test-db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - maven_repo:/root/.m2
+    working_dir: /app
+    environment:
+      SPRING_PROFILES_ACTIVE: test
+      DB_URL: jdbc:postgresql://test-db:5432/freightclub_test?currentSchema=freightclub
+      DB_USERNAME: freightclub_runtime
+      DB_PASSWORD: freightclub
+    command: mvn test -Dspring.profiles.active=test
 
   frontend-test:
     build:
@@ -75,3 +92,4 @@ services:
 volumes:
   postgres_test_data:
   uploads_test_data:
+  maven_repo:

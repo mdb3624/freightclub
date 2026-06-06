@@ -26,6 +26,7 @@
 | US-502 | Payment Account Setup | ✅ COMPLETED | 2026-04-27 | 82% |
 | US-503 | Payment Processor Integration | ⏳ BACKLOG | — | — |
 | US-504 | Dispute Resolution | ⏳ BACKLOG | — | — |
+| US-506 | SETTLED Load Status & Workflow | ✅ COMPLETED | 2026-06-05 | 823 tests / REVIEWER PASS |
 
 ## Phase 7 Progress: Advanced Carrier Management & Logistics Compliance
 

@@ -15,7 +15,7 @@
 
 ---
 
-## Phase 1: Core Load Lifecycle (4 stories)
+## Phase 1: Core Load Lifecycle (5 stories)
 
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
@@ -23,6 +23,7 @@
 | US-102 | Tenant Context & JWT                   | COMPLETED   | 1     | US-101 | ✅ RLS, ✅ No-Lombok |
 | US-103 | Load CRUD (Create, Edit, Cancel, Publish) | COMPLETED | 1 | US-101 | ✅ RLS, ✅ No-Lombok |
 | US-104 | Load Board & Claiming Workflow         | COMPLETED   | 1     | US-103 | ✅ RLS, ✅ No-Lombok, ✅ Pessimistic Locking |
+| US-105 | Load Status Transitions (Pick Up & Delivery) | ✅ COMPLETED | 1 | US-104, US-305 | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 |
 
 ---
 
@@ -81,7 +82,7 @@
 | US-503 | **Bank Account Setup & Verification** | **MIGRATION_PENDING** | **5** | **US-502** | **⚠️ BLOCKER: Payment processor** |
 | US-504 | **Payment History & Ledger**          | **MIGRATION_PENDING** | **5** | **US-502** | **NFR-504 (30m TTL)** |
 | US-505 | **Receipt Generation & Export**       | **MIGRATION_PENDING** | **5** | **US-502** | **NFR-504 (24h TTL)** |
-| US-506 | **SETTLED Load Status & Workflow**    | **MIGRATION_PENDING** | **5** | **US-502** | **NFR-504 (15m TTL)** |
+| US-506 | **SETTLED Load Status & Workflow**    | **COMPLETED** | **5** | **US-502** | **✅ RLS, ✅ No-Lombok, ✅ settle+dispute endpoints, ✅ shipper UI** |
 | US-507 | **Payment Dispute Flow & Resolution** | **MIGRATION_PENDING** | **5** | **US-502** | **NFR-504 (15m TTL)** |
 
 ---

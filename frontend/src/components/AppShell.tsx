@@ -14,13 +14,13 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
   const user = useAuthStore((s) => s.user)
   const logout = useLogout()
   const { pathname } = useLocation()
-  const { persona, backgroundClassName, surfaceClassName, controlClassName, headingClassName, mutedClassName } = usePersonaTheme()
+  const { persona, backgroundClassName, surfaceClassName, headingClassName, mutedClassName, contentWidthClassName } = usePersonaTheme()
   const isCarrier = persona === 'carrier'
 
   const dashboardPath = user?.role === 'TRUCKER' ? '/dashboard/trucker' : '/dashboard/shipper'
   const dashboardLabel = user?.role === 'TRUCKER' ? 'Load Board' : 'My Loads'
 
-  const maxWidthClass = {
+  const explicitMaxWidthClass = {
     sm: 'max-w-sm',
     md: 'max-w-md',
     lg: 'max-w-lg',
@@ -29,6 +29,11 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
     '6xl': 'max-w-6xl',
     full: 'max-w-full',
   }[maxWidth]
+
+  // CHG-707: Carrier keeps the caller's mobile-first width constraint;
+  // Shipper ignores it in favor of the persona's full-width dense layout
+  // (desktop data-table density takes precedence over per-page maxWidth).
+  const widthClass = isCarrier ? explicitMaxWidthClass : contentWidthClassName
 
   function NavLink({ to, children: label }: { to: string; children: string }) {
     const active = pathname === to || pathname.startsWith(to + '/')
@@ -58,7 +63,7 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
         Skip to main content
       </a>
       <header className={`sticky top-0 z-30 px-6 py-3 ${isCarrier ? 'border-b border-carrier-border bg-carrier-bg' : 'border-b border-shipper-border bg-shipper-surface'}`}>
-        <div className={`mx-auto ${maxWidthClass} flex items-center justify-between gap-4`}>
+        <div className={`mx-auto ${widthClass} flex items-center justify-between gap-4`}>
           <div className="flex items-center gap-6">
             <Link to={dashboardPath} className={`text-lg font-bold shrink-0 ${headingClassName}`}>
               FreightClub
@@ -80,7 +85,6 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
               variant="secondary"
               onClick={logout}
               data-testid="logout-btn"
-              className={controlClassName}
             >
               Sign out
             </Button>
@@ -88,7 +92,7 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
         </div>
       </header>
 
-      <main id="main-content" className={`mx-auto ${maxWidthClass} px-6 py-8`}>
+      <main id="main-content" className={`mx-auto ${widthClass} px-6 py-8`}>
         <div data-testid="app-shell-surface" className={`p-6 ${surfaceClassName}`}>
           {children}
         </div>

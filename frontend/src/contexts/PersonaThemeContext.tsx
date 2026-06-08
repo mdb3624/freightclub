@@ -27,6 +27,12 @@ export interface PersonaTokens {
   surfaceClassName: string
   /** Tailwind classes for buttons/interactive controls per the persona's surface shape. */
   controlClassName: string
+  /** Corner radius for buttons/controls — pill (rounded-3xl) for Carrier, framed (rounded-md) for Shipper. */
+  shapeClassName: string
+  /** Background/text/hover classes for primary CTA buttons — copper (Carrier) vs. bronze (Shipper) accent. */
+  actionClassName: string
+  /** Page-content width — narrow & centered for Carrier's mobile-first layout, full-width dense for Shipper's desktop data tables. */
+  contentWidthClassName: string
   /** Heading/primary text color. */
   headingClassName: string
   /** Body/primary label text color. */
@@ -41,6 +47,9 @@ const CARRIER_TOKENS: PersonaTokens = {
   surfaceShape: 'pill',
   surfaceClassName: 'rounded-3xl border border-carrier-border bg-carrier-surface shadow-lg',
   controlClassName: 'rounded-full',
+  shapeClassName: 'rounded-3xl',
+  actionClassName: 'bg-carrier-accent text-carrier-bg hover:opacity-90 focus:ring-carrier-accent',
+  contentWidthClassName: 'max-w-md mx-auto',
   headingClassName: 'text-carrier-text',
   textClassName: 'text-carrier-text',
   mutedClassName: 'text-carrier-text-muted',
@@ -52,6 +61,9 @@ const SHIPPER_TOKENS: PersonaTokens = {
   surfaceShape: 'framed',
   surfaceClassName: 'rounded-md border border-shipper-border bg-shipper-surface shadow-sm',
   controlClassName: 'rounded-md',
+  shapeClassName: 'rounded-md',
+  actionClassName: 'bg-shipper-accent text-white hover:opacity-90 focus:ring-shipper-accent',
+  contentWidthClassName: 'max-w-full',
   headingClassName: 'text-shipper-text',
   textClassName: 'text-shipper-text',
   mutedClassName: 'text-shipper-text-muted',

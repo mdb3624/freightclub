@@ -75,12 +75,14 @@ export default {
         'carrier-border':     '#2A2A2A',
         'carrier-text':       '#F5F5F5',
         'carrier-text-muted': '#C9A876', // muted metallic copper
+        'carrier-accent':     '#C9A876', // metallic copper — CTA/action accent
 
         'shipper-bg':         '#EFEBE0',
         'shipper-surface':    '#FFFFFF',
         'shipper-border':     '#E5E7EB',
         'shipper-text':       '#1A1A1A',
         'shipper-text-muted': '#4A5568',
+        'shipper-accent':     '#B08D57', // metallic bronze — CTA/action accent
       },
 
       // ─── Typography (docs/standards/brand_assets/STYLE_GUIDE.md) ──────────────

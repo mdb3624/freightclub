@@ -61,6 +61,26 @@ export default {
           500: '#f97316',
           600: '#ea580c',
         },
+
+        // ── Persona-aware tokens (CHG-705 — brand_assets style guides) ──────
+        // Carrier (mobile, "Luxury Industrial" dark mode): docs/standards/brand_assets/Carrier Style Guide.md
+        // Shipper & Administrator (desktop, "Classic Cream & Metallic Bronze"): docs/standards/brand_assets/Shipper & Administrator Style Guide.md
+        //
+        // NOTE: index.css applies global `!important` overrides to .bg-white,
+        // .bg-gray-*, .text-gray-*, and .border-gray-* (CHG-705 — legacy dark
+        // theme). Persona surfaces/text/borders MUST use these custom-named
+        // tokens instead — they bypass the legacy selectors entirely.
+        'carrier-bg':         '#121212',
+        'carrier-surface':    '#1A1A1A',
+        'carrier-border':     '#2A2A2A',
+        'carrier-text':       '#F5F5F5',
+        'carrier-text-muted': '#C9A876', // muted metallic copper
+
+        'shipper-bg':         '#EFEBE0',
+        'shipper-surface':    '#FFFFFF',
+        'shipper-border':     '#E5E7EB',
+        'shipper-text':       '#1A1A1A',
+        'shipper-text-muted': '#4A5568',
       },
 
       // ─── Typography (docs/standards/brand_assets/STYLE_GUIDE.md) ──────────────

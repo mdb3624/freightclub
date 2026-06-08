@@ -3,6 +3,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useLogout } from '@/features/auth/hooks/useLogout'
 import { NotificationBell } from '@/features/notifications/components/NotificationBell'
 import { Button } from '@/components/ui/Button'
+import { usePersonaTheme } from '@/contexts/PersonaThemeContext'
 
 interface AppShellProps {
   children: React.ReactNode
@@ -13,6 +14,8 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
   const user = useAuthStore((s) => s.user)
   const logout = useLogout()
   const { pathname } = useLocation()
+  const { persona, backgroundClassName, surfaceClassName, controlClassName, headingClassName, mutedClassName } = usePersonaTheme()
+  const isCarrier = persona === 'carrier'
 
   const dashboardPath = user?.role === 'TRUCKER' ? '/dashboard/trucker' : '/dashboard/shipper'
   const dashboardLabel = user?.role === 'TRUCKER' ? 'Load Board' : 'My Loads'
@@ -35,7 +38,9 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
         className={`text-sm font-medium transition-colors ${
           active
             ? 'text-primary-600 border-b-2 border-primary-600 pb-0.5'
-            : 'text-gray-600 hover:text-gray-900'
+            : isCarrier
+              ? 'text-carrier-text-muted hover:text-carrier-text'
+              : 'text-shipper-text-muted hover:text-shipper-text'
         }`}
       >
         {label}
@@ -44,14 +49,18 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div
+      data-testid="app-shell"
+      data-persona={persona}
+      className={`min-h-screen ${backgroundClassName}`}
+    >
       <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-50 focus:bg-primary-600 focus:text-white focus:px-4 focus:py-2">
         Skip to main content
       </a>
-      <header className="sticky top-0 z-30 border-b border-gray-200 bg-white px-6 py-3">
+      <header className={`sticky top-0 z-30 px-6 py-3 ${isCarrier ? 'border-b border-carrier-border bg-carrier-bg' : 'border-b border-shipper-border bg-shipper-surface'}`}>
         <div className={`mx-auto ${maxWidthClass} flex items-center justify-between gap-4`}>
           <div className="flex items-center gap-6">
-            <Link to={dashboardPath} className="text-lg font-bold text-gray-900 shrink-0">
+            <Link to={dashboardPath} className={`text-lg font-bold shrink-0 ${headingClassName}`}>
               FreightClub
             </Link>
             <nav role="navigation" className="flex items-center gap-5">
@@ -64,10 +73,15 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
           </div>
           <div className="flex items-center gap-3">
             <NotificationBell />
-            <span className="text-sm text-gray-600 hidden sm:inline">
+            <span className={`text-sm hidden sm:inline ${mutedClassName}`}>
               {user?.firstName} {user?.lastName}
             </span>
-            <Button variant="secondary" onClick={logout} data-testid="logout-btn">
+            <Button
+              variant="secondary"
+              onClick={logout}
+              data-testid="logout-btn"
+              className={controlClassName}
+            >
               Sign out
             </Button>
           </div>
@@ -75,7 +89,9 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
       </header>
 
       <main id="main-content" className={`mx-auto ${maxWidthClass} px-6 py-8`}>
-        {children}
+        <div data-testid="app-shell-surface" className={`p-6 ${surfaceClassName}`}>
+          {children}
+        </div>
       </main>
     </div>
   )

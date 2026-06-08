@@ -1,5 +1,6 @@
 import type { UseFormRegister, FieldErrors } from 'react-hook-form'
 import { Input } from '@/components/ui/Input'
+import { usePersonaTheme } from '@/contexts/PersonaThemeContext'
 import type { UpdateProfileValues } from '@/features/profile/types'
 
 const EQUIPMENT_OPTIONS = [
@@ -16,10 +17,12 @@ interface Props {
 }
 
 export function PersonalInfoSection({ register, errors, isTrucker }: Props) {
+  const { surfaceClassName, mutedClassName, textClassName } = usePersonaTheme()
+
   return (
     <>
-      <section className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Personal Information</h3>
+      <section className={`p-6 space-y-4 ${surfaceClassName}`}>
+        <h3 className={`text-sm font-semibold uppercase tracking-wide ${mutedClassName}`}>Personal Information</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Input label="First Name" error={errors.firstName?.message} {...register('firstName')} />
           <Input label="Last Name" error={errors.lastName?.message} {...register('lastName')} />
@@ -29,8 +32,8 @@ export function PersonalInfoSection({ register, errors, isTrucker }: Props) {
       </section>
 
       {isTrucker && (
-        <section className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
-          <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Carrier Information</h3>
+        <section className={`p-6 space-y-4 ${surfaceClassName}`}>
+          <h3 className={`text-sm font-semibold uppercase tracking-wide ${mutedClassName}`}>Carrier Information</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input
               data-testid="mc-number-input"
@@ -50,9 +53,9 @@ export function PersonalInfoSection({ register, errors, isTrucker }: Props) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Primary Equipment</label>
+            <label className={`block text-sm font-medium mb-1 ${mutedClassName}`}>Primary Equipment</label>
             <select
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className={`w-full rounded-md border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 ${surfaceClassName} ${textClassName}`}
               {...register('equipmentType')}
             >
               <option value="">Select equipment type</option>

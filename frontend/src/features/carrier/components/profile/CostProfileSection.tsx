@@ -1,6 +1,7 @@
 import type { UseFormRegister, Control } from 'react-hook-form'
 import { useWatch } from 'react-hook-form'
 import { Input } from '@/components/ui/Input'
+import { usePersonaTheme } from '@/contexts/PersonaThemeContext'
 import type { UpdateProfileValues } from '@/features/profile/types'
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 }
 
 function CostProfileSummary({ control }: { control: Control<UpdateProfileValues> }) {
+  const { surfaceClassName, mutedClassName, textClassName } = usePersonaTheme()
   const values = useWatch({ control })
   const truckPayment = Number(values.truckPaymentLease) || 0
   const insurance = Number(values.insurance) || 0
@@ -31,17 +33,17 @@ function CostProfileSummary({ control }: { control: Control<UpdateProfileValues>
   const minRpm = totalCpm + marginPerMile
 
   return (
-    <div className="rounded-lg bg-gray-50 border border-gray-200 p-4">
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+    <div className={`rounded-lg p-4 ${surfaceClassName}`}>
+      <p className={`text-xs font-semibold uppercase tracking-wide mb-3 ${mutedClassName}`}>
         Calculated Cost Breakdown
       </p>
       <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
-        <span className="text-gray-600">Fixed CPM</span>
-        <span className="font-mono text-gray-900">${fixedCpm.toFixed(4)}/mi</span>
-        <span className="text-gray-600">Variable CPM (fuel + maint.)</span>
-        <span className="font-mono text-gray-900">${variableCpm.toFixed(4)}/mi</span>
-        <span className="text-gray-700 font-semibold">Total CPM</span>
-        <span className="font-mono font-semibold text-gray-900">${totalCpm.toFixed(4)}/mi</span>
+        <span className={mutedClassName}>Fixed CPM</span>
+        <span className={`font-mono ${textClassName}`}>${fixedCpm.toFixed(4)}/mi</span>
+        <span className={mutedClassName}>Variable CPM (fuel + maint.)</span>
+        <span className={`font-mono ${textClassName}`}>${variableCpm.toFixed(4)}/mi</span>
+        <span className={`font-semibold ${mutedClassName}`}>Total CPM</span>
+        <span className={`font-mono font-semibold ${textClassName}`}>${totalCpm.toFixed(4)}/mi</span>
         <span className="text-primary-700 font-semibold">Minimum RPM</span>
         <span className="font-mono font-semibold text-primary-700">${minRpm.toFixed(4)}/mi</span>
       </div>
@@ -50,18 +52,20 @@ function CostProfileSummary({ control }: { control: Control<UpdateProfileValues>
 }
 
 export function CostProfileSection({ register, control }: Props) {
+  const { surfaceClassName, mutedClassName } = usePersonaTheme()
+
   return (
-    <section className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
+    <section className={`p-6 space-y-4 ${surfaceClassName}`}>
       <div>
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Cost Profile</h3>
-        <p className="text-xs text-gray-500 mt-1">
+        <h3 className={`text-sm font-semibold uppercase tracking-wide ${mutedClassName}`}>Cost Profile</h3>
+        <p className={`text-xs mt-1 ${mutedClassName}`}>
           Used to calculate load profitability and your minimum RPM. All fields optional.
         </p>
       </div>
 
       <div className="space-y-4">
         <div>
-          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Fixed Monthly Costs</p>
+          <p className={`text-xs font-semibold uppercase tracking-wide mb-3 ${mutedClassName}`}>Fixed Monthly Costs</p>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input
               label="Truck Payment / Lease ($)"
@@ -99,7 +103,7 @@ export function CostProfileSection({ register, control }: Props) {
         </div>
 
         <div>
-          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Variable Costs</p>
+          <p className={`text-xs font-semibold uppercase tracking-wide mb-3 ${mutedClassName}`}>Variable Costs</p>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input
               label="Diesel Price ($/Gal)"
@@ -148,7 +152,7 @@ export function CostProfileSection({ register, control }: Props) {
         </div>
 
         <div>
-          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Operational</p>
+          <p className={`text-xs font-semibold uppercase tracking-wide mb-3 ${mutedClassName}`}>Operational</p>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input
               label="Miles Driven (Monthly)"

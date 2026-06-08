@@ -5,6 +5,7 @@ import { LoginPage } from '@/pages/LoginPage'
 import { RegisterPage } from '@/pages/RegisterPage'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { AuthInitializer } from '@/components/AuthInitializer'
+import { PersonaThemeProvider } from '@/contexts/PersonaThemeContext'
 import { Toaster } from '@/components/ui/Toaster'
 
 // Lazy load dashboard and protected routes to defer vendor-query and dashboard code
@@ -56,6 +57,7 @@ export default function App() {
   return (
     <ErrorBoundary>
     <AuthInitializer>
+    <PersonaThemeProvider>
       <Toaster />
       <Routes>
       <Route path="/login" element={<LoginPage />} />
@@ -200,6 +202,7 @@ export default function App() {
       <Route path="/" element={<TruckerLandingPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </PersonaThemeProvider>
     </AuthInitializer>
     </ErrorBoundary>
   )

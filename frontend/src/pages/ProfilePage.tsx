@@ -19,6 +19,7 @@ import { CostProfileSection } from '@/features/carrier/components/profile/CostPr
 import { NotificationsSection } from '@/features/carrier/components/profile/NotificationsSection'
 import { ThemeModeToggle } from '@/features/theme-preferences/components/ThemeModeToggle'
 import { useThemePreferences } from '@/features/theme-preferences/hooks/useThemePreferences'
+import { usePersonaTheme } from '@/contexts/PersonaThemeContext'
 import type { ApiError } from '@/types'
 
 const schema = z.object({
@@ -58,6 +59,7 @@ const schema = z.object({
 export function ProfilePage() {
   const user = useAuthStore((s) => s.user)
   const isTrucker = user?.role === 'TRUCKER'
+  const { surfaceClassName, headingClassName, textClassName, mutedClassName } = usePersonaTheme()
 
   const { data: profile, isLoading } = useProfile()
   const { mutate, isPending, error, isSuccess } = useUpdateProfile()
@@ -142,17 +144,17 @@ export function ProfilePage() {
     ? ((error as AxiosError<ApiError>).response?.data?.message ?? 'Failed to save profile')
     : null
 
-  if (isLoading) return <AppShell maxWidth="lg"><p className="text-center text-gray-500 py-12">Loading...</p></AppShell>
+  if (isLoading) return <AppShell maxWidth="lg"><p className={`text-center py-12 ${mutedClassName}`}>Loading...</p></AppShell>
 
   return (
     <AppShell maxWidth="lg">
       <div data-testid="profile-page" data-testid-alt="shipper-profile-page">
       <div className="mb-6">
-        <h1 data-testid="profile-page-title" className="text-2xl font-semibold text-gray-900">My Profile</h1>
+        <h1 data-testid="profile-page-title" className={`text-2xl font-semibold ${headingClassName}`}>My Profile</h1>
       </div>
 
-      <section data-testid="theme-preferences-section" data-track={isTrucker ? 'carrier' : 'shipper'} className="mb-8 rounded-xl border border-gray-200 bg-white p-6">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Theme Preferences</h3>
+      <section data-testid="theme-preferences-section" data-track={isTrucker ? 'carrier' : 'shipper'} className={`mb-8 p-6 ${surfaceClassName}`}>
+        <h3 className={`text-sm font-semibold uppercase tracking-wide mb-3 ${mutedClassName}`}>Theme Preferences</h3>
         {themePrefs && (
           <ThemeModeToggle value={themePrefs.themeMode} onChange={setThemeMode} />
         )}
@@ -167,36 +169,36 @@ export function ProfilePage() {
         )}
 
         {isTrucker && ratingSummary && (
-          <section className="rounded-xl border border-gray-200 bg-white p-6">
+          <section className={`p-6 ${surfaceClassName}`}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">My Rating</h3>
+              <h3 className={`text-sm font-semibold uppercase tracking-wide ${mutedClassName}`}>My Rating</h3>
               <Link to="/ratings" className="text-xs text-primary-600 hover:underline">View history →</Link>
             </div>
             {ratingSummary.avgStars != null ? (
               <div className="flex items-center gap-3">
                 <StarRating value={Math.round(ratingSummary.avgStars)} readOnly size="md" />
-                <span className="text-lg font-bold text-gray-900">{ratingSummary.avgStars.toFixed(1)}</span>
-                <span className="text-sm text-gray-500">
+                <span className={`text-lg font-bold ${headingClassName}`}>{ratingSummary.avgStars.toFixed(1)}</span>
+                <span className={`text-sm ${mutedClassName}`}>
                   ({ratingSummary.totalRatings} rating{ratingSummary.totalRatings !== 1 ? 's' : ''})
                 </span>
               </div>
             ) : (
-              <p className="text-sm text-gray-400">No ratings yet — complete your first load to start building your reputation.</p>
+              <p className={`text-sm ${mutedClassName}`}>No ratings yet — complete your first load to start building your reputation.</p>
             )}
           </section>
         )}
 
         {profile?.companyName && (
-          <section className="rounded-xl border border-gray-200 bg-white p-6">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Company</h3>
-            <p className="text-sm text-gray-900 font-medium">{profile.companyName}</p>
+          <section className={`p-6 ${surfaceClassName}`}>
+            <h3 className={`text-sm font-semibold uppercase tracking-wide mb-3 ${mutedClassName}`}>Company</h3>
+            <p className={`text-sm font-medium ${textClassName}`}>{profile.companyName}</p>
             {profile.companyJoinCode && (
               <div className="mt-3 flex items-center gap-3">
-                <div className="rounded-md bg-gray-100 px-3 py-2">
-                  <p className="text-xs text-gray-500 mb-0.5">Join code</p>
-                  <p className="font-mono text-sm font-semibold text-gray-900 tracking-widest">{profile.companyJoinCode}</p>
+                <div className={`rounded-md px-3 py-2 ${surfaceClassName}`}>
+                  <p className={`text-xs mb-0.5 ${mutedClassName}`}>Join code</p>
+                  <p className={`font-mono text-sm font-semibold tracking-widest ${textClassName}`}>{profile.companyJoinCode}</p>
                 </div>
-                <p className="text-xs text-gray-500">Share this code with colleagues to add them to your company.</p>
+                <p className={`text-xs ${mutedClassName}`}>Share this code with colleagues to add them to your company.</p>
               </div>
             )}
           </section>

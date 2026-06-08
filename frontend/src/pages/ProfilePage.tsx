@@ -17,6 +17,8 @@ import { PersonalInfoSection } from '@/features/carrier/components/profile/Perso
 import { AddressSection } from '@/features/carrier/components/profile/AddressSection'
 import { CostProfileSection } from '@/features/carrier/components/profile/CostProfileSection'
 import { NotificationsSection } from '@/features/carrier/components/profile/NotificationsSection'
+import { ThemeModeToggle } from '@/features/theme-preferences/components/ThemeModeToggle'
+import { useThemePreferences } from '@/features/theme-preferences/hooks/useThemePreferences'
 import type { ApiError } from '@/types'
 
 const schema = z.object({
@@ -134,6 +136,8 @@ export function ProfilePage() {
     }
   }, [isSuccess])
 
+  const { data: themePrefs, setThemeMode } = useThemePreferences()
+
   const apiError = error
     ? ((error as AxiosError<ApiError>).response?.data?.message ?? 'Failed to save profile')
     : null
@@ -146,6 +150,13 @@ export function ProfilePage() {
       <div className="mb-6">
         <h1 data-testid="profile-page-title" className="text-2xl font-semibold text-gray-900">My Profile</h1>
       </div>
+
+      <section data-testid="theme-preferences-section" data-track={isTrucker ? 'carrier' : 'shipper'} className="mb-8 rounded-xl border border-gray-200 bg-white p-6">
+        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Theme Preferences</h3>
+        {themePrefs && (
+          <ThemeModeToggle value={themePrefs.themeMode} onChange={setThemeMode} />
+        )}
+      </section>
 
       <form onSubmit={handleSubmit((v) => mutate(v))} className="space-y-8">
         {apiError && <ErrorBanner message={apiError} />}

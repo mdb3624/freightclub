@@ -19,6 +19,8 @@ export function ShipperPageHeader() {
   const navigate = useNavigate()
   const { user, logout, isAuthenticated } = useAuthStore()
   const [showDropdown, setShowDropdown] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [unreadCount] = useState(0)
 
   const now = new Date()
   const lastUpdated = now.toLocaleString('en-US', {
@@ -29,20 +31,26 @@ export function ShipperPageHeader() {
     minute: '2-digit',
   })
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
-    if (!showDropdown) return
+    if (!showDropdown && !showNotifications) return
 
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as HTMLElement
-      if (!target.closest('[data-testid="avatar-dropdown"]') && !target.closest('[data-testid="avatar-button"]')) {
+      if (
+        !target.closest('[data-testid="avatar-dropdown"]') &&
+        !target.closest('[data-testid="avatar-button"]') &&
+        !target.closest('[data-testid="notifications-dropdown"]') &&
+        !target.closest('[data-testid="notification-bell"]')
+      ) {
         setShowDropdown(false)
+        setShowNotifications(false)
       }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [showDropdown])
+  }, [showDropdown, showNotifications])
 
   const handleLogout = () => {
     logout()
@@ -117,39 +125,98 @@ export function ShipperPageHeader() {
       {/* Right: Notification Bell + Avatar */}
       <div style={{ display: 'flex', gap: 'var(--space-sm)', alignItems: 'center' }}>
         {/* Notification Bell */}
-        <button
-          data-testid="notification-bell"
-          onClick={() => navigate('/notifications')}
-          aria-label="Notifications"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '40px',
-            height: '40px',
-            borderRadius: 'var(--radius-full)',
-            backgroundColor: 'transparent',
-            color: 'var(--color-text-primary)',
-            border: 'none',
-            cursor: 'pointer',
-            position: 'relative',
-          }}
-          title="Notifications"
-        >
-          <Bell size={20} />
-          {/* Unread badge */}
-          <span
+        <div style={{ position: 'relative' }}>
+          <button
+            data-testid="notification-bell"
+            onClick={() => setShowNotifications(!showNotifications)}
+            aria-label="Notifications"
+            aria-haspopup="true"
+            aria-expanded={showNotifications}
             style={{
-              position: 'absolute',
-              top: '4px',
-              right: '4px',
-              width: '8px',
-              height: '8px',
-              backgroundColor: 'var(--color-critical)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px',
               borderRadius: 'var(--radius-full)',
+              backgroundColor: 'transparent',
+              color: 'var(--color-text-primary)',
+              border: 'none',
+              cursor: 'pointer',
+              position: 'relative',
             }}
-          />
-        </button>
+            title="Notifications"
+          >
+            <Bell size={20} />
+            {/* Unread badge - only show if there are unread messages */}
+            {unreadCount > 0 && (
+              <span
+                style={{
+                  position: 'absolute',
+                  top: '4px',
+                  right: '4px',
+                  width: '8px',
+                  height: '8px',
+                  backgroundColor: 'var(--color-critical)',
+                  borderRadius: 'var(--radius-full)',
+                }}
+              />
+            )}
+          </button>
+
+          {/* Notifications Dropdown */}
+          {showNotifications && (
+            <div
+              role="menu"
+              data-testid="notifications-dropdown"
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: '100%',
+                marginTop: 'var(--space-sm)',
+                backgroundColor: 'var(--color-surface-white)',
+                border: 'var(--border-widget)',
+                borderRadius: 'var(--radius-widget)',
+                boxShadow: 'var(--shadow-elevated)',
+                minWidth: '320px',
+                maxHeight: '400px',
+                overflowY: 'auto',
+                zIndex: 1000,
+              }}
+            >
+              {unreadCount === 0 ? (
+                <div
+                  style={{
+                    padding: 'var(--space-lg)',
+                    textAlign: 'center',
+                    color: 'var(--color-text-secondary)',
+                    fontSize: 'var(--font-size-sm)',
+                  }}
+                >
+                  No new messages
+                </div>
+              ) : (
+                <div
+                  style={{
+                    padding: 'var(--space-md)',
+                  }}
+                >
+                  <p
+                    style={{
+                      margin: '0 0 var(--space-md) 0',
+                      fontSize: 'var(--font-size-sm)',
+                      fontWeight: 'var(--font-weight-semibold)',
+                      color: 'var(--color-text-primary)',
+                    }}
+                  >
+                    {unreadCount} new message{unreadCount !== 1 ? 's' : ''}
+                  </p>
+                  {/* Messages will be populated here */}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Avatar Button */}
         <div style={{ position: 'relative' }}>

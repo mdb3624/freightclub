@@ -6,6 +6,8 @@
  * AC-1: Loading state displays skeleton placeholders
  */
 
+import React from 'react';
+
 interface SkeletonLoaderProps {
   rowCount?: number; // default: 3
   rowHeight?: string; // e.g., "60px" for result rows, "40px" for inputs

@@ -403,3 +403,13 @@
 .btn-bronze:active {
   opacity: 0.8;
 }
+
+/* Spinner animation for loading states */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { QuickActionsPanel } from './components/QuickActionsPanel';
+import { MessagesAlertsPanel } from './components/MessagesAlertsPanel';
 import { useQuickActionNavigation } from './hooks/useQuickActionNavigation';
 
 export const ShipperDashboardPage: React.FC = () => {
@@ -35,6 +36,9 @@ export const ShipperDashboardPage: React.FC = () => {
         isLoading={isLoading}
         loadingButtonId={loadingButtonId}
       />
+
+      {/* Row 3: Messages and Alerts */}
+      <MessagesAlertsPanel />
     </div>
   );
 };

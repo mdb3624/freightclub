@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter, useNavigate } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ShipperDashboardPage } from './ShipperDashboardPage';
 
 vi.mock('react-router-dom', async () => {
@@ -12,9 +13,30 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
+vi.mock('../../../notifications/hooks/useNotifications', () => ({
+  useNotifications: vi.fn(() => ({
+    data: { content: [] },
+    isLoading: false,
+    error: null,
+  })),
+  useMarkRead: vi.fn(() => ({
+    mutate: vi.fn(),
+  })),
+}));
+
 describe('ShipperDashboardPage', () => {
   const renderWithRouter = (component: React.ReactElement) => {
-    return render(<BrowserRouter>{component}</BrowserRouter>);
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>{component}</BrowserRouter>
+      </QueryClientProvider>
+    );
   };
 
   it('renders QuickActionsPanel in col-span-4 grid slot', () => {
@@ -48,5 +70,13 @@ describe('ShipperDashboardPage', () => {
     expect(screen.getByTestId('quick-actions-quote')).toBeInTheDocument();
     expect(screen.getByTestId('quick-actions-track')).toBeInTheDocument();
     expect(screen.getByTestId('quick-actions-carriers')).toBeInTheDocument();
+  });
+
+  it('renders MessagesAlertsPanel in col-span-7 grid slot', () => {
+    renderWithRouter(<ShipperDashboardPage />);
+
+    const messagesPanel = screen.getByTestId('dashboard-messages-alerts-panel');
+    expect(messagesPanel).toBeInTheDocument();
+    expect(messagesPanel).toHaveClass('col-span-7');
   });
 });

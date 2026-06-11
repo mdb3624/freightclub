@@ -66,16 +66,48 @@ export function ShipperDashboardHome() {
 
             {/* SLOT_A: Navigation Header + KPI Summary */}
             <div className="slot-a">
-              {/* Framework Header: Panel-Header with Title */}
-              <div className="panel-header" data-testid="dashboard-nav">
+              {/* Framework Header: Panel-Header with Branding */}
+              <div className="panel-header" data-testid="dashboard-nav" style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingBottom: 'var(--space-lg)',
+                marginBottom: 0,
+              }}>
+                {/* Left: Logo + Branding */}
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'space-between',
+                  gap: 'var(--space-md)',
                 }}>
-                  <h1 className="panel-title">
-                    Shipper Command Center
-                  </h1>
+                  <img src="/logo.png" alt="FreightClub" style={{ height: '40px' }} />
+                  <div>
+                    <h1 className="panel-title" style={{ marginBottom: 0, fontSize: 'var(--font-size-lg)' }}>
+                      FreightClub
+                    </h1>
+                    <p style={{
+                      margin: 0,
+                      fontSize: 'var(--font-size-xs)',
+                      color: 'var(--color-text-secondary)',
+                      fontWeight: 'var(--font-weight-regular)',
+                    }}>
+                      Integrated Logistics
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right: Navigation Elements */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--space-lg)',
+                }}>
+                  <div style={{
+                    fontSize: 'var(--font-size-xs)',
+                    color: 'var(--color-text-secondary)',
+                  }}>
+                    Last Updated: 2026-06-10
+                  </div>
                   <Link
                     to="/dashboard/shipper/loads"
                     data-testid="my-loads-nav-link"

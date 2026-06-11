@@ -1,54 +1,304 @@
-<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="5.037644">
-<testsuite name="us-821-shipper-header-e2e.spec.ts" timestamp="2026-06-11T10:56:25.364Z" hostname="chromium" tests="1" failures="1" skipped="0" time="0.536" errors="0">
-<testcase name="US-821: Shipper Dashboard with Header and Avatar Dropdown" classname="us-821-shipper-header-e2e.spec.ts" time="0.536">
+<testsuites id="" name="" tests="5" failures="0" skipped="0" errors="5" time="162.54444700000002">
+<testsuite name="tests\us-820-kpi-summary.spec.ts" timestamp="2026-06-11T17:00:44.453Z" hostname="chromium" tests="5" failures="0" skipped="0" time="152.61" errors="5">
+<testcase name="US-820: KPI Summary Display › AC-1,2,3: Shipper views KPI metrics on dashboard" classname="tests\us-820-kpi-summary.spec.ts" time="30.671">
 <system-out>
-<![CDATA[Registration: 400 - shipper-1781175386573@freightclub.local
+<![CDATA[
+[[ATTACHMENT|tests-us-820-kpi-summary-U-461ad-ws-KPI-metrics-on-dashboard-chromium\test-failed-1.png]]
 
-[[ATTACHMENT|us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\test-failed-1.png]]
+[[ATTACHMENT|tests-us-820-kpi-summary-U-461ad-ws-KPI-metrics-on-dashboard-chromium\video.webm]]
 
-[[ATTACHMENT|us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\video.webm]]
+[[ATTACHMENT|tests-us-820-kpi-summary-U-461ad-ws-KPI-metrics-on-dashboard-chromium\error-context.md]]
 
-[[ATTACHMENT|us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\error-context.md]]
-
-[[ATTACHMENT|us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\trace.zip]]
+[[ATTACHMENT|tests-us-820-kpi-summary-U-461ad-ws-KPI-metrics-on-dashboard-chromium\trace.zip]]
 ]]>
 </system-out>
-<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
-<![CDATA[  [chromium] › us-821-shipper-header-e2e.spec.ts:15:1 › US-821: Shipper Dashboard with Header and Avatar Dropdown 
+<error message="Test timeout of 30000ms exceeded while running &quot;beforeEach&quot; hook." type="Error">
+<![CDATA[  [chromium] › tests\us-820-kpi-summary.spec.ts:25:3 › US-820: KPI Summary Display › AC-1,2,3: Shipper views KPI metrics on dashboard 
 
-    Error: expect(received).toBe(expected) // Object.is equality
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
 
-    Expected: true
-    Received: false
+      11 |
+      12 | test.describe('US-820: KPI Summary Display', () => {
+    > 13 |   test.beforeEach(async ({ page, context }) => {
+         |        ^
+      14 |     // Login as shipper
+      15 |     await page.goto('/');
+      16 |     await page.fill('[data-testid="email-input"]', 'shipper@test.com');
+        at C:\projects\freightclub\frontend\e2e\tests\us-820-kpi-summary.spec.ts:13:8
 
-      35 |
-      36 |   console.log(`Registration: ${registerRes.status()} - ${testEmail}`)
-    > 37 |   expect(registerRes.ok() || registerRes.status() === 409).toBe(true)
-         |                                                            ^
-      38 |
-      39 |   // Step 2: Navigate to login page (normal flow)
-      40 |   await page.goto('http://localhost:9090/login')
-        at C:\projects\freightclub\frontend\e2e\us-821-shipper-header-e2e.spec.ts:37:60
+    Error: page.fill: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="email-input"]')
+
+
+      14 |     // Login as shipper
+      15 |     await page.goto('/');
+    > 16 |     await page.fill('[data-testid="email-input"]', 'shipper@test.com');
+         |                ^
+      17 |     await page.fill('[data-testid="password-input"]', 'N1kk101!');
+      18 |     await page.click('[data-testid="login-submit-btn"]');
+      19 |
+        at C:\projects\freightclub\frontend\e2e\tests\us-820-kpi-summary.spec.ts:16:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\test-failed-1.png
+    ..\test-results\tests-us-820-kpi-summary-U-461ad-ws-KPI-metrics-on-dashboard-chromium\test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\test-results\us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\video.webm
+    ..\test-results\tests-us-820-kpi-summary-U-461ad-ws-KPI-metrics-on-dashboard-chromium\video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ..\test-results\us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\error-context.md
+    Error Context: ..\test-results\tests-us-820-kpi-summary-U-461ad-ws-KPI-metrics-on-dashboard-chromium\error-context.md
 
     attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
-    ..\test-results\us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\trace.zip
+    ..\test-results\tests-us-820-kpi-summary-U-461ad-ws-KPI-metrics-on-dashboard-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace ..\test-results\us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\trace.zip
+        npx playwright show-trace ..\test-results\tests-us-820-kpi-summary-U-461ad-ws-KPI-metrics-on-dashboard-chromium\trace.zip
 
     ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
-</failure>
+</error>
+</testcase>
+<testcase name="US-820: KPI Summary Display › AC-4: KPI metrics load within 2 seconds" classname="tests\us-820-kpi-summary.spec.ts" time="30.506">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium\video.webm]]
+
+[[ATTACHMENT|tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium\error-context.md]]
+
+[[ATTACHMENT|tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded while running &quot;beforeEach&quot; hook." type="Error">
+<![CDATA[  [chromium] › tests\us-820-kpi-summary.spec.ts:61:3 › US-820: KPI Summary Display › AC-4: KPI metrics load within 2 seconds 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      11 |
+      12 | test.describe('US-820: KPI Summary Display', () => {
+    > 13 |   test.beforeEach(async ({ page, context }) => {
+         |        ^
+      14 |     // Login as shipper
+      15 |     await page.goto('/');
+      16 |     await page.fill('[data-testid="email-input"]', 'shipper@test.com');
+        at C:\projects\freightclub\frontend\e2e\tests\us-820-kpi-summary.spec.ts:13:8
+
+    Error: page.fill: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="email-input"]')
+
+
+      14 |     // Login as shipper
+      15 |     await page.goto('/');
+    > 16 |     await page.fill('[data-testid="email-input"]', 'shipper@test.com');
+         |                ^
+      17 |     await page.fill('[data-testid="password-input"]', 'N1kk101!');
+      18 |     await page.click('[data-testid="login-submit-btn"]');
+      19 |
+        at C:\projects\freightclub\frontend\e2e\tests\us-820-kpi-summary.spec.ts:16:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="US-820: KPI Summary Display › AC-5: Empty state displays when no delivered loads" classname="tests\us-820-kpi-summary.spec.ts" time="30.525">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|tests-us-820-kpi-summary-U-dc0aa-ays-when-no-delivered-loads-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|tests-us-820-kpi-summary-U-dc0aa-ays-when-no-delivered-loads-chromium\video.webm]]
+
+[[ATTACHMENT|tests-us-820-kpi-summary-U-dc0aa-ays-when-no-delivered-loads-chromium\error-context.md]]
+
+[[ATTACHMENT|tests-us-820-kpi-summary-U-dc0aa-ays-when-no-delivered-loads-chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded while running &quot;beforeEach&quot; hook." type="Error">
+<![CDATA[  [chromium] › tests\us-820-kpi-summary.spec.ts:83:3 › US-820: KPI Summary Display › AC-5: Empty state displays when no delivered loads 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      11 |
+      12 | test.describe('US-820: KPI Summary Display', () => {
+    > 13 |   test.beforeEach(async ({ page, context }) => {
+         |        ^
+      14 |     // Login as shipper
+      15 |     await page.goto('/');
+      16 |     await page.fill('[data-testid="email-input"]', 'shipper@test.com');
+        at C:\projects\freightclub\frontend\e2e\tests\us-820-kpi-summary.spec.ts:13:8
+
+    Error: page.fill: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="email-input"]')
+
+
+      14 |     // Login as shipper
+      15 |     await page.goto('/');
+    > 16 |     await page.fill('[data-testid="email-input"]', 'shipper@test.com');
+         |                ^
+      17 |     await page.fill('[data-testid="password-input"]', 'N1kk101!');
+      18 |     await page.click('[data-testid="login-submit-btn"]');
+      19 |
+        at C:\projects\freightclub\frontend\e2e\tests\us-820-kpi-summary.spec.ts:16:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\tests-us-820-kpi-summary-U-dc0aa-ays-when-no-delivered-loads-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\tests-us-820-kpi-summary-U-dc0aa-ays-when-no-delivered-loads-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\tests-us-820-kpi-summary-U-dc0aa-ays-when-no-delivered-loads-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\tests-us-820-kpi-summary-U-dc0aa-ays-when-no-delivered-loads-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\tests-us-820-kpi-summary-U-dc0aa-ays-when-no-delivered-loads-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="US-820: KPI Summary Display › Responsive layout: KPI tiles stack on mobile" classname="tests\us-820-kpi-summary.spec.ts" time="30.447">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|tests-us-820-kpi-summary-U-82170-t-KPI-tiles-stack-on-mobile-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|tests-us-820-kpi-summary-U-82170-t-KPI-tiles-stack-on-mobile-chromium\video.webm]]
+
+[[ATTACHMENT|tests-us-820-kpi-summary-U-82170-t-KPI-tiles-stack-on-mobile-chromium\error-context.md]]
+
+[[ATTACHMENT|tests-us-820-kpi-summary-U-82170-t-KPI-tiles-stack-on-mobile-chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded while running &quot;beforeEach&quot; hook." type="Error">
+<![CDATA[  [chromium] › tests\us-820-kpi-summary.spec.ts:105:3 › US-820: KPI Summary Display › Responsive layout: KPI tiles stack on mobile 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      11 |
+      12 | test.describe('US-820: KPI Summary Display', () => {
+    > 13 |   test.beforeEach(async ({ page, context }) => {
+         |        ^
+      14 |     // Login as shipper
+      15 |     await page.goto('/');
+      16 |     await page.fill('[data-testid="email-input"]', 'shipper@test.com');
+        at C:\projects\freightclub\frontend\e2e\tests\us-820-kpi-summary.spec.ts:13:8
+
+    Error: page.fill: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="email-input"]')
+
+
+      14 |     // Login as shipper
+      15 |     await page.goto('/');
+    > 16 |     await page.fill('[data-testid="email-input"]', 'shipper@test.com');
+         |                ^
+      17 |     await page.fill('[data-testid="password-input"]', 'N1kk101!');
+      18 |     await page.click('[data-testid="login-submit-btn"]');
+      19 |
+        at C:\projects\freightclub\frontend\e2e\tests\us-820-kpi-summary.spec.ts:16:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\tests-us-820-kpi-summary-U-82170-t-KPI-tiles-stack-on-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\tests-us-820-kpi-summary-U-82170-t-KPI-tiles-stack-on-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\tests-us-820-kpi-summary-U-82170-t-KPI-tiles-stack-on-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\tests-us-820-kpi-summary-U-82170-t-KPI-tiles-stack-on-mobile-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\tests-us-820-kpi-summary-U-82170-t-KPI-tiles-stack-on-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="US-820: KPI Summary Display › Responsive layout: KPI tiles in 3-column grid on desktop" classname="tests\us-820-kpi-summary.spec.ts" time="30.461">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|tests-us-820-kpi-summary-U-cf988-in-3-column-grid-on-desktop-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|tests-us-820-kpi-summary-U-cf988-in-3-column-grid-on-desktop-chromium\video.webm]]
+
+[[ATTACHMENT|tests-us-820-kpi-summary-U-cf988-in-3-column-grid-on-desktop-chromium\error-context.md]]
+
+[[ATTACHMENT|tests-us-820-kpi-summary-U-cf988-in-3-column-grid-on-desktop-chromium\trace.zip]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded while running &quot;beforeEach&quot; hook." type="Error">
+<![CDATA[  [chromium] › tests\us-820-kpi-summary.spec.ts:118:3 › US-820: KPI Summary Display › Responsive layout: KPI tiles in 3-column grid on desktop 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      11 |
+      12 | test.describe('US-820: KPI Summary Display', () => {
+    > 13 |   test.beforeEach(async ({ page, context }) => {
+         |        ^
+      14 |     // Login as shipper
+      15 |     await page.goto('/');
+      16 |     await page.fill('[data-testid="email-input"]', 'shipper@test.com');
+        at C:\projects\freightclub\frontend\e2e\tests\us-820-kpi-summary.spec.ts:13:8
+
+    Error: page.fill: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="email-input"]')
+
+
+      14 |     // Login as shipper
+      15 |     await page.goto('/');
+    > 16 |     await page.fill('[data-testid="email-input"]', 'shipper@test.com');
+         |                ^
+      17 |     await page.fill('[data-testid="password-input"]', 'N1kk101!');
+      18 |     await page.click('[data-testid="login-submit-btn"]');
+      19 |
+        at C:\projects\freightclub\frontend\e2e\tests\us-820-kpi-summary.spec.ts:16:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\tests-us-820-kpi-summary-U-cf988-in-3-column-grid-on-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\tests-us-820-kpi-summary-U-cf988-in-3-column-grid-on-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\tests-us-820-kpi-summary-U-cf988-in-3-column-grid-on-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\tests-us-820-kpi-summary-U-cf988-in-3-column-grid-on-desktop-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\tests-us-820-kpi-summary-U-cf988-in-3-column-grid-on-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
 </testcase>
 </testsuite>
 </testsuites>

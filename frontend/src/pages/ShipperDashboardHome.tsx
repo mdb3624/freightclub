@@ -60,10 +60,9 @@ export function ShipperDashboardHome() {
   const notificationItems = notifications?.content ?? []
 
   return (
-    <AppShell maxWidth="6xl">
-      <div className="fc-shell">
-        <div className="zone-main">
-          <div className="zone-widget-slots" data-testid="dashboard-grid">
+    <div className="fc-shell">
+      <div className="zone-main">
+        <div className="zone-widget-slots" data-testid="dashboard-grid">
 
             {/* SLOT_A: Navigation Header + KPI Summary */}
             <div className="slot-a">
@@ -406,6 +405,6 @@ export function ShipperDashboardHome() {
           </div>
         </div>
       </div>
-    </AppShell>
+    </div>
   )
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
-import { LogOut, User, Settings } from 'lucide-react'
+import { LogOut, User, Settings, Bell } from 'lucide-react'
 
 /**
  * ShipperPageHeader: Mandatory header for all Shipper pages
@@ -114,13 +114,13 @@ export function ShipperPageHeader() {
         <p style={{ margin: 0, fontWeight: 'var(--font-weight-semibold)' }}>{lastUpdated}</p>
       </div>
 
-      {/* Right: Avatar + Dropdown */}
-      <div style={{ position: 'relative' }}>
+      {/* Right: Notification Bell + Avatar */}
+      <div style={{ display: 'flex', gap: 'var(--space-sm)', alignItems: 'center' }}>
+        {/* Notification Bell */}
         <button
-          data-testid="avatar-button"
-          onClick={() => setShowDropdown(!showDropdown)}
-          aria-haspopup="true"
-          aria-expanded={showDropdown}
+          data-testid="notification-bell"
+          onClick={() => navigate('/notifications')}
+          aria-label="Notifications"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -128,17 +128,54 @@ export function ShipperPageHeader() {
             width: '40px',
             height: '40px',
             borderRadius: 'var(--radius-full)',
-            backgroundColor: 'var(--color-brand-bronze)',
-            color: 'var(--color-surface-white)',
+            backgroundColor: 'transparent',
+            color: 'var(--color-text-primary)',
             border: 'none',
-            fontSize: 'var(--font-size-sm)',
-            fontWeight: 'var(--font-weight-semibold)',
             cursor: 'pointer',
+            position: 'relative',
           }}
-          title={isAuthenticated ? user?.email : 'Login'}
+          title="Notifications"
         >
-          {isAuthenticated && user ? getInitials(user.firstName, user.lastName) : '?'}
+          <Bell size={20} />
+          {/* Unread badge */}
+          <span
+            style={{
+              position: 'absolute',
+              top: '4px',
+              right: '4px',
+              width: '8px',
+              height: '8px',
+              backgroundColor: 'var(--color-critical)',
+              borderRadius: 'var(--radius-full)',
+            }}
+          />
         </button>
+
+        {/* Avatar Button */}
+        <div style={{ position: 'relative' }}>
+          <button
+            data-testid="avatar-button"
+            onClick={() => setShowDropdown(!showDropdown)}
+            aria-haspopup="true"
+            aria-expanded={showDropdown}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px',
+              borderRadius: 'var(--radius-full)',
+              backgroundColor: 'var(--color-brand-bronze)',
+              color: 'var(--color-surface-white)',
+              border: 'none',
+              fontSize: 'var(--font-size-sm)',
+              fontWeight: 'var(--font-weight-semibold)',
+              cursor: 'pointer',
+            }}
+            title={isAuthenticated ? user?.email : 'Login'}
+          >
+            {isAuthenticated && user ? getInitials(user.firstName, user.lastName) : '?'}
+          </button>
 
         {/* Dropdown Menu */}
         {showDropdown && isAuthenticated && (
@@ -253,6 +290,7 @@ export function ShipperPageHeader() {
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   )

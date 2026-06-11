@@ -2,6 +2,7 @@ package com.freightclub.modules.load.domain;
 
 import com.freightclub.domain.Load;
 import com.freightclub.domain.LoadStatus;
+import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
@@ -17,6 +18,7 @@ import java.util.Objects;
  * - On-time = deliveredAt <= deliveryTo
  * - Returns null if no delivered loads exist
  */
+@Service
 public class OnTimeRateCalculator {
 
   public BigDecimal calculate(Collection<Load> loads) {

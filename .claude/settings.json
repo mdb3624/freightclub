@@ -8,7 +8,9 @@
       "Bash(npm run *)",
       "Bash(docker compose *)",
       "Bash(rm -rf test-results/evidence/*)",
-      "mcp__browser-use__browser_scroll"
+      "mcp__browser-use__browser_scroll",
+      "mcp__MCP_DOCKER__browser_navigate",
+      "mcp__MCP_DOCKER__browser_snapshot"
     ],
     "deny": [
       "Read(.env)",

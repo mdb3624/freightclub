@@ -4,7 +4,7 @@ import { useKPISummary } from '@/features/shipper/hooks/useKPISummary';
 import { KPITile } from './KPITile';
 
 export const KPISummaryPanel: React.FC = () => {
-  const { data, isLoading, error } = useKPISummary();
+  const { data, isLoading } = useKPISummary();
 
   // Empty state: no delivered loads yet
   if (data?.isEmpty) {
@@ -92,7 +92,7 @@ export const KPISummaryPanel: React.FC = () => {
         <KPITile
           icon={TrendingUp}
           label="On-Time Rate"
-          value={data?.onTimePercentage?.toFixed(1)}
+          value={data?.onTimePercentage ? data.onTimePercentage.toFixed(1) : null}
           unit="%"
           dataTestId="kpi-tile-ontime"
           loading={isLoading}
@@ -101,7 +101,7 @@ export const KPISummaryPanel: React.FC = () => {
         <KPITile
           icon={DollarSign}
           label="Cost per Mile"
-          value={data?.costPerMile?.toFixed(2)}
+          value={data?.costPerMile ? data.costPerMile.toFixed(2) : null}
           unit="$"
           dataTestId="kpi-tile-cost-per-mile"
           loading={isLoading}

@@ -2,6 +2,7 @@ package com.freightclub.modules.load.domain;
 
 import com.freightclub.domain.Load;
 import com.freightclub.domain.LoadStatus;
+import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
@@ -16,6 +17,7 @@ import java.util.Objects;
  * - Rounds to 2 decimal places (e.g., $2.45)
  * - Returns null if no delivered loads exist
  */
+@Service
 public class CostEfficiencyCalculator {
 
   public BigDecimal calculate(Collection<Load> loads) {

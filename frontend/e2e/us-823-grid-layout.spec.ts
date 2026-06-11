@@ -33,21 +33,7 @@ test.describe('US-823: Shipper Dashboard Grid Layout', () => {
   test.beforeEach(async ({ page, context }) => {
     // Clear cookies for fresh state
     await context.clearCookies();
-    // Set up tracing for failures
-    await context.tracing.start({
-      screenshots: true,
-      snapshots: true,
-      sources: true,
-    });
-  });
-
-  test.afterEach(async ({ context }, testInfo) => {
-    // Save trace on failure
-    if (testInfo.status !== 'passed') {
-      await context.tracing.stop({
-        path: `test-results/trace-${testInfo.title.replace(/\s+/g, '-')}-${Date.now()}.zip`,
-      });
-    }
+    // Tracing is configured in playwright.config.ts
   });
 
   // AC-1: Dashboard Landing Page

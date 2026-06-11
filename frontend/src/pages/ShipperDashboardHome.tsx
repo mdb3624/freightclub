@@ -405,6 +405,5 @@ export function ShipperDashboardHome() {
           </div>
         </div>
       </div>
-    </div>
   )
 }

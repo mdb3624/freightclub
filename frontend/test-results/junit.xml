@@ -1,0 +1,132 @@
+<testsuites id="" name="" tests="3" failures="2" skipped="0" errors="0" time="34.925519">
+<testsuite name="shipper-dashboard-home.spec.ts" timestamp="2026-06-11T03:10:41.790Z" hostname="chromium" tests="3" failures="2" skipped="0" time="24.849" errors="0">
+<testcase name="Shipper Dashboard Home Golden Path (US-760/US-761/US-762) › US-761 AC-1: dashboard home displays KPI tiles backed by the summary endpoint" classname="shipper-dashboard-home.spec.ts" time="12.198">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|shipper-dashboard-home-Shi-075a1-ked-by-the-summary-endpoint-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-dashboard-home-Shi-075a1-ked-by-the-summary-endpoint-chromium\video.webm]]
+
+[[ATTACHMENT|shipper-dashboard-home-Shi-075a1-ked-by-the-summary-endpoint-chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-dashboard-home-Shi-075a1-ked-by-the-summary-endpoint-chromium\trace.zip]]
+]]>
+</system-out>
+<system-err>
+<![CDATA[Failed to delete users 433d7c64-1eee-4006-9d58-03f141429257: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/433d7c64-1eee-4006-9d58-03f141429257","timestamp":"2026-06-11T03:10:53.984699678Z"}
+]]>
+</system-err>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [chromium] › shipper-dashboard-home.spec.ts:30:3 › Shipper Dashboard Home Golden Path (US-760/US-761/US-762) › US-761 AC-1: dashboard home displays KPI tiles backed by the summary endpoint 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="dashboard-grid"]')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('[data-testid="dashboard-grid"]')
+
+
+       at page-objects\ShipperDashboardHomePageObject.ts:40
+
+      38 |
+      39 |   async waitForGridReady() {
+    > 40 |     await expect(this.grid).toBeVisible({ timeout: 10000 })
+         |                             ^
+      41 |   }
+      42 |
+      43 |   async searchLane(origin: string, destination: string) {
+        at ShipperDashboardHomePageObject.waitForGridReady (C:\projects\freightclub\frontend\e2e\page-objects\ShipperDashboardHomePageObject.ts:40:29)
+        at C:\projects\freightclub\frontend\e2e\shipper-dashboard-home.spec.ts:44:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-home-Shi-075a1-ked-by-the-summary-endpoint-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-home-Shi-075a1-ked-by-the-summary-endpoint-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-dashboard-home-Shi-075a1-ked-by-the-summary-endpoint-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-home-Shi-075a1-ked-by-the-summary-endpoint-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-dashboard-home-Shi-075a1-ked-by-the-summary-endpoint-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="Shipper Dashboard Home Golden Path (US-760/US-761/US-762) › US-762 AC-1: carrier search panel performs a lane search and renders results state" classname="shipper-dashboard-home.spec.ts" time="12.098">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|shipper-dashboard-home-Shi-24eeb-h-and-renders-results-state-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-dashboard-home-Shi-24eeb-h-and-renders-results-state-chromium\video.webm]]
+
+[[ATTACHMENT|shipper-dashboard-home-Shi-24eeb-h-and-renders-results-state-chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-dashboard-home-Shi-24eeb-h-and-renders-results-state-chromium\trace.zip]]
+]]>
+</system-out>
+<system-err>
+<![CDATA[Failed to delete users e42e2e44-96b9-4bbf-ab2d-b575ea25d946: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/e42e2e44-96b9-4bbf-ab2d-b575ea25d946","timestamp":"2026-06-11T03:11:07.894978635Z"}
+]]>
+</system-err>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [chromium] › shipper-dashboard-home.spec.ts:60:3 › Shipper Dashboard Home Golden Path (US-760/US-761/US-762) › US-762 AC-1: carrier search panel performs a lane search and renders results state 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="dashboard-grid"]')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('[data-testid="dashboard-grid"]')
+
+
+       at page-objects\ShipperDashboardHomePageObject.ts:40
+
+      38 |
+      39 |   async waitForGridReady() {
+    > 40 |     await expect(this.grid).toBeVisible({ timeout: 10000 })
+         |                             ^
+      41 |   }
+      42 |
+      43 |   async searchLane(origin: string, destination: string) {
+        at ShipperDashboardHomePageObject.waitForGridReady (C:\projects\freightclub\frontend\e2e\page-objects\ShipperDashboardHomePageObject.ts:40:29)
+        at C:\projects\freightclub\frontend\e2e\shipper-dashboard-home.spec.ts:74:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-home-Shi-24eeb-h-and-renders-results-state-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-home-Shi-24eeb-h-and-renders-results-state-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-dashboard-home-Shi-24eeb-h-and-renders-results-state-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-home-Shi-24eeb-h-and-renders-results-state-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-dashboard-home-Shi-24eeb-h-and-renders-results-state-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="Shipper Dashboard Home Golden Path (US-760/US-761/US-762) › US-760: dashboard home requires authentication" classname="shipper-dashboard-home.spec.ts" time="0.553">
+</testcase>
+</testsuite>
+</testsuites>

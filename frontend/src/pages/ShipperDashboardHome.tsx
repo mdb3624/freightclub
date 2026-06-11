@@ -266,7 +266,7 @@ export function ShipperDashboardHome() {
             </div>
 
             {/* SLOT_C: Carrier Search (col-5) + Messages (col-7) */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-lg)' }}>
+            <div className="slot-c" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-lg)' }}>
               {/* Carrier Search Panel */}
               <div data-testid="carrier-search-panel" className="panel">
                 <div className="panel-header">

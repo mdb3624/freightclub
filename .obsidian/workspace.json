@@ -181,6 +181,11 @@
   },
   "active": "60bffee8747cbd54",
   "lastOpenFiles": [
+    "docs/hfd/US-821_Shipper_Header_Navigation_Design_Spec.md",
+    "docs/hfd/US-821_Shipper_Header_Navigation_Design_Spec.md.tmp.12828.2e7c1bc202f4",
+    "docs/hfd/US-820_KPI_Summary_Design_Spec_FINAL.md",
+    "docs/business/stories/US-821_Shipper_Header_Navigation.md",
+    "docs/business/stories/US-820_KPI_Summary_Display.md.tmp.12828.0e92e5358216",
     "backend/target/site/jacoco/com.freightclub.storage/LocalStorageService.java.html",
     "backend/target/site/jacoco/com.freightclub.storage/LocalStorageService.html",
     "backend/target/site/jacoco/com.freightclub.storage/index.source.html",
@@ -189,9 +194,6 @@
     "backend/target/site/jacoco/jacoco-sessions.html",
     "backend/target/site/jacoco/index.html",
     "backend/target/site/jacoco/com.freightclub.profile.service/UserCostProfileValidator.java.html",
-    "backend/target/site/jacoco/com.freightclub.profile.service/UserCostProfileValidator.html",
-    "backend/target/site/jacoco/com.freightclub.profile.service/index.source.html",
-    "backend/target/site/jacoco/com.freightclub.profile.service/index.html",
     "backend/target/site/jacoco/jacoco-resources/greenbar.gif",
     "backend/target/site/jacoco/jacoco-resources/redbar.gif",
     "backend/target/site/jacoco/jacoco-resources/branchpc.gif",
@@ -224,8 +226,6 @@
     "frontend/test-results/evidence/US-821-EVIDENCE.md",
     "frontend/test-results/us-821-shipper-dashboard-e-8dd93-hboard-Refactoring-Evidence-chromium/error-context.md",
     "frontend/playwright-report/data/71c9bc7f379a39b5c01cc7857f5d4961c08eff88.md",
-    "frontend/playwright-report/data/cfb9fd2d41a8c9a1ca8ea51cc43a303c2107814a.md",
-    "frontend/test-results/us-821-shipper-dashboard-e-543a5-board-template-architecture-chromium/error-context.md",
-    "frontend/playwright-report/data/0c832903950db6a57fb987d0202c524f49bfc6f6.md"
+    "frontend/playwright-report/data/cfb9fd2d41a8c9a1ca8ea51cc43a303c2107814a.md"
   ]
 }

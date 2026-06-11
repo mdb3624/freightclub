@@ -157,6 +157,24 @@ This rule applies to: BA, ARCH, HFD, CODER, REVIEWER, LIBRARIAN, and all automat
 - **Neon `neondb_owner` auth**: JDBC URL must include `channel_binding=require` for `neondb_owner` connections. Without it, authentication fails even with the correct password.
 - **Flyway vs runtime credentials**: Production uses `DB_USERNAME=neondb_owner` (required for `ALTER TABLE`). `spring.flyway.user/password/url` override properties allow Flyway to use admin credentials independently. All production secrets come from `.env.prod` → `.env.cloudrun.yaml` → Secret Manager (verify Secret Manager versions match `.env.prod`).
 
+## 🧪 Test Environment Setup
+
+**Local Testing with Maven:**
+- Test profile (`application-test.yml`) reads from `.env.test` file in project root (in `.gitignore`, not committed)
+- **Critical:** `spring-dotenv` library requires explicit `spring.dotenv.file: .env.test` property in `application-test.yml`
+- `.env.test` must contain: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `APP_JWT_SECRET`, `DEFAULT_TENANT_ID`
+- Default test database: `localhost:5433` with user `freightclub_runtime` / password `freightclub`
+- Variable substitution: `${DB_USERNAME}` in YAML gets replaced by spring-dotenv from `.env.test`
+- **Do NOT use** `spring.config.import: optional:file:.env.test` (Spring Cloud Config syntax) — use `spring.dotenv.file` instead
+- Run with: `cd backend && mvn clean test` (will auto-load `.env.test`)
+
+**Docker Test Execution:**
+- `docker-compose.test.yml` provides its own environment variables to `backend-tester` service
+- Overrides `.env.test` — uses Docker-internal network `test-db:5432` instead of localhost
+- Run with: `docker compose -f docker-compose.test.yml up backend-tester`
+
+See `TEST_ENVIRONMENT.md` for full setup and troubleshooting guide.
+
 ## ⚠️ Enforcement
 - Role documents override user convenience.
 - If a request asks you to skip a Gate (e.g., "Code this without a story"), you MUST reject the request and cite the **Sequential Gate Protocol** in `docs/standards/Definition_of_Done.md`.

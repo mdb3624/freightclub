@@ -181,6 +181,7 @@
   },
   "active": "60bffee8747cbd54",
   "lastOpenFiles": [
+    "TEST_ENVIRONMENT.md",
     "frontend/vite.config.ts.timestamp-1781179385264-b0eba66e124d.mjs",
     "frontend/src/features/shipper/components/__tests__/KPISummaryPanel.test.tsx.tmp.12828.78580e340ce4",
     "frontend/vite.config.ts.timestamp-1781179352915-e276362a5dfa3.mjs",
@@ -200,7 +201,6 @@
     "backend/target/site/jacoco/jacoco-resources/sort.gif",
     "backend/target/site/jacoco/jacoco-resources/session.gif",
     "backend/target/test-classes/com/freightclub/service/SmsNotificationServiceTest.class",
-    "backend/target/test-classes/com/freightclub/service/ShipperServiceTest$IsOwner.class",
     "backend/target/site/jacoco/jacoco-resources/source.gif",
     "backend/target/classes/db/migration/MIGRATION_CHECKLIST.md",
     "docs/architecture/DESIGN_US-820_KPI_Summary.md",

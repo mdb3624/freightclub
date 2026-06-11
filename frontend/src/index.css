@@ -16,6 +16,83 @@
    ============================================================ */
 
 :root {
+  /* ============ COMPOSITE FRAMEWORK TOKENS (SYSTEM_BLUEPRINT.md §2) ============ */
+
+  /* Primary Palette */
+  --color-canvas: #EFEBE0;
+  --color-surface-white: #FFFFFF;
+  --color-surface-light: #F8F9FB;
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #4A5568;
+  --color-text-tertiary: #636E72;
+
+  /* Semantic Status Colors */
+  --color-success: #27AE60;
+  --color-warning: #F39C12;
+  --color-critical: #E74C3C;
+  --color-info: #3498DB;
+
+  /* Brand Bronze */
+  --color-brand-bronze: #B08D57;
+  --color-brand-bronze-light: #C9A46A;
+  --color-brand-bronze-dark: #8C6D3F;
+  --color-brand-bronze-border: #7A5F3A;
+
+  /* Neutral Greys */
+  --color-border-primary: #D0D0D0;
+  --color-border-secondary: #E8E3D8;
+  --color-divider-light: #D0CCC4;
+  --color-interactive-bg: #F0F0F0;
+
+  /* Borders */
+  --border-widget: 1px solid var(--color-border-primary);
+  --border-divider: 1px solid var(--color-border-secondary);
+  --border-focus: 2px solid var(--color-brand-bronze);
+  --border-subtle: 1px dashed var(--color-divider-light);
+
+  /* Shadows */
+  --shadow-subtle: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-header: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-button-inset: inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2);
+  --shadow-button-outer: 0 2px 5px rgba(0,0,0,0.35);
+
+  /* Border Radius */
+  --radius-widget: 8px;
+  --radius-input: 4px;
+  --radius-button: 6px;
+  --radius-full: 50%;
+
+  /* Spacing (8px Grid Rule) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* Typography */
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Inter', sans-serif;
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 56px;
+
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-heavy: 900;
+
+  /* Layout Dimensions */
+  --header-height: 64px;
+  --sidebar-width-expanded: 240px;
+  --sidebar-width-collapsed: 160px;
+  --action-zone-width: 280px;
+  --table-row-height: 48px;
+
+  /* ============ LEGACY THEME TOKENS (for .legacy-dark) ============ */
   --black:   #0a0c10;
   --surface: #111520;
   --card:    #161c2d;
@@ -134,3 +211,190 @@
 
 /* Skeleton shimmer on dark */
 .legacy-dark .animate-pulse { background-color: var(--surface) !important; }
+
+/* ============================================================
+   COMPOSITE FRAMEWORK COMPONENTS (SYSTEM_BLUEPRINT.md §3.5)
+   ============================================================ */
+
+/* Shell & Layout Grid */
+.fc-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.zone-main {
+  flex: 1;
+  overflow: auto;
+}
+
+.zone-widget-slots {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--space-lg);
+  padding: var(--space-xl);
+}
+
+.slot-a { grid-column: 1 / -1; }      /* Full width */
+.slot-b { grid-column: 1 / span 8; }  /* 8 columns */
+.slot-c { grid-column: 9 / -1; }      /* 4 columns */
+
+@media (max-width: 1024px) {
+  .slot-b { grid-column: 1 / -1; }
+  .slot-c { grid-column: 1 / -1; }
+}
+
+/* Panel (Universal Widget Container) */
+.panel {
+  background: var(--color-surface-white);
+  border: var(--border-widget);
+  border-radius: var(--radius-widget);
+  box-shadow: var(--shadow-subtle);
+  padding: var(--space-lg);
+  transition: box-shadow 200ms ease;
+}
+
+.panel:hover {
+  box-shadow: var(--shadow-elevated);
+}
+
+.panel-header {
+  margin-bottom: var(--space-lg);
+}
+
+.panel-title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-xs);
+}
+
+.panel-subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+.panel-content {
+  /* Content flows naturally */
+}
+
+/* Widget Grid (Multiple widgets in one panel) */
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-lg);
+}
+
+/* Individual Widget */
+.widget {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 140px;
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-widget);
+  background: var(--color-surface-white);
+}
+
+.widget-number {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-heavy);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.widget-number.success { color: var(--color-success); }
+.widget-number.warning { color: var(--color-warning); }
+.widget-number.critical { color: var(--color-critical); }
+
+.widget-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-secondary);
+}
+
+/* Data Table */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table thead {
+  background: var(--color-surface-light);
+  border-bottom: var(--border-divider);
+}
+
+.data-table th {
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.05em;
+}
+
+.data-table tbody tr {
+  height: var(--table-row-height);
+  border-bottom: var(--border-divider);
+}
+
+.data-table tbody tr:hover {
+  background: var(--color-surface-light);
+}
+
+.data-table td {
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-input);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+}
+
+.status-badge.success {
+  background: rgba(39, 174, 96, 0.1);
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+}
+
+.status-badge.warning {
+  background: rgba(243, 156, 18, 0.1);
+  color: var(--color-warning);
+  border: 1px solid var(--color-warning);
+}
+
+.status-badge.critical {
+  background: rgba(231, 76, 60, 0.1);
+  color: var(--color-critical);
+  border: 1px solid var(--color-critical);
+}
+
+/* Bronze CTA Button Helper */
+.btn-bronze {
+  background: linear-gradient(180deg, var(--color-brand-bronze-light) 0%, var(--color-brand-bronze) 45%, var(--color-brand-bronze-dark) 100%);
+  box-shadow: var(--shadow-button-inset), var(--shadow-button-outer);
+  border: 1px solid var(--color-brand-bronze-border);
+  color: var(--color-surface-white);
+  transition: opacity 200ms ease;
+}
+
+.btn-bronze:hover {
+  opacity: 0.9;
+}
+
+.btn-bronze:active {
+  opacity: 0.8;
+}

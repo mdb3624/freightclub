@@ -1,0 +1,62 @@
+business_analysis_task:
+  description: >
+    Identify the target logistics actor (SHIPPER, TRUCKER, ADMIN). Formulate the user story value statement
+    and document Gherkin success criteria. Initialize the row-by-row Field Contract Table by filling out the 'UI Field' column
+    and setting the technical 'Scope flag'.
+  expected_output: >
+    A formalized user story containing a Scope flag, measurable Acceptance Criteria, and an initialized Field Contract Table.
+  agent: business_analyst
+
+architectural_validation_task:
+  description: >
+    Audit the BA story against the Input Acceptance checklist. If passed, lock the story and populate the technical components of the Field Contract Table.
+    CRITICAL ARCHITECTURAL CHECKS:
+    1. Ensure the domain layer relies strictly on Pure Java POJOs/Records (Hexagonal purity).
+    2. Ensure Flyway migration scripts are drafted for every single new `@Entity` class introduced to prevent schema validation crashes.
+    3. Set up explicit RLS policies on new tables, ensuring they use `current_setting('app.current_tenant', true)` with a missing_ok fallback to prevent system startup crashes.
+  expected_output: >
+    A validated, locked technical design specification containing a populated contract table, pure domain models, schema layouts, and matching Flyway DDL scripts.
+  agent: architect
+
+hfd_ui_spec_task:
+  description: >
+    Conduct a row-by-row validation of the Field Contract Table to ensure no missing parameters, duplicate names, or type mismatches.
+    Verify that all commands and paths use strict Windows 11 PowerShell syntax (prohibit Bash tokens like 'export' or '&&').
+    Provide layout specifications matching the targeted aesthetic palette: "Luxury Industrial" dark-mode (#121212) for Carrier Mobile and "Classic Cream & Metallic Bronze" (#EFEBE0) for Shipper Desktop.
+  expected_output: >
+    A signed-off Field Contract Table accompanied by UI design tokens, accessibility (ARIA) definitions, and a Playwright visual verification script.
+  agent: human_factors_designer
+
+code_implementation_task:
+  description: >
+    Validate all inputs from BA, ARCH, and HFD. Once accepted, lock inputs and initiate the Red-Green-Refactor loop.
+    Analyze the requested feature, and cross-reference the active historical debt ledger provided here:
+    ---
+    {historical_debt_context}
+    ---
+    Identify any listed pitfalls related to your target files (such as form ref binding issues, connection pool exhaustion, or RLS gaps) and explicitly write defensive code to ensure these architectural regressions are not re-introduced.
+    Implement the source code without Lombok annotations, applying mandatory soft-delete repository filters and multi-tenant filters via TenantContextHolder.
+    Verify that every UI Field maps exactly to its designated API Parameter and DB Column. Run tests to ensure JaCoCo branch coverage is ≥ 80%.
+    CRITICAL: If inputs are discovered to be broken, do not request manual rewrites; immediately escalate to the LIBRARIAN using the Input Blocker format.
+  expected_output: >
+    A functional feature implementation accompanied by unit/integration test suites, achieving clean compilation and a passing JaCoCo coverage report.
+  agent: coder
+
+review_verification_task:
+  description: >
+    Execute the "Evidence First" Protocol. Confirm a valid visual regression artifact exists at 'test-results/evidence/[story_id]_success.png'.
+    Audit code files against all Hard Gates (ensure RLS policies are active on tables, cyclomatic complexity is ≤ 10, constructor injection is utilized,
+    and no Unix syntax has slipped into documentation or scripts).
+    Verify that backend controller annotations perfectly align with frontend network calls, and ensure no frontend list properties are bound to missing fields in the backend response DTO.
+  expected_output: >
+    A formal code audit verdict. Output 'PASS' if all hard gates and visual match checks clear, or an automatic 'REJECT' outlining the specific constraint failure.
+  agent: reviewer
+
+librarian_merge_task:
+  description: >
+    Perform a complete repository health audit. Verify that Flyway migration script names strictly follow the 'VYYYYMMDD_HHmm__Desc.sql' format.
+    Trace requirement execution links from user story IDs through to test cases. Ensure any active tracking tickets are closed.
+    Generate the permanent sign-off documentation file at 'docs/project/LIBRARIAN_SIGN_OFF_US{###}.md'.
+  expected_output: >
+    A final, verified repository merge approval statement and a completed project sign-off memo markdown file.
+  agent: librarian

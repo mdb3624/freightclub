@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --canvas: #EFEBE0;
+            --panel: #FFFFFF;
+            --bronze-gradient: linear-gradient(180deg, #C9A46A 0%, #8C6D3F 100%);
+            --text-main: #1A1A1A;
+            --text-secondary: #636E72;
+            --border-color: #D0D0D0;
+        }
+
+        body {
+            background-color: var(--canvas);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            padding: 20px;
+            margin: 0;
+        }
+
+        /* Layout */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        /* Widget Containers (Style Guide §3) */
+        .widget {
+            background: var(--panel);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* KPI Specifics (Style Guide §2) */
+        .kpi-row {
+            grid-column: 1 / span 2;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .kpi-value {
+            font-family: 'Sora', sans-serif;
+            font-size: 42px;
+            font-weight: 900;
+            margin: 8px 0;
+        }
+
+        /* Bronze Button (Style Guide §1, §4) */
+        .btn-bronze {
+            background: var(--bronze-gradient);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            width: 100%;
+            text-transform: uppercase;
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.3);
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        /* Progress Bar (Style Guide §4) */
+        .progress-track {
+            background: #E0E0E0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            width: 100px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--bronze-gradient);
+        }
+
+        /* Typography */
+        h1, h2, h3 { font-family: 'Sora', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; }
+        .label { font-size: 11px; color: var(--text-secondary); font-weight: 700; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 11px; color: var(--text-secondary); padding: 12px 0; }
+        td { padding: 15px 0; border-bottom: 1px solid #f0f0f0; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard">
+        <div class="kpi-row">
+            <div class="widget">
+                <div class="label">ACTIVE SHIPMENTS</div>
+                <div class="kpi-value">24</div>
+                <div style="font-size: 12px;">(3 Delayed | 12 In-Transit)</div>
+            </div>
+            <div class="widget">
+                <div class="label">EST. COST/MILE</div>
+                <div class="kpi-value">$2.11</div>
+            </div>
+            <div class="widget">
+                <div class="label">ON-TIME RATE</div>
+                <div class="kpi-value">96%</div>
+            </div>
+        </div>
+
+        <div class="widget">
+            <h3>Shipment Status</h3>
+            <table>
+                <thead><tr><th>Load ID</th><th>Status</th><th>Progress</th></tr></thead>
+                <tbody>
+                    <tr><td>Load #3011</td><td style="color:red">Delayed</td><td><div class="progress-track"><div class="progress-fill" style="width: 70%;"></div></div></td></tr>
+                    <tr><td>Load #3012</td><td style="color:orange">Claimed</td><td><div class="progress-track"><div class="progress-fill" style="width: 40%;"></div></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="widget">
+            <h3>Action Zone</h3>
+            <button class="btn-bronze">Create New Load</button>
+            <button class="btn-bronze">Get A Quote</button>
+        </div>
+    </div>
+
+</body>
+</html>

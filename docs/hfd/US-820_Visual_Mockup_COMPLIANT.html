@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>US-820 KPI Summary - Master Prototype Compliant</title>
+    <style>
+        /**
+         * STYLE GUIDE COMPLIANCE DECLARATION
+         *
+         * All CSS values in this file are derived from:
+         * "Shipper & Administrator Style Guide.md" §1-4
+         *
+         * Color Palette Source: §1 "Classic Cream & Metallic Bronze"
+         * Typography Source: §2 "Typography"
+         * Layout Source: §3 "Layout & Structure"
+         * Elements Source: §4 "Interface Elements"
+         */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* Canvas: Primary Background §1 */
+            background-color: #EFEBE0;
+
+            /* Typography: Sans-serif clean, high-legibility §2 */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Inter', sans-serif;
+
+            /* Typography: Minimum 14px-16px for office viewing §2 */
+            font-size: 16px;
+
+            /* Text Hierarchy: Primary labels dark charcoal §1 */
+            color: #1A1A1A;
+
+            padding: 32px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* HEADING STYLES - Typography §2 */
+        .header {
+            margin-bottom: 48px;
+        }
+
+        .header h1 {
+            /* Typography: Headings bold, uppercase, wide letter-spacing §2 */
+            font-size: 32px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #1A1A1A;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            /* Text Hierarchy: Secondary data muted grey §1 */
+            font-size: 14px;
+            color: #4A5568;
+        }
+
+        /* NAVIGATION TABS - Interface Elements §4 */
+        .tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid #E8E3D8;
+        }
+
+        .tab {
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4A5568;
+            cursor: pointer;
+            transition: all 200ms ease;
+        }
+
+        .tab.active {
+            /* Text Hierarchy: Primary labels dark charcoal §1 */
+            color: #1A1A1A;
+            /* CTA Color: Metallic bronze §1 */
+            border-bottom-color: #B08D57;
+        }
+
+        .tab:hover {
+            color: #1A1A1A;
+        }
+
+        /* GRID LAYOUT - Asymmetric Split Grid §3 */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        /* KPI CARD CONTAINER - Framed Containers §3 */
+        .kpi-card {
+            /* Surface: Crisp white container §1 */
+            background-color: #FFFFFF;
+
+            /* Layout: Framed containers with subtle shadows §3 */
+            border: 1px solid #E8E3D8;
+            border-radius: 6px;
+
+            padding: 24px;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            /* Interaction: Subtle drop shadow §4 */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+
+            transition: all 200ms ease;
+        }
+
+        .kpi-card:hover {
+            /* Interaction Feedback: Clear hover state §4 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* KPI NUMBER - Typography: Large heavy numeric weights §2 */
+        .kpi-number {
+            font-size: 56px;
+            font-weight: 900;
+            line-height: 1.1;
+            color: #1A1A1A;
+            margin-bottom: 8px;
+        }
+
+        /* Status Colors - Master Prototype Reference */
+        .kpi-number.status-good {
+            color: #2ECC71;
+        }
+
+        .kpi-number.status-caution {
+            color: #F39C12;
+        }
+
+        .kpi-number.status-critical {
+            color: #E74C3C;
+        }
+
+        /* KPI LABEL - Typography: Secondary data muted grey §1 */
+        .kpi-label {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #4A5568;
+        }
+
+        /* EMPTY STATE CONTAINER - Surface §1 */
+        .empty-state {
+            /* Surface: Ultra-light cream panels §1 */
+            background-color: #F8F9FB;
+
+            /* Layout: Framed container §3 */
+            border: 1px dashed #D0CCC4;
+            border-radius: 8px;
+
+            padding: 48px;
+            text-align: center;
+            margin-top: 32px;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+        }
+
+        .empty-state-title {
+            /* Typography: Headings bold §2 */
+            font-size: 24px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-bottom: 16px;
+        }
+
+        .empty-state-subtitle {
+            /* Text Hierarchy: Secondary data §1 */
+            font-size: 14px;
+            color: #4A5568;
+            margin-bottom: 32px;
+        }
+
+        /* CTA BUTTON - Action/CTA Color §1, Interface Elements §4 */
+        .cta-button {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 6px;
+
+            /* CTA Color: Rich metallic copper/bronze gradient §1 */
+            border: 1px solid #8C6D3F;
+            background: linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%);
+
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 150ms ease;
+
+            /* Interaction: Dimensional inner shadow and gloss finish §1 */
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25),
+                        inset 0 -1px 2px rgba(0, 0, 0, 0.2),
+                        0 2px 5px rgba(0, 0, 0, 0.35);
+
+            margin-bottom: 16px;
+        }
+
+        .cta-button:hover {
+            /* Interaction Feedback: Darkening on hover §4 */
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25),
+                        inset 0 -1px 2px rgba(0, 0, 0, 0.2),
+                        0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        /* SECONDARY ACTION - Text link */
+        .secondary-action {
+            font-size: 12px;
+            color: #B08D57;
+            text-decoration: none;
+            transition: all 200ms ease;
+        }
+
+        .secondary-action:hover {
+            text-decoration: underline;
+        }
+
+        /* RESPONSIVE BREAKPOINTS - Asymmetric Split Grid §3 */
+        @media (max-width: 767px) {
+            body {
+                padding: 16px;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-number {
+                font-size: 40px;
+            }
+
+            .empty-state {
+                padding: 32px 16px;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* DATA FRESHNESS INDICATOR */
+        .data-freshness {
+            font-size: 12px;
+            color: #636E72;
+            text-align: right;
+            margin-top: 16px;
+        }
+
+        /* COLOR LEGEND - Surface §1 */
+        .color-legend {
+            background: #FFFFFF;
+            border: 1px solid #E8E3D8;
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 32px;
+            font-size: 12px;
+        }
+
+        .legend-item {
+            display: inline-block;
+            margin-right: 24px;
+            margin-bottom: 8px;
+        }
+
+        .legend-badge {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        /* COMPLIANCE FOOTER */
+        .compliance-badge {
+            background: #E8F5E9;
+            border: 1px solid #4CAF50;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 32px;
+            font-size: 11px;
+            color: #2E7D32;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER - Typography §2 -->
+        <div class="header">
+            <h1>Business Health</h1>
+            <p>Real-time overview of your shipments</p>
+        </div>
+
+        <!-- NAVIGATION TABS - Interface Elements §4 -->
+        <div class="tabs">
+            <button class="tab active">Dashboard</button>
+            <button class="tab">Loads</button>
+            <button class="tab">Carriers</button>
+            <button class="tab">Reports</button>
+        </div>
+
+        <!-- STATE 1: WITH DATA -->
+        <div id="withDataState" style="display: block;">
+            <div class="kpi-grid">
+                <!-- Card 1: Active Shipments - Layout §3 -->
+                <div class="kpi-card">
+                    <div class="kpi-number">24</div>
+                    <div class="kpi-label">Active Loads</div>
+                </div>
+
+                <!-- Card 2: On-Time % (Green - Good Performance) -->
+                <div class="kpi-card">
+                    <div class="kpi-number status-good">92.1%</div>
+                    <div class="kpi-label">On-Time Delivery</div>
+                </div>
+
+                <!-- Card 3: Cost Per Mile -->
+                <div class="kpi-card">
+                    <div class="kpi-number">$2.15</div>
+                    <div class="kpi-label">Cost Per Mile</div>
+                </div>
+            </div>
+
+            <div class="data-freshness">
+                Updated just now · Last refresh: 2:34 PM
+            </div>
+        </div>
+
+        <!-- STATE 2: EMPTY STATE -->
+        <div id="emptyState" style="display: none;">
+            <div class="empty-state">
+                <div class="empty-state-icon">🚀</div>
+                <div class="empty-state-title">No active shipments yet.</div>
+                <div class="empty-state-subtitle">
+                    Let's get your first load on the board in 2 minutes.
+                </div>
+                <button class="cta-button">Create Your First Load</button>
+                <div>
+                    <a href="#" class="secondary-action">or view example loads →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLOR LEGEND - Surface §1 -->
+        <div class="color-legend">
+            <strong style="display: block; margin-bottom: 12px; color: #1A1A1A;">On-Time % Status Colors (Master Prototype):</strong>
+            <div class="legend-item">
+                <span class="legend-badge" style="background-color: #2ECC71;"></span>
+                <span>Green (≥90%) — On Schedule</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-badge" style="background-color: #F39C12;"></span>
+                <span>Orange (75-89%) — At Risk</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-badge" style="background-color: #E74C3C;"></span>
+                <span>Red (&lt;75%) — Delayed</span>
+            </div>
+        </div>
+
+        <!-- COMPLIANCE CERTIFICATION -->
+        <div class="compliance-badge">
+            ✅ STYLE GUIDE COMPLIANT: All CSS values derived from "Shipper & Administrator Style Guide.md" §1-4
+            <br />
+            Colors: Canvas #EFEBE0, Primary #1A1A1A, Secondary #4A5568, White #FFFFFF, Bronze #B08D57
+            <br />
+            Typography: Bold uppercase headings, 56px heavy numeric weights, 12px uppercase labels
+        </div>
+
+        <!-- TOGGLE BUTTON -->
+        <div style="margin-top: 32px; text-align: center;">
+            <button onclick="toggleState()" style="
+                padding: 8px 16px;
+                background-color: #B08D57;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 12px;
+            ">
+                Toggle: Show Empty State
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let showingEmptyState = false;
+
+        function toggleState() {
+            showingEmptyState = !showingEmptyState;
+            document.getElementById('withDataState').style.display = showingEmptyState ? 'none' : 'block';
+            document.getElementById('emptyState').style.display = showingEmptyState ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

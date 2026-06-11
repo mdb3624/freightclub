@@ -13,6 +13,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -78,6 +79,54 @@ class CarrierSearchServiceTest {
         service.searchCarriers("tenant-1", "  Mike  ");
 
         verify(userRepository).searchTruckers(any(), eq("Mike"), any());
+    }
+
+    // US-762 AC-1: lane search filters by origin/destination region and optional equipment type
+    @Test
+    void searchCarriersByLane_returnsMatchingCarriers() {
+        String tenantId = "tenant-1";
+        User trucker = makeTrucker("id-1", "Mike", "Johnson", "mike@example.com", EquipmentType.FLATBED);
+        when(userRepository.searchTruckersByLane(eq(tenantId), eq("Midwest"), eq("Northeast"), eq(EquipmentType.FLATBED), any(PageRequest.class)))
+                .thenReturn(List.of(trucker));
+
+        List<CarrierLaneSearchResult> results = service.searchCarriersByLane(tenantId, "Midwest", "Northeast", "FLATBED");
+
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).id()).isEqualTo("id-1");
+        assertThat(results.get(0).companyName()).isEqualTo("Mike Johnson");
+        assertThat(results.get(0).email()).isEqualTo("mike@example.com");
+        assertThat(results.get(0).equipmentTypes()).containsExactly("FLATBED");
+    }
+
+    // US-762 AC-2: equipmentType is optional — null filter passed through to repository
+    @Test
+    void searchCarriersByLane_allowsNullEquipmentType() {
+        when(userRepository.searchTruckersByLane(any(), eq("Midwest"), eq("Northeast"), isNull(), any(PageRequest.class)))
+                .thenReturn(List.of());
+
+        service.searchCarriersByLane("tenant-1", "Midwest", "Northeast", null);
+
+        verify(userRepository).searchTruckersByLane(any(), eq("Midwest"), eq("Northeast"), isNull(), any(PageRequest.class));
+    }
+
+    // US-762 AC-3: blank origin/destination short-circuits without hitting the repository
+    @Test
+    void searchCarriersByLane_returnsEmpty_whenOriginBlank() {
+        List<CarrierLaneSearchResult> results = service.searchCarriersByLane("tenant-1", "  ", "Northeast", null);
+
+        assertThat(results).isEmpty();
+        verify(userRepository, never()).searchTruckersByLane(any(), any(), any(), any(), any());
+    }
+
+    // US-762 AC-4: carriers without an equipment type map to an empty list, not [null]
+    @Test
+    void searchCarriersByLane_mapsNullEquipmentTypeToEmptyList() {
+        User trucker = makeTrucker("id-2", "Jane", "Smith", "jane@test.com", null);
+        when(userRepository.searchTruckersByLane(any(), any(), any(), any(), any())).thenReturn(List.of(trucker));
+
+        List<CarrierLaneSearchResult> results = service.searchCarriersByLane("tenant-1", "Midwest", "Northeast", null);
+
+        assertThat(results.get(0).equipmentTypes()).isEmpty();
     }
 
     private User makeTrucker(String id, String firstName, String lastName, String email, EquipmentType equipmentType) {

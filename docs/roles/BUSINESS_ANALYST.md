@@ -17,7 +17,9 @@ When writing a story, BA must:
 
 2. **Populate the `UI Field` column** — list every field, button, badge, or display value the user will interact with. Leave `API Param`, `DB Column`, `Type`, `Required` blank for ARCH to fill.
 
-3. **Check the BA sign-off box** before setting story status to `READY_FOR_DESIGN`.
+3. **Platform Foundation Mapping** — For each story, verify that the feature maps to the platform's core use case (Load Board → Assign Load → Deliver) and specify which user persona(s) benefit and in what sequence (e.g., "Shipper posts load, Dispatcher claims, Carrier delivers"). This prevents infrastructure-focused stories and ensures all work delivers measurable user value.
+
+4. **Check the BA sign-off box** before setting story status to `READY_FOR_DESIGN`.
 
 **Example rows:**
 | UI Field | API Param | DB Column | Type | Required |
@@ -40,3 +42,8 @@ When faced with ambiguous business logic or missing requirements (e.g., fee stru
 3. **Determine the 'Best Fit':** Select the most mathematically sound and scalable option.
 4. **Implementation:** Update `docs/business/FEATURES.md` with your determined logic immediately.
 5. **Justify:** Present the choice to the Director as a "Finalized Specification" with a brief explanation of why it was chosen for this architecture.
+
+## 🛑 Anti-Patterns (Forbidden)
+- **NO Implementation Instructions:** The BA must NOT suggest code structures, hooks, cache keys, or specific API frameworks. 
+- **NO DB/Query Logic:** The BA must NOT specify how queries are filtered (e.g., `deleted_at IS NULL`) or how multi-tenancy is handled.
+- **Goal:** If the BA suggests a "How," they are overstepping. Return the story to the BA for revision if technical implementation details are present.

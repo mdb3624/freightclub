@@ -1,0 +1,34 @@
+<testsuites id="" name="" tests="7" failures="0" skipped="0" errors="0" time="13.561194000000002">
+<testsuite name="smoke.spec.ts" timestamp="2026-06-05T18:19:43.615Z" hostname="chromium" tests="7" failures="0" skipped="0" time="9.982" errors="0">
+<testcase name="Smoke Tests - Core Functionality › Home page loads with correct title" classname="smoke.spec.ts" time="1.358">
+</testcase>
+<testcase name="Smoke Tests - Core Functionality › Unauthenticated user visiting protected route is redirected to login" classname="smoke.spec.ts" time="1.248">
+</testcase>
+<testcase name="Smoke Tests - Core Functionality › Login page renders with required elements" classname="smoke.spec.ts" time="0.985">
+</testcase>
+<testcase name="Smoke Tests - Core Functionality › Authenticated shipper can access dashboard" classname="smoke.spec.ts" time="1.506">
+<system-err>
+<![CDATA[Failed to delete users 04e1a1ef-2539-43ee-bfed-8e9d6c690630: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/04e1a1ef-2539-43ee-bfed-8e9d6c690630","timestamp":"2026-06-05T18:19:49.339767357Z"}
+]]>
+</system-err>
+</testcase>
+<testcase name="Smoke Tests - Core Functionality › Authenticated trucker can access dashboard" classname="smoke.spec.ts" time="1.553">
+<system-err>
+<![CDATA[Failed to delete users a89f73df-8e42-4807-abac-cd68a4c52585: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/a89f73df-8e42-4807-abac-cd68a4c52585","timestamp":"2026-06-05T18:19:50.920328154Z"}
+]]>
+</system-err>
+</testcase>
+<testcase name="Smoke Tests - Core Functionality › User can logout and is redirected to login" classname="smoke.spec.ts" time="1.787">
+<system-err>
+<![CDATA[Failed to delete users 0d1288c3-630c-4cf7-8b1a-81b4032fcbde: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/0d1288c3-630c-4cf7-8b1a-81b4032fcbde","timestamp":"2026-06-05T18:19:52.721879168Z"}
+]]>
+</system-err>
+</testcase>
+<testcase name="Smoke Tests - Core Functionality › Profile page loads for authenticated user" classname="smoke.spec.ts" time="1.545">
+<system-err>
+<![CDATA[Failed to delete users a3dabf00-dcd1-4aa3-8e10-e1997e138f56: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/a3dabf00-dcd1-4aa3-8e10-e1997e138f56","timestamp":"2026-06-05T18:19:54.275549880Z"}
+]]>
+</system-err>
+</testcase>
+</testsuite>
+</testsuites>

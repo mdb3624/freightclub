@@ -1,8 +1,10 @@
 package com.freightclub.modules.shipper.infrastructure.rest;
 
+import com.freightclub.modules.shipper.application.DashboardSummaryService;
 import com.freightclub.modules.shipper.application.LoadQueryService;
 import com.freightclub.modules.shipper.application.ShipperService;
 import com.freightclub.modules.shipper.domain.ShipperReputation;
+import com.freightclub.modules.shipper.infrastructure.rest.dto.DashboardSummaryResponse;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadListResponse;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadStatsResponse;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +18,19 @@ public class ShipperController {
 
     private final LoadQueryService loadQueryService;
     private final ShipperService shipperService;
+    private final DashboardSummaryService dashboardSummaryService;
 
-    public ShipperController(LoadQueryService loadQueryService, ShipperService shipperService) {
+    public ShipperController(LoadQueryService loadQueryService, ShipperService shipperService,
+                             DashboardSummaryService dashboardSummaryService) {
         this.loadQueryService = loadQueryService;
         this.shipperService = shipperService;
+        this.dashboardSummaryService = dashboardSummaryService;
+    }
+
+    // US-761 AC-1/AC-2/AC-3: dashboard KPI strip (activeShipments, estimatedCostPerMile, onTimeCarrierPct)
+    @GetMapping("/shipper/dashboard-summary")
+    public ResponseEntity<DashboardSummaryResponse> getDashboardSummary() {
+        return ResponseEntity.ok(dashboardSummaryService.getSummary());
     }
 
     @GetMapping("/shipper/loads/stats")

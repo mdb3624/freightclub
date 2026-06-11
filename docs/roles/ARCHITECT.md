@@ -23,6 +23,24 @@ If rejected: BA must resubmit. Re-evaluate when resubmitted.
 
 ---
 
+## 🔄 Platform Reuse Check (Phase 10+)
+
+**Before finalizing domain model design**, verify reusability:
+
+1. **Domain Service Inventory:** Review existing domain services (e.g., `OnTimeRateCalculator`, `CostPerMileCalculator`, `CarrierAffinityService`)
+2. **Duplication Detection:** For each new domain service in your design, confirm it does NOT duplicate logic in existing services
+3. **Consolidation:** If similar calculations exist across multiple stories, design ONE reusable service with multiple use cases
+4. **Traceability:** Document which stories consume which domain services in the design handoff
+
+**Example (Phase 10):**
+- US-820 (KPI Summary) needs on-time rate → Use `OnTimeRateCalculator`
+- US-821 (Status List) also displays on-time rate → Reuse same `OnTimeRateCalculator`, don't create a duplicate
+- If rate calculation varies by story, add a parameter to `OnTimeRateCalculator` instead of creating `OnTimeRateCalculator_v2`
+
+**Rejection Rule:** If your design introduces duplicate domain logic, REJECT and consolidate before handing to CODER.
+
+---
+
 ## Core Rules
 
 - Must use `VARCHAR(36)` for all IDs.

@@ -1,0 +1,12 @@
+/* Shell Grid Pattern */
+.shell-container { display: grid; grid-template-columns: 240px 1fr; }
+.zone-main { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+/* Responsive Breaks */
+@media (max-width: 768px) {
+    .shell-container { grid-template-columns: 1fr; }
+    .zone-main { grid-template-columns: 1fr; }
+}
+
+/* Global Tokens (Imports from Style Guide) */
+:root { --card-bg: #FFFFFF; --shadow: 0 2px 4px rgba(0,0,0,0.05); }

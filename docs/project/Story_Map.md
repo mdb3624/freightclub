@@ -117,6 +117,9 @@
 | US-715 | **Shipper Dashboard (Load Summary & Management)** | **✅ COMPLETED** | **7** | **US-101, US-103** | **✅ RLS, ✅ No-Lombok, ✅ NFR-504 (2m TTL)** |
 | US-714 | Trucker Onboarding Checklist (Pre-Claim Gate) | READY_FOR_DESIGN | 7 | US-101, US-701 | ✅ RLS, ✅ No-Lombok |
 | US-712 | View Shipper Public Profile (Payment Speed, Rating) | MIGRATION_PENDING | 7b | US-102, US-502 | ✅ NFR-504 (1h TTL), ✅ Avg Payment Speed calc (90-day) |
+| US-760 | Shipper Dashboard Home (KPI Tiles, Quick Actions, Carrier Search Panel, Status Feed) | **READY FOR REVIEWER RE-AUDIT** | 7 | US-761, US-762, US-715, US-707-v2 | ✅ HFE REWORK COMPLETE 2026-06-08 — All 8 Visual Integrity Gate corrections applied: (1) KPI `text-4xl font-black` + `UPPERCASE tracking-widest` labels, (2) lucide-react icons on all QAP buttons, (3) right-zone QAP duplication (Persistent Redundancy Framework), (4) Shipment Status progress bars (metallic bronze fill), (5) `gap-3`/`p-4` density, (6) `shadow-md` panel depth, (7) circular initials badge with `border-2 border-shipper-accent` ring in nav, (8) `dashboard/shipper` is now the canonical post-login route. E2E: **3 passed (7.8s)**. Evidence: `test-results/evidence/us-761-ac1-kpi-tiles.png`, `us-762-ac1-carrier-lane-search.png`. |
+| US-761 | Dashboard Summary Aggregate Endpoint (Est. Cost/Mile, On-Time Carrier %) | **READY FOR REVIEWER RE-AUDIT** | 7 | US-715 | ✅ Backend GREEN — unchanged. Unblocked by US-760 visual compliance restore. |
+| US-762 | Carrier Search Lane Extension (origin/destination/equipmentType params) | **READY FOR REVIEWER RE-AUDIT** | 7 | US-707-v2 | ✅ Backend GREEN — unchanged. Unblocked by US-760 visual compliance restore. |
 
 ---
 

@@ -23,6 +23,7 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 * ❌ **Complexity:** Any method with cyclomatic complexity > 10.
 * ❌ **Test Coverage:** Backend branch coverage < 80% (JaCoCo).
 * ❌ *(Phase 7+)* GET endpoint without `@Cacheable` or missing `TenantContextHolder.getTenantId()`.
+* ❌ *(Phase 10+)* **Platform Integrity Violation:** Same domain logic implemented in multiple services or classes (duplicate calculations, filters, or transformations). Single source of truth must be enforced.
 
 ## 📋 Review Checklist
 

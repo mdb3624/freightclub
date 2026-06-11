@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreightClub Shipper Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Inter', sans-serif;
+            background-color: #EFEBE0;
+            color: #1A1A1A;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* ============ HEADER ============ */
+        .zone-header {
+            height: 64px;
+            background: #FFFFFF;
+            border-bottom: 1px solid #E8E3D8;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1A1A1A;
+        }
+
+        .header-title {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1A1A1A;
+        }
+
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #F0F0F0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 200ms ease;
+        }
+
+        .header-icon:hover {
+            background: #E8E8E8;
+        }
+
+        .header-profile {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #B08D57, #9A7548);
+            border: 2px solid #7A5F3A;
+            cursor: pointer;
+        }
+
+        /* ============ SIDEBAR NAVIGATION ============ */
+        .sidebar {
+            width: 240px;
+            background: #EFEBE0;
+            border-right: 1px solid #E8E3D8;
+            padding: 24px;
+            min-height: calc(100vh - 64px);
+            position: sticky;
+            top: 64px;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 200ms ease;
+            font-size: 14px;
+            color: #4A5568;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: #1A1A1A;
+        }
+
+        .nav-item.active {
+            background: #FFFFFF;
+            color: #1A1A1A;
+            font-weight: 600;
+            border-left: 3px solid #B08D57;
+            padding-left: 13px;
+        }
+
+        /* ============ MAIN CONTENT ============ */
+        .container {
+            display: flex;
+            height: calc(100vh - 64px);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            background: #EFEBE0;
+        }
+
+        /* ============ KPI SECTION ============ */
+        .kpi-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: #4A5568;
+            margin-bottom: 16px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: #FFFFFF;
+            border: 1px solid #D0D0D0;
+            border-radius: 8px;
+            padding: 24px;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 200ms ease;
+        }
+
+        .kpi-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .kpi-number {
+            font-size: 56px;
+            font-weight: 900;
+            line-height: 1.1;
+            color: #1A1A1A;
+            margin-bottom: 8px;
+        }
+
+        .kpi-number.success {
+            color: #27AE60;
+        }
+
+        .kpi-number.warning {
+            color: #F39C12;
+        }
+
+        .kpi-number.critical {
+            color: #E74C3C;
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #4A5568;
+        }
+
+        .gauge-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 16px;
+        }
+
+        .gauge {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(#27AE60 0deg 270deg, #E0E0E0 270deg 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .gauge::before {
+            content: '';
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+            background: #FFFFFF;
+            border: 1px solid #D0D0D0;
+        }
+
+        .gauge-text {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .gauge-value {
+            font-size: 28px;
+            font-weight: 900;
+            color: #27AE60;
+        }
+
+        /* ============ DATA TABLE ============ */
+        .table-section {
+            margin-bottom: 32px;
+        }
+
+        .table-container {
+            background: #FFFFFF;
+            border: 1px solid #D0D0D0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #F8F9FB;
+            border-bottom: 1px solid #E8E3D8;
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #636E72;
+            letter-spacing: 0.05em;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #E8E3D8;
+            height: 48px;
+        }
+
+        tbody tr:hover {
+            background: #F8F9FB;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        td {
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #1A1A1A;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-delivered {
+            background: #E8F5E9;
+            color: #27AE60;
+            border: 1px solid #27AE60;
+        }
+
+        .status-in-transit {
+            background: #FEF3E2;
+            color: #F39C12;
+            border: 1px solid #F39C12;
+        }
+
+        .status-delayed {
+            background: #FADBD8;
+            color: #E74C3C;
+            border: 1px solid #E74C3C;
+        }
+
+        .td-id {
+            font-weight: 600;
+            color: #1A1A1A;
+        }
+
+        /* ============ RATING DISPLAY ============ */
+        .rating {
+            display: flex;
+            gap: 2px;
+        }
+
+        .star {
+            font-size: 12px;
+            color: #F39C12;
+        }
+
+        .star.empty {
+            color: #D0D0D0;
+        }
+
+        /* ============ ACTION ZONE (RIGHT SIDEBAR) ============ */
+        .action-zone {
+            width: 280px;
+            background: #FFFFFF;
+            border-left: 1px solid #D0D0D0;
+            padding: 24px;
+            overflow-y: auto;
+            min-height: 100%;
+        }
+
+        .action-zone-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1A1A1A;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            letter-spacing: 0.05em;
+        }
+
+        .action-item {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #E8E3D8;
+        }
+
+        .action-item:last-child {
+            border-bottom: none;
+        }
+
+        .action-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #636E72;
+            margin-bottom: 8px;
+            letter-spacing: 0.05em;
+        }
+
+        .action-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 8px;
+        }
+
+        .action-button {
+            display: block;
+            width: 100%;
+            padding: 8px 12px;
+            background: linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%);
+            color: white;
+            border: 1px solid #8C6D3F;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 200ms ease;
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.25),
+                        inset 0 -1px 2px rgba(0,0,0,0.2),
+                        0 2px 5px rgba(0,0,0,0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .action-button:hover {
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.25),
+                        inset 0 -1px 2px rgba(0,0,0,0.2),
+                        0 4px 12px rgba(0,0,0,0.4);
+            transform: translateY(-1px);
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 1200px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .action-zone {
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+                padding: 16px;
+                border-right: none;
+                border-bottom: 1px solid #E8E3D8;
+                display: flex;
+                overflow-x: auto;
+            }
+
+            .nav-item {
+                white-space: nowrap;
+                margin-bottom: 0;
+                margin-right: 8px;
+            }
+
+            .main-content {
+                padding: 16px;
+            }
+
+            .action-zone {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid #D0D0D0;
+                padding: 16px;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            td, th {
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="zone-header">
+        <div class="header-logo">
+            <div style="font-size: 24px; font-weight: 700; color: #B08D57;">🚚</div>
+            <div class="header-logo-text">FreightClub</div>
+        </div>
+        <div class="header-title">Shipper Dashboard</div>
+        <div class="header-icons">
+            <div class="header-icon">🔔</div>
+            <div class="header-icon">⚙️</div>
+            <div class="header-profile"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="nav-item active">📊 Dashboard</div>
+            <div class="nav-item">📦 My Loads</div>
+            <div class="nav-item">👥 Carriers</div>
+            <div class="nav-item">📈 Reports</div>
+            <div class="nav-item">⚙️ Settings</div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- KPI SECTION -->
+            <div class="kpi-section">
+                <div class="section-title">Business Health</div>
+                <div class="section-subtitle">Real-time overview of your shipments</div>
+
+                <div class="kpi-grid">
+                    <!-- Card 1: Active Shipments -->
+                    <div class="kpi-card">
+                        <div class="kpi-number">24</div>
+                        <div class="kpi-label">Active Loads</div>
+                    </div>
+
+                    <!-- Card 2: On-Time Delivery -->
+                    <div class="kpi-card">
+                        <div style="text-align: center;">
+                            <div class="gauge-container">
+                                <div class="gauge">
+                                    <div class="gauge-text">
+                                        <div class="gauge-value">92%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kpi-label" style="text-align: center;">On-Time Rate</div>
+                    </div>
+
+                    <!-- Card 3: Cost Per Mile -->
+                    <div class="kpi-card">
+                        <div class="kpi-number">$2.15</div>
+                        <div class="kpi-label">Cost Per Mile</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLE SECTION -->
+            <div class="table-section">
+                <div class="section-title">Shipment Status</div>
+                <div class="section-subtitle">Current load tracking</div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Load ID</th>
+                                <th>Status</th>
+                                <th>Origin</th>
+                                <th>Destination</th>
+                                <th>Carrier Rating</th>
+                                <th>Due Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="td-id">LD-2024-001</td>
+                                <td><span class="status-badge status-in-transit">In Transit</span></td>
+                                <td>Los Angeles, CA</td>
+                                <td>Phoenix, AZ</td>
+                                <td>
+                                    <div class="rating">
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star empty">★</span>
+                                    </div>
+                                </td>
+                                <td>Jun 12, 2026</td>
+                            </tr>
+                            <tr>
+                                <td class="td-id">LD-2024-002</td>
+                                <td><span class="status-badge status-delivered">Delivered</span></td>
+                                <td>San Francisco, CA</td>
+                                <td>Seattle, WA</td>
+                                <td>
+                                    <div class="rating">
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                    </div>
+                                </td>
+                                <td>Jun 10, 2026</td>
+                            </tr>
+                            <tr>
+                                <td class="td-id">LD-2024-003</td>
+                                <td><span class="status-badge status-delayed">Delayed</span></td>
+                                <td>Denver, CO</td>
+                                <td>Kansas City, MO</td>
+                                <td>
+                                    <div class="rating">
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star empty">★</span>
+                                        <span class="star empty">★</span>
+                                        <span class="star empty">★</span>
+                                    </div>
+                                </td>
+                                <td>Jun 08, 2026</td>
+                            </tr>
+                            <tr>
+                                <td class="td-id">LD-2024-004</td>
+                                <td><span class="status-badge status-in-transit">In Transit</span></td>
+                                <td>Dallas, TX</td>
+                                <td>Atlanta, GA</td>
+                                <td>
+                                    <div class="rating">
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star empty">★</span>
+                                        <span class="star empty">★</span>
+                                    </div>
+                                </td>
+                                <td>Jun 14, 2026</td>
+                            </tr>
+                            <tr>
+                                <td class="td-id">LD-2024-005</td>
+                                <td><span class="status-badge status-delivered">Delivered</span></td>
+                                <td>Chicago, IL</td>
+                                <td>New York, NY</td>
+                                <td>
+                                    <div class="rating">
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                    </div>
+                                </td>
+                                <td>Jun 09, 2026</td>
+                            </tr>
+                            <tr>
+                                <td class="td-id">LD-2024-006</td>
+                                <td><span class="status-badge status-in-transit">In Transit</span></td>
+                                <td>Miami, FL</td>
+                                <td>Boston, MA</td>
+                                <td>
+                                    <div class="rating">
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star">★</span>
+                                        <span class="star empty">★</span>
+                                    </div>
+                                </td>
+                                <td>Jun 15, 2026</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTION ZONE -->
+        <div class="action-zone">
+            <div class="action-zone-title">Actions</div>
+
+            <div class="action-item">
+                <div class="action-label">Quick Actions</div>
+                <button class="action-button">Create Load</button>
+            </div>
+
+            <div class="action-item">
+                <div class="action-label">Find Carriers</div>
+                <button class="action-button">Browse Board</button>
+            </div>
+
+            <div class="action-item">
+                <div class="action-label">Pending Approvals</div>
+                <div class="action-value">3 items</div>
+                <button class="action-button">Review Now</button>
+            </div>
+
+            <div class="action-item">
+                <div class="action-label">Recent Contacts</div>
+                <div class="action-value">ABC Trucking Co.</div>
+                <div class="action-value" style="font-size: 12px; font-weight: 400; margin-top: 4px;">★★★★★</div>
+            </div>
+
+            <div class="action-item">
+                <div class="action-label">Performance</div>
+                <div class="action-value">92% On-Time</div>
+                <div class="action-value" style="font-size: 12px; font-weight: 400; color: #27AE60; margin-top: 4px;">↑ 3% from last month</div>
+            </div>
+
+            <div class="action-item">
+                <div class="action-label">Data Freshness</div>
+                <div class="action-value" style="font-size: 12px;">Updated just now</div>
+                <div class="action-value" style="font-size: 11px; font-weight: 400; color: #636E72;">Last refresh: 2:34 PM</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

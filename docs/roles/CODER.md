@@ -20,17 +20,38 @@ Implement features based on validated story AC + ARCHITECT design + HFD UI specs
 - [ ] Soft delete pattern is documented
 - [ ] Multi-tenancy filters (tenant_id) are specified
 
-**From HFD (Field Contract Table):**
+**From HFD (Field Contract Table + Visual Reference):**
 - [ ] Field Contract Table sign-off chain complete for story Scope:
   - `FULL_STACK` → BA ✅ + ARCH ✅ + HFD ✅
   - `UI_ONLY` → BA ✅ + HFD ✅
   - `BACKEND_ONLY` → BA ✅ + ARCH ✅
+- [ ] `shipper-page-example.png` (or equivalent design reference) reviewed and design density/layout understood
+- [ ] Any conflict between wireframe and `HUMAN_FACTORS_DESIGNER.md` guidelines is flagged as **Design Ambiguity Blocker** before coding begins
 
 **Verdict:**
 - ✅ **ACCEPT** → All inputs LOCKED. Begin Red-Green-Refactor immediately.
 - ❌ **REJECT** → Escalate to LIBRARIAN with specific blocker. Do NOT start coding.
 
 If rejected: LIBRARIAN decides whether to fix inputs or create Change Request (CHG-###).
+
+---
+
+## 🔄 Service Reuse Check (Phase 10+)
+
+**Before writing implementation code**, verify service reusability:
+
+1. **Existing Service Audit:** Search codebase for domain services matching your story's needs (e.g., pricing, calculations, filtering)
+2. **Reuse vs. Build:** If service exists, use it; if not, create ONE canonical implementation
+3. **Parameter Extension:** If existing service needs a new parameter/variant, extend it (add optional parameter) rather than creating a new service
+4. **Test Inheritance:** If reusing a service, reuse its existing tests; add new tests only for new parameters/behaviors
+
+**Example (Phase 10):**
+- Story needs to calculate carrier affinity (preferred carrier ranking)
+- Search: `CarrierAffinityService` already exists
+- ✅ **REUSE:** Inject it; write tests for your story's specific use case
+- ❌ **DON'T:** Create `CarrierAffinityCalculator` or `PreferredCarrierRanker` (duplicates)
+
+**Rejection Rule:** If code review finds duplicate service implementations, CODER must refactor before merge (violates Phase 10 platform integrity).
 
 ---
 
@@ -73,6 +94,29 @@ Repeat for each AC.
 
 ---
 
+## 🎨 HFE Compliance Ownership (MANDATORY — Effective 2026-06-08)
+
+CODER is **equally responsible** for UI visual outcome as the HFD persona. Tests passing is not sufficient if visual evidence deviates from the design reference.
+
+**Before submitting UI work to REVIEWER:**
+1. Compare `test-results/evidence/` screenshots against `docs/standards/brand_assets/shipper-page-example.png` (or equivalent design reference)
+2. Verify compliance with `HUMAN_FACTORS_DESIGNER.md`: density, typography, iconography, cognitive load
+3. Self-correct any CSS/layout deviations — do NOT submit if visual parity is not achieved
+4. If wireframe and `HUMAN_FACTORS_DESIGNER.md` conflict → raise **Design Ambiguity Blocker** (do not guess; escalate to LIBRARIAN)
+
+**Visual Integrity Checklist (UI stories):**
+- [ ] KPI/data values use heavy numeric weight (`font-black`, `text-4xl+`)
+- [ ] Section labels use `UPPERCASE tracking-widest` typography
+- [ ] Icons present on all interactive buttons (thin line style per §4)
+- [ ] Layout density matches reference (tight gutters, compact padding)
+- [ ] Panel depth uses visible shadows per persona surface spec
+- [ ] Persistent Redundancy Framework applied where specified in style guide
+- [ ] Playwright screenshot evidence captured and visually matches design reference
+
+Failure to achieve visual parity = **CODER Implementation Error** under Definition of Done.
+
+---
+
 ## Deliverables
 
 When submitting to REVIEWER:
@@ -82,6 +126,7 @@ When submitting to REVIEWER:
 4. JaCoCo coverage report (branch %)
 5. All tests passing (`mvn clean test`)
 6. Code builds cleanly (`mvn clean package`)
+7. **Visual evidence** (`test-results/evidence/`) confirmed to match design reference
 
 ---
 

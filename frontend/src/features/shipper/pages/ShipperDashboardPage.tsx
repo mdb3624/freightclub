@@ -8,11 +8,17 @@
  * AC-9: Visual Integrity & Grid Alignment (HFD Artifact Requirement)
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { ShipperPageLayout } from '../components/ShipperPageLayout';
 import { KPISummaryPanel } from '../components/KPISummaryPanel';
+import { EmptyStateCard } from '../components/EmptyStateCard';
+import { Package, Zap, Truck, MessageSquare } from 'lucide-react';
 
 export const ShipperDashboardPage: React.FC = () => {
+  // State for toggling between skeleton (loading) and empty states
+  // TODO: Replace with actual data loading state after US-824/US-825/US-826 implementation
+  const [showEmptyStates] = useState(false);
+
   // SLOT_A: KPI Summary (full-width)
   const slotAContent = (
     <div className="panel" data-testid="kpi-summary-section">
@@ -30,18 +36,31 @@ export const ShipperDashboardPage: React.FC = () => {
         aria-label="Shipment Status"
         data-testid="shipment-status-section"
       >
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
-            Shipment Status
-          </h2>
-          <div
-            className="rounded animate-pulse"
-            style={{
-              minHeight: 'var(--skeleton-height-shipment-status)',
-              backgroundColor: 'var(--color-surface-light)',
+        {!showEmptyStates ? (
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
+              Shipment Status
+            </h2>
+            <div
+              className="rounded animate-pulse"
+              style={{
+                minHeight: 'var(--skeleton-height-shipment-status)',
+                backgroundColor: 'var(--color-surface-light)',
+              }}
+            />
+          </div>
+        ) : (
+          <EmptyStateCard
+            icon={<Package size={40} />}
+            title="No Active Shipments"
+            description="Start by posting a new load to track your shipments here."
+            action={{
+              label: 'Post a Load',
+              onClick: () => window.location.href = '/shipper/loads/new',
             }}
+            testId="shipment-status-empty"
           />
-        </div>
+        )}
       </section>
 
       {/* Row 3: Carrier Search */}
@@ -51,18 +70,27 @@ export const ShipperDashboardPage: React.FC = () => {
         aria-label="Carrier Search"
         data-testid="carrier-search-section"
       >
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
-            Carrier Search
-          </h2>
-          <div
-            className="rounded animate-pulse"
-            style={{
-              minHeight: 'var(--skeleton-height-carrier-search)',
-              backgroundColor: 'var(--color-surface-light)',
-            }}
+        {!showEmptyStates ? (
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
+              Carrier Search
+            </h2>
+            <div
+              className="rounded animate-pulse"
+              style={{
+                minHeight: 'var(--skeleton-height-carrier-search)',
+                backgroundColor: 'var(--color-surface-light)',
+              }}
+            />
+          </div>
+        ) : (
+          <EmptyStateCard
+            icon={<Truck size={40} />}
+            title="Search for Carriers"
+            description="Enter a destination to find available carriers for your loads."
+            testId="carrier-search-empty"
           />
-        </div>
+        )}
       </section>
     </div>
   );
@@ -77,18 +105,27 @@ export const ShipperDashboardPage: React.FC = () => {
         aria-label="Quick Actions"
         data-testid="action-zone-section"
       >
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
-            Quick Actions
-          </h2>
-          <div
-            className="rounded animate-pulse"
-            style={{
-              minHeight: 'var(--skeleton-height-action-zone)',
-              backgroundColor: 'var(--color-surface-light)',
-            }}
+        {!showEmptyStates ? (
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
+              Quick Actions
+            </h2>
+            <div
+              className="rounded animate-pulse"
+              style={{
+                minHeight: 'var(--skeleton-height-action-zone)',
+                backgroundColor: 'var(--color-surface-light)',
+              }}
+            />
+          </div>
+        ) : (
+          <EmptyStateCard
+            icon={<Zap size={40} />}
+            title="Quick Actions Ready"
+            description="Common tasks and shortcuts will appear here for faster operations."
+            testId="action-zone-empty"
           />
-        </div>
+        )}
       </section>
 
       {/* Row 3: Messages & Alerts */}
@@ -98,18 +135,27 @@ export const ShipperDashboardPage: React.FC = () => {
         aria-label="Messages and Alerts"
         data-testid="messages-alerts-section"
       >
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
-            Messages & Alerts
-          </h2>
-          <div
-            className="rounded animate-pulse"
-            style={{
-              minHeight: 'var(--skeleton-height-messages-alerts)',
-              backgroundColor: 'var(--color-surface-light)',
-            }}
+        {!showEmptyStates ? (
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
+              Messages & Alerts
+            </h2>
+            <div
+              className="rounded animate-pulse"
+              style={{
+                minHeight: 'var(--skeleton-height-messages-alerts)',
+                backgroundColor: 'var(--color-surface-light)',
+              }}
+            />
+          </div>
+        ) : (
+          <EmptyStateCard
+            icon={<MessageSquare size={40} />}
+            title="No Notifications Yet"
+            description="You'll receive alerts here when carriers respond to your loads."
+            testId="messages-alerts-empty"
           />
-        </div>
+        )}
       </section>
     </div>
   );

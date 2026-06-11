@@ -66,41 +66,42 @@ export function ShipperDashboardHome() {
 
             {/* SLOT_A: Navigation Header + KPI Summary */}
             <div className="slot-a">
-              {/* Navigation Row */}
-              <div data-testid="dashboard-nav" style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: 'var(--space-lg)',
-              }}>
-                <h1 style={{
-                  fontSize: 'var(--font-size-sm)',
-                  fontWeight: 'var(--font-weight-bold)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  color: 'var(--color-text-secondary)',
-                  margin: 0,
+              {/* Framework Header: Panel-Header with Title */}
+              <div className="panel-header" data-testid="dashboard-nav">
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                 }}>
-                  Shipper Command Center
-                </h1>
-                <Link
-                  to="/dashboard/shipper/loads"
-                  data-testid="my-loads-nav-link"
-                  className="btn-bronze"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 'var(--space-sm)',
-                    padding: 'var(--space-sm) var(--space-lg)',
-                    borderRadius: 'var(--radius-button)',
-                    textDecoration: 'none',
+                  <h1 className="panel-title" style={{
                     fontSize: 'var(--font-size-sm)',
-                    fontWeight: 'var(--font-weight-semibold)',
-                  }}
-                >
-                  <List size={14} strokeWidth={1.5} />
-                  My Loads
-                </Link>
+                    fontWeight: 'var(--font-weight-bold)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: 'var(--color-text-secondary)',
+                    margin: 0,
+                  }}>
+                    Shipper Command Center
+                  </h1>
+                  <Link
+                    to="/dashboard/shipper/loads"
+                    data-testid="my-loads-nav-link"
+                    className="btn-bronze"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 'var(--space-sm)',
+                      padding: 'var(--space-sm) var(--space-lg)',
+                      borderRadius: 'var(--radius-button)',
+                      textDecoration: 'none',
+                      fontSize: 'var(--font-size-sm)',
+                      fontWeight: 'var(--font-weight-semibold)',
+                    }}
+                  >
+                    <List size={14} strokeWidth={1.5} />
+                    My Loads
+                  </Link>
+                </div>
               </div>
 
               {/* KPI Panel with Widget Grid */}

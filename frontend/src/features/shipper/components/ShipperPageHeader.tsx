@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { LogOut, User, Settings } from 'lucide-react'
@@ -19,7 +19,6 @@ export function ShipperPageHeader() {
   const navigate = useNavigate()
   const { user, logout, isAuthenticated } = useAuthStore()
   const [showDropdown, setShowDropdown] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const now = new Date()
   const lastUpdated = now.toLocaleString('en-US', {
@@ -32,15 +31,18 @@ export function ShipperPageHeader() {
 
   // Close dropdown when clicking outside
   useEffect(() => {
+    if (!showDropdown) return
+
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as HTMLElement
+      if (!target.closest('[data-testid="avatar-dropdown"]') && !target.closest('[data-testid="avatar-button"]')) {
         setShowDropdown(false)
       }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+  }, [showDropdown])
 
   const handleLogout = () => {
     logout()
@@ -115,7 +117,7 @@ export function ShipperPageHeader() {
       </div>
 
       {/* Right: Avatar + Dropdown */}
-      <div ref={dropdownRef} style={{ position: 'relative' }}>
+      <div style={{ position: 'relative' }}>
         <button
           data-testid="avatar-button"
           onClick={() => setShowDropdown(!showDropdown)}

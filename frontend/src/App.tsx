@@ -20,6 +20,7 @@ const RatingsPage = lazy(() => import('@/pages/RatingsPage').then(m => ({ defaul
 // const AnalyticsPage = lazy(() => import('@/features/analytics/pages/AnalyticsPage').then(m => ({ default: m.AnalyticsPage })))
 const PreferredCarriersList = lazy(() => import('@/features/shippers/components/PreferredCarriersList').then(m => ({ default: m.PreferredCarriersList })))
 const CarrierPublicProfilePage = lazy(() => import('@/features/carriers/components/CarrierPublicProfilePage').then(m => ({ default: m.CarrierPublicProfilePage })))
+const QuoteRequestPlaceholder = lazy(() => import('@/pages/QuoteRequestPlaceholder').then(m => ({ default: m.QuoteRequestPlaceholder })))
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
   state = { hasError: false }
@@ -129,7 +130,19 @@ export default function App() {
         }
       />
 
-      
+      {/* US-824: Quick Actions Panel → Quote Request Stub (TODO: Implement full feature in US-827) */}
+      <Route
+        path="/shipper/quote"
+        element={
+          <ProtectedRoute role="SHIPPER">
+            <Suspense fallback={<PageLoader />}>
+              <QuoteRequestPlaceholder />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+
+
 <Route
         path="/profile"
         element={

@@ -37,7 +37,7 @@ export const ShipperDashboardPage: React.FC = () => {
           <div
             className="rounded animate-pulse"
             style={{
-              minHeight: '300px',
+              minHeight: 'var(--skeleton-height-shipment-status)',
               backgroundColor: 'var(--color-surface-light)',
             }}
           />
@@ -58,7 +58,7 @@ export const ShipperDashboardPage: React.FC = () => {
           <div
             className="rounded animate-pulse"
             style={{
-              minHeight: '180px',
+              minHeight: 'var(--skeleton-height-carrier-search)',
               backgroundColor: 'var(--color-surface-light)',
             }}
           />
@@ -84,7 +84,7 @@ export const ShipperDashboardPage: React.FC = () => {
           <div
             className="rounded animate-pulse"
             style={{
-              minHeight: '240px',
+              minHeight: 'var(--skeleton-height-action-zone)',
               backgroundColor: 'var(--color-surface-light)',
             }}
           />
@@ -105,7 +105,7 @@ export const ShipperDashboardPage: React.FC = () => {
           <div
             className="rounded animate-pulse"
             style={{
-              minHeight: '280px',
+              minHeight: 'var(--skeleton-height-messages-alerts)',
               backgroundColor: 'var(--color-surface-light)',
             }}
           />

@@ -73,14 +73,7 @@ export function ShipperDashboardHome() {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                 }}>
-                  <h1 className="panel-title" style={{
-                    fontSize: 'var(--font-size-sm)',
-                    fontWeight: 'var(--font-weight-bold)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    color: 'var(--color-text-secondary)',
-                    margin: 0,
-                  }}>
+                  <h1 className="panel-title">
                     Shipper Command Center
                   </h1>
                   <Link

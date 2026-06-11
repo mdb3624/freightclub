@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { QuickActionsPanel } from './components/QuickActionsPanel';
 import { MessagesAlertsPanel } from './components/MessagesAlertsPanel';
+import { CarrierSearchPanel } from './components/CarrierSearchPanel';
 import { useQuickActionNavigation } from './hooks/useQuickActionNavigation';
 
 export const ShipperDashboardPage: React.FC = () => {
@@ -37,8 +38,15 @@ export const ShipperDashboardPage: React.FC = () => {
         loadingButtonId={loadingButtonId}
       />
 
-      {/* Row 3: Messages and Alerts */}
+      {/* Row 3: Messages and Alerts + Carrier Search */}
       <MessagesAlertsPanel />
+
+      <CarrierSearchPanel
+        onCarrierSelect={(carrier) => {
+          console.log('Carrier selected:', carrier);
+          // Optional: navigate to carrier detail or perform other action
+        }}
+      />
     </div>
   );
 };

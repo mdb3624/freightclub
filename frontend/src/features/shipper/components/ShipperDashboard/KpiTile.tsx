@@ -9,7 +9,7 @@ interface KpiTileProps {
 }
 
 export function KpiTile({ testId, label, value, unit, trend }: KpiTileProps) {
-  const { surfaceClassName, headingClassName, mutedClassName } = usePersonaTheme()
+  const { headingClassName, mutedClassName } = usePersonaTheme()
   const displayValue = unit === '%' ? `${value}${unit}` : unit ? `${unit}${value}` : `${value}`
 
   return (

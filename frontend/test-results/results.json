@@ -67,21 +67,21 @@
   },
   "suites": [
     {
-      "title": "shipper-dashboard-home.spec.ts",
-      "file": "shipper-dashboard-home.spec.ts",
+      "title": "shipper-dashboard-framework.spec.ts",
+      "file": "shipper-dashboard-framework.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Shipper Dashboard Home Golden Path (US-760/US-761/US-762)",
-          "file": "shipper-dashboard-home.spec.ts",
-          "line": 24,
+          "title": "US-821: Shipper Dashboard Framework Compliance",
+          "file": "shipper-dashboard-framework.spec.ts",
+          "line": 12,
           "column": 6,
           "specs": [
             {
-              "title": "US-761 AC-1: dashboard home displays KPI tiles backed by the summary endpoint",
-              "ok": false,
+              "title": "framework structure and token compliance",
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -94,179 +94,17 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 12198,
-                      "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-testid=\"dashboard-grid\"]')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"dashboard-grid\"]')\u001b[22m\n",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-testid=\"dashboard-grid\"]')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"dashboard-grid\"]')\u001b[22m\n\n    at ShipperDashboardHomePageObject.waitForGridReady (C:\\projects\\freightclub\\frontend\\e2e\\page-objects\\ShipperDashboardHomePageObject.ts:40:29)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard-home.spec.ts:44:23",
-                        "location": {
-                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\page-objects\\ShipperDashboardHomePageObject.ts",
-                          "column": 29,
-                          "line": 40
-                        },
-                        "snippet": "\u001b[90m   at \u001b[39mpage-objects\\ShipperDashboardHomePageObject.ts:40\n\n\u001b[0m \u001b[90m 38 |\u001b[39m\n \u001b[90m 39 |\u001b[39m   \u001b[36masync\u001b[39m waitForGridReady() {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mgrid)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\n \u001b[90m    |\u001b[39m                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m   }\n \u001b[90m 42 |\u001b[39m\n \u001b[90m 43 |\u001b[39m   \u001b[36masync\u001b[39m searchLane(origin\u001b[33m:\u001b[39m string\u001b[33m,\u001b[39m destination\u001b[33m:\u001b[39m string) {\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\page-objects\\ShipperDashboardHomePageObject.ts",
-                            "column": 29,
-                            "line": 40
-                          },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-testid=\"dashboard-grid\"]')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"dashboard-grid\"]')\u001b[22m\n\n\n   at page-objects\\ShipperDashboardHomePageObject.ts:40\n\n  38 |\n  39 |   async waitForGridReady() {\n> 40 |     await expect(this.grid).toBeVisible({ timeout: 10000 })\n     |                             ^\n  41 |   }\n  42 |\n  43 |   async searchLane(origin: string, destination: string) {\n    at ShipperDashboardHomePageObject.waitForGridReady (C:\\projects\\freightclub\\frontend\\e2e\\page-objects\\ShipperDashboardHomePageObject.ts:40:29)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard-home.spec.ts:44:23"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [
-                        {
-                          "text": "Failed to delete users 433d7c64-1eee-4006-9d58-03f141429257: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/433d7c64-1eee-4006-9d58-03f141429257\",\"timestamp\":\"2026-06-11T03:10:53.984699678Z\"}\n"
-                        }
-                      ],
-                      "retry": 0,
-                      "startTime": "2026-06-11T03:10:42.535Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-home-Shi-075a1-ked-by-the-summary-endpoint-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-home-Shi-075a1-ked-by-the-summary-endpoint-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-home-Shi-075a1-ked-by-the-summary-endpoint-chromium\\error-context.md"
-                        },
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-home-Shi-075a1-ked-by-the-summary-endpoint-chromium\\trace.zip"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\page-objects\\ShipperDashboardHomePageObject.ts",
-                        "column": 29,
-                        "line": 40
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "0da0c7d225a7cc0ee9ff-30935ada54285b8d1903",
-              "file": "shipper-dashboard-home.spec.ts",
-              "line": 30,
-              "column": 3
-            },
-            {
-              "title": "US-762 AC-1: carrier search panel performs a lane search and renders results state",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 12098,
-                      "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-testid=\"dashboard-grid\"]')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"dashboard-grid\"]')\u001b[22m\n",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-testid=\"dashboard-grid\"]')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"dashboard-grid\"]')\u001b[22m\n\n    at ShipperDashboardHomePageObject.waitForGridReady (C:\\projects\\freightclub\\frontend\\e2e\\page-objects\\ShipperDashboardHomePageObject.ts:40:29)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard-home.spec.ts:74:23",
-                        "location": {
-                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\page-objects\\ShipperDashboardHomePageObject.ts",
-                          "column": 29,
-                          "line": 40
-                        },
-                        "snippet": "\u001b[90m   at \u001b[39mpage-objects\\ShipperDashboardHomePageObject.ts:40\n\n\u001b[0m \u001b[90m 38 |\u001b[39m\n \u001b[90m 39 |\u001b[39m   \u001b[36masync\u001b[39m waitForGridReady() {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mgrid)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\n \u001b[90m    |\u001b[39m                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m   }\n \u001b[90m 42 |\u001b[39m\n \u001b[90m 43 |\u001b[39m   \u001b[36masync\u001b[39m searchLane(origin\u001b[33m:\u001b[39m string\u001b[33m,\u001b[39m destination\u001b[33m:\u001b[39m string) {\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\page-objects\\ShipperDashboardHomePageObject.ts",
-                            "column": 29,
-                            "line": 40
-                          },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-testid=\"dashboard-grid\"]')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"dashboard-grid\"]')\u001b[22m\n\n\n   at page-objects\\ShipperDashboardHomePageObject.ts:40\n\n  38 |\n  39 |   async waitForGridReady() {\n> 40 |     await expect(this.grid).toBeVisible({ timeout: 10000 })\n     |                             ^\n  41 |   }\n  42 |\n  43 |   async searchLane(origin: string, destination: string) {\n    at ShipperDashboardHomePageObject.waitForGridReady (C:\\projects\\freightclub\\frontend\\e2e\\page-objects\\ShipperDashboardHomePageObject.ts:40:29)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard-home.spec.ts:74:23"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [
-                        {
-                          "text": "Failed to delete users e42e2e44-96b9-4bbf-ab2d-b575ea25d946: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/e42e2e44-96b9-4bbf-ab2d-b575ea25d946\",\"timestamp\":\"2026-06-11T03:11:07.894978635Z\"}\n"
-                        }
-                      ],
-                      "retry": 0,
-                      "startTime": "2026-06-11T03:10:56.255Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-home-Shi-24eeb-h-and-renders-results-state-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-home-Shi-24eeb-h-and-renders-results-state-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-home-Shi-24eeb-h-and-renders-results-state-chromium\\error-context.md"
-                        },
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-home-Shi-24eeb-h-and-renders-results-state-chromium\\trace.zip"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\page-objects\\ShipperDashboardHomePageObject.ts",
-                        "column": 29,
-                        "line": 40
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "0da0c7d225a7cc0ee9ff-e98ef415e213e9ed4fae",
-              "file": "shipper-dashboard-home.spec.ts",
-              "line": 60,
-              "column": 3
-            },
-            {
-              "title": "US-760: dashboard home requires authentication",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 2,
-                      "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 553,
+                      "duration": 1907,
                       "errors": [],
                       "stdout": [],
-                      "stderr": [],
+                      "stderr": [
+                        {
+                          "text": "Failed to delete users 823afd28-220a-4911-9ee1-5323674788c9: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/823afd28-220a-4911-9ee1-5323674788c9\",\"timestamp\":\"2026-06-11T10:22:37.852896744Z\"}\n"
+                        }
+                      ],
                       "retry": 0,
-                      "startTime": "2026-06-11T03:11:09.319Z",
+                      "startTime": "2026-06-11T10:22:35.960Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -274,9 +112,9 @@
                   "status": "expected"
                 }
               ],
-              "id": "0da0c7d225a7cc0ee9ff-e415fd24f71d243ee456",
-              "file": "shipper-dashboard-home.spec.ts",
-              "line": 90,
+              "id": "fd95a283ae387c52f5db-f529ca7ed763c0f1245b",
+              "file": "shipper-dashboard-framework.spec.ts",
+              "line": 13,
               "column": 3
             }
           ]
@@ -286,11 +124,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-11T03:10:35.134Z",
-    "duration": 34925.519,
+    "startTime": "2026-06-11T10:22:32.616Z",
+    "duration": 5443.233,
     "expected": 1,
     "skipped": 0,
-    "unexpected": 2,
+    "unexpected": 0,
     "flaky": 0
   }
 }

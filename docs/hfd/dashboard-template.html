@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FreightClub Dashboard</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+:root{
+    --fc-gold:#9b7a3a;
+    --fc-gold-dark:#7c602d;
+    --fc-gold-light:#b79456;
+
+    --fc-cream:#f4f1e8;
+    --fc-panel:#ffffff;
+    --fc-border:#d6d0c3;
+
+    --success:#15803d;
+    --warning:#eab308;
+    --danger:#c62828;
+    --info:#1565c0;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Segoe UI,Arial,sans-serif;
+    background:#ebe8df;
+    padding:25px;
+    color:#222;
+}
+
+.fc-shell{
+    max-width:1600px;
+    margin:auto;
+    background:var(--fc-cream);
+    border:1px solid var(--fc-border);
+    border-radius:18px;
+    padding:18px;
+    box-shadow:0 10px 25px rgba(0,0,0,.10);
+}
+
+.fc-header{
+    background:white;
+    border:1px solid var(--fc-border);
+    border-radius:12px;
+    padding:15px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    box-shadow:0 2px 4px rgba(0,0,0,.05);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.logo i{
+    font-size:30px;
+    color:var(--fc-gold);
+}
+
+.logo h1{
+    font-size:30px;
+}
+
+.logo small{
+    color:#666;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:25px;
+}
+
+.notification{
+    position:relative;
+}
+
+.badge{
+    position:absolute;
+    top:-8px;
+    right:-8px;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background:red;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+}
+
+.avatar{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#ccc;
+}
+
+.kpi-row{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+    margin-bottom:20px;
+}
+
+.kpi-card{
+    background:white;
+    border:1px solid var(--fc-border);
+    border-radius:12px;
+    padding:20px;
+    box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.8),
+    0 3px 8px rgba(0,0,0,.08);
+}
+
+.kpi-header{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+    font-weight:700;
+}
+
+.metric{
+    text-align:center;
+    font-size:72px;
+    color:var(--success);
+    font-weight:800;
+    text-shadow:0 2px 3px rgba(0,0,0,.15);
+}
+
+.metric-small{
+    text-align:center;
+    font-size:56px;
+    font-weight:800;
+}
+
+.kpi-footer{
+    text-align:center;
+    color:#666;
+    margin-top:10px;
+}
+
+.chart{
+    margin-top:10px;
+}
+
+.gauge{
+    width:220px;
+    height:110px;
+    margin:10px auto;
+    position:relative;
+}
+
+.gauge svg{
+    width:100%;
+}
+
+.gauge-value{
+    position:absolute;
+    bottom:5px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:48px;
+    font-weight:bold;
+}
+
+.content{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:18px;
+}
+
+.panel{
+    background:white;
+    border:1px solid var(--fc-border);
+    border-radius:12px;
+    box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    0 3px 8px rgba(0,0,0,.06);
+}
+
+.panel-header{
+    padding:18px;
+    border-bottom:1px solid var(--fc-border);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.panel-header h2{
+    font-size:34px;
+}
+
+.toolbar{
+    padding:15px;
+}
+
+.toolbar input{
+    width:100%;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:6px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+thead{
+    background:#f5f1e8;
+}
+
+th{
+    padding:12px;
+    text-align:left;
+    font-size:14px;
+}
+
+td{
+    padding:12px;
+    border-bottom:1px solid #eee;
+}
+
+.status{
+    color:white;
+    padding:8px 12px;
+    border-radius:4px;
+    font-weight:bold;
+}
+
+.delayed{background:var(--danger);}
+.claimed{background:var(--warning); color:black;}
+.picked{background:var(--info);}
+.delivered{background:var(--success);}
+
+.progress{
+    background:#ddd;
+    height:10px;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress div{
+    height:100%;
+    background:var(--fc-gold);
+}
+
+.action-zone{
+    padding:18px;
+}
+
+.action-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+    margin-bottom:15px;
+}
+
+.widget{
+    border:1px solid var(--fc-border);
+    border-radius:10px;
+    padding:15px;
+    background:#faf9f4;
+}
+
+.widget h3{
+    margin-bottom:15px;
+}
+
+.fc-btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    margin-bottom:10px;
+    border-radius:6px;
+    cursor:pointer;
+    color:white;
+    font-weight:700;
+
+    background:
+    linear-gradient(
+    to bottom,
+    var(--fc-gold-light),
+    var(--fc-gold-dark));
+}
+
+.fc-btn:hover{
+    opacity:.9;
+}
+
+select{
+    width:100%;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+.carrier{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid #ddd;
+}
+
+.assign{
+    background:var(--fc-gold);
+    color:white;
+    border:none;
+    padding:8px 12px;
+    border-radius:5px;
+}
+
+@media(max-width:1200px){
+
+    .kpi-row{
+        grid-template-columns:1fr;
+    }
+
+    .content{
+        grid-template-columns:1fr;
+    }
+
+    .action-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="fc-shell">
+
+<header class="fc-header">
+
+<div class="logo">
+<i class="fas fa-cubes"></i>
+</div>
+
+<div class="header-right">
+
+<div>Last Updated: 2026-05-21</div>
+
+<i class="fas fa-table-cells-large"></i>
+
+<div class="notification">
+<i class="fas fa-bell"></i>
+<span class="badge">3</span>
+</div>
+
+<div class="avatar"></div>
+
+</div>
+
+</header>
+
+
+<section>
+<!-- Insert Page Content Here-->
+</section>
+
+</body>
+</html>

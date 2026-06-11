@@ -1,10 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { KPISummaryPanel } from '../KPISummaryPanel';
-import * as useKPISummaryHook from '@/hooks/useKPISummary';
+import * as useKPISummaryHook from '@/features/shipper/hooks/useKPISummary';
 
 // Mock the useKPISummary hook
-jest.mock('@/hooks/useKPISummary');
+vi.mock('@/features/shipper/hooks/useKPISummary');
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,11 +19,11 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 
 describe('KPISummaryPanel', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders loading state', () => {
-    jest.spyOn(useKPISummaryHook, 'useKPISummary').mockReturnValue({
+    vi.spyOn(useKPISummaryHook, 'useKPISummary').mockReturnValue({
       data: undefined,
       isLoading: true,
       error: null,
@@ -35,7 +36,7 @@ describe('KPISummaryPanel', () => {
   });
 
   it('renders metrics when data is available', () => {
-    jest.spyOn(useKPISummaryHook, 'useKPISummary').mockReturnValue({
+    vi.spyOn(useKPISummaryHook, 'useKPISummary').mockReturnValue({
       data: {
         activeLoadCount: 5,
         onTimePercentage: 94.5,
@@ -58,7 +59,7 @@ describe('KPISummaryPanel', () => {
   });
 
   it('renders empty state when no delivered loads', () => {
-    jest.spyOn(useKPISummaryHook, 'useKPISummary').mockReturnValue({
+    vi.spyOn(useKPISummaryHook, 'useKPISummary').mockReturnValue({
       data: {
         activeLoadCount: 0,
         onTimePercentage: null,
@@ -77,7 +78,7 @@ describe('KPISummaryPanel', () => {
   });
 
   it('renders error state when fetch fails', () => {
-    jest.spyOn(useKPISummaryHook, 'useKPISummary').mockReturnValue({
+    vi.spyOn(useKPISummaryHook, 'useKPISummary').mockReturnValue({
       data: undefined,
       isLoading: false,
       error: new Error('Failed to fetch'),

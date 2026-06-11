@@ -1,6 +1,6 @@
 import React from 'react';
 import { TrendingUp, Truck, DollarSign } from 'lucide-react';
-import { useKPISummary } from '@/hooks/useKPISummary';
+import { useKPISummary } from '@/features/shipper/hooks/useKPISummary';
 import { KPITile } from './KPITile';
 
 export const KPISummaryPanel: React.FC = () => {

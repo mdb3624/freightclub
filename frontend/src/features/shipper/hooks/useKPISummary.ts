@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '@/api/apiClient';
+import { apiGet } from '@/lib/apiClient';
 
 export interface KPISummaryData {
   activeLoadCount: number;
@@ -11,12 +11,7 @@ export interface KPISummaryData {
 export const useKPISummary = () => {
   return useQuery<KPISummaryData>({
     queryKey: ['kpiSummary'],
-    queryFn: async () => {
-      const response = await apiClient.get<KPISummaryData>(
-        '/shipper/dashboard/kpi-summary'
-      );
-      return response.data;
-    },
+    queryFn: () => apiGet<KPISummaryData>('/shipper/dashboard/kpi-summary'),
     staleTime: 5 * 60 * 1000, // 5 minutes (AC-4: data freshness)
     retry: 1,
   });

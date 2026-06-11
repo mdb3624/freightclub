@@ -18,7 +18,7 @@ export const KPITile: React.FC<KPITileProps> = ({
   loading,
   dataTestId,
 }) => {
-  const displayValue = loading ? '—' : value ?? '—';
+  const displayValue = loading ? '—' : (value ?? 'No data');
 
   return (
     <div

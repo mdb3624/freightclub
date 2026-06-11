@@ -179,6 +179,15 @@
 
 ---
 
+## Phase 10: Shipper Dashboard Refinement (2 stories)
+
+| ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
+| :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
+| US-820 | **KPI Summary Display (Active Shipments, On-Time %, Cost/Mile)** | **✅ COMPLETED** | **10** | **US-760** | **✅ REVIEWER APPROVED | ✅ E2E: 7.2s PASS | ✅ KPI tiles always visible with "No data" state | ✅ Design system shadows** |
+| US-821 | **Shipper Header Navigation (Logo, Notification Bell, Avatar Dropdown)** | **✅ COMPLETED** | **10** | **US-760** | **✅ REVIEWER APPROVED | ✅ E2E: 7.2s PASS | ✅ Notification bell dropdown (not page nav) | ✅ Smart red badge (only show with unread)** |
+
+---
+
 ## Compliance Matrix
 
 ### Hard Gates (All Phases)
@@ -212,13 +221,13 @@
 
 | Status | Count | Phases |
 |--------|-------|--------|
-| ✅ COMPLETED | 5 | 1, 1.1, 1.2, 2, 3 |
+| ✅ COMPLETED | 27 | 1, 1.1, 1.2, 2, 3, 4, 5, 7, 10 |
 | 🔄 IN_PROGRESS | 2 | 1, 3 |
 | 🟡 PARTIAL | 9 | 3, 4, 7 |
 | 📋 DESIGN_APPROVED | 0 | — |
 | 🔍 REVIEWER_APPROVED_PENDING_TESTS | 0 | — |
 | ⚠️ MIGRATION_PENDING | 62 | 3–9 |
-| **TOTAL** | **81** | **1–9 + Cross (6 complete, 2 in progress, 9 partial, 0 design-approved, 0 reviewer-approved, 62 pending)** |
+| **TOTAL** | **83** | **1–10 + Cross (27 complete, 2 in progress, 9 partial, 0 design-approved, 0 reviewer-approved, 62 pending)** |
 
 ---
 

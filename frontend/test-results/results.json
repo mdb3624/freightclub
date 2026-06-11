@@ -67,465 +67,141 @@
   },
   "suites": [
     {
-      "title": "tests\\us-820-kpi-summary.spec.ts",
-      "file": "tests/us-820-kpi-summary.spec.ts",
+      "title": "us-821-us-820-styling-evidence.spec.ts",
+      "file": "us-821-us-820-styling-evidence.spec.ts",
       "column": 0,
       "line": 0,
-      "specs": [],
-      "suites": [
+      "specs": [
         {
-          "title": "US-820: KPI Summary Display",
-          "file": "tests/us-820-kpi-summary.spec.ts",
-          "line": 12,
-          "column": 6,
-          "specs": [
+          "title": "US-821 + US-820: Header and KPI Styling Evidence",
+          "ok": true,
+          "tags": [],
+          "tests": [
             {
-              "title": "AC-1,2,3: Shipper views KPI metrics on dashboard",
-              "ok": false,
-              "tags": [],
-              "tests": [
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
                 {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2894,
+                  "errors": [],
+                  "stdout": [
                     {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "timedOut",
-                      "duration": 30671,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:13:8",
-                        "location": {
-                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                          "column": 8,
-                          "line": 13
-                        },
-                        "snippet": "  11 |\n  12 | test.describe('US-820: KPI Summary Display', () => {\n> 13 |   test.beforeEach(async ({ page, context }) => {\n     |        ^\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n  16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                            "column": 8,
-                            "line": 13
-                          },
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n\n  11 |\n  12 | test.describe('US-820: KPI Summary Display', () => {\n> 13 |   test.beforeEach(async ({ page, context }) => {\n     |        ^\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n  16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:13:8"
-                        },
-                        {
-                          "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                            "column": 16,
-                            "line": 16
-                          },
-                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"email-input\"]')\u001b[22m\n\n\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n> 16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');\n     |                ^\n  17 |     await page.fill('[data-testid=\"password-input\"]', 'N1kk101!');\n  18 |     await page.click('[data-testid=\"login-submit-btn\"]');\n  19 |\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:16:16"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-06-11T17:00:45.165Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-461ad-ws-KPI-metrics-on-dashboard-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-461ad-ws-KPI-metrics-on-dashboard-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-461ad-ws-KPI-metrics-on-dashboard-chromium\\error-context.md"
-                        },
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-461ad-ws-KPI-metrics-on-dashboard-chromium\\trace.zip"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                        "column": 8,
-                        "line": 13
-                      }
+                      "text": "Current URL: http://localhost:9090/dashboard/shipper\n"
+                    },
+                    {
+                      "text": "Page has dashboard-grid: false\n"
+                    },
+                    {
+                      "text": "Page has shipper-page-header: false\n"
+                    },
+                    {
+                      "text": "✅ Header Styling Computed:\n"
+                    },
+                    {
+                      "text": "  Background: rgb(255, 255, 255)\n"
+                    },
+                    {
+                      "text": "  Border: 1px rgb(208, 208, 208)\n"
+                    },
+                    {
+                      "text": "  Border Radius: 8px\n"
+                    },
+                    {
+                      "text": "  Padding: 24px\n"
+                    },
+                    {
+                      "text": "  Box Shadow: rgba(0, 0, 0, 0.05) 0px 2px 4px 0px\n"
+                    },
+                    {
+                      "text": "✅ Header screenshot captured: us-821-header-bounded.png\n"
+                    },
+                    {
+                      "text": "✅ Found 9 KPI tiles\n"
+                    },
+                    {
+                      "text": "  Tile 1 Shadow: rgba(0, 0, 0, 0.05) 0px 2px 4px 0px\n"
+                    },
+                    {
+                      "text": "  Tile 2 Shadow: none\n"
+                    },
+                    {
+                      "text": "  Tile 3 Shadow: none\n"
+                    },
+                    {
+                      "text": "  Tile 4 Shadow: rgba(0, 0, 0, 0.05) 0px 2px 4px 0px\n"
+                    },
+                    {
+                      "text": "  Tile 5 Shadow: none\n"
+                    },
+                    {
+                      "text": "  Tile 6 Shadow: none\n"
+                    },
+                    {
+                      "text": "  Tile 7 Shadow: rgba(0, 0, 0, 0.05) 0px 2px 4px 0px\n"
+                    },
+                    {
+                      "text": "  Tile 8 Shadow: none\n"
+                    },
+                    {
+                      "text": "  Tile 9 Shadow: none\n"
+                    },
+                    {
+                      "text": "✅ KPI panel screenshot captured: us-820-kpi-panel.png\n"
+                    },
+                    {
+                      "text": "✅ Full dashboard screenshot captured: us-821-us-820-full-dashboard.png\n"
+                    },
+                    {
+                      "text": "\n✅ ALL STYLING VERIFICATION COMPLETE\n"
+                    },
+                    {
+                      "text": "Evidence files:\n"
+                    },
+                    {
+                      "text": "  - us-821-header-bounded.png\n"
+                    },
+                    {
+                      "text": "  - us-820-kpi-panel.png\n"
+                    },
+                    {
+                      "text": "  - us-821-us-820-full-dashboard.png\n"
                     }
                   ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "7a8be16f3ababd22df90-3783428bd85a67b91d78",
-              "file": "tests/us-820-kpi-summary.spec.ts",
-              "line": 25,
-              "column": 3
-            },
-            {
-              "title": "AC-4: KPI metrics load within 2 seconds",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
+                  "stderr": [
                     {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "timedOut",
-                      "duration": 30506,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:13:8",
-                        "location": {
-                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                          "column": 8,
-                          "line": 13
-                        },
-                        "snippet": "  11 |\n  12 | test.describe('US-820: KPI Summary Display', () => {\n> 13 |   test.beforeEach(async ({ page, context }) => {\n     |        ^\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n  16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                            "column": 8,
-                            "line": 13
-                          },
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n\n  11 |\n  12 | test.describe('US-820: KPI Summary Display', () => {\n> 13 |   test.beforeEach(async ({ page, context }) => {\n     |        ^\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n  16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:13:8"
-                        },
-                        {
-                          "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                            "column": 16,
-                            "line": 16
-                          },
-                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"email-input\"]')\u001b[22m\n\n\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n> 16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');\n     |                ^\n  17 |     await page.fill('[data-testid=\"password-input\"]', 'N1kk101!');\n  18 |     await page.click('[data-testid=\"login-submit-btn\"]');\n  19 |\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:16:16"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-06-11T17:01:17.740Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium\\error-context.md"
-                        },
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium\\trace.zip"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                        "column": 8,
-                        "line": 13
-                      }
+                      "text": "Failed to delete users 3d1c56b5-c856-429f-94bf-054dd1c8a438: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/3d1c56b5-c856-429f-94bf-054dd1c8a438\",\"timestamp\":\"2026-06-11T17:44:08.496726362Z\"}\n"
                     }
                   ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "7a8be16f3ababd22df90-f10d135bf5797a99dc2b",
-              "file": "tests/us-820-kpi-summary.spec.ts",
-              "line": 61,
-              "column": 3
-            },
-            {
-              "title": "AC-5: Empty state displays when no delivered loads",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
+                  "retry": 0,
+                  "startTime": "2026-06-11T17:44:05.673Z",
                   "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 2,
-                      "parallelIndex": 0,
-                      "status": "timedOut",
-                      "duration": 30525,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:13:8",
-                        "location": {
-                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                          "column": 8,
-                          "line": 13
-                        },
-                        "snippet": "  11 |\n  12 | test.describe('US-820: KPI Summary Display', () => {\n> 13 |   test.beforeEach(async ({ page, context }) => {\n     |        ^\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n  16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                            "column": 8,
-                            "line": 13
-                          },
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n\n  11 |\n  12 | test.describe('US-820: KPI Summary Display', () => {\n> 13 |   test.beforeEach(async ({ page, context }) => {\n     |        ^\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n  16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:13:8"
-                        },
-                        {
-                          "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                            "column": 16,
-                            "line": 16
-                          },
-                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"email-input\"]')\u001b[22m\n\n\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n> 16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');\n     |                ^\n  17 |     await page.fill('[data-testid=\"password-input\"]', 'N1kk101!');\n  18 |     await page.click('[data-testid=\"login-submit-btn\"]');\n  19 |\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:16:16"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-06-11T17:01:49.569Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-dc0aa-ays-when-no-delivered-loads-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-dc0aa-ays-when-no-delivered-loads-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-dc0aa-ays-when-no-delivered-loads-chromium\\error-context.md"
-                        },
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-dc0aa-ays-when-no-delivered-loads-chromium\\trace.zip"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                        "column": 8,
-                        "line": 13
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
+                  "attachments": []
                 }
               ],
-              "id": "7a8be16f3ababd22df90-7d88b450f220ec753e00",
-              "file": "tests/us-820-kpi-summary.spec.ts",
-              "line": 83,
-              "column": 3
-            },
-            {
-              "title": "Responsive layout: KPI tiles stack on mobile",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 3,
-                      "parallelIndex": 0,
-                      "status": "timedOut",
-                      "duration": 30447,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:13:8",
-                        "location": {
-                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                          "column": 8,
-                          "line": 13
-                        },
-                        "snippet": "  11 |\n  12 | test.describe('US-820: KPI Summary Display', () => {\n> 13 |   test.beforeEach(async ({ page, context }) => {\n     |        ^\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n  16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                            "column": 8,
-                            "line": 13
-                          },
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n\n  11 |\n  12 | test.describe('US-820: KPI Summary Display', () => {\n> 13 |   test.beforeEach(async ({ page, context }) => {\n     |        ^\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n  16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:13:8"
-                        },
-                        {
-                          "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                            "column": 16,
-                            "line": 16
-                          },
-                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"email-input\"]')\u001b[22m\n\n\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n> 16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');\n     |                ^\n  17 |     await page.fill('[data-testid=\"password-input\"]', 'N1kk101!');\n  18 |     await page.click('[data-testid=\"login-submit-btn\"]');\n  19 |\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:16:16"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-06-11T17:02:21.397Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-82170-t-KPI-tiles-stack-on-mobile-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-82170-t-KPI-tiles-stack-on-mobile-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-82170-t-KPI-tiles-stack-on-mobile-chromium\\error-context.md"
-                        },
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-82170-t-KPI-tiles-stack-on-mobile-chromium\\trace.zip"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                        "column": 8,
-                        "line": 13
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "7a8be16f3ababd22df90-ddae7ad857bffe2ab448",
-              "file": "tests/us-820-kpi-summary.spec.ts",
-              "line": 105,
-              "column": 3
-            },
-            {
-              "title": "Responsive layout: KPI tiles in 3-column grid on desktop",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 4,
-                      "parallelIndex": 0,
-                      "status": "timedOut",
-                      "duration": 30461,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:13:8",
-                        "location": {
-                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                          "column": 8,
-                          "line": 13
-                        },
-                        "snippet": "  11 |\n  12 | test.describe('US-820: KPI Summary Display', () => {\n> 13 |   test.beforeEach(async ({ page, context }) => {\n     |        ^\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n  16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                            "column": 8,
-                            "line": 13
-                          },
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n\n  11 |\n  12 | test.describe('US-820: KPI Summary Display', () => {\n> 13 |   test.beforeEach(async ({ page, context }) => {\n     |        ^\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n  16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:13:8"
-                        },
-                        {
-                          "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                            "column": 16,
-                            "line": 16
-                          },
-                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"email-input\"]')\u001b[22m\n\n\n  14 |     // Login as shipper\n  15 |     await page.goto('/');\n> 16 |     await page.fill('[data-testid=\"email-input\"]', 'shipper@test.com');\n     |                ^\n  17 |     await page.fill('[data-testid=\"password-input\"]', 'N1kk101!');\n  18 |     await page.click('[data-testid=\"login-submit-btn\"]');\n  19 |\n    at C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts:16:16"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-06-11T17:02:53.040Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-cf988-in-3-column-grid-on-desktop-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-cf988-in-3-column-grid-on-desktop-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-cf988-in-3-column-grid-on-desktop-chromium\\error-context.md"
-                        },
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\tests-us-820-kpi-summary-U-cf988-in-3-column-grid-on-desktop-chromium\\trace.zip"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\tests\\us-820-kpi-summary.spec.ts",
-                        "column": 8,
-                        "line": 13
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "7a8be16f3ababd22df90-8ea1a3e65ae9422ae898",
-              "file": "tests/us-820-kpi-summary.spec.ts",
-              "line": 118,
-              "column": 3
+              "status": "expected"
             }
-          ]
+          ],
+          "id": "3590ef5d106036e5270d-6db3ca874d812446f231",
+          "file": "us-821-us-820-styling-evidence.spec.ts",
+          "line": 28,
+          "column": 1
         }
       ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-11T17:00:41.536Z",
-    "duration": 162544.44700000001,
-    "expected": 0,
+    "startTime": "2026-06-11T17:44:01.644Z",
+    "duration": 7233.116,
+    "expected": 1,
     "skipped": 0,
-    "unexpected": 5,
+    "unexpected": 0,
     "flaky": 0
   }
 }

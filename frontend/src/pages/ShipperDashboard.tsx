@@ -1,5 +1,4 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { AppShell } from '@/components/AppShell'
 import { useLoadStats } from '@/features/shipper/hooks/useLoadStats'
 import { useLoadBoard } from '@/features/shipper/hooks/useLoadBoard'
 import { useProfile } from '@/features/profile/hooks/useProfile'
@@ -58,93 +57,147 @@ export function ShipperDashboard() {
   const isEmpty = !loadsData?.loads.length
 
   return (
-    <AppShell maxWidth="5xl">
-      <div className="space-y-6" data-testid="dashboard-container">
+    <div className="fc-shell" data-testid="dashboard-container">
+      <div className="zone-main">
         {(() => {
           const p = profile as any
           const isComplete = p && p.phone && p.billingCity && (p.businessName || p.firstName)
           const pct = p ? (isComplete ? 85 : 20) : 0
           return (!p || !isComplete) ? <ProfileCompletionBanner completeness={pct} /> : null
         })()}
-        <div className="mb-6 flex items-center justify-between border-b border-gray-200">
-          <div className="flex gap-2">
-            <button
-              onClick={() => handleViewToggle('active')}
-              className={`px-4 py-2 text-sm font-medium ${
-                view === 'active'
-                  ? 'border-b-2 border-blue-600 text-blue-600'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Active Loads
-            </button>
-            <button
-              data-testid="tab-all-loads"
-              aria-selected={view === 'all'}
-              onClick={() => handleViewToggle('all')}
-              className={`px-4 py-2 text-sm font-medium ${
-                view === 'all'
-                  ? 'border-b-2 border-blue-600 text-blue-600'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              All Loads
-            </button>
+
+        <div className="zone-widget-slots">
+          {/* SLOT_A: Summary (BusinessHealth) - Full Width */}
+          <div className="slot-a">
+            {/* View Toggle + Action Buttons Header */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 'var(--space-lg)',
+              paddingBottom: 'var(--space-md)',
+              borderBottom: 'var(--border-divider)',
+            }}>
+              <div style={{
+                display: 'flex',
+                gap: 'var(--space-sm)',
+              }}>
+                <button
+                  onClick={() => handleViewToggle('active')}
+                  style={{
+                    padding: 'var(--space-sm) var(--space-md)',
+                    fontSize: 'var(--font-size-sm)',
+                    fontWeight: 'var(--font-weight-semibold)',
+                    color: view === 'active' ? 'var(--color-brand-bronze)' : 'var(--color-text-secondary)',
+                    borderBottom: view === 'active' ? `2px solid var(--color-brand-bronze)` : 'none',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Active Loads
+                </button>
+                <button
+                  data-testid="tab-all-loads"
+                  aria-selected={view === 'all'}
+                  onClick={() => handleViewToggle('all')}
+                  style={{
+                    padding: 'var(--space-sm) var(--space-md)',
+                    fontSize: 'var(--font-size-sm)',
+                    fontWeight: 'var(--font-weight-semibold)',
+                    color: view === 'all' ? 'var(--color-brand-bronze)' : 'var(--color-text-secondary)',
+                    borderBottom: view === 'all' ? `2px solid var(--color-brand-bronze)` : 'none',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  All Loads
+                </button>
+              </div>
+              <div style={{
+                display: 'flex',
+                gap: 'var(--space-sm)',
+              }}>
+                <button
+                  onClick={() => navigate('/settings/preferred-carriers')}
+                  className="btn-bronze"
+                  style={{
+                    padding: 'var(--space-sm) var(--space-lg)',
+                    fontSize: 'var(--font-size-sm)',
+                    fontWeight: 'var(--font-weight-semibold)',
+                    borderRadius: 'var(--radius-button)',
+                  }}
+                >
+                  Preferred Carriers
+                </button>
+                <button
+                  data-testid="post-load-btn"
+                  onClick={() => navigate('/shipper/loads/new')}
+                  className="btn-bronze"
+                  style={{
+                    padding: 'var(--space-sm) var(--space-lg)',
+                    fontSize: 'var(--font-size-sm)',
+                    fontWeight: 'var(--font-weight-semibold)',
+                    borderRadius: 'var(--radius-button)',
+                  }}
+                >
+                  + Post Load
+                </button>
+              </div>
+            </div>
+
+            {/* SummaryStrip Panel */}
+            {statsData && (
+              <div className="panel">
+                <SummaryStrip
+                  open={statsData.active?.open || 0}
+                  claimed={statsData.active?.claimed || 0}
+                  inTransit={statsData.active?.inTransit || 0}
+                  delivered={statsData.active?.delivered || 0}
+                />
+              </div>
+            )}
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => navigate('/settings/preferred-carriers')}
-              className="px-4 py-2 bg-gray-200 text-gray-900 text-sm font-medium rounded hover:bg-gray-300"
-            >
-              Preferred Carriers
-            </button>
-            <button
-              data-testid="post-load-btn"
-              onClick={() => navigate('/shipper/loads/new')}
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700"
-            >
-              + Post Load
-            </button>
-          </div>
-        </div>
 
-        {statsData && (
-          <SummaryStrip
-            open={statsData.active?.open || 0}
-            claimed={statsData.active?.claimed || 0}
-            inTransit={statsData.active?.inTransit || 0}
-            delivered={statsData.active?.delivered || 0}
-          />
-        )}
+          {/* SLOT_B: Search + LoadTable - 8 columns (main content) */}
+          <div className="slot-b">
+            {/* SearchBar Panel */}
+            <div className="panel" data-testid="load-search-input">
+              <SearchBar onSearch={handleSearch} />
+            </div>
 
-        <div data-testid="load-search-input">
-          <SearchBar onSearch={handleSearch} />
-        </div>
-
-        {isEmpty ? (
-          <EmptyState onPostLoad={() => navigate('/shipper/loads/new')} />
-        ) : (
-          <>
-            {loadsData && (
+            {isEmpty ? (
+              <EmptyState onPostLoad={() => navigate('/shipper/loads/new')} />
+            ) : (
               <>
-                <div data-testid="load-table">
-                <LoadTable
-                  loads={loadsData.loads}
-                  onViewDetails={(id) => navigate(`/shipper/loads/${id}`)}
-                  onEdit={(id) => navigate(`/shipper/loads/${id}/edit`)}
-                  onCancel={() => {}}
-                />
-                </div>
-                <Pagination
-                  currentPage={page}
-                  totalPages={Math.ceil((loadsData.pagination.total || 1) / 20)}
-                  onPageChange={handlePageChange}
-                />
+                {loadsData && (
+                  <>
+                    {/* LoadTable Panel */}
+                    <div className="panel" data-testid="load-table">
+                      <LoadTable
+                        loads={loadsData.loads}
+                        onViewDetails={(id) => navigate(`/shipper/loads/${id}`)}
+                        onEdit={(id) => navigate(`/shipper/loads/${id}/edit`)}
+                        onCancel={() => {}}
+                      />
+                    </div>
+
+                    {/* Pagination Panel */}
+                    <div className="panel">
+                      <Pagination
+                        currentPage={page}
+                        totalPages={Math.ceil((loadsData.pagination.total || 1) / 20)}
+                        onPageChange={handlePageChange}
+                      />
+                    </div>
+                  </>
+                )}
               </>
             )}
-          </>
-        )}
+          </div>
+        </div>
       </div>
-    </AppShell>
+    </div>
   )
 }

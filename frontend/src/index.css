@@ -259,6 +259,11 @@
 }
 
 .panel-header {
+  background: var(--color-surface-white);
+  border: var(--border-widget);
+  border-radius: var(--radius-widget);
+  box-shadow: var(--shadow-subtle);
+  padding: var(--space-lg);
   margin-bottom: var(--space-lg);
 }
 

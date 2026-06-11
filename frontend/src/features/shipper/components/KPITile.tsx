@@ -23,12 +23,13 @@ export const KPITile: React.FC<KPITileProps> = ({
   return (
     <div
       data-testid={dataTestId}
-      className="rounded-md border border-shipper-accent bg-shipper-surface shadow-md p-6"
+      className="rounded-md border border-shipper-accent bg-shipper-surface p-6"
       style={{
         borderColor: 'var(--color-brand-bronze)',
         backgroundColor: 'var(--color-surface-white)',
         padding: 'var(--space-lg)',
         borderRadius: 'var(--radius-widget)',
+        boxShadow: 'var(--shadow-subtle)',
       }}
     >
       <div className="flex items-start justify-between mb-4">

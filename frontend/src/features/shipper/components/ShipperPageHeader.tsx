@@ -74,8 +74,6 @@ export function ShipperPageHeader() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          paddingBottom: 'var(--space-lg)',
-          marginBottom: 0,
         }}
       >
       {/* Left: Logo + Branding */}

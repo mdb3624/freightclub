@@ -1,10 +1,54 @@
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="5.443233">
-<testsuite name="shipper-dashboard-framework.spec.ts" timestamp="2026-06-11T10:22:35.295Z" hostname="chromium" tests="1" failures="0" skipped="0" time="1.907" errors="0">
-<testcase name="US-821: Shipper Dashboard Framework Compliance › framework structure and token compliance" classname="shipper-dashboard-framework.spec.ts" time="1.907">
-<system-err>
-<![CDATA[Failed to delete users 823afd28-220a-4911-9ee1-5323674788c9: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/823afd28-220a-4911-9ee1-5323674788c9","timestamp":"2026-06-11T10:22:37.852896744Z"}
+<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="5.037644">
+<testsuite name="us-821-shipper-header-e2e.spec.ts" timestamp="2026-06-11T10:56:25.364Z" hostname="chromium" tests="1" failures="1" skipped="0" time="0.536" errors="0">
+<testcase name="US-821: Shipper Dashboard with Header and Avatar Dropdown" classname="us-821-shipper-header-e2e.spec.ts" time="0.536">
+<system-out>
+<![CDATA[Registration: 400 - shipper-1781175386573@freightclub.local
+
+[[ATTACHMENT|us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\video.webm]]
+
+[[ATTACHMENT|us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\error-context.md]]
+
+[[ATTACHMENT|us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\trace.zip]]
 ]]>
-</system-err>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [chromium] › us-821-shipper-header-e2e.spec.ts:15:1 › US-821: Shipper Dashboard with Header and Avatar Dropdown 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      35 |
+      36 |   console.log(`Registration: ${registerRes.status()} - ${testEmail}`)
+    > 37 |   expect(registerRes.ok() || registerRes.status() === 409).toBe(true)
+         |                                                            ^
+      38 |
+      39 |   // Step 2: Navigate to login page (normal flow)
+      40 |   await page.goto('http://localhost:9090/login')
+        at C:\projects\freightclub\frontend\e2e\us-821-shipper-header-e2e.spec.ts:37:60
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
 </testcase>
 </testsuite>
 </testsuites>

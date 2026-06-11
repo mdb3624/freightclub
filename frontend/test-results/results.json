@@ -67,68 +67,104 @@
   },
   "suites": [
     {
-      "title": "shipper-dashboard-framework.spec.ts",
-      "file": "shipper-dashboard-framework.spec.ts",
+      "title": "us-821-shipper-header-e2e.spec.ts",
+      "file": "us-821-shipper-header-e2e.spec.ts",
       "column": 0,
       "line": 0,
-      "specs": [],
-      "suites": [
+      "specs": [
         {
-          "title": "US-821: Shipper Dashboard Framework Compliance",
-          "file": "shipper-dashboard-framework.spec.ts",
-          "line": 12,
-          "column": 6,
-          "specs": [
+          "title": "US-821: Shipper Dashboard with Header and Avatar Dropdown",
+          "ok": false,
+          "tags": [],
+          "tests": [
             {
-              "title": "framework structure and token compliance",
-              "ok": true,
-              "tags": [],
-              "tests": [
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
                 {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 536,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at C:\\projects\\freightclub\\frontend\\e2e\\us-821-shipper-header-e2e.spec.ts:37:60",
+                    "location": {
+                      "file": "C:\\projects\\freightclub\\frontend\\e2e\\us-821-shipper-header-e2e.spec.ts",
+                      "column": 60,
+                      "line": 37
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 35 |\u001b[39m\n \u001b[90m 36 |\u001b[39m   console\u001b[33m.\u001b[39mlog(\u001b[32m`Registration: ${registerRes.status()} - ${testEmail}`\u001b[39m)\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 37 |\u001b[39m   expect(registerRes\u001b[33m.\u001b[39mok() \u001b[33m||\u001b[39m registerRes\u001b[33m.\u001b[39mstatus() \u001b[33m===\u001b[39m \u001b[35m409\u001b[39m)\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\n \u001b[90m    |\u001b[39m                                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 38 |\u001b[39m\n \u001b[90m 39 |\u001b[39m   \u001b[90m// Step 2: Navigate to login page (normal flow)\u001b[39m\n \u001b[90m 40 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:9090/login'\u001b[39m)\u001b[0m"
+                  },
+                  "errors": [
                     {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1907,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [
-                        {
-                          "text": "Failed to delete users 823afd28-220a-4911-9ee1-5323674788c9: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/823afd28-220a-4911-9ee1-5323674788c9\",\"timestamp\":\"2026-06-11T10:22:37.852896744Z\"}\n"
-                        }
-                      ],
-                      "retry": 0,
-                      "startTime": "2026-06-11T10:22:35.960Z",
-                      "annotations": [],
-                      "attachments": []
+                      "location": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\us-821-shipper-header-e2e.spec.ts",
+                        "column": 60,
+                        "line": 37
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  35 |\n  36 |   console.log(`Registration: ${registerRes.status()} - ${testEmail}`)\n> 37 |   expect(registerRes.ok() || registerRes.status() === 409).toBe(true)\n     |                                                            ^\n  38 |\n  39 |   // Step 2: Navigate to login page (normal flow)\n  40 |   await page.goto('http://localhost:9090/login')\n    at C:\\projects\\freightclub\\frontend\\e2e\\us-821-shipper-header-e2e.spec.ts:37:60"
                     }
                   ],
-                  "status": "expected"
+                  "stdout": [
+                    {
+                      "text": "Registration: 400 - shipper-1781175386573@freightclub.local\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-06-11T10:56:26.229Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\projects\\freightclub\\frontend\\test-results\\us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\\test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "C:\\projects\\freightclub\\frontend\\test-results\\us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\\video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\projects\\freightclub\\frontend\\test-results\\us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\projects\\freightclub\\frontend\\test-results\\us-821-shipper-header-e2e--fea26--Header-and-Avatar-Dropdown-chromium\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\projects\\freightclub\\frontend\\e2e\\us-821-shipper-header-e2e.spec.ts",
+                    "column": 60,
+                    "line": 37
+                  }
                 }
               ],
-              "id": "fd95a283ae387c52f5db-f529ca7ed763c0f1245b",
-              "file": "shipper-dashboard-framework.spec.ts",
-              "line": 13,
-              "column": 3
+              "status": "unexpected"
             }
-          ]
+          ],
+          "id": "e7383180e095728b9aa0-fd99c80c43783561901b",
+          "file": "us-821-shipper-header-e2e.spec.ts",
+          "line": 15,
+          "column": 1
         }
       ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-11T10:22:32.616Z",
-    "duration": 5443.233,
-    "expected": 1,
+    "startTime": "2026-06-11T10:56:22.014Z",
+    "duration": 5037.644,
+    "expected": 0,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 1,
     "flaky": 0
   }
 }

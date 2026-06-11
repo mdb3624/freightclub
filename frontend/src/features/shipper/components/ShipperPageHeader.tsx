@@ -68,16 +68,16 @@ export function ShipperPageHeader() {
 
   return (
     <div
-      className="panel-header"
-      data-testid="shipper-page-header"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingBottom: 'var(--space-lg)',
-        marginBottom: 0,
-      }}
-    >
+        className="panel-header"
+        data-testid="shipper-page-header"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingBottom: 'var(--space-lg)',
+          marginBottom: 0,
+        }}
+      >
       {/* Left: Logo + Branding */}
       <div
         style={{

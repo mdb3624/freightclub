@@ -10,7 +10,6 @@ import { Toaster } from '@/components/ui/Toaster'
 
 // Lazy load dashboard and protected routes to defer vendor-query and dashboard code
 const TruckerDashboard = lazy(() => import('@/pages/TruckerDashboard').then(m => ({ default: m.TruckerDashboard })))
-const ShipperDashboardHome = lazy(() => import('@/pages/ShipperDashboardHome').then(m => ({ default: m.ShipperDashboardHome })))
 const ShipperDashboard = lazy(() => import('@/pages/ShipperDashboard').then(m => ({ default: m.ShipperDashboard })))
 const LoadCreatePage = lazy(() => import('@/pages/LoadCreatePage').then(m => ({ default: m.LoadCreatePage })))
 const LoadDetailPage = lazy(() => import('@/pages/LoadDetailPage').then(m => ({ default: m.LoadDetailPage })))
@@ -79,17 +78,6 @@ export default function App() {
 
       <Route
         path="/dashboard/shipper"
-        element={
-          <ProtectedRoute role="SHIPPER">
-            <Suspense fallback={<PageLoader />}>
-              <ShipperDashboardHome />
-            </Suspense>
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/dashboard/shipper/loads"
         element={
           <ProtectedRoute role="SHIPPER">
             <Suspense fallback={<PageLoader />}>

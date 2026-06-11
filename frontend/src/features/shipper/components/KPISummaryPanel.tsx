@@ -6,17 +6,6 @@ import { KPITile } from './KPITile';
 export const KPISummaryPanel: React.FC = () => {
   const { data, isLoading, error } = useKPISummary();
 
-  if (error) {
-    return (
-      <div
-        className="rounded-md border border-red-200 bg-red-50 p-4"
-        data-testid="kpi-summary-error"
-      >
-        <p className="text-sm text-red-700">Failed to load KPI metrics</p>
-      </div>
-    );
-  }
-
   // Empty state: no delivered loads yet
   if (data?.isEmpty) {
     return (

@@ -145,11 +145,6 @@ export function ShipperDashboard() {
         </div>
       </div>
 
-      {/* KPI Summary Panel (US-820) */}
-      <div className="panel" data-testid="kpi-summary-section">
-        <KPISummaryPanel />
-      </div>
-
       {/* SummaryStrip Panel */}
       {statsData && (
         <div className="panel">
@@ -161,6 +156,11 @@ export function ShipperDashboard() {
           />
         </div>
       )}
+
+      {/* KPI Summary Panel (US-820) */}
+      <div className="panel" data-testid="kpi-summary-section">
+        <KPISummaryPanel />
+      </div>
     </>
   )
 

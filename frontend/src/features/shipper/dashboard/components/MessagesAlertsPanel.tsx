@@ -97,7 +97,7 @@ export const MessagesAlertsPanel: React.FC = () => {
         data-testid="dashboard-messages-alerts-panel"
         role="region"
         aria-label="Messages and Alerts"
-        className="col-span-7 border border-widget rounded-md p-6 bg-white shadow-subtle max-h-80 overflow-auto"
+        className="col-span-7 md:col-span-6 sm:col-span-12 border border-widget rounded-md p-6 bg-white shadow-subtle max-h-80 md:max-h-[300px] sm:max-h-[280px] overflow-auto"
       >
         <SkeletonLoader rowCount={3} rowHeight="60px" />
       </div>
@@ -111,7 +111,7 @@ export const MessagesAlertsPanel: React.FC = () => {
         data-testid="dashboard-messages-alerts-panel"
         role="region"
         aria-label="Messages and Alerts"
-        className="col-span-7 border border-widget rounded-md p-6 bg-white shadow-subtle max-h-80 overflow-auto"
+        className="col-span-7 md:col-span-6 sm:col-span-12 border border-widget rounded-md p-6 bg-white shadow-subtle max-h-80 md:max-h-[300px] sm:max-h-[280px] overflow-auto"
       >
         <div className="text-center py-8">
           <p className="text-red-600 font-medium">Failed to load notifications</p>
@@ -127,7 +127,7 @@ export const MessagesAlertsPanel: React.FC = () => {
         data-testid="dashboard-messages-alerts-panel"
         role="region"
         aria-label="Messages and Alerts"
-        className="col-span-7 border border-widget rounded-md p-6 bg-white shadow-subtle max-h-80 overflow-auto"
+        className="col-span-7 md:col-span-6 sm:col-span-12 border border-widget rounded-md p-6 bg-white shadow-subtle max-h-80 md:max-h-[300px] sm:max-h-[280px] overflow-auto"
       >
         <div className="text-center py-8">
           <p className="text-gray-500">No messages or alerts</p>
@@ -142,7 +142,7 @@ export const MessagesAlertsPanel: React.FC = () => {
       data-testid="dashboard-messages-alerts-panel"
       role="region"
       aria-label="Messages and Alerts"
-      className="col-span-7 border border-widget rounded-md p-6 bg-white shadow-subtle max-h-80 overflow-auto"
+      className="col-span-7 md:col-span-6 sm:col-span-12 border border-widget rounded-md p-6 bg-white shadow-subtle max-h-80 md:max-h-[300px] sm:max-h-[280px] overflow-auto"
     >
       <div className="space-y-2">
         {displayNotifications.map((notification, index) => (

@@ -41,12 +41,14 @@ export const ShipperDashboardPage: React.FC = () => {
       {/* Row 3: Messages and Alerts + Carrier Search */}
       <MessagesAlertsPanel />
 
-      <CarrierSearchPanel
-        onCarrierSelect={(carrier) => {
-          console.log('Carrier selected:', carrier);
-          // Optional: navigate to carrier detail or perform other action
-        }}
-      />
+      <div className="col-span-5 md:col-span-6 sm:col-span-12">
+        <CarrierSearchPanel
+          onCarrierSelect={(carrier) => {
+            console.log('Carrier selected:', carrier);
+            // Optional: navigate to carrier detail or perform other action
+          }}
+        />
+      </div>
     </div>
   );
 };

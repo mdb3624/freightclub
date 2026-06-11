@@ -1,17 +1,23 @@
 import { ReactNode } from 'react'
+import { ShipperPageHeader } from './ShipperPageHeader'
 
 interface ShipperPageLayoutProps {
   children?: ReactNode
   slotA?: ReactNode
   slotB?: ReactNode
   slotC?: ReactNode
-  header?: ReactNode
+  profileBanner?: ReactNode
   className?: string
   'data-testid'?: string
 }
 
 /**
- * ShipperPageLayout: Template-driven Composite Framework shell.
+ * ShipperPageLayout: Mandatory template for all Shipper pages.
+ *
+ * Structure:
+ * - ShipperPageHeader: Logo, branding, last updated (MANDATORY)
+ * - ProfileCompletionBanner: Optional notification (if needed)
+ * - fc-shell > zone-main > zone-widget-slots (Composite Framework)
  *
  * Enforces:
  * - Container Gate: fc-shell > zone-main > zone-widget-slots hierarchy
@@ -19,12 +25,11 @@ interface ShipperPageLayoutProps {
  * - Token Gate: CSS variables only (no hardcoded colors)
  * - Layout Gate: CSS Grid-based responsive layout
  *
- * Usage:
+ * Usage (REQUIRED for all Shipper pages):
  * <ShipperPageLayout
- *   header={<HeaderComponent />}
+ *   profileBanner={<ProfileCompletionBanner />}  // Optional
  *   slotA={<SlotAContent />}
  *   slotB={<SlotBContent />}
- *   slotC={<SlotCContent />}
  * />
  */
 export function ShipperPageLayout({
@@ -32,14 +37,19 @@ export function ShipperPageLayout({
   slotA,
   slotB,
   slotC,
-  header,
+  profileBanner,
   className = '',
   'data-testid': testId = 'shipper-page-layout',
 }: ShipperPageLayoutProps) {
   return (
     <div className={`fc-shell ${className}`} data-testid={testId}>
       <div className="zone-main">
-        {header}
+        {/* MANDATORY: ShipperPageHeader (logo, branding, timestamp) */}
+        <ShipperPageHeader />
+
+        {/* OPTIONAL: Profile completion banner or alerts */}
+        {profileBanner}
+
         <div className="zone-widget-slots" data-testid="zone-widget-slots">
           {/* SLOT_A: Full-width row (header/summary content) */}
           {slotA && <div className="slot-a">{slotA}</div>}

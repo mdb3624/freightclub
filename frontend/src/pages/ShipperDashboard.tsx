@@ -200,7 +200,7 @@ export function ShipperDashboard() {
   return (
     <ShipperPageLayout
       data-testid="dashboard-container"
-      header={showCompletionBanner ? <ProfileCompletionBanner completeness={completionPct} /> : undefined}
+      profileBanner={showCompletionBanner ? <ProfileCompletionBanner completeness={completionPct} /> : undefined}
       slotA={slotAContent}
       slotB={slotBContent}
     />

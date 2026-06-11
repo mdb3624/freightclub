@@ -7,14 +7,20 @@
 2. Test database credentials configured in `.env.test`
 
 ### Configuration
-The test profile (`-Dspring.profiles.active=test`) automatically loads `.env.test`:
+The test profile (`-Dspring.profiles.active=test`) automatically loads `.env.test` via spring-dotenv:
 
 ```yaml
 # application-test.yml
 spring:
-  config:
-    import: optional:file:.env.test  # Loads environment variables
+  dotenv:
+    enabled: true
+    file: .env.test  # spring-dotenv library reads this file
 ```
+
+**How it works:**
+- spring-dotenv reads `.env.test` file in project root
+- Parses `KEY=value` pairs into Java properties
+- Spring Boot substitutes `${KEY}` placeholders in application-test.yml
 
 ### Running Tests Locally
 ```bash

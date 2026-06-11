@@ -1,6 +1,7 @@
 spring:
-  config:
-    import: optional:file:.env.test
+  dotenv:
+    enabled: true
+    file: .env.test
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/freightclub_db?currentSchema=freightclub}
     driver-class-name: org.postgresql.Driver

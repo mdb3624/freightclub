@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { useNotifications, useMarkRead } from '../../../notifications/hooks/useNotifications';
 import { NotificationRow } from './NotificationRow';
 import { SkeletonLoader } from './SkeletonLoader';
-import { NotificationDisplayData } from '../types/notification';
+import { NotificationDisplayData, transformNotification } from '../types/notification';
 
 /**
  * Format ISO timestamp to relative time string (e.g., "2h ago")
@@ -82,7 +82,7 @@ export const MessagesAlertsPanel: React.FC = () => {
     data?.content || []
   )
     .map((notif) => ({
-      ...notif,
+      ...transformNotification(notif),
       relativeTime: formatRelativeTime(notif.createdAt),
     }))
     .sort(

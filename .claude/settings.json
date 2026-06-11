@@ -7,7 +7,8 @@
       "Bash(rm -rf test-results/evidence/* test-results/shipper-dashboard-home-*)",
       "Bash(npm run *)",
       "Bash(docker compose *)",
-      "Bash(rm -rf test-results/evidence/*)"
+      "Bash(rm -rf test-results/evidence/*)",
+      "mcp__browser-use__browser_scroll"
     ],
     "deny": [
       "Read(.env)",

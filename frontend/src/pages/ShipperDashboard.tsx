@@ -9,6 +9,7 @@ import { Pagination } from '@/features/shipper/components/ShipperDashboard/Pagin
 import { SearchBar } from '@/features/shipper/components/ShipperDashboard/SearchBar'
 import { EmptyState } from '@/features/shipper/components/ShipperDashboard/EmptyState'
 import { ProfileCompletionBanner } from '@/features/shipper/components/ProfileCompletionBanner'
+import { KPISummaryPanel } from '@/features/shipper/components/KPISummaryPanel'
 
 export function ShipperDashboard() {
   const navigate = useNavigate()
@@ -142,6 +143,11 @@ export function ShipperDashboard() {
             + Post Load
           </button>
         </div>
+      </div>
+
+      {/* KPI Summary Panel (US-820) */}
+      <div className="panel" data-testid="kpi-summary-section">
+        <KPISummaryPanel />
       </div>
 
       {/* SummaryStrip Panel */}

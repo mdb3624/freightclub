@@ -12,7 +12,7 @@ export interface ShipmentStatusData {
   deliveryDate: string;
 }
 
-export function useShipmentStatus(userId?: string) {
+export function useShipmentStatus() {
   // TODO: Replace with actual API call after US-824 implementation
   return {
     data: null as ShipmentStatusData[] | null,

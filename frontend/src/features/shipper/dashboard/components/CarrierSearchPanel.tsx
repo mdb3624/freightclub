@@ -44,7 +44,7 @@ interface CarrierSearchPanelProps {
 export const CarrierSearchPanel: React.FC<CarrierSearchPanelProps> = ({
   onCarrierSelect,
 }) => {
-  const { status, data, error, search } = useCarrierSearch();
+  const { status, data, search } = useCarrierSearch();
   const {
     register,
     handleSubmit,

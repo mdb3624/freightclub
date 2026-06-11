@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Carrier, CarrierSearchParams, CarrierSearchState } from '../types/carrier';
+import { CarrierSearchParams, CarrierSearchState } from '../types/carrier';
 
 /**
  * US-825 Task 4: Hook for searching carriers with filtering

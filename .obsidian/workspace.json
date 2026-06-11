@@ -181,17 +181,18 @@
   },
   "active": "60bffee8747cbd54",
   "lastOpenFiles": [
-    "frontend/src/features/shipper/pages/ShipperDashboardPage.jitter.test.tsx.tmp.39596.3f44e98e88dd",
-    "frontend/vite.config.ts.timestamp-1781217144863-9a3d51c50f438.mjs",
-    "frontend/vite.config.ts.timestamp-1781217127682-8aa1fc378f7748.mjs",
-    "frontend/src/pages/QuoteRequestPlaceholder.tsx",
-    "frontend/e2e/us-823-grid-layout.spec.ts",
-    "frontend/src/features/shipper/pages/ShipperDashboardPage.a11y.test.tsx",
-    "frontend/src/features/shipper/components/EmptyStateCard.test.tsx",
-    "frontend/src/features/shipper/components/EmptyStateCard.tsx",
-    "frontend/src/features/shipper/pages/ShipperDashboardPage.jitter.test.tsx",
-    "frontend/src/features/shipper/hooks/useActionZone.ts",
-    "frontend/src/features/shipper/hooks/useShipmentStatus.ts",
+    "frontend/dist/assets/profitability-CZfz0Wek.js",
+    "frontend/dist/assets/TruckerLoadDetailPage-DpjntYag.js",
+    "frontend/dist/assets/useLoad-CtN7pv1X.js",
+    "frontend/dist/assets/LoadDetailPage-vf3JJK11.js",
+    "frontend/dist/assets/LoadForm-D_8zy-tm.js",
+    "frontend/dist/assets/LoadEditPage-DdrqaK6r.js",
+    "frontend/dist/assets/LoadCreatePage-B3U9H3HP.js",
+    "frontend/dist/assets/ShipperDashboard-BrhEGrbg.js",
+    "frontend/dist/assets/TruckerDashboard--0sUKglN.js",
+    "frontend/dist/assets/main-C3Zp9Pz3.js",
+    "frontend/dist/assets/main-C97RwxkP.css",
+    "backend/target/classes/db/migration/MIGRATION_CHECKLIST.md",
     "frontend/playwright-report/data/f29366d9d6c4206cf0f0ed4a3b6c0ed8ab223c3e.md",
     "frontend/playwright-report/data/e0dad0813faae2facd15d66aec47b86546e6ad6d.png",
     "frontend/playwright-report/data/c54cbf6397f30babe0f468ffd93d0f9ad2ee257d.md",
@@ -225,7 +226,6 @@
     "frontend/test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/error-context.md",
     "frontend/test-results/us-824-quick-actions-US-82-64fd9--navigates-to-shipper-quote-chromium/error-context.md",
     "frontend/test-results/us-824-quick-actions-US-82-fc75f-igates-to-shipper-loads-new-chromium/error-context.md",
-    "frontend/test-results/us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/error-context.md",
-    "docs/superpowers/plans/2026-06-11-US-826-Messages-And-Alerts-Panel.md"
+    "frontend/test-results/us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/error-context.md"
   ]
 }

@@ -1,14 +1,15 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { useCarrierSearch } from './useCarrierSearch';
 import { Carrier } from '../types/carrier';
 
 describe('useCarrierSearch', () => {
   beforeEach(() => {
-    global.fetch = jest.fn();
+    global.fetch = vi.fn();
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should return initial idle state', () => {
@@ -31,7 +32,7 @@ describe('useCarrierSearch', () => {
       },
     ];
 
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       json: async () => ({ carriers: mockCarriers }),
     });
 
@@ -68,7 +69,7 @@ describe('useCarrierSearch', () => {
       },
     ];
 
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       json: async () => ({ carriers: mockCarriers }),
     });
 
@@ -89,7 +90,7 @@ describe('useCarrierSearch', () => {
   });
 
   it('should return no-results when empty array received', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       json: async () => ({ carriers: [] }),
     });
 
@@ -111,7 +112,7 @@ describe('useCarrierSearch', () => {
 
   it('should return error status on API failure', async () => {
     const mockError = new Error('Network error');
-    (global.fetch as jest.Mock).mockRejectedValueOnce(mockError);
+    (global.fetch as any).mockRejectedValueOnce(mockError);
 
     const { result } = renderHook(() => useCarrierSearch());
 
@@ -141,7 +142,7 @@ describe('useCarrierSearch', () => {
       },
     ];
 
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       json: async () => ({ carriers: mockCarriers }),
     });
 
@@ -161,7 +162,7 @@ describe('useCarrierSearch', () => {
     });
 
     // Verify fetch was called with equipment parameter
-    const fetchCall = (global.fetch as jest.Mock).mock.calls[0][0];
+    const fetchCall = (global.fetch as any).mock.calls[0][0];
     expect(fetchCall).toContain('equipment=Refrigerated');
   });
 
@@ -177,7 +178,7 @@ describe('useCarrierSearch', () => {
       },
     ];
 
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       json: async () => ({ carriers: mockCarriers }),
     });
 
@@ -207,7 +208,7 @@ describe('useCarrierSearch', () => {
   });
 
   it('should construct correct URL with all query parameters', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       json: async () => ({ carriers: [] }),
     });
 
@@ -225,15 +226,15 @@ describe('useCarrierSearch', () => {
       expect(global.fetch).toHaveBeenCalled();
     });
 
-    const fetchUrl = (global.fetch as jest.Mock).mock.calls[0][0];
+    const fetchUrl = (global.fetch as any).mock.calls[0][0];
     expect(fetchUrl).toContain('/api/v1/carriers/search');
-    expect(fetchUrl).toContain('origin=Los%20Angeles%2C%20CA');
-    expect(fetchUrl).toContain('destination=San%20Francisco%2C%20CA');
-    expect(fetchUrl).toContain('equipment=Dry%20Van');
+    expect(fetchUrl).toContain('origin=Los+Angeles%2C+CA');
+    expect(fetchUrl).toContain('destination=San+Francisco%2C+CA');
+    expect(fetchUrl).toContain('equipment=Dry+Van');
   });
 
   it('should not include equipment in URL when not provided', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       json: async () => ({ carriers: [] }),
     });
 
@@ -250,7 +251,7 @@ describe('useCarrierSearch', () => {
       expect(global.fetch).toHaveBeenCalled();
     });
 
-    const fetchUrl = (global.fetch as jest.Mock).mock.calls[0][0];
+    const fetchUrl = (global.fetch as any).mock.calls[0][0];
     expect(fetchUrl).toContain('/api/v1/carriers/search');
     expect(fetchUrl).toContain('origin=');
     expect(fetchUrl).toContain('destination=');

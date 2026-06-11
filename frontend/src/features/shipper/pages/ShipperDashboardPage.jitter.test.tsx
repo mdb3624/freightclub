@@ -10,10 +10,11 @@
 
 import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 import { ShipperDashboardPage } from './ShipperDashboardPage';
 
 // Mock dependencies
-jest.mock('../components/ShipperPageLayout', () => ({
+vi.mock('../components/ShipperPageLayout', () => ({
   ShipperPageLayout: ({ slotA, slotB, slotC, ...props }: any) => (
     <div data-testid="shipper-page-layout" {...props}>
       {slotA && <div data-testid="slot-a-content" className="zone-widget-slots">{slotA}</div>}
@@ -23,7 +24,7 @@ jest.mock('../components/ShipperPageLayout', () => ({
   ),
 }));
 
-jest.mock('../components/KPISummaryPanel', () => ({
+vi.mock('../components/KPISummaryPanel', () => ({
   KPISummaryPanel: () => <div data-testid="kpi-summary-panel" style={{ minHeight: '120px' }}>KPI Content (120px)</div>,
 }));
 

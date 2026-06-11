@@ -56,7 +56,7 @@ describe('EmptyStateCard', () => {
   });
 
   it('applies token-based styling', () => {
-    const { container } = render(
+    render(
       <EmptyStateCard
         icon={<Package size={40} />}
         title="No Shipments"
@@ -66,7 +66,6 @@ describe('EmptyStateCard', () => {
     );
 
     const emptyStateDiv = screen.getByTestId('empty-test');
-    const styles = window.getComputedStyle(emptyStateDiv);
 
     // Verify flexbox layout
     expect(emptyStateDiv).toHaveClass('flex flex-col items-center justify-center');

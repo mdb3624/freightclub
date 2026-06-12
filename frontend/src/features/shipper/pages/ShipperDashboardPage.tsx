@@ -12,7 +12,7 @@ import React, { useState } from 'react';
 import { ShipperPageLayout } from '../components/ShipperPageLayout';
 import { KPISummaryPanel } from '../components/KPISummaryPanel';
 import { EmptyStateCard } from '../components/EmptyStateCard';
-import { Package, Zap, Truck, MessageSquare } from 'lucide-react';
+import { Package, Zap, MessageSquare, Search } from 'lucide-react';
 
 export const ShipperDashboardPage: React.FC = () => {
   // State for toggling between skeleton (loading) and empty states
@@ -95,76 +95,101 @@ export const ShipperDashboardPage: React.FC = () => {
     </div>
   );
 
-  // SLOT_C: Action Zone + Messages & Alerts (4 columns, stacked rows)
+  // SLOT_C: Action Zone (4 columns) with Carrier Search button
   const slotCContent = (
-    <div className="flex flex-col gap-6" data-testid="slot-c-content">
-      {/* Row 2: Action Zone */}
-      <section
-        className="panel"
-        role="region"
-        aria-label="Quick Actions"
-        data-testid="action-zone-section"
-      >
-        {!showEmptyStates ? (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
-              Quick Actions
-            </h2>
+    <section
+      className="panel"
+      role="region"
+      aria-label="Quick Actions"
+      data-testid="action-zone-section"
+    >
+      {!showEmptyStates ? (
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
+            Quick Actions
+          </h2>
+          <div
+            className="grid grid-cols-2 gap-3"
+            data-testid="action-buttons-grid"
+          >
+            {/* Placeholder buttons */}
             <div
-              className="rounded animate-pulse"
-              style={{
-                minHeight: 'var(--skeleton-height-action-zone)',
-                backgroundColor: 'var(--color-surface-light)',
-              }}
+              className="h-12 bg-gray-100 rounded animate-pulse"
+              style={{ backgroundColor: 'var(--color-surface-light)' }}
+            />
+            <div
+              className="h-12 bg-gray-100 rounded animate-pulse"
+              style={{ backgroundColor: 'var(--color-surface-light)' }}
+            />
+            <div
+              className="h-12 bg-gray-100 rounded animate-pulse"
+              style={{ backgroundColor: 'var(--color-surface-light)' }}
+            />
+            <div
+              className="h-12 bg-gray-100 rounded animate-pulse"
+              style={{ backgroundColor: 'var(--color-surface-light)' }}
             />
           </div>
-        ) : (
-          <EmptyStateCard
-            icon={<Zap size={40} />}
-            title="Quick Actions Ready"
-            description="Common tasks and shortcuts will appear here for faster operations."
-            testId="action-zone-empty"
+          <div
+            style={{
+              minHeight: 'var(--skeleton-height-action-zone)',
+              backgroundColor: 'var(--color-surface-light)',
+            }}
           />
-        )}
-      </section>
+        </div>
+      ) : (
+        <EmptyStateCard
+          icon={<Zap size={40} />}
+          title="Quick Actions Ready"
+          description="Common tasks and shortcuts will appear here for faster operations."
+          testId="action-zone-empty"
+        />
+      )}
+    </section>
+  );
 
-      {/* Row 3: Messages & Alerts */}
-      <section
-        className="panel"
-        role="region"
-        aria-label="Messages and Alerts"
-        data-testid="messages-alerts-section"
-      >
-        {!showEmptyStates ? (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
-              Messages & Alerts
-            </h2>
-            <div
-              className="rounded animate-pulse"
-              style={{
-                minHeight: 'var(--skeleton-height-messages-alerts)',
-                backgroundColor: 'var(--color-surface-light)',
-              }}
-            />
-          </div>
-        ) : (
-          <EmptyStateCard
-            icon={<MessageSquare size={40} />}
-            title="No Notifications Yet"
-            description="You'll receive alerts here when carriers respond to your loads."
-            testId="messages-alerts-empty"
+  // SLOT_B (Row 3): Messages & Alerts (8 columns)
+  const slotBRow3Content = (
+    <section
+      className="panel"
+      role="region"
+      aria-label="Messages and Alerts"
+      data-testid="messages-alerts-section"
+    >
+      {!showEmptyStates ? (
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
+            Messages & Alerts
+          </h2>
+          <div
+            className="rounded animate-pulse"
+            style={{
+              minHeight: 'var(--skeleton-height-messages-alerts)',
+              backgroundColor: 'var(--color-surface-light)',
+            }}
           />
-        )}
-      </section>
-    </div>
+        </div>
+      ) : (
+        <EmptyStateCard
+          icon={<MessageSquare size={40} />}
+          title="No Notifications Yet"
+          description="You'll receive alerts here when carriers respond to your loads."
+          testId="messages-alerts-empty"
+        />
+      )}
+    </section>
   );
 
   return (
     <ShipperPageLayout
       data-testid="shipper-dashboard-page"
       slotA={slotAContent}
-      slotB={slotBContent}
+      slotB={
+        <div className="flex flex-col gap-6" data-testid="slot-b-content">
+          {slotBContent}
+          {slotBRow3Content}
+        </div>
+      }
       slotC={slotCContent}
     />
   );

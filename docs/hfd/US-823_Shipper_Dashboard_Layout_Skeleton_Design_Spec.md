@@ -56,23 +56,27 @@ Container: .zone-widget-slots
 │ │ Shipment Status      │ │ │ Action Zone (Quick Actions)│  │
 │ │ .panel wrapper       │ │ │ .panel wrapper             │  │
 │ │ ┌────────────────────┤ │ │ ┌──────────────────────────┤  │
-│ │ │ [Skeleton State]   │ │ │ │ [Skeleton State]         │  │
-│ │ │ Fixed height: 300px│ │ │ │ Fixed height: 240px      │  │
-│ │ │ No jitter on load  │ │ │ │ No jitter on load        │  │
+│ │ │ [Skeleton State]   │ │ │ │ [4 Buttons including:]   │  │
+│ │ │ Fixed height: 300px│ │ │ │ - Post Load              │  │
+│ │ │ No jitter on load  │ │ │ │ - Get Quote              │  │
+│ │ │                    │ │ │ │ - Search Carriers (BTN)  │  │
+│ │ │                    │ │ │ │ - Track Shipments        │  │
+│ │ │                    │ │ │ │ Fixed height: 240px      │  │
 │ │ └────────────────────┤ │ │ └──────────────────────────┤  │
 │ └──────────────────────┘ │ └────────────────────────────┘  │
 ├──────────────────────────┴──────────────────────────────────┤
 │ Gap: var(--space-lg) (24px)                                 │
 ├──────────────────────────┬──────────────────────────────────┤
 │ .slot-b (8 columns)      │ .slot-c (4 columns)              │
-│ ┌──────────────────────┐ │ ┌────────────────────────────┐  │
-│ │ Carrier Search       │ │ │ Messages & Alerts          │  │
-│ │ .panel wrapper       │ │ │ .panel wrapper             │  │
-│ │ ┌────────────────────┤ │ │ ┌──────────────────────────┤  │
-│ │ │ [Skeleton State]   │ │ │ │ [Skeleton State]         │  │
-│ │ │ Fixed height: 180px│ │ │ │ Fixed height: 280px      │  │
-│ │ └────────────────────┤ │ │ └──────────────────────────┤  │
-│ └──────────────────────┘ │ └────────────────────────────┘  │
+│ ┌──────────────────────┐ │                                  │
+│ │ Messages & Alerts    │ │ [EMPTY - Future Use]             │
+│ │ .panel wrapper       │ │                                  │
+│ │ ┌────────────────────┤ │                                  │
+│ │ │ [Skeleton State]   │ │                                  │
+│ │ │ Fixed height: 280px│ │                                  │
+│ │ │ No jitter on load  │ │                                  │
+│ │ └────────────────────┤ │                                  │
+│ └──────────────────────┘ │                                  │
 └──────────────────────────┴──────────────────────────────────┘
 ```
 
@@ -84,9 +88,8 @@ Sequence:
 1. Header
 2. KPI Summary
 3. Shipment Status (full-width)
-4. Action Zone (full-width)
-5. Carrier Search (full-width)
-6. Messages & Alerts (full-width)
+4. Action Zone (full-width) [includes Carrier Search button]
+5. Messages & Alerts (full-width)
 ```
 
 ### Mobile Layout (≤767px)
@@ -125,8 +128,9 @@ All four content sections MUST use the `.panel` class as defined in `index.css`:
 |---|---|---|---|---|
 | Shipment Status | `.slot-b` (8 cols) | `.panel` | `region` | "Shipment Status Feed" |
 | Action Zone | `.slot-c` (4 cols) | `.panel` | `region` | "Quick Actions & Tools" |
-| Carrier Search | `.slot-b` (8 cols) | `.panel` | `region` | "Carrier Search" |
-| Messages & Alerts | `.slot-c` (4 cols) | `.panel` | `region` | "Messages & Alerts" |
+| Messages & Alerts | `.slot-b` (8 cols) | `.panel` | `region` | "Messages & Alerts" |
+
+**Note:** Carrier Search is a **button** within the Action Zone panel (not a separate panel). The button will navigate to or open the carrier search modal/panel from US-825.
 
 **Constraint:** No custom margins or padding override `.panel` defaults. Grid gap (`var(--space-lg)`) manages all spacing.
 
@@ -141,8 +145,7 @@ All skeleton placeholders MUST maintain the same height as their final rendered 
 | **Section** | **Skeleton Min-Height** | **Final Content Height** | **Match** |
 |---|---|---|---|
 | Shipment Status | 300px | ~320px (scrollable list) | ✅ Fixed |
-| Action Zone | 240px | ~250px (4 buttons, 2-col grid) | ✅ Fixed |
-| Carrier Search | 180px | ~200px (3 inputs + button) | ✅ Fixed |
+| Action Zone | 240px | ~250px (4 buttons including Carrier Search) | ✅ Fixed |
 | Messages & Alerts | 280px | ~300px (notification list) | ✅ Fixed |
 
 ### Skeleton Pattern
@@ -160,15 +163,6 @@ All skeleton loaders use the standard `.animate-pulse` pattern:
   </div>
 </div>
 
-<!-- Carrier Search Skeleton -->
-<div class="panel" role="region" aria-label="Carrier Search">
-  <div class="animate-pulse space-y-4" style="min-height: 180px;">
-    <div class="h-10 bg-gray-200 rounded"></div>
-    <div class="h-10 bg-gray-200 rounded"></div>
-    <div class="h-10 bg-gray-200 rounded"></div>
-    <div class="h-12 bg-brand-bronze rounded"></div>
-  </div>
-</div>
 ```
 
 **Result:** Grid remains visually stable; no height shift when skeleton → real content.
@@ -227,13 +221,6 @@ Description: "Check back once you've posted a load"
 Icon: 🚀 (or lucide-zap icon)
 Title: "Quick Actions Ready"
 Description: "Select an action to get started"
-```
-
-**Carrier Search:**
-```
-Icon: 🔍 (or lucide-search icon)
-Title: "Enter a Location"
-Description: "Search by origin and destination"
 ```
 
 **Messages & Alerts:**
@@ -334,16 +321,12 @@ CTA buttons use the `.btn-bronze` class:
 
     <!-- Action Zone -->
     <section role="region" aria-label="Quick Actions & Tools" class="slot-c panel">
-      <!-- Content loaded by US-824/825/826 -->
-    </section>
-
-    <!-- Carrier Search -->
-    <section role="region" aria-label="Carrier Search" class="slot-b panel">
-      <!-- Content loaded by US-825 -->
+      <!-- 4 buttons including: Post Load, Get Quote, Search Carriers, Track Shipments -->
+      <!-- Content loaded by US-824 -->
     </section>
 
     <!-- Messages & Alerts -->
-    <section role="region" aria-label="Messages & Alerts" class="slot-c panel">
+    <section role="region" aria-label="Messages & Alerts" class="slot-b panel">
       <!-- Content loaded by US-826 -->
     </section>
   </div>
@@ -398,10 +381,11 @@ The following screenshots MUST be captured and included in the final PR:
 - [ ] Wrap grid in `.zone-widget-slots` container
 - [ ] Import `ShipperPageHeader` (US-821) and render in grid
 - [ ] Import `KPISummaryPanel` (US-820) and render in grid
-- [ ] Create 4 `.panel` placeholder sections with correct `.slot-*` classes
+- [ ] Create 3 `.panel` placeholder sections with correct `.slot-*` classes (Shipment Status, Action Zone, Messages & Alerts)
+- [ ] Add "Search Carriers" button to Action Zone (alongside Post Load, Get Quote, Track Shipments)
 - [ ] Add semantic roles and aria-labels to all regions
 - [ ] Implement loading skeleton with fixed heights (no jitter)
-- [ ] Implement empty states for all 4 sections
+- [ ] Implement empty states for all 3 sections
 - [ ] Verify all spacing uses CSS variables (no hardcoded px)
 - [ ] Verify all colors/borders/shadows use CSS variables
 - [ ] Test responsive behavior at 1280px, 768px, 375px
@@ -430,17 +414,18 @@ The following screenshots MUST be captured and included in the final PR:
 **I, the Human Factors Designer, certify that:**
 
 ✅ This design strictly adheres to the Composite Framework (index.css SYSTEM_BLUEPRINT.md §3.5).  
-✅ Grid mapping is correct: Shipment Status → `.slot-b` (8 cols), Action Zone → `.slot-c` (4 cols), Carrier Search → `.slot-b` (8 cols), Messages & Alerts → `.slot-c` (4 cols).  
+✅ Grid mapping is correct: Shipment Status → `.slot-b` (8 cols), Action Zone → `.slot-c` (4 cols with Carrier Search button), Messages & Alerts → `.slot-b` (8 cols).  
 ✅ All content sections wrapped in `.panel` class (System of Record, §6.5).  
+✅ Carrier Search is a button within Action Zone (not a separate panel).  
 ✅ All colors, borders, shadows, spacing use CSS variables (zero hardcoded hex values).  
 ✅ Loading skeletons maintain fixed heights to prevent layout jitter.  
-✅ Empty states are designed and specified for all four sections.  
+✅ Empty states are designed and specified for all three content sections.  
 ✅ Responsive breakpoints tested and specified (1280px, 768px, 375px).  
 ✅ ARIA landmarks and semantic roles properly assigned.  
 ✅ WCAG AA accessibility standards met.  
 ✅ E2E artifact requirements documented (5 screenshots, validation checklist).  
 ✅ No conflicts with Shipper & Administrator Style Guide.  
-✅ **ARCH Review Complete** — Option A (Strict 8-4 Slot Compliance) approved per ARCH_REVIEW_US-823_Structural_Gate.md
+✅ **DESIGN UPDATED 2026-06-12** — Carrier Search changed from panel to button per user requirements.
 
 **Status:** ✅ APPROVED FOR CODER  
 **Date:** 2026-06-11  

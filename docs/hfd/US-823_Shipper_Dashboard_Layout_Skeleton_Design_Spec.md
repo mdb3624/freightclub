@@ -145,7 +145,7 @@ All skeleton placeholders MUST maintain the same height as their final rendered 
 | **Section** | **Skeleton Min-Height** | **Final Content Height** | **Match** |
 |---|---|---|---|
 | Shipment Status | 300px | ~320px (scrollable list) | ✅ Fixed |
-| Action Zone | 240px | ~250px (4 buttons including Carrier Search) | ✅ Fixed |
+| Action Zone | 140px | ~140px (4 buttons + Carrier Search button in 2-col grid) | ✅ Fixed |
 | Messages & Alerts | 280px | ~300px (notification list) | ✅ Fixed |
 
 ### Skeleton Pattern

@@ -1,26 +1,26 @@
-<testsuites id="" name="" tests="11" failures="0" skipped="0" errors="0" time="7.325227">
-<testsuite name="us-823-grid-layout.spec.ts" timestamp="2026-06-11T22:38:25.205Z" hostname="chromium" tests="11" failures="0" skipped="0" time="3.293" errors="0">
-<testcase name="US-823: Shipper Dashboard Grid Layout › AC-1: Dashboard loads at /dashboard/shipper" classname="us-823-grid-layout.spec.ts" time="0.85">
+<testsuites id="" name="" tests="11" failures="0" skipped="0" errors="0" time="10.46299">
+<testsuite name="us-823-grid-layout.spec.ts" timestamp="2026-06-12T19:04:35.146Z" hostname="chromium" tests="11" failures="0" skipped="0" time="3.102" errors="0">
+<testcase name="US-823: Shipper Dashboard Grid Layout › AC-1: Dashboard loads at /dashboard/shipper" classname="us-823-grid-layout.spec.ts" time="0.821">
 </testcase>
-<testcase name="US-823: Shipper Dashboard Grid Layout › AC-4: All four content sections are present" classname="us-823-grid-layout.spec.ts" time="0.286">
+<testcase name="US-823: Shipper Dashboard Grid Layout › AC-4: All four content sections are present" classname="us-823-grid-layout.spec.ts" time="0.252">
 </testcase>
-<testcase name="US-823: Shipper Dashboard Grid Layout › AC-6: Grid alignment at 1280px (8-4 split)" classname="us-823-grid-layout.spec.ts" time="0.266">
+<testcase name="US-823: Shipper Dashboard Grid Layout › AC-6: Grid alignment at 1280px (8-4 split)" classname="us-823-grid-layout.spec.ts" time="0.241">
 </testcase>
-<testcase name="US-823: Shipper Dashboard Grid Layout › AC-6: Grid stacking at 768px (responsive)" classname="us-823-grid-layout.spec.ts" time="0.23">
+<testcase name="US-823: Shipper Dashboard Grid Layout › AC-6: Grid stacking at 768px (responsive)" classname="us-823-grid-layout.spec.ts" time="0.212">
 </testcase>
-<testcase name="US-823: Shipper Dashboard Grid Layout › AC-6: Grid stacking at 375px (mobile layout)" classname="us-823-grid-layout.spec.ts" time="0.208">
+<testcase name="US-823: Shipper Dashboard Grid Layout › AC-6: Grid stacking at 375px (mobile layout)" classname="us-823-grid-layout.spec.ts" time="0.191">
 </testcase>
-<testcase name="US-823: Shipper Dashboard Grid Layout › AC-7: All sections use .panel class" classname="us-823-grid-layout.spec.ts" time="0.229">
+<testcase name="US-823: Shipper Dashboard Grid Layout › AC-7: All sections use .panel class" classname="us-823-grid-layout.spec.ts" time="0.227">
 </testcase>
-<testcase name="US-823: Shipper Dashboard Grid Layout › AC-8: Skeleton heights prevent layout jitter" classname="us-823-grid-layout.spec.ts" time="0.223">
+<testcase name="US-823: Shipper Dashboard Grid Layout › AC-8: Skeleton heights prevent layout jitter" classname="us-823-grid-layout.spec.ts" time="0.217">
 </testcase>
-<testcase name="US-823: Shipper Dashboard Grid Layout › AC-9: Grid alignment is visually correct (no overflow/gaps)" classname="us-823-grid-layout.spec.ts" time="0.244">
+<testcase name="US-823: Shipper Dashboard Grid Layout › AC-9: Grid alignment is visually correct (no overflow/gaps)" classname="us-823-grid-layout.spec.ts" time="0.207">
 </testcase>
-<testcase name="US-823: Shipper Dashboard Grid Layout › AC-5: Keyboard navigation works (tab through regions)" classname="us-823-grid-layout.spec.ts" time="0.234">
+<testcase name="US-823: Shipper Dashboard Grid Layout › AC-5: Keyboard navigation works (tab through regions)" classname="us-823-grid-layout.spec.ts" time="0.215">
 </testcase>
-<testcase name="US-823: Shipper Dashboard Grid Layout › AC-5: Screen reader announces regions correctly" classname="us-823-grid-layout.spec.ts" time="0.285">
+<testcase name="US-823: Shipper Dashboard Grid Layout › AC-5: Screen reader announces regions correctly" classname="us-823-grid-layout.spec.ts" time="0.238">
 </testcase>
-<testcase name="US-823: Shipper Dashboard Grid Layout › No errors in browser console" classname="us-823-grid-layout.spec.ts" time="0.238">
+<testcase name="US-823: Shipper Dashboard Grid Layout › No errors in browser console" classname="us-823-grid-layout.spec.ts" time="0.281">
 </testcase>
 </testsuite>
 </testsuites>

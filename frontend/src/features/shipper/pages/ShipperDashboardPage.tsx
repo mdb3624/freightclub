@@ -12,7 +12,7 @@ import React, { useState } from 'react';
 import { ShipperPageLayout } from '../components/ShipperPageLayout';
 import { KPISummaryPanel } from '../components/KPISummaryPanel';
 import { EmptyStateCard } from '../components/EmptyStateCard';
-import { Package, Zap, MessageSquare, Search } from 'lucide-react';
+import { Package, Zap, MessageSquare } from 'lucide-react';
 
 export const ShipperDashboardPage: React.FC = () => {
   // State for toggling between skeleton (loading) and empty states
@@ -26,73 +26,40 @@ export const ShipperDashboardPage: React.FC = () => {
     </div>
   );
 
-  // SLOT_B: Shipment Status + Carrier Search (8 columns, stacked rows)
+  // SLOT_B (Row 2): Shipment Status (8 columns)
   const slotBContent = (
-    <div className="flex flex-col gap-6" data-testid="slot-b-content">
-      {/* Row 2: Shipment Status */}
-      <section
-        className="panel"
-        role="region"
-        aria-label="Shipment Status"
-        data-testid="shipment-status-section"
-      >
-        {!showEmptyStates ? (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
-              Shipment Status
-            </h2>
-            <div
-              className="rounded animate-pulse"
-              style={{
-                minHeight: 'var(--skeleton-height-shipment-status)',
-                backgroundColor: 'var(--color-surface-light)',
-              }}
-            />
-          </div>
-        ) : (
-          <EmptyStateCard
-            icon={<Package size={40} />}
-            title="No Active Shipments"
-            description="Start by posting a new load to track your shipments here."
-            action={{
-              label: 'Post a Load',
-              onClick: () => window.location.href = '/shipper/loads/new',
+    <section
+      className="panel"
+      role="region"
+      aria-label="Shipment Status"
+      data-testid="shipment-status-section"
+    >
+      {!showEmptyStates ? (
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
+            Shipment Status
+          </h2>
+          <div
+            className="rounded animate-pulse"
+            style={{
+              minHeight: 'var(--skeleton-height-shipment-status)',
+              backgroundColor: 'var(--color-surface-light)',
             }}
-            testId="shipment-status-empty"
           />
-        )}
-      </section>
-
-      {/* Row 3: Carrier Search */}
-      <section
-        className="panel"
-        role="region"
-        aria-label="Carrier Search"
-        data-testid="carrier-search-section"
-      >
-        {!showEmptyStates ? (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
-              Carrier Search
-            </h2>
-            <div
-              className="rounded animate-pulse"
-              style={{
-                minHeight: 'var(--skeleton-height-carrier-search)',
-                backgroundColor: 'var(--color-surface-light)',
-              }}
-            />
-          </div>
-        ) : (
-          <EmptyStateCard
-            icon={<Truck size={40} />}
-            title="Search for Carriers"
-            description="Enter a destination to find available carriers for your loads."
-            testId="carrier-search-empty"
-          />
-        )}
-      </section>
-    </div>
+        </div>
+      ) : (
+        <EmptyStateCard
+          icon={<Package size={40} />}
+          title="No Active Shipments"
+          description="Start by posting a new load to track your shipments here."
+          action={{
+            label: 'Post a Load',
+            onClick: () => window.location.href = '/shipper/loads/new',
+          }}
+          testId="shipment-status-empty"
+        />
+      )}
+    </section>
   );
 
   // SLOT_C: Action Zone (4 columns) with Carrier Search button

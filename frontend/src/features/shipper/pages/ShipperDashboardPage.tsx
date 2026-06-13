@@ -71,29 +71,11 @@ export const ShipperDashboardPage: React.FC = () => {
         <h3 className="text-sm font-semibold mb-4" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
           Quick Actions
         </h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm, 8px)' }} data-testid="quick-actions-buttons">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }} data-testid="quick-actions-buttons">
           <button
             onClick={() => handleActionClick('quick-actions-post-load', onPostLoad)}
             disabled={isLoading && loadingButtonId === 'quick-actions-post-load'}
-            style={{
-              width: '100%',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              background: isLoading && loadingButtonId === 'quick-actions-post-load'
-                ? '#D3D3D3'
-                : 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
-              color: isLoading && loadingButtonId === 'quick-actions-post-load' ? '#888888' : '#FFFFFF',
-              border: isLoading && loadingButtonId === 'quick-actions-post-load'
-                ? 'none'
-                : '1px solid #7A5F3A',
-              boxShadow: isLoading && loadingButtonId === 'quick-actions-post-load'
-                ? '0 1px 2px rgba(0,0,0,0.1)'
-                : 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: isLoading && loadingButtonId === 'quick-actions-post-load' ? 'not-allowed' : 'pointer',
-              transition: 'all 150ms ease-in-out',
-            }}
+            className="btn-bronze"
             data-testid="quick-actions-post-load"
           >
             📤 Post Load
@@ -101,25 +83,7 @@ export const ShipperDashboardPage: React.FC = () => {
           <button
             onClick={() => handleActionClick('quick-actions-quote', onGetQuote)}
             disabled={isLoading && loadingButtonId === 'quick-actions-quote'}
-            style={{
-              width: '100%',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              background: isLoading && loadingButtonId === 'quick-actions-quote'
-                ? '#D3D3D3'
-                : 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
-              color: isLoading && loadingButtonId === 'quick-actions-quote' ? '#888888' : '#FFFFFF',
-              border: isLoading && loadingButtonId === 'quick-actions-quote'
-                ? 'none'
-                : '1px solid #7A5F3A',
-              boxShadow: isLoading && loadingButtonId === 'quick-actions-quote'
-                ? '0 1px 2px rgba(0,0,0,0.1)'
-                : 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: isLoading && loadingButtonId === 'quick-actions-quote' ? 'not-allowed' : 'pointer',
-              transition: 'all 150ms ease-in-out',
-            }}
+            className="btn-bronze"
             data-testid="quick-actions-quote"
           >
             💬 Get A Quote
@@ -127,25 +91,7 @@ export const ShipperDashboardPage: React.FC = () => {
           <button
             onClick={() => handleActionClick('quick-actions-track', onTrackShipments)}
             disabled={isLoading && loadingButtonId === 'quick-actions-track'}
-            style={{
-              width: '100%',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              background: isLoading && loadingButtonId === 'quick-actions-track'
-                ? '#D3D3D3'
-                : 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
-              color: isLoading && loadingButtonId === 'quick-actions-track' ? '#888888' : '#FFFFFF',
-              border: isLoading && loadingButtonId === 'quick-actions-track'
-                ? 'none'
-                : '1px solid #7A5F3A',
-              boxShadow: isLoading && loadingButtonId === 'quick-actions-track'
-                ? '0 1px 2px rgba(0,0,0,0.1)'
-                : 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: isLoading && loadingButtonId === 'quick-actions-track' ? 'not-allowed' : 'pointer',
-              transition: 'all 150ms ease-in-out',
-            }}
+            className="btn-bronze"
             data-testid="quick-actions-track"
           >
             📦 Track Shipments
@@ -153,25 +99,7 @@ export const ShipperDashboardPage: React.FC = () => {
           <button
             onClick={() => handleActionClick('quick-actions-carriers', onPreferredCarriers)}
             disabled={isLoading && loadingButtonId === 'quick-actions-carriers'}
-            style={{
-              width: '100%',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              background: isLoading && loadingButtonId === 'quick-actions-carriers'
-                ? '#D3D3D3'
-                : 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
-              color: isLoading && loadingButtonId === 'quick-actions-carriers' ? '#888888' : '#FFFFFF',
-              border: isLoading && loadingButtonId === 'quick-actions-carriers'
-                ? 'none'
-                : '1px solid #7A5F3A',
-              boxShadow: isLoading && loadingButtonId === 'quick-actions-carriers'
-                ? '0 1px 2px rgba(0,0,0,0.1)'
-                : 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: isLoading && loadingButtonId === 'quick-actions-carriers' ? 'not-allowed' : 'pointer',
-              transition: 'all 150ms ease-in-out',
-            }}
+            className="btn-bronze"
             data-testid="quick-actions-carriers"
           >
             ⭐ Preferred Carriers

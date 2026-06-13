@@ -95,7 +95,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2539,
+                      "duration": 3934,
                       "errors": [],
                       "stdout": [
                         {
@@ -104,11 +104,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users 2c7911c3-8d33-4632-8294-88f4a7126d95: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/2c7911c3-8d33-4632-8294-88f4a7126d95\",\"timestamp\":\"2026-06-13T18:08:02.533215357Z\"}\n"
+                          "text": "Failed to delete users 4d6bfe6a-35ab-43fa-957e-1697e027e693: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/4d6bfe6a-35ab-43fa-957e-1697e027e693\",\"timestamp\":\"2026-06-13T18:29:12.605297958Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:08:00.087Z",
+                      "startTime": "2026-06-13T18:29:08.928Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -137,7 +137,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1826,
+                      "duration": 2121,
                       "errors": [],
                       "stdout": [
                         {
@@ -146,11 +146,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users c1385208-5373-4bc3-b5b9-376f7afb720a: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/c1385208-5373-4bc3-b5b9-376f7afb720a\",\"timestamp\":\"2026-06-13T18:08:04.329203646Z\"}\n"
+                          "text": "Failed to delete users 8ad28068-8a18-46ec-bcc0-d70c41ecba08: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/8ad28068-8a18-46ec-bcc0-d70c41ecba08\",\"timestamp\":\"2026-06-13T18:29:14.771253311Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:08:02.726Z",
+                      "startTime": "2026-06-13T18:29:12.988Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -179,7 +179,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1757,
+                      "duration": 1950,
                       "errors": [],
                       "stdout": [
                         {
@@ -188,11 +188,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users 24d6c913-d1c8-4cbf-bf5d-368719c33fac: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/24d6c913-d1c8-4cbf-bf5d-368719c33fac\",\"timestamp\":\"2026-06-13T18:08:06.133443439Z\"}\n"
+                          "text": "Failed to delete users a1deab55-9efb-4e92-b520-0f6161a15acc: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/a1deab55-9efb-4e92-b520-0f6161a15acc\",\"timestamp\":\"2026-06-13T18:29:16.825592994Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:08:04.570Z",
+                      "startTime": "2026-06-13T18:29:15.126Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -221,7 +221,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1726,
+                      "duration": 2254,
                       "errors": [],
                       "stdout": [
                         {
@@ -230,11 +230,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users 7135a873-192e-4b5f-a4c9-11777d343d0d: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/7135a873-192e-4b5f-a4c9-11777d343d0d\",\"timestamp\":\"2026-06-13T18:08:07.873092423Z\"}\n"
+                          "text": "Failed to delete users cbd2b67e-2ffb-412d-9a98-d642b4961fea: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/cbd2b67e-2ffb-412d-9a98-d642b4961fea\",\"timestamp\":\"2026-06-13T18:29:18.874850227Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:08:06.343Z",
+                      "startTime": "2026-06-13T18:29:17.094Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -263,7 +263,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1800,
+                      "duration": 1953,
                       "errors": [],
                       "stdout": [
                         {
@@ -272,11 +272,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users 4e1adff8-5b50-4ffc-93bf-ccad4af89da0: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/4e1adff8-5b50-4ffc-93bf-ccad4af89da0\",\"timestamp\":\"2026-06-13T18:08:09.659122106Z\"}\n"
+                          "text": "Failed to delete users 1337f3d1-87a5-47d1-9f07-4683fd494002: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/1337f3d1-87a5-47d1-9f07-4683fd494002\",\"timestamp\":\"2026-06-13T18:29:21.069959987Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:08:08.087Z",
+                      "startTime": "2026-06-13T18:29:19.371Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -305,7 +305,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1839,
+                      "duration": 2360,
                       "errors": [],
                       "stdout": [
                         {
@@ -314,11 +314,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users 36ac96ac-f5a9-403f-b613-cd728419cb89: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/36ac96ac-f5a9-403f-b613-cd728419cb89\",\"timestamp\":\"2026-06-13T18:08:11.505183731Z\"}\n"
+                          "text": "Failed to delete users 2d7e7079-7fc8-4b72-807d-b340806a2426: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/2d7e7079-7fc8-4b72-807d-b340806a2426\",\"timestamp\":\"2026-06-13T18:29:23.313292407Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:08:09.906Z",
+                      "startTime": "2026-06-13T18:29:21.344Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -347,7 +347,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1845,
+                      "duration": 2007,
                       "errors": [],
                       "stdout": [
                         {
@@ -356,11 +356,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users bb44375d-8bff-48c9-b4e8-281d32469c18: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/bb44375d-8bff-48c9-b4e8-281d32469c18\",\"timestamp\":\"2026-06-13T18:08:13.364364941Z\"}\n"
+                          "text": "Failed to delete users 1d9e31cc-6fe2-464f-af56-447e9c7019ed: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/1d9e31cc-6fe2-464f-af56-447e9c7019ed\",\"timestamp\":\"2026-06-13T18:29:25.508339937Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:08:11.763Z",
+                      "startTime": "2026-06-13T18:29:23.729Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -389,7 +389,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1759,
+                      "duration": 1930,
                       "errors": [],
                       "stdout": [
                         {
@@ -398,11 +398,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users 4cc43225-dbff-4f62-af5e-4b01c4850934: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/4cc43225-dbff-4f62-af5e-4b01c4850934\",\"timestamp\":\"2026-06-13T18:08:15.156642015Z\"}\n"
+                          "text": "Failed to delete users ed4593d6-560a-4061-9efe-296880642b52: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/ed4593d6-560a-4061-9efe-296880642b52\",\"timestamp\":\"2026-06-13T18:29:27.446245925Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:08:13.625Z",
+                      "startTime": "2026-06-13T18:29:25.757Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -431,7 +431,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1595,
+                      "duration": 1844,
                       "errors": [],
                       "stdout": [
                         {
@@ -440,11 +440,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users 515aa2c2-9222-4b0d-b678-f189aa96859e: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/515aa2c2-9222-4b0d-b678-f189aa96859e\",\"timestamp\":\"2026-06-13T18:08:16.883008540Z\"}\n"
+                          "text": "Failed to delete users 455c4b72-3844-45a7-92be-1b04b90c8455: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/455c4b72-3844-45a7-92be-1b04b90c8455\",\"timestamp\":\"2026-06-13T18:29:29.457953603Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:08:15.407Z",
+                      "startTime": "2026-06-13T18:29:27.724Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -464,8 +464,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-13T18:07:56.371Z",
-    "duration": 21350.761,
+    "startTime": "2026-06-13T18:29:04.274Z",
+    "duration": 26098.248,
     "expected": 9,
     "skipped": 0,
     "unexpected": 0,

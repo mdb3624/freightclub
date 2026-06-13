@@ -95,7 +95,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2115,
+                      "duration": 2444,
                       "errors": [],
                       "stdout": [
                         {
@@ -104,11 +104,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users b118df53-0c92-4974-a757-a93768c275d0: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/b118df53-0c92-4974-a757-a93768c275d0\",\"timestamp\":\"2026-06-13T17:52:37.070363101Z\"}\n"
+                          "text": "Failed to delete users 68b2467e-af64-431a-9e29-7e256b6fc94c: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/68b2467e-af64-431a-9e29-7e256b6fc94c\",\"timestamp\":\"2026-06-13T17:55:36.403079949Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T17:52:35.218Z",
+                      "startTime": "2026-06-13T17:55:34.058Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -137,7 +137,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2082,
+                      "duration": 1974,
                       "errors": [],
                       "stdout": [
                         {
@@ -146,11 +146,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users 21aa527a-2819-45fe-aea0-1a301d4294cb: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/21aa527a-2819-45fe-aea0-1a301d4294cb\",\"timestamp\":\"2026-06-13T17:52:39.057802980Z\"}\n"
+                          "text": "Failed to delete users c587c796-a3fc-4617-8557-7dfac9915a61: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/c587c796-a3fc-4617-8557-7dfac9915a61\",\"timestamp\":\"2026-06-13T17:55:38.233209238Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T17:52:37.437Z",
+                      "startTime": "2026-06-13T17:55:36.597Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -179,7 +179,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1851,
+                      "duration": 1936,
                       "errors": [],
                       "stdout": [
                         {
@@ -188,11 +188,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users a12dd6a5-f1f7-4d5e-8a45-743c08c2ce7e: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/a12dd6a5-f1f7-4d5e-8a45-743c08c2ce7e\",\"timestamp\":\"2026-06-13T17:52:41.021589978Z\"}\n"
+                          "text": "Failed to delete users 190d7f02-6164-4ad3-84df-d3200a2f240f: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/190d7f02-6164-4ad3-84df-d3200a2f240f\",\"timestamp\":\"2026-06-13T17:55:40.198265069Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T17:52:39.536Z",
+                      "startTime": "2026-06-13T17:55:38.589Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -207,7 +207,7 @@
             },
             {
               "title": "US-824 AC-4: Track Shipments button navigates to /dashboard/shipper/loads",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -220,67 +220,26 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 7507,
-                      "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/dashboard\\/shipper\\/loads/\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:9090/\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 5000ms\u001b[22m\n\u001b[2m    9 × unexpected value \"http://localhost:9090/\"\u001b[22m\n",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/dashboard\\/shipper\\/loads/\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:9090/\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 5000ms\u001b[22m\n\u001b[2m    9 × unexpected value \"http://localhost:9090/\"\u001b[22m\n\n    at /app/e2e/us-824-quick-actions.spec.ts:161:26",
-                        "location": {
-                          "file": "/app/e2e/us-824-quick-actions.spec.ts",
-                          "column": 26,
-                          "line": 161
-                        },
-                        "snippet": "  159 |       await trackBtn.click();\n  160 |\n> 161 |       await expect(page).toHaveURL(/\\/dashboard\\/shipper\\/loads/, { timeout: 5000 });\n      |                          ^\n  162 |       console.log('✅ Track Shipments button navigates correctly');\n  163 |     } finally {\n  164 |       await seeder.cleanup();"
-                      },
-                      "errors": [
+                      "status": "passed",
+                      "duration": 1944,
+                      "errors": [],
+                      "stdout": [
                         {
-                          "location": {
-                            "file": "/app/e2e/us-824-quick-actions.spec.ts",
-                            "column": 26,
-                            "line": 161
-                          },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/dashboard\\/shipper\\/loads/\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:9090/\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 5000ms\u001b[22m\n\u001b[2m    9 × unexpected value \"http://localhost:9090/\"\u001b[22m\n\n\n  159 |       await trackBtn.click();\n  160 |\n> 161 |       await expect(page).toHaveURL(/\\/dashboard\\/shipper\\/loads/, { timeout: 5000 });\n      |                          ^\n  162 |       console.log('✅ Track Shipments button navigates correctly');\n  163 |     } finally {\n  164 |       await seeder.cleanup();\n    at /app/e2e/us-824-quick-actions.spec.ts:161:26"
+                          "text": "✅ Track Shipments button navigates correctly\n"
                         }
                       ],
-                      "stdout": [],
                       "stderr": [
                         {
-                          "text": "Failed to delete users ce1e1280-3a38-4ded-96c0-5a67318da08d: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/ce1e1280-3a38-4ded-96c0-5a67318da08d\",\"timestamp\":\"2026-06-13T17:52:48.001014132Z\"}\n"
+                          "text": "Failed to delete users 2e52f43e-9d17-4f23-8f43-5076b67337e3: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/2e52f43e-9d17-4f23-8f43-5076b67337e3\",\"timestamp\":\"2026-06-13T17:55:42.172224646Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T17:52:41.401Z",
+                      "startTime": "2026-06-13T17:55:40.542Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/app/test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/app/test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/app/test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/error-context.md"
-                        },
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "/app/test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/trace.zip"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "/app/e2e/us-824-quick-actions.spec.ts",
-                        "column": 26,
-                        "line": 161
-                      }
+                      "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "5ed864e83a3995c521fc-6f75f640b1c66e76fb4e",
@@ -301,10 +260,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2232,
+                      "duration": 2187,
                       "errors": [],
                       "stdout": [
                         {
@@ -313,11 +272,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users 266cc093-5808-412a-83da-23473e7dc402: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/266cc093-5808-412a-83da-23473e7dc402\",\"timestamp\":\"2026-06-13T17:52:52.167960064Z\"}\n"
+                          "text": "Failed to delete users 9b8a1335-7e46-4f46-9d5d-a1e114350dc1: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/9b8a1335-7e46-4f46-9d5d-a1e114350dc1\",\"timestamp\":\"2026-06-13T17:55:44.332441736Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T17:52:50.350Z",
+                      "startTime": "2026-06-13T17:55:42.503Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -343,10 +302,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1963,
+                      "duration": 2056,
                       "errors": [],
                       "stdout": [
                         {
@@ -355,11 +314,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users 6d030874-b60d-4da0-a5a7-baec906ef6e4: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/6d030874-b60d-4da0-a5a7-baec906ef6e4\",\"timestamp\":\"2026-06-13T17:52:54.196867772Z\"}\n"
+                          "text": "Failed to delete users aef93fa3-20a9-4777-b542-fadb4317f35c: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/aef93fa3-20a9-4777-b542-fadb4317f35c\",\"timestamp\":\"2026-06-13T17:55:46.426340466Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T17:52:52.677Z",
+                      "startTime": "2026-06-13T17:55:44.718Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -385,10 +344,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1712,
+                      "duration": 1901,
                       "errors": [],
                       "stdout": [
                         {
@@ -397,11 +356,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users 39c1c1f5-bde6-4908-a8aa-5e4e40fb406a: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/39c1c1f5-bde6-4908-a8aa-5e4e40fb406a\",\"timestamp\":\"2026-06-13T17:52:56.078560349Z\"}\n"
+                          "text": "Failed to delete users a3058324-5753-4ece-82a5-b135c08f38e2: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/a3058324-5753-4ece-82a5-b135c08f38e2\",\"timestamp\":\"2026-06-13T17:55:48.368008274Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T17:52:54.657Z",
+                      "startTime": "2026-06-13T17:55:46.792Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -427,10 +386,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1800,
+                      "duration": 1801,
                       "errors": [],
                       "stdout": [
                         {
@@ -439,11 +398,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users 2d1275a1-b867-41d9-93af-0d0101ced457: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/2d1275a1-b867-41d9-93af-0d0101ced457\",\"timestamp\":\"2026-06-13T17:52:57.885386123Z\"}\n"
+                          "text": "Failed to delete users d6292e0a-52aa-4aac-84ff-81b2833b2475: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/d6292e0a-52aa-4aac-84ff-81b2833b2475\",\"timestamp\":\"2026-06-13T17:55:50.299969347Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T17:52:56.387Z",
+                      "startTime": "2026-06-13T17:55:48.712Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -469,10 +428,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1576,
+                      "duration": 1699,
                       "errors": [],
                       "stdout": [
                         {
@@ -481,11 +440,11 @@
                       ],
                       "stderr": [
                         {
-                          "text": "Failed to delete users 49bf396d-35e6-4633-b8da-9425b4760632: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/49bf396d-35e6-4633-b8da-9425b4760632\",\"timestamp\":\"2026-06-13T17:52:59.666140599Z\"}\n"
+                          "text": "Failed to delete users e5b98a7b-1333-441f-aa64-de5ae854b922: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/e5b98a7b-1333-441f-aa64-de5ae854b922\",\"timestamp\":\"2026-06-13T17:55:52.109655364Z\"}\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-06-13T17:52:58.206Z",
+                      "startTime": "2026-06-13T17:55:50.528Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -505,11 +464,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-13T17:52:31.875Z",
-    "duration": 28359.784,
-    "expected": 8,
+    "startTime": "2026-06-13T17:55:29.818Z",
+    "duration": 23304.260000000002,
+    "expected": 9,
     "skipped": 0,
-    "unexpected": 1,
+    "unexpected": 0,
     "flaky": 0
   }
 }

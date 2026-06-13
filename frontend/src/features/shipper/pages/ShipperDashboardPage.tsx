@@ -96,20 +96,20 @@ export const ShipperDashboardPage: React.FC = () => {
               Get A Quote
             </button>
             <button
-              onClick={() => handleActionClick('quick-actions-carriers', onPreferredCarriers)}
-              disabled={isLoading && loadingButtonId === 'quick-actions-carriers'}
-              className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
-              data-testid="quick-actions-carriers"
-            >
-              Carrier Network
-            </button>
-            <button
               onClick={() => handleActionClick('quick-actions-track', onTrackShipments)}
               disabled={isLoading && loadingButtonId === 'quick-actions-track'}
               className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
               data-testid="quick-actions-track"
             >
-              Documents Portal
+              Track Shipments
+            </button>
+            <button
+              onClick={() => handleActionClick('quick-actions-carriers', onPreferredCarriers)}
+              disabled={isLoading && loadingButtonId === 'quick-actions-carriers'}
+              className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
+              data-testid="quick-actions-carriers"
+            >
+              Preferred Carriers
             </button>
           </div>
         </div>

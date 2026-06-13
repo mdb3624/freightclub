@@ -60,7 +60,10 @@ export class TestDataSeeder {
   private createdResources: Map<string, any[]> = new Map(); // Track created resources for cleanup
   private accessToken: string | null = null;
 
-  constructor(apiContext: APIRequestContext, backendUrl: string = 'http://localhost:9091') {
+  constructor(
+    apiContext: APIRequestContext,
+    backendUrl: string = process.env.TEST_BACKEND_URL || 'http://backend-test:9091'
+  ) {
     this.apiContext = apiContext;
     this.backendUrl = backendUrl;
   }

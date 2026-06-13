@@ -4,6 +4,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --legacy-peer-deps
 
+# Install Playwright browsers for E2E testing
+RUN npx playwright install chromium
+
 COPY . .
 
 EXPOSE 9090

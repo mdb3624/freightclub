@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "CHG-703.md",
+                "file": "DEBUG_REGISTRATION.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CHG-703"
+              "title": "DEBUG_REGISTRATION"
             }
           }
         ]
@@ -185,17 +185,26 @@
   },
   "active": "60bffee8747cbd54",
   "lastOpenFiles": [
-    "frontend/dist/assets/LoadDetailPage-9LhczX6Z.js",
-    "frontend/dist/assets/LoadCreatePage-ChhTzqsB.js",
-    "frontend/dist/assets/ShipperDashboard-cRmbEhxA.js",
-    "frontend/dist/assets/TruckerDashboard-B9-9eo9j.js",
-    "frontend/dist/assets/main-ChHVMMl8.js",
-    "frontend/dist/assets/main-BivFAz6C.css",
-    "backend/target/site/jacoco/index.html",
-    "backend/target/site/jacoco/com.freightclub.controller/ThemePreferencesController.java.html",
-    "backend/target/site/jacoco/com.freightclub.controller/ThemePreferencesController.html",
-    "backend/target/site/jacoco/com.freightclub.controller/TestAuthController.java.html",
-    "backend/target/site/jacoco/com.freightclub.controller/TestAuthController.html",
+    "docker-compose.test.yml.tmp.25636.e4aaeb96ea1f",
+    "backend/target/surefire-reports/2026-06-13T17-33-07_104-jvmRun1.dump",
+    "backend/target/surefire-reports/2026-06-13T17-33-07_104-jvmRun1.dumpstream",
+    "backend/target/surefire/surefirebooter-20260613173308663_3.jar",
+    "backend/target/surefire/surefire_0-20260613173308663_2tmp",
+    "backend/target/surefire/surefire-20260613173308663_1tmp",
+    "frontend/vite.config.ts.timestamp-1781371966423-732cf1a0cd366.mjs",
+    "backend/target/surefire-reports/2026-06-13T17-31-04_596-jvmRun1.dump",
+    "backend/target/surefire-reports/2026-06-13T17-31-04_596-jvmRun1.dumpstream",
+    "backend/target/surefire/surefirebooter-20260613173106091_3.jar",
+    "backend/target/surefire/surefire_0-20260613173106091_2tmp",
+    "database-migrations.md",
+    "CROSS_REFERENCE_SYSTEM_COMPLETE.md",
+    "CRITICAL_ISSUES_STATUS.md",
+    "CRITICAL_ISSUE_TEST_PLAN.md",
+    "CONTRIBUTING_GOVERNANCE.md",
+    "CONFIGURATION_COMPLIANCE_REVIEW.md",
+    "CLAUDE.local.md",
+    "CLAUDE.md",
+    "CHG-703.md",
     "backend/target/site/jacoco/jacoco-resources/greenbar.gif",
     "backend/target/site/jacoco/jacoco-resources/redbar.gif",
     "backend/target/site/jacoco/jacoco-resources/branchpc.gif",
@@ -221,12 +230,6 @@
     "frontend/test-results/us-823-grid-layout-US-823--b90cd-ll-sections-use-panel-class-chromium/error-context.md",
     "frontend/test-results/us-823-grid-layout-US-823--5ad48-ing-at-375px-mobile-layout--chromium/error-context.md",
     "frontend/test-results/us-823-grid-layout-US-823--963fa-acking-at-768px-responsive--chromium/error-context.md",
-    "frontend/test-results/us-823-grid-layout-US-823--214da-gnment-at-1280px-8-4-split--chromium/error-context.md",
-    "frontend/test-results/us-823-grid-layout-US-823--ce228-ontent-sections-are-present-chromium/error-context.md",
-    "frontend/test-results/us-823-grid-layout-US-823--32a89--loads-at-dashboard-shipper-chromium/error-context.md",
-    "backend/target/classes/db/migration/MIGRATION_CHECKLIST.md",
-    "frontend/playwright-report/data/f29366d9d6c4206cf0f0ed4a3b6c0ed8ab223c3e.md",
-    "frontend/playwright-report/data/c54cbf6397f30babe0f468ffd93d0f9ad2ee257d.md",
-    "frontend/playwright-report/data/950d9f18482f0615314526a665b743ff5962856b.md",
-    "frontend/playwright-report/data/5c8f8439002a9e9385158d1b4aba872fa21101a9.md",
-    "frontend/playwright-report/data/546450efae8
+    "frontend/test-results/us-823-grid-layout-US-823--214da-gnment-at-1280px-8-4-split--chromium/error-context.md"
+  ]
+}

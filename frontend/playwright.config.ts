@@ -31,7 +31,11 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Add --no-sandbox for Docker environments where kernel namespaces aren't available
+        launchArgs: process.env.CI || process.env.DOCKER ? ['--no-sandbox'] : [],
+      },
     },
   ],
   timeout: 30_000, // Global test timeout

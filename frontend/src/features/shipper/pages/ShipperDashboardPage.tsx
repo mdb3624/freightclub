@@ -11,7 +11,6 @@
 import React, { useState } from 'react';
 import { ShipperPageLayout } from '../components/ShipperPageLayout';
 import { KPISummaryPanel } from '../components/KPISummaryPanel';
-import { CarrierSearchPanel } from '../dashboard/components/CarrierSearchPanel';
 import { MessagesAlertsPanel } from '../dashboard/components/MessagesAlertsPanel';
 import { useQuickActionNavigation } from '../dashboard/hooks/useQuickActionNavigation';
 
@@ -56,7 +55,7 @@ export const ShipperDashboardPage: React.FC = () => {
     </section>
   );
 
-  // SLOT_C: Action Zone (4 columns) - Panel containing Quick Actions + Carrier Search side-by-side
+  // SLOT_C: Action Zone (4 columns) - Quick Actions Panel only
   const slotCContent = (
     <section
       className="panel"
@@ -64,70 +63,119 @@ export const ShipperDashboardPage: React.FC = () => {
       aria-label="Action Zone"
       data-testid="action-zone-section"
     >
-      <h2 className="text-lg font-semibold mb-4" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
-        Action Zone
-      </h2>
-      {/* Grid: Quick Actions Panel (left) + Carrier Search Panel (right) */}
-      <div className="grid grid-cols-2 gap-4" data-testid="action-zone-panels">
-        {/* Left: Quick Actions Panel */}
-        <div
-          role="region"
-          aria-label="Quick Action Panel"
-          data-testid="dashboard-quick-actions-panel"
-        >
-          <h3 className="text-sm font-semibold mb-4" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
-            Quick Action Panel
-          </h3>
-          <div className="space-y-2" data-testid="quick-actions-buttons">
-            <button
-              onClick={() => handleActionClick('quick-actions-post-load', onPostLoad)}
-              disabled={isLoading && loadingButtonId === 'quick-actions-post-load'}
-              className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
-              data-testid="quick-actions-post-load"
-            >
-              Post Load
-            </button>
-            <button
-              onClick={() => handleActionClick('quick-actions-quote', onGetQuote)}
-              disabled={isLoading && loadingButtonId === 'quick-actions-quote'}
-              className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
-              data-testid="quick-actions-quote"
-            >
-              Get A Quote
-            </button>
-            <button
-              onClick={() => handleActionClick('quick-actions-track', onTrackShipments)}
-              disabled={isLoading && loadingButtonId === 'quick-actions-track'}
-              className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
-              data-testid="quick-actions-track"
-            >
-              Track Shipments
-            </button>
-            <button
-              onClick={() => handleActionClick('quick-actions-carriers', onPreferredCarriers)}
-              disabled={isLoading && loadingButtonId === 'quick-actions-carriers'}
-              className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
-              data-testid="quick-actions-carriers"
-            >
-              Preferred Carriers
-            </button>
-          </div>
-        </div>
-
-        {/* Right: Carrier Search Panel */}
-        <div
-          role="region"
-          aria-label="Carrier Search Panel"
-          data-testid="carrier-search-panel"
-        >
-          <h3 className="text-sm font-semibold mb-4" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
-            Search For Available Carriers
-          </h3>
-          <CarrierSearchPanel
-            onCarrierSelect={(carrier) => {
-              console.log('Carrier selected:', carrier);
+      <div
+        role="region"
+        aria-label="Quick Actions"
+        data-testid="dashboard-quick-actions-panel"
+      >
+        <h3 className="text-sm font-semibold mb-4" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
+          Quick Actions
+        </h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm, 8px)' }} data-testid="quick-actions-buttons">
+          <button
+            onClick={() => handleActionClick('quick-actions-post-load', onPostLoad)}
+            disabled={isLoading && loadingButtonId === 'quick-actions-post-load'}
+            style={{
+              width: '100%',
+              padding: '8px 16px',
+              borderRadius: '4px',
+              background: isLoading && loadingButtonId === 'quick-actions-post-load'
+                ? '#D3D3D3'
+                : 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
+              color: isLoading && loadingButtonId === 'quick-actions-post-load' ? '#888888' : '#FFFFFF',
+              border: isLoading && loadingButtonId === 'quick-actions-post-load'
+                ? 'none'
+                : '1px solid #7A5F3A',
+              boxShadow: isLoading && loadingButtonId === 'quick-actions-post-load'
+                ? '0 1px 2px rgba(0,0,0,0.1)'
+                : 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: isLoading && loadingButtonId === 'quick-actions-post-load' ? 'not-allowed' : 'pointer',
+              transition: 'all 150ms ease-in-out',
             }}
-          />
+            data-testid="quick-actions-post-load"
+          >
+            📤 Post Load
+          </button>
+          <button
+            onClick={() => handleActionClick('quick-actions-quote', onGetQuote)}
+            disabled={isLoading && loadingButtonId === 'quick-actions-quote'}
+            style={{
+              width: '100%',
+              padding: '8px 16px',
+              borderRadius: '4px',
+              background: isLoading && loadingButtonId === 'quick-actions-quote'
+                ? '#D3D3D3'
+                : 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
+              color: isLoading && loadingButtonId === 'quick-actions-quote' ? '#888888' : '#FFFFFF',
+              border: isLoading && loadingButtonId === 'quick-actions-quote'
+                ? 'none'
+                : '1px solid #7A5F3A',
+              boxShadow: isLoading && loadingButtonId === 'quick-actions-quote'
+                ? '0 1px 2px rgba(0,0,0,0.1)'
+                : 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: isLoading && loadingButtonId === 'quick-actions-quote' ? 'not-allowed' : 'pointer',
+              transition: 'all 150ms ease-in-out',
+            }}
+            data-testid="quick-actions-quote"
+          >
+            💬 Get A Quote
+          </button>
+          <button
+            onClick={() => handleActionClick('quick-actions-track', onTrackShipments)}
+            disabled={isLoading && loadingButtonId === 'quick-actions-track'}
+            style={{
+              width: '100%',
+              padding: '8px 16px',
+              borderRadius: '4px',
+              background: isLoading && loadingButtonId === 'quick-actions-track'
+                ? '#D3D3D3'
+                : 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
+              color: isLoading && loadingButtonId === 'quick-actions-track' ? '#888888' : '#FFFFFF',
+              border: isLoading && loadingButtonId === 'quick-actions-track'
+                ? 'none'
+                : '1px solid #7A5F3A',
+              boxShadow: isLoading && loadingButtonId === 'quick-actions-track'
+                ? '0 1px 2px rgba(0,0,0,0.1)'
+                : 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: isLoading && loadingButtonId === 'quick-actions-track' ? 'not-allowed' : 'pointer',
+              transition: 'all 150ms ease-in-out',
+            }}
+            data-testid="quick-actions-track"
+          >
+            📦 Track Shipments
+          </button>
+          <button
+            onClick={() => handleActionClick('quick-actions-carriers', onPreferredCarriers)}
+            disabled={isLoading && loadingButtonId === 'quick-actions-carriers'}
+            style={{
+              width: '100%',
+              padding: '8px 16px',
+              borderRadius: '4px',
+              background: isLoading && loadingButtonId === 'quick-actions-carriers'
+                ? '#D3D3D3'
+                : 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
+              color: isLoading && loadingButtonId === 'quick-actions-carriers' ? '#888888' : '#FFFFFF',
+              border: isLoading && loadingButtonId === 'quick-actions-carriers'
+                ? 'none'
+                : '1px solid #7A5F3A',
+              boxShadow: isLoading && loadingButtonId === 'quick-actions-carriers'
+                ? '0 1px 2px rgba(0,0,0,0.1)'
+                : 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: isLoading && loadingButtonId === 'quick-actions-carriers' ? 'not-allowed' : 'pointer',
+              transition: 'all 150ms ease-in-out',
+            }}
+            data-testid="quick-actions-carriers"
+          >
+            ⭐ Preferred Carriers
+          </button>
         </div>
       </div>
     </section>

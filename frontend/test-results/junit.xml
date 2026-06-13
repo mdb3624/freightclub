@@ -1,92 +1,92 @@
-<testsuites id="" name="" tests="9" failures="0" skipped="0" errors="0" time="23.304260000000003">
-<testsuite name="us-824-quick-actions.spec.ts" timestamp="2026-06-13T17:55:33.358Z" hostname="chromium" tests="9" failures="0" skipped="0" time="17.942" errors="0">
-<testcase name="US-824: Quick Actions Panel › US-824 AC-1: renders all four quick action buttons" classname="us-824-quick-actions.spec.ts" time="2.444">
+<testsuites id="" name="" tests="9" failures="0" skipped="0" errors="0" time="21.350761">
+<testsuite name="us-824-quick-actions.spec.ts" timestamp="2026-06-13T18:07:59.529Z" hostname="chromium" tests="9" failures="0" skipped="0" time="16.686" errors="0">
+<testcase name="US-824: Quick Actions Panel › US-824 AC-1: renders all four quick action buttons" classname="us-824-quick-actions.spec.ts" time="2.539">
 <system-out>
 <![CDATA[✅ All four quick action buttons rendered correctly
 ]]>
 </system-out>
 <system-err>
-<![CDATA[Failed to delete users 68b2467e-af64-431a-9e29-7e256b6fc94c: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/68b2467e-af64-431a-9e29-7e256b6fc94c","timestamp":"2026-06-13T17:55:36.403079949Z"}
+<![CDATA[Failed to delete users 2c7911c3-8d33-4632-8294-88f4a7126d95: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/2c7911c3-8d33-4632-8294-88f4a7126d95","timestamp":"2026-06-13T18:08:02.533215357Z"}
 ]]>
 </system-err>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-2: Post Load button navigates to /shipper/loads/new" classname="us-824-quick-actions.spec.ts" time="1.974">
+<testcase name="US-824: Quick Actions Panel › US-824 AC-2: Post Load button navigates to /shipper/loads/new" classname="us-824-quick-actions.spec.ts" time="1.826">
 <system-out>
 <![CDATA[✅ Post Load button navigates correctly
 ]]>
 </system-out>
 <system-err>
-<![CDATA[Failed to delete users c587c796-a3fc-4617-8557-7dfac9915a61: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/c587c796-a3fc-4617-8557-7dfac9915a61","timestamp":"2026-06-13T17:55:38.233209238Z"}
+<![CDATA[Failed to delete users c1385208-5373-4bc3-b5b9-376f7afb720a: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/c1385208-5373-4bc3-b5b9-376f7afb720a","timestamp":"2026-06-13T18:08:04.329203646Z"}
 ]]>
 </system-err>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-3: Get A Quote button navigates to /shipper/quote" classname="us-824-quick-actions.spec.ts" time="1.936">
+<testcase name="US-824: Quick Actions Panel › US-824 AC-3: Get A Quote button navigates to /shipper/quote" classname="us-824-quick-actions.spec.ts" time="1.757">
 <system-out>
 <![CDATA[✅ Get A Quote button navigates correctly
 ]]>
 </system-out>
 <system-err>
-<![CDATA[Failed to delete users 190d7f02-6164-4ad3-84df-d3200a2f240f: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/190d7f02-6164-4ad3-84df-d3200a2f240f","timestamp":"2026-06-13T17:55:40.198265069Z"}
+<![CDATA[Failed to delete users 24d6c913-d1c8-4cbf-bf5d-368719c33fac: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/24d6c913-d1c8-4cbf-bf5d-368719c33fac","timestamp":"2026-06-13T18:08:06.133443439Z"}
 ]]>
 </system-err>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-4: Track Shipments button navigates to /dashboard/shipper/loads" classname="us-824-quick-actions.spec.ts" time="1.944">
+<testcase name="US-824: Quick Actions Panel › US-824 AC-4: Track Shipments button navigates to /dashboard/shipper/loads" classname="us-824-quick-actions.spec.ts" time="1.726">
 <system-out>
 <![CDATA[✅ Track Shipments button navigates correctly
 ]]>
 </system-out>
 <system-err>
-<![CDATA[Failed to delete users 2e52f43e-9d17-4f23-8f43-5076b67337e3: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/2e52f43e-9d17-4f23-8f43-5076b67337e3","timestamp":"2026-06-13T17:55:42.172224646Z"}
+<![CDATA[Failed to delete users 7135a873-192e-4b5f-a4c9-11777d343d0d: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/7135a873-192e-4b5f-a4c9-11777d343d0d","timestamp":"2026-06-13T18:08:07.873092423Z"}
 ]]>
 </system-err>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-5: Preferred Carriers button navigates to /settings/preferred-carriers" classname="us-824-quick-actions.spec.ts" time="2.187">
+<testcase name="US-824: Quick Actions Panel › US-824 AC-5: Preferred Carriers button navigates to /settings/preferred-carriers" classname="us-824-quick-actions.spec.ts" time="1.8">
 <system-out>
 <![CDATA[✅ Preferred Carriers button navigates correctly
 ]]>
 </system-out>
 <system-err>
-<![CDATA[Failed to delete users 9b8a1335-7e46-4f46-9d5d-a1e114350dc1: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/9b8a1335-7e46-4f46-9d5d-a1e114350dc1","timestamp":"2026-06-13T17:55:44.332441736Z"}
+<![CDATA[Failed to delete users 4e1adff8-5b50-4ffc-93bf-ccad4af89da0: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/4e1adff8-5b50-4ffc-93bf-ccad4af89da0","timestamp":"2026-06-13T18:08:09.659122106Z"}
 ]]>
 </system-err>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-6: buttons are keyboard accessible (Tab + Enter)" classname="us-824-quick-actions.spec.ts" time="2.056">
+<testcase name="US-824: Quick Actions Panel › US-824 AC-6: buttons are keyboard accessible (Tab + Enter)" classname="us-824-quick-actions.spec.ts" time="1.839">
 <system-out>
 <![CDATA[✅ Buttons are keyboard accessible
 ]]>
 </system-out>
 <system-err>
-<![CDATA[Failed to delete users aef93fa3-20a9-4777-b542-fadb4317f35c: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/aef93fa3-20a9-4777-b542-fadb4317f35c","timestamp":"2026-06-13T17:55:46.426340466Z"}
+<![CDATA[Failed to delete users 36ac96ac-f5a9-403f-b613-cd728419cb89: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/36ac96ac-f5a9-403f-b613-cd728419cb89","timestamp":"2026-06-13T18:08:11.505183731Z"}
 ]]>
 </system-err>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-7a: responsive design (desktop 1280x720)" classname="us-824-quick-actions.spec.ts" time="1.901">
+<testcase name="US-824: Quick Actions Panel › US-824 AC-7a: responsive design (desktop 1280x720)" classname="us-824-quick-actions.spec.ts" time="1.845">
 <system-out>
 <![CDATA[✅ Desktop responsive screenshot captured
 ]]>
 </system-out>
 <system-err>
-<![CDATA[Failed to delete users a3058324-5753-4ece-82a5-b135c08f38e2: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/a3058324-5753-4ece-82a5-b135c08f38e2","timestamp":"2026-06-13T17:55:48.368008274Z"}
+<![CDATA[Failed to delete users bb44375d-8bff-48c9-b4e8-281d32469c18: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/bb44375d-8bff-48c9-b4e8-281d32469c18","timestamp":"2026-06-13T18:08:13.364364941Z"}
 ]]>
 </system-err>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-7b: responsive design (tablet 768x1024)" classname="us-824-quick-actions.spec.ts" time="1.801">
+<testcase name="US-824: Quick Actions Panel › US-824 AC-7b: responsive design (tablet 768x1024)" classname="us-824-quick-actions.spec.ts" time="1.759">
 <system-out>
 <![CDATA[✅ Tablet responsive screenshot captured
 ]]>
 </system-out>
 <system-err>
-<![CDATA[Failed to delete users d6292e0a-52aa-4aac-84ff-81b2833b2475: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/d6292e0a-52aa-4aac-84ff-81b2833b2475","timestamp":"2026-06-13T17:55:50.299969347Z"}
+<![CDATA[Failed to delete users 4cc43225-dbff-4f62-af5e-4b01c4850934: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/4cc43225-dbff-4f62-af5e-4b01c4850934","timestamp":"2026-06-13T18:08:15.156642015Z"}
 ]]>
 </system-err>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-7c: responsive design (mobile 375x667)" classname="us-824-quick-actions.spec.ts" time="1.699">
+<testcase name="US-824: Quick Actions Panel › US-824 AC-7c: responsive design (mobile 375x667)" classname="us-824-quick-actions.spec.ts" time="1.595">
 <system-out>
 <![CDATA[✅ Mobile responsive screenshot captured
 ]]>
 </system-out>
 <system-err>
-<![CDATA[Failed to delete users e5b98a7b-1333-441f-aa64-de5ae854b922: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/e5b98a7b-1333-441f-aa64-de5ae854b922","timestamp":"2026-06-13T17:55:52.109655364Z"}
+<![CDATA[Failed to delete users 515aa2c2-9222-4b0d-b678-f189aa96859e: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/515aa2c2-9222-4b0d-b678-f189aa96859e","timestamp":"2026-06-13T18:08:16.883008540Z"}
 ]]>
 </system-err>
 </testcase>

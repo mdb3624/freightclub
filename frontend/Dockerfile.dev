@@ -1,11 +1,21 @@
 FROM node:20-alpine
 WORKDIR /app
 
+# Install system dependencies required by Chromium
+RUN apk add --no-cache \
+  chromium \
+  nss \
+  freetype \
+  harfbuzz \
+  ca-certificates \
+  ttf-freefont \
+  dumb-init
+
 COPY package*.json ./
 RUN npm ci --legacy-peer-deps
 
-# Install Playwright browsers for E2E testing
-RUN npx playwright install chromium
+# Install Playwright browsers (Chromium already available via apk, but install full Playwright)
+RUN npm install -g @playwright/test && npx playwright install --with-deps chromium
 
 COPY . .
 
@@ -13,4 +23,6 @@ EXPOSE 9090
 
 ENV VITE_PORT=9090
 
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["dumb-init", "--"]
 CMD ["npm", "run", "dev", "--", "--host"]

@@ -1,0 +1,556 @@
+{
+  "config": {
+    "configFile": "/app/playwright.config.ts",
+    "rootDir": "/app/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/app/e2e/fixtures/global-setup.ts",
+    "globalTeardown": "/app/e2e/fixtures/global-teardown.ts",
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/app/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-results/junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 3,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "us-824-quick-actions.spec.ts",
+      "file": "us-824-quick-actions.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "US-824: Quick Actions Panel",
+          "file": "us-824-quick-actions.spec.ts",
+          "line": 23,
+          "column": 6,
+          "specs": [
+            {
+              "title": "US-824 AC-1: renders all four quick action buttons",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 9823,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-testid=\"quick-actions-track\"]')\nExpected substring: \u001b[32m\"Track Shipments\"\u001b[39m\nReceived string:    \u001b[31m\"Documents Portal\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"quick-actions-track\"]')\u001b[22m\n\u001b[2m    9 × locator resolved to <button data-testid=\"quick-actions-track\" class=\"w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90\">Documents Portal</button>\u001b[22m\n\u001b[2m      - unexpected value \"Documents Portal\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-testid=\"quick-actions-track\"]')\nExpected substring: \u001b[32m\"Track Shipments\"\u001b[39m\nReceived string:    \u001b[31m\"Documents Portal\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"quick-actions-track\"]')\u001b[22m\n\u001b[2m    9 × locator resolved to <button data-testid=\"quick-actions-track\" class=\"w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90\">Documents Portal</button>\u001b[22m\n\u001b[2m      - unexpected value \"Documents Portal\"\u001b[22m\n\n    at /app/e2e/us-824-quick-actions.spec.ts:61:30",
+                        "location": {
+                          "file": "/app/e2e/us-824-quick-actions.spec.ts",
+                          "column": 30,
+                          "line": 61
+                        },
+                        "snippet": "  59 |       await expect(postLoadBtn).toContainText('Post Load');\n  60 |       await expect(quoteBtn).toContainText('Get A Quote');\n> 61 |       await expect(trackBtn).toContainText('Track Shipments');\n     |                              ^\n  62 |       await expect(carriersBtn).toContainText('Preferred Carriers');\n  63 |\n  64 |       console.log('✅ All four quick action buttons rendered correctly');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/e2e/us-824-quick-actions.spec.ts",
+                            "column": 30,
+                            "line": 61
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-testid=\"quick-actions-track\"]')\nExpected substring: \u001b[32m\"Track Shipments\"\u001b[39m\nReceived string:    \u001b[31m\"Documents Portal\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"quick-actions-track\"]')\u001b[22m\n\u001b[2m    9 × locator resolved to <button data-testid=\"quick-actions-track\" class=\"w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90\">Documents Portal</button>\u001b[22m\n\u001b[2m      - unexpected value \"Documents Portal\"\u001b[22m\n\n\n  59 |       await expect(postLoadBtn).toContainText('Post Load');\n  60 |       await expect(quoteBtn).toContainText('Get A Quote');\n> 61 |       await expect(trackBtn).toContainText('Track Shipments');\n     |                              ^\n  62 |       await expect(carriersBtn).toContainText('Preferred Carriers');\n  63 |\n  64 |       console.log('✅ All four quick action buttons rendered correctly');\n    at /app/e2e/us-824-quick-actions.spec.ts:61:30"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "Failed to delete users c3dca5e6-212b-4baa-bd9b-869912032ad9: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/c3dca5e6-212b-4baa-bd9b-869912032ad9\",\"timestamp\":\"2026-06-13T17:48:00.098904475Z\"}\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-06-13T17:47:51.494Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/app/test-results/us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/app/test-results/us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/test-results/us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/app/test-results/us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/e2e/us-824-quick-actions.spec.ts",
+                        "column": 30,
+                        "line": 61
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "5ed864e83a3995c521fc-8da6738705ebdb2bc74e",
+              "file": "us-824-quick-actions.spec.ts",
+              "line": 27,
+              "column": 3
+            },
+            {
+              "title": "US-824 AC-2: Post Load button navigates to /shipper/loads/new",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2747,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Post Load button navigates correctly\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "text": "Failed to delete users 3d9fabfc-01ca-4b4a-b525-1b933b890b1d: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/3d9fabfc-01ca-4b4a-b525-1b933b890b1d\",\"timestamp\":\"2026-06-13T17:48:05.329574504Z\"}\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-06-13T17:48:02.951Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5ed864e83a3995c521fc-e5ab5262b3939d9455a7",
+              "file": "us-824-quick-actions.spec.ts",
+              "line": 73,
+              "column": 3
+            },
+            {
+              "title": "US-824 AC-3: Get A Quote button navigates to /shipper/quote",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2189,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Get A Quote button navigates correctly\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "text": "Failed to delete users 05fbe664-1090-45ac-908f-4a549fba3b92: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/05fbe664-1090-45ac-908f-4a549fba3b92\",\"timestamp\":\"2026-06-13T17:48:07.600360809Z\"}\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-06-13T17:48:05.822Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5ed864e83a3995c521fc-6011e644fb180fd3a5dd",
+              "file": "us-824-quick-actions.spec.ts",
+              "line": 107,
+              "column": 3
+            },
+            {
+              "title": "US-824 AC-4: Track Shipments button navigates to /dashboard/shipper/loads",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 8011,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/dashboard\\/shipper\\/loads/\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:9090/\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 5000ms\u001b[22m\n\u001b[2m    9 × unexpected value \"http://localhost:9090/\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/dashboard\\/shipper\\/loads/\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:9090/\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 5000ms\u001b[22m\n\u001b[2m    9 × unexpected value \"http://localhost:9090/\"\u001b[22m\n\n    at /app/e2e/us-824-quick-actions.spec.ts:161:26",
+                        "location": {
+                          "file": "/app/e2e/us-824-quick-actions.spec.ts",
+                          "column": 26,
+                          "line": 161
+                        },
+                        "snippet": "  159 |       await trackBtn.click();\n  160 |\n> 161 |       await expect(page).toHaveURL(/\\/dashboard\\/shipper\\/loads/, { timeout: 5000 });\n      |                          ^\n  162 |       console.log('✅ Track Shipments button navigates correctly');\n  163 |     } finally {\n  164 |       await seeder.cleanup();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/app/e2e/us-824-quick-actions.spec.ts",
+                            "column": 26,
+                            "line": 161
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/dashboard\\/shipper\\/loads/\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:9090/\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 5000ms\u001b[22m\n\u001b[2m    9 × unexpected value \"http://localhost:9090/\"\u001b[22m\n\n\n  159 |       await trackBtn.click();\n  160 |\n> 161 |       await expect(page).toHaveURL(/\\/dashboard\\/shipper\\/loads/, { timeout: 5000 });\n      |                          ^\n  162 |       console.log('✅ Track Shipments button navigates correctly');\n  163 |     } finally {\n  164 |       await seeder.cleanup();\n    at /app/e2e/us-824-quick-actions.spec.ts:161:26"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "Failed to delete users 944fa026-affa-49fd-89e1-5e1c5c4885e0: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/944fa026-affa-49fd-89e1-5e1c5c4885e0\",\"timestamp\":\"2026-06-13T17:48:14.953942064Z\"}\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-06-13T17:48:08.034Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/app/test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/app/test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/app/test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/app/test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/app/e2e/us-824-quick-actions.spec.ts",
+                        "column": 26,
+                        "line": 161
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "5ed864e83a3995c521fc-6f75f640b1c66e76fb4e",
+              "file": "us-824-quick-actions.spec.ts",
+              "line": 139,
+              "column": 3
+            },
+            {
+              "title": "US-824 AC-5: Preferred Carriers button navigates to /settings/preferred-carriers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2548,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Preferred Carriers button navigates correctly\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "text": "Failed to delete users 1d06b501-54c7-4bf2-8f15-2d154b4e6bf1: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/1d06b501-54c7-4bf2-8f15-2d154b4e6bf1\",\"timestamp\":\"2026-06-13T17:48:19.830495497Z\"}\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-06-13T17:48:17.724Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5ed864e83a3995c521fc-fd11a2f47153800a95a0",
+              "file": "us-824-quick-actions.spec.ts",
+              "line": 171,
+              "column": 3
+            },
+            {
+              "title": "US-824 AC-6: buttons are keyboard accessible (Tab + Enter)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2226,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Buttons are keyboard accessible\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "text": "Failed to delete users 65f8d93a-51ad-4034-b57a-490a1f33d9ac: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/65f8d93a-51ad-4034-b57a-490a1f33d9ac\",\"timestamp\":\"2026-06-13T17:48:22.144890185Z\"}\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-06-13T17:48:20.406Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5ed864e83a3995c521fc-a5e1f6a516c6e2f3834b",
+              "file": "us-824-quick-actions.spec.ts",
+              "line": 203,
+              "column": 3
+            },
+            {
+              "title": "US-824 AC-7a: responsive design (desktop 1280x720)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2273,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Desktop responsive screenshot captured\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "text": "Failed to delete users f29b1701-0d36-4c27-9554-d4362c7b4a2a: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/f29b1701-0d36-4c27-9554-d4362c7b4a2a\",\"timestamp\":\"2026-06-13T17:48:24.411491683Z\"}\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-06-13T17:48:22.665Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5ed864e83a3995c521fc-0f7144fbf9bd84bb5843",
+              "file": "us-824-quick-actions.spec.ts",
+              "line": 245,
+              "column": 3
+            },
+            {
+              "title": "US-824 AC-7b: responsive design (tablet 768x1024)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2284,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Tablet responsive screenshot captured\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "text": "Failed to delete users 8d9a9c57-86ac-4ff0-b605-dc2e2059d369: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/8d9a9c57-86ac-4ff0-b605-dc2e2059d369\",\"timestamp\":\"2026-06-13T17:48:26.929532770Z\"}\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-06-13T17:48:24.961Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5ed864e83a3995c521fc-d701b96614e71ae15f5d",
+              "file": "us-824-quick-actions.spec.ts",
+              "line": 284,
+              "column": 3
+            },
+            {
+              "title": "US-824 AC-7c: responsive design (mobile 375x667)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1748,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✅ Mobile responsive screenshot captured\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "text": "Failed to delete users b884c331-99e2-4791-b238-5e5f0615a6c2: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/b884c331-99e2-4791-b238-5e5f0615a6c2\",\"timestamp\":\"2026-06-13T17:48:28.887471669Z\"}\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-06-13T17:48:27.268Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5ed864e83a3995c521fc-37371d05b035e5bb18e3",
+              "file": "us-824-quick-actions.spec.ts",
+              "line": 323,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-06-13T17:47:40.884Z",
+    "duration": 48683.919,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

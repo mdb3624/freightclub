@@ -73,7 +73,7 @@ export const ShipperDashboardPage: React.FC = () => {
         <div
           role="region"
           aria-label="Quick Action Panel"
-          data-testid="quick-actions-panel"
+          data-testid="dashboard-quick-actions-panel"
         >
           <h3 className="text-sm font-semibold mb-4" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
             Quick Action Panel
@@ -85,7 +85,7 @@ export const ShipperDashboardPage: React.FC = () => {
               className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
               data-testid="quick-actions-post-load"
             >
-              Create New Load
+              Post Load
             </button>
             <button
               onClick={() => handleActionClick('quick-actions-quote', onGetQuote)}

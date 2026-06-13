@@ -1,0 +1,195 @@
+<testsuites id="" name="" tests="9" failures="2" skipped="0" errors="0" time="48.683919">
+<testsuite name="us-824-quick-actions.spec.ts" timestamp="2026-06-13T17:47:50.762Z" hostname="chromium" tests="9" failures="2" skipped="0" time="33.849" errors="0">
+<testcase name="US-824: Quick Actions Panel › US-824 AC-1: renders all four quick action buttons" classname="us-824-quick-actions.spec.ts" time="9.823">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/video.webm]]
+
+[[ATTACHMENT|us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/error-context.md]]
+
+[[ATTACHMENT|us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/trace.zip]]
+]]>
+</system-out>
+<system-err>
+<![CDATA[Failed to delete users c3dca5e6-212b-4baa-bd9b-869912032ad9: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/c3dca5e6-212b-4baa-bd9b-869912032ad9","timestamp":"2026-06-13T17:48:00.098904475Z"}
+]]>
+</system-err>
+<failure message="expect(locator).toContainText(expected) failed" type="expect.toContainText">
+<![CDATA[  [chromium] › us-824-quick-actions.spec.ts:27:3 › US-824: Quick Actions Panel › US-824 AC-1: renders all four quick action buttons 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('[data-testid="quick-actions-track"]')
+    Expected substring: "Track Shipments"
+    Received string:    "Documents Portal"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('[data-testid="quick-actions-track"]')
+        9 × locator resolved to <button data-testid="quick-actions-track" class="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90">Documents Portal</button>
+          - unexpected value "Documents Portal"
+
+
+      59 |       await expect(postLoadBtn).toContainText('Post Load');
+      60 |       await expect(quoteBtn).toContainText('Get A Quote');
+    > 61 |       await expect(trackBtn).toContainText('Track Shipments');
+         |                              ^
+      62 |       await expect(carriersBtn).toContainText('Preferred Carriers');
+      63 |
+      64 |       console.log('✅ All four quick action buttons rendered correctly');
+        at /app/e2e/us-824-quick-actions.spec.ts:61:30
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../test-results/us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../test-results/us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="US-824: Quick Actions Panel › US-824 AC-2: Post Load button navigates to /shipper/loads/new" classname="us-824-quick-actions.spec.ts" time="2.747">
+<system-out>
+<![CDATA[✅ Post Load button navigates correctly
+]]>
+</system-out>
+<system-err>
+<![CDATA[Failed to delete users 3d9fabfc-01ca-4b4a-b525-1b933b890b1d: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/3d9fabfc-01ca-4b4a-b525-1b933b890b1d","timestamp":"2026-06-13T17:48:05.329574504Z"}
+]]>
+</system-err>
+</testcase>
+<testcase name="US-824: Quick Actions Panel › US-824 AC-3: Get A Quote button navigates to /shipper/quote" classname="us-824-quick-actions.spec.ts" time="2.189">
+<system-out>
+<![CDATA[✅ Get A Quote button navigates correctly
+]]>
+</system-out>
+<system-err>
+<![CDATA[Failed to delete users 05fbe664-1090-45ac-908f-4a549fba3b92: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/05fbe664-1090-45ac-908f-4a549fba3b92","timestamp":"2026-06-13T17:48:07.600360809Z"}
+]]>
+</system-err>
+</testcase>
+<testcase name="US-824: Quick Actions Panel › US-824 AC-4: Track Shipments button navigates to /dashboard/shipper/loads" classname="us-824-quick-actions.spec.ts" time="8.011">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/video.webm]]
+
+[[ATTACHMENT|us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/error-context.md]]
+
+[[ATTACHMENT|us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/trace.zip]]
+]]>
+</system-out>
+<system-err>
+<![CDATA[Failed to delete users 944fa026-affa-49fd-89e1-5e1c5c4885e0: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/944fa026-affa-49fd-89e1-5e1c5c4885e0","timestamp":"2026-06-13T17:48:14.953942064Z"}
+]]>
+</system-err>
+<failure message="expect(page).toHaveURL(expected) failed" type="expect.toHaveURL">
+<![CDATA[  [chromium] › us-824-quick-actions.spec.ts:139:3 › US-824: Quick Actions Panel › US-824 AC-4: Track Shipments button navigates to /dashboard/shipper/loads 
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected pattern: /\/dashboard\/shipper\/loads/
+    Received string:  "http://localhost:9090/"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toHaveURL" with timeout 5000ms
+        9 × unexpected value "http://localhost:9090/"
+
+
+      159 |       await trackBtn.click();
+      160 |
+    > 161 |       await expect(page).toHaveURL(/\/dashboard\/shipper\/loads/, { timeout: 5000 });
+          |                          ^
+      162 |       console.log('✅ Track Shipments button navigates correctly');
+      163 |     } finally {
+      164 |       await seeder.cleanup();
+        at /app/e2e/us-824-quick-actions.spec.ts:161:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="US-824: Quick Actions Panel › US-824 AC-5: Preferred Carriers button navigates to /settings/preferred-carriers" classname="us-824-quick-actions.spec.ts" time="2.548">
+<system-out>
+<![CDATA[✅ Preferred Carriers button navigates correctly
+]]>
+</system-out>
+<system-err>
+<![CDATA[Failed to delete users 1d06b501-54c7-4bf2-8f15-2d154b4e6bf1: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/1d06b501-54c7-4bf2-8f15-2d154b4e6bf1","timestamp":"2026-06-13T17:48:19.830495497Z"}
+]]>
+</system-err>
+</testcase>
+<testcase name="US-824: Quick Actions Panel › US-824 AC-6: buttons are keyboard accessible (Tab + Enter)" classname="us-824-quick-actions.spec.ts" time="2.226">
+<system-out>
+<![CDATA[✅ Buttons are keyboard accessible
+]]>
+</system-out>
+<system-err>
+<![CDATA[Failed to delete users 65f8d93a-51ad-4034-b57a-490a1f33d9ac: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/65f8d93a-51ad-4034-b57a-490a1f33d9ac","timestamp":"2026-06-13T17:48:22.144890185Z"}
+]]>
+</system-err>
+</testcase>
+<testcase name="US-824: Quick Actions Panel › US-824 AC-7a: responsive design (desktop 1280x720)" classname="us-824-quick-actions.spec.ts" time="2.273">
+<system-out>
+<![CDATA[✅ Desktop responsive screenshot captured
+]]>
+</system-out>
+<system-err>
+<![CDATA[Failed to delete users f29b1701-0d36-4c27-9554-d4362c7b4a2a: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/f29b1701-0d36-4c27-9554-d4362c7b4a2a","timestamp":"2026-06-13T17:48:24.411491683Z"}
+]]>
+</system-err>
+</testcase>
+<testcase name="US-824: Quick Actions Panel › US-824 AC-7b: responsive design (tablet 768x1024)" classname="us-824-quick-actions.spec.ts" time="2.284">
+<system-out>
+<![CDATA[✅ Tablet responsive screenshot captured
+]]>
+</system-out>
+<system-err>
+<![CDATA[Failed to delete users 8d9a9c57-86ac-4ff0-b605-dc2e2059d369: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/8d9a9c57-86ac-4ff0-b605-dc2e2059d369","timestamp":"2026-06-13T17:48:26.929532770Z"}
+]]>
+</system-err>
+</testcase>
+<testcase name="US-824: Quick Actions Panel › US-824 AC-7c: responsive design (mobile 375x667)" classname="us-824-quick-actions.spec.ts" time="1.748">
+<system-out>
+<![CDATA[✅ Mobile responsive screenshot captured
+]]>
+</system-out>
+<system-err>
+<![CDATA[Failed to delete users b884c331-99e2-4791-b238-5e5f0615a6c2: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/b884c331-99e2-4791-b238-5e5f0615a6c2","timestamp":"2026-06-13T17:48:28.887471669Z"}
+]]>
+</system-err>
+</testcase>
+</testsuite>
+</testsuites>

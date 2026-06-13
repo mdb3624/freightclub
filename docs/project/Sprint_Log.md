@@ -45,6 +45,14 @@
 | US-706 | Revenue & Profitability Reports | ✅ COMPLETED | 2026-04-27 | 95% |
 | US-757 | Trucker Cost Per Mile Calculator | ✅ COMPLETED | 2026-05-19 | 85% |
 
+## Phase 10 Progress: Shipper Dashboard Refinement
+
+| Story ID | Title | Status | Completion Date | Coverage | Sign-Off |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-820 | KPI Summary Display | ✅ COMPLETED | 2026-06-10 | 100% | ✅ REVIEWER_PASS + LIBRARIAN (2026-06-13) |
+| US-821 | Shipper Header Navigation | ✅ COMPLETED | 2026-06-10 | 100% | ✅ REVIEWER_PASS + LIBRARIAN (2026-06-13) |
+| US-823 | Dashboard Layout Skeleton (Grid + Placeholders) | ✅ COMPLETED | 2026-06-13 | 100% | ✅ REVIEWER_PASS (8 gates) + LIBRARIAN (2026-06-13) |
+
 ## Infrastructure Progress: Performance & Optimization
 
 | Story ID | Title | Status | Completion Date | Coverage |

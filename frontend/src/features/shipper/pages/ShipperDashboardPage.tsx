@@ -11,13 +11,20 @@
 import React, { useState } from 'react';
 import { ShipperPageLayout } from '../components/ShipperPageLayout';
 import { KPISummaryPanel } from '../components/KPISummaryPanel';
-import { EmptyStateCard } from '../components/EmptyStateCard';
-import { Package, Zap, MessageSquare } from 'lucide-react';
+import { CarrierSearchPanel } from '../dashboard/components/CarrierSearchPanel';
+import { MessagesAlertsPanel } from '../dashboard/components/MessagesAlertsPanel';
+import { useQuickActionNavigation } from '../dashboard/hooks/useQuickActionNavigation';
 
 export const ShipperDashboardPage: React.FC = () => {
-  // State for toggling between skeleton (loading) and empty states
-  // TODO: Replace with actual data loading state after US-824/US-825/US-826 implementation
-  const [showEmptyStates] = useState(false);
+  const { onPostLoad, onGetQuote, onTrackShipments, onPreferredCarriers } = useQuickActionNavigation();
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingButtonId, setLoadingButtonId] = useState<string | null>(null);
+
+  const handleActionClick = (buttonId: string, handler: () => void) => {
+    setIsLoading(true);
+    setLoadingButtonId(buttonId);
+    handler();
+  };
 
   // SLOT_A: KPI Summary (full-width)
   const slotAContent = (
@@ -26,7 +33,7 @@ export const ShipperDashboardPage: React.FC = () => {
     </div>
   );
 
-  // SLOT_B (Row 2): Shipment Status (8 columns)
+  // SLOT_B (Row 2): Shipment Status (8 columns) — Placeholder until real data hook implemented
   const slotBContent = (
     <section
       className="panel"
@@ -34,84 +41,81 @@ export const ShipperDashboardPage: React.FC = () => {
       aria-label="Shipment Status"
       data-testid="shipment-status-section"
     >
-      {!showEmptyStates ? (
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
-            Shipment Status
-          </h2>
-          <div
-            className="rounded animate-pulse"
-            style={{
-              minHeight: 'var(--skeleton-height-shipment-status)',
-              backgroundColor: 'var(--color-surface-light)',
-            }}
-          />
-        </div>
-      ) : (
-        <EmptyStateCard
-          icon={<Package size={40} />}
-          title="No Active Shipments"
-          description="Start by posting a new load to track your shipments here."
-          action={{
-            label: 'Post a Load',
-            onClick: () => window.location.href = '/shipper/loads/new',
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
+          Shipment Status
+        </h2>
+        <div
+          className="rounded animate-pulse"
+          style={{
+            minHeight: 'var(--skeleton-height-shipment-status)',
+            backgroundColor: 'var(--color-surface-light)',
           }}
-          testId="shipment-status-empty"
         />
-      )}
+      </div>
     </section>
   );
 
-  // SLOT_C: Action Zone (4 columns) with Carrier Search button
+  // SLOT_C: Action Zone (4 columns) - Split layout: Quick Actions (left) + Carrier Search (right)
   const slotCContent = (
     <section
       className="panel"
       role="region"
-      aria-label="Quick Actions"
+      aria-label="Action Zone"
       data-testid="action-zone-section"
     >
-      {!showEmptyStates ? (
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
+      <div className="grid grid-cols-2 gap-4" data-testid="action-zone-grid">
+        {/* Left: Quick Action Buttons */}
+        <div className="space-y-2" data-testid="quick-actions-buttons">
+          <h3 className="text-sm font-semibold mb-3" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
             Quick Actions
-          </h2>
-          <div
-            className="grid grid-cols-2 gap-3"
-            data-testid="action-buttons-grid"
+          </h3>
+          <button
+            onClick={() => handleActionClick('quick-actions-post-load', onPostLoad)}
+            disabled={isLoading && loadingButtonId === 'quick-actions-post-load'}
+            className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
+            data-testid="quick-actions-post-load"
           >
-            {/* Placeholder buttons */}
-            <div
-              className="h-12 bg-gray-100 rounded animate-pulse"
-              style={{ backgroundColor: 'var(--color-surface-light)' }}
-            />
-            <div
-              className="h-12 bg-gray-100 rounded animate-pulse"
-              style={{ backgroundColor: 'var(--color-surface-light)' }}
-            />
-            <div
-              className="h-12 bg-gray-100 rounded animate-pulse"
-              style={{ backgroundColor: 'var(--color-surface-light)' }}
-            />
-            <div
-              className="h-12 bg-gray-100 rounded animate-pulse"
-              style={{ backgroundColor: 'var(--color-surface-light)' }}
-            />
-          </div>
-          <div
-            style={{
-              minHeight: 'var(--skeleton-height-action-zone)',
-              backgroundColor: 'var(--color-surface-light)',
+            Create Load
+          </button>
+          <button
+            onClick={() => handleActionClick('quick-actions-quote', onGetQuote)}
+            disabled={isLoading && loadingButtonId === 'quick-actions-quote'}
+            className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
+            data-testid="quick-actions-quote"
+          >
+            Get Quote
+          </button>
+          <button
+            onClick={() => handleActionClick('quick-actions-track', onTrackShipments)}
+            disabled={isLoading && loadingButtonId === 'quick-actions-track'}
+            className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
+            data-testid="quick-actions-track"
+          >
+            Track Shipments
+          </button>
+          <button
+            onClick={() => handleActionClick('quick-actions-carriers', onPreferredCarriers)}
+            disabled={isLoading && loadingButtonId === 'quick-actions-carriers'}
+            className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
+            data-testid="quick-actions-carriers"
+          >
+            My Carriers
+          </button>
+        </div>
+
+        {/* Right: Carrier Search Form */}
+        <div data-testid="carrier-search-inline">
+          <h3 className="text-sm font-semibold mb-3" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
+            Search Carriers
+          </h3>
+          <CarrierSearchPanel
+            onCarrierSelect={(carrier) => {
+              console.log('Carrier selected:', carrier);
             }}
           />
         </div>
-      ) : (
-        <EmptyStateCard
-          icon={<Zap size={40} />}
-          title="Quick Actions Ready"
-          description="Common tasks and shortcuts will appear here for faster operations."
-          testId="action-zone-empty"
-        />
-      )}
+      </div>
     </section>
   );
 
@@ -123,27 +127,7 @@ export const ShipperDashboardPage: React.FC = () => {
       aria-label="Messages and Alerts"
       data-testid="messages-alerts-section"
     >
-      {!showEmptyStates ? (
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
-            Messages & Alerts
-          </h2>
-          <div
-            className="rounded animate-pulse"
-            style={{
-              minHeight: 'var(--skeleton-height-messages-alerts)',
-              backgroundColor: 'var(--color-surface-light)',
-            }}
-          />
-        </div>
-      ) : (
-        <EmptyStateCard
-          icon={<MessageSquare size={40} />}
-          title="No Notifications Yet"
-          description="You'll receive alerts here when carriers respond to your loads."
-          testId="messages-alerts-empty"
-        />
-      )}
+      <MessagesAlertsPanel />
     </section>
   );
 

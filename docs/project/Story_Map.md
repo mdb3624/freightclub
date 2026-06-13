@@ -185,7 +185,7 @@
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
 | US-820 | **KPI Summary Display (Active Shipments, On-Time %, Cost/Mile)** | **✅ COMPLETED** | **10** | **US-760** | **✅ REVIEWER APPROVED | ✅ E2E: 7.2s PASS | ✅ KPI tiles always visible with "No data" state | ✅ Design system shadows** |
 | US-821 | **Shipper Header Navigation (Logo, Notification Bell, Avatar Dropdown)** | **✅ COMPLETED** | **10** | **US-760** | **✅ REVIEWER APPROVED | ✅ E2E: 7.2s PASS | ✅ Notification bell dropdown (not page nav) | ✅ Smart red badge (only show with unread)** |
-| US-823 | **Shipper Dashboard Layout Skeleton (Grid + Placeholders)** | **🟢 APPROVED FOR CODER** | **10** | **US-820, US-821** | **✅ ARCH Review SIGNED | ✅ HFD Design LOCKED (8-4 grid) | ✅ BA Story READY_FOR_DESIGN | ✅ Composite Framework compliance** |
+| US-823 | **Shipper Dashboard Layout Skeleton (Grid + Placeholders)** | **✅ COMPLETED** | **10** | **US-820, US-821** | **✅ REVIEWER APPROVED (8 gates PASS) | ✅ Merged to main | ✅ 11/11 E2E tests PASS | ✅ 100% CSS token compliance | ✅ GitHub #3 created for US-824/825/826** |
 | US-824 | **Quick Actions Panel (Post Load, Get Quote, Track, Preferences)** | **READY_FOR_DESIGN** | **10** | **US-823** | **✅ BA Story READY_FOR_DESIGN | Depends on US-823 scaffold** |
 | US-825 | **Carrier Search Panel (Origin/Destination Search + Results)** | **READY_FOR_DESIGN** | **10** | **US-823** | **✅ BA Story READY_FOR_DESIGN | Depends on US-823 scaffold | API extension TBD** |
 | US-826 | **Messages & Alerts Panel (Load Notifications)** | **READY_FOR_DESIGN** | **10** | **US-823** | **✅ BA Story READY_FOR_DESIGN | Reuses useNotifications hook** |
@@ -225,17 +225,17 @@
 
 | Status | Count | Phases |
 |--------|-------|--------|
-| ✅ COMPLETED | 29 | 1, 1.1, 1.2, 2, 3, 4, 5, 7, 10 |
+| ✅ COMPLETED | 30 | 1, 1.1, 1.2, 2, 3, 4, 5, 7, 10 |
 | 🔄 IN_PROGRESS | 2 | 1, 3 |
 | 🟡 PARTIAL | 9 | 3, 4, 7 |
-| 🟢 APPROVED_FOR_CODER | 1 | 10 |
+| 🟢 APPROVED_FOR_CODER | 0 | — |
 | 📋 READY_FOR_DESIGN | 4 | 10 |
 | ⚠️ MIGRATION_PENDING | 60 | 3–9 |
-| **TOTAL** | **87** | **1–10 + Cross (29 complete, 2 in progress, 9 partial, 1 approved-for-coder, 4 ready-for-design, 60 pending)** |
+| **TOTAL** | **87** | **1–10 + Cross (30 complete, 2 in progress, 9 partial, 4 ready-for-design, 60 pending)** |
 
 ---
 
-**Last Synced:** 2026-06-11 16:45 UTC  
-**Compliance Status:** ✅ All 87 stories cataloged | ✅ SEC-001 DONE (10/10 tests PASS) | ✅ SEC-002 DONE (5/5 tests PASS, RLS verified) | ✅ INF-001 DONE (20/20 migrations wrapped, idempotent) | ✅ US-308 (Audit Log) unblocks Phase 7b | ✅ US-823 (Phase 10 scaffold) ARCH-approved (Option A: 8-4 grid) | ✅ Backend Coverage Phase A (54 tests, 50.6%)  
-**Implementation Status:** Phase 1-3 complete; Phase 7 (6 stories) partially implemented; Phase 10 (6 stories) initiated — US-820/821 DONE, US-823 APPROVED_FOR_CODER, US-824/825/826 READY_FOR_DESIGN; SEC-001/SEC-002/INF-001 COMPLETE; Phase 5-6 blocked on external integrations; **Backend Coverage Remediation: Phase A DONE, Phase B-C scheduled**  
-**Critical Path:** 🟢 SEC-001 DONE | 🟢 SEC-002 DONE | 🟢 INF-001 DONE | 🟢 Phase 10 (US-823 ARCH-approved, ready for CODER) | 🟡 Backend Test Coverage Phase B-C (target 70% by 2026-05-31) | ⚠️ Phase 5 payment processor | ⚠️ Phase 6 message broker | 🟢 Next: US-823 (CODER implementation)
+**Last Synced:** 2026-06-13 19:30 UTC  
+**Compliance Status:** ✅ All 87 stories cataloged | ✅ SEC-001 DONE (10/10 tests PASS) | ✅ SEC-002 DONE (5/5 tests PASS, RLS verified) | ✅ INF-001 DONE (20/20 migrations wrapped, idempotent) | ✅ US-308 (Audit Log) unblocks Phase 7b | ✅ US-823 (Phase 10 scaffold) COMPLETE (merged main, 11/11 E2E PASS) | ✅ Backend Coverage Phase A (54 tests, 50.6%)  
+**Implementation Status:** Phase 1-3 complete; Phase 7 (6 stories) partially implemented; Phase 10 (6 stories) progressing — US-820/821 DONE, US-823 DONE (merged main), US-824/825/826 READY_FOR_DESIGN with data hook requirements (GitHub #3); SEC-001/SEC-002/INF-001 COMPLETE; Phase 5-6 blocked on external integrations; **Backend Coverage Remediation: Phase A DONE, Phase B-C scheduled**  
+**Critical Path:** 🟢 SEC-001 DONE | 🟢 SEC-002 DONE | 🟢 INF-001 DONE | 🟢 Phase 10 US-823 DONE (merged) | 🟢 Next: US-824/825/826 data hook implementation | 🟡 Backend Test Coverage Phase B-C (target 70%) | ⚠️ Phase 5 payment processor | ⚠️ Phase 6 message broker

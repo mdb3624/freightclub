@@ -5,6 +5,7 @@ interface QuickActionsPanelProps {
   onGetQuote: () => void;
   onTrackShipments: () => void;
   onPreferredCarriers: () => void;
+  onCarrierSearch?: () => void;
   isLoading?: boolean;
   loadingButtonId?: string | null;
 }
@@ -14,6 +15,7 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
   onGetQuote,
   onTrackShipments,
   onPreferredCarriers,
+  onCarrierSearch,
   isLoading = false,
   loadingButtonId = null,
 }) => {
@@ -42,6 +44,12 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
       icon: '⭐',
       handler: onPreferredCarriers,
     },
+    ...(onCarrierSearch ? [{
+      id: 'quick-actions-search-carriers',
+      label: 'Search Carriers',
+      icon: '🔍',
+      handler: onCarrierSearch,
+    }] : []),
   ];
 
   return (

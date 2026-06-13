@@ -56,14 +56,21 @@ export const ShipperDashboardPage: React.FC = () => {
     </section>
   );
 
-  // SLOT_C: Action Zone (4 columns) - Two separate panels side-by-side
+  // SLOT_C: Action Zone (4 columns) - Panel containing Quick Actions + Carrier Search side-by-side
   const slotCContent = (
-    <div className="flex flex-col gap-4" role="region" aria-label="Action Zone" data-testid="action-zone-section">
-      {/* Row 1: Quick Actions Panel + Carrier Search Panel (side-by-side) */}
+    <section
+      className="panel"
+      role="region"
+      aria-label="Action Zone"
+      data-testid="action-zone-section"
+    >
+      <h2 className="text-lg font-semibold mb-4" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
+        Action Zone
+      </h2>
+      {/* Grid: Quick Actions Panel (left) + Carrier Search Panel (right) */}
       <div className="grid grid-cols-2 gap-4" data-testid="action-zone-panels">
         {/* Left: Quick Actions Panel */}
         <div
-          className="panel"
           role="region"
           aria-label="Quick Action Panel"
           data-testid="quick-actions-panel"
@@ -109,7 +116,6 @@ export const ShipperDashboardPage: React.FC = () => {
 
         {/* Right: Carrier Search Panel */}
         <div
-          className="panel"
           role="region"
           aria-label="Carrier Search Panel"
           data-testid="carrier-search-panel"
@@ -124,7 +130,7 @@ export const ShipperDashboardPage: React.FC = () => {
           />
         </div>
       </div>
-    </div>
+    </section>
   );
 
   // SLOT_B (Row 3): Messages & Alerts (8 columns)

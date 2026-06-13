@@ -11,10 +11,14 @@
             "id": "60bffee8747cbd54",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "CHG-703.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "CHG-703"
             }
           }
         ]
@@ -225,7 +229,4 @@
     "frontend/playwright-report/data/c54cbf6397f30babe0f468ffd93d0f9ad2ee257d.md",
     "frontend/playwright-report/data/950d9f18482f0615314526a665b743ff5962856b.md",
     "frontend/playwright-report/data/5c8f8439002a9e9385158d1b4aba872fa21101a9.md",
-    "frontend/playwright-report/data/546450efae8fa07cdf073dc9c060f09c48262475.md",
-    "frontend/playwright-report/data/514ec3dfbd79efaa6312ed9dbb2a033cfc4d22b9.md"
-  ]
-}
+    "frontend/playwright-report/data/546450efae8

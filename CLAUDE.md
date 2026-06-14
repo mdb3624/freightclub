@@ -29,6 +29,27 @@ You MUST load and follow the instructions defined in these files located in `doc
 
 **Effective 2026-05-25 — MANDATORY enforcement**
 
+### Pre-Work Branch Verification (ALL ROLES)
+
+**Before any role accepts inputs or starts work on a story, Branch Verification is MANDATORY:**
+
+**Checklist:**
+- [ ] Verify current branch: `git branch -v` 
+  - ✅ MUST show: `* feature/US-XXX-short-description`
+  - ❌ STOP if: `* main`
+- [ ] If on `main`, create/switch to feature branch:
+  ```powershell
+  git checkout main
+  git pull origin main
+  git checkout -b feature/US-XXX-short-description
+  ```
+- [ ] Proceed with role-specific input acceptance gates
+
+**Applies to:** ARCHITECT, CODER, REVIEWER, BA, HFD, LIBRARIAN  
+**Rationale:** Prevents accidental commits to main. Sequential Lock Protocol depends on clean feature branch isolation.
+
+---
+
 ### Core Rules
 
 1. **Input Acceptance Gates** — Each role MUST validate inputs with a checklist BEFORE starting work
@@ -51,6 +72,156 @@ Circular dependency loops (BA → ARCH → CODER → BA feedback) cause indefini
 
 ### How to Apply
 See **CIRCULAR_DEPENDENCY_FIX.md** for full protocol, acceptance checklists, and change request templates.
+
+---
+
+## 🔐 Git Branch Enforcement Protocol
+
+**Effective 2026-06-14 — MANDATORY enforcement**
+
+All feature work MUST happen on feature branches. NO direct commits to `main`. Three enforcement layers:
+
+### Layer 1: GitHub Branch Protection (Strongest)
+
+**Repo Settings → Branches → Add rule for `main`:**
+- ✅ Require pull request reviews before merging
+- ✅ Require status checks to pass
+- ✅ Require branches to be up to date before merging
+- ✅ Dismiss stale pull request approvals
+
+**Result:** `git push origin main` is rejected. Forces all changes through PRs.
+
+### Layer 2: Git Pre-Commit Hook (Local Automation)
+
+**File: `.git/hooks/pre-commit`**
+
+```bash
+#!/bin/bash
+# Prevent commits directly to main
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$BRANCH" == "main" ]; then
+  echo "❌ ERROR: You are on the main branch!"
+  echo ""
+  echo "Feature work must be done on a branch."
+  echo ""
+  echo "Fix:"
+  echo "  git reset HEAD~1          (undo the commit)"
+  echo "  git checkout -b feature/US-XXX-description"
+  echo "  git commit -m 'message'"
+  echo ""
+  exit 1
+fi
+
+exit 0
+```
+
+**Setup (one-time):**
+
+From project root:
+```powershell
+New-Item -ItemType Directory -Path ".git\hooks" -Force
+$hookContent = @'
+#!/bin/bash
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ "$BRANCH" == "main" ]; then
+  echo "❌ ERROR: You are on the main branch!"
+  echo ""
+  echo "Feature work must be done on a branch."
+  exit 1
+fi
+exit 0
+'@
+Set-Content -Path ".git\hooks\pre-commit" -Value $hookContent -Encoding UTF8
+```
+
+**Result:** Try `git commit` on `main` → Git blocks you before commit happens.
+
+### Layer 3: Mandatory Pre-Commit Workflow Checklist
+
+**BEFORE EVERY STORY:**
+
+```powershell
+# ═══════════════════════════════════════════════════════
+# STORY STARTUP (MANDATORY)
+# ═══════════════════════════════════════════════════════
+
+# 1️⃣ Verify on main, synced with remote
+git checkout main
+git pull origin main
+
+# 2️⃣ Create feature branch (NEVER work on main)
+git checkout -b feature/US-XXX-short-description
+
+# 3️⃣ Verify you're now on the feature branch
+git branch -v
+# ✅ MUST show: * feature/US-XXX-short-description
+# ❌ STOP if: * main
+
+# ═══════════════════════════════════════════════════════
+# DURING STORY WORK
+# ═══════════════════════════════════════════════════════
+
+# BEFORE EACH COMMIT, verify branch:
+git branch -v
+# ❌ STOP if on main
+# ✅ Continue if on feature/US-XXX
+
+# Stage only files for THIS story (never git add .)
+git add frontend/src/features/shipper/pages/YourPage.tsx
+git add docs/hfd/US-XXX_Design.md
+
+# Commit with semantic message
+git commit -m "feat(US-XXX): Description"
+
+# ═══════════════════════════════════════════════════════
+# READY FOR PR
+# ═══════════════════════════════════════════════════════
+
+# Push to remote with -u flag (tracks upstream)
+git push origin feature/US-XXX-short-description -u
+
+# Create PR via GitHub CLI
+gh pr create --base main --head feature/US-XXX-short-description
+```
+
+### Anti-Patterns (What NOT to Do)
+
+| Anti-Pattern | Why Wrong | Fix |
+|---|---|---|
+| `git commit` while on `main` | Violates Sequential Lock | Use `git checkout -b feature/US-XXX` first |
+| `git add .` | Stages unrelated files | Use `git add <specific-files>` |
+| `git push origin main` | Bypasses PR review | GitHub protection blocks this |
+| Committing directly to main | No REVIEWER audit trail | All commits must go through PR |
+
+### Enforcement
+
+- **GitHub branch protection** blocks pushes to main.
+- **Git hook** prevents commits to main before they happen.
+- **PR requirement** ensures REVIEWER sees all changes.
+- **Violation = Rejected PR** — Reviewer gates check branch compliance.
+
+### Quick Verification
+
+Before starting any story, run:
+
+```powershell
+git branch -v; echo ""; git status
+```
+
+**Expected output:**
+```
+  main                           abc1234 [origin/main]
+* feature/US-XXX-description    def5678 [ahead 3]
+
+On branch feature/US-XXX-description
+Your branch is ahead of 'origin/main' by 3 commits.
+```
+
+**Red flags:**
+- ❌ Shows `* main` — you're on main, need to branch
+- ❌ Shows unrelated modified files — stash them: `git stash`
 
 ---
 

@@ -2,6 +2,8 @@ package com.freightclub.modules.shipper.infrastructure.rest;
 
 import com.freightclub.modules.shipper.application.DashboardSummaryService;
 import com.freightclub.modules.shipper.application.LoadQueryService;
+import com.freightclub.modules.shipper.application.ShipmentStatusDTO;
+import com.freightclub.modules.shipper.application.ShipmentStatusService;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.DashboardSummaryResponse;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadListResponse;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadStatsResponse;
@@ -25,6 +27,7 @@ class ShipperControllerTest {
   @Autowired private MockMvc mvc;
   @MockBean private LoadQueryService loadQueryService;
   @MockBean private DashboardSummaryService dashboardSummaryService;
+  @MockBean private ShipmentStatusService shipmentStatusService;
 
   @Test
   @WithMockUser(roles = "SHIPPER")
@@ -145,6 +148,37 @@ class ShipperControllerTest {
   @Test
   void testGetDashboardSummaryRequiresAuth() throws Exception {
     mvc.perform(get("/api/v1/shipper/dashboard-summary"))
+        .andExpect(status().isUnauthorized());
+  }
+
+  // US-822 AC-1: Get active shipments with status, progress, carrier info
+  @Test
+  @WithMockUser(roles = "SHIPPER")
+  void testGetActiveShipments() throws Exception {
+    var shipment = new ShipmentStatusDTO(
+        "load-001",
+        "CLAIMED",
+        java.math.BigDecimal.valueOf(15),
+        "FLATBED",
+        "Carrier A",
+        java.math.BigDecimal.valueOf(4.5),
+        "New York, NY"
+    );
+    when(shipmentStatusService.getActiveShipments("test-tenant")).thenReturn(java.util.List.of(shipment));
+
+    mvc.perform(get("/api/v1/shipper/shipments/active"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].loadId").value("load-001"))
+        .andExpect(jsonPath("$[0].status").value("CLAIMED"))
+        .andExpect(jsonPath("$[0].progress").value(15))
+        .andExpect(jsonPath("$[0].equipment").value("FLATBED"))
+        .andExpect(jsonPath("$[0].carrier").value("Carrier A"))
+        .andExpect(jsonPath("$[0].destination").value("New York, NY"));
+  }
+
+  @Test
+  void testGetActiveShipmentsRequiresAuth() throws Exception {
+    mvc.perform(get("/api/v1/shipper/shipments/active"))
         .andExpect(status().isUnauthorized());
   }
 }

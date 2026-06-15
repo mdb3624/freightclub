@@ -185,6 +185,7 @@
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
 | US-820 | **KPI Summary Display (Active Shipments, On-Time %, Cost/Mile)** | **✅ COMPLETED** | **10** | **US-760** | **✅ REVIEWER APPROVED | ✅ E2E: 7.2s PASS | ✅ KPI tiles always visible with "No data" state | ✅ Design system shadows** |
 | US-821 | **Shipper Header Navigation (Logo, Notification Bell, Avatar Dropdown)** | **✅ COMPLETED** | **10** | **US-760** | **✅ REVIEWER APPROVED | ✅ E2E: 7.2s PASS | ✅ Notification bell dropdown (not page nav) | ✅ Smart red badge (only show with unread)** |
+| US-822 | **Shipment Status Panel (Active Shipments List)** | **APPROVED_FOR_CODER** | **10** | **US-823** | **✅ HFD & ARCH APPROVED | Audited by BA (2026-06-15) | `docs/hfd/US-822_Shipment_Status_Panel_Design_Spec.md`** |
 | US-823 | **Shipper Dashboard Layout Skeleton (Grid + Placeholders)** | **✅ COMPLETED** | **10** | **US-820, US-821** | **✅ REVIEWER APPROVED (8 gates PASS) | ✅ Merged to main | ✅ 11/11 E2E tests PASS | ✅ 100% CSS token compliance | ✅ GitHub #3 created for US-824/825/826** |
 | US-824 | **Quick Actions Panel (Post Load, Get Quote, Track, Preferences)** | **READY_FOR_DESIGN** | **10** | **US-823** | **✅ BA Story READY_FOR_DESIGN | Depends on US-823 scaffold** |
 | US-825 | **Carrier Search Panel (Origin/Destination Search + Results)** | **READY_FOR_DESIGN** | **10** | **US-823** | **✅ BA Story READY_FOR_DESIGN | Depends on US-823 scaffold | API extension TBD** |

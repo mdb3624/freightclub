@@ -13,15 +13,30 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DEBUG_REGISTRATION.md",
+                "file": "CRITICAL_ISSUES_STATUS.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "DEBUG_REGISTRATION"
+              "title": "CRITICAL_ISSUES_STATUS"
+            }
+          },
+          {
+            "id": "bbef792bfedc9f7d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/governance/MANDATE_Composite_Framework_Adoption.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "MANDATE_Composite_Framework_Adoption"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -183,52 +198,53 @@
       "bases:Create new base": false
     }
   },
-  "active": "60bffee8747cbd54",
+  "active": "8c3069d0457bc066",
   "lastOpenFiles": [
-    "frontend/test-results/junit.xml",
-    "frontend/test-results/results.json",
-    "frontend/test-results/evidence/us-824-quick-actions-mobile-375x667.png",
+    "frontend/src/features/shipper/components/ShipmentStatusPanel.tsx.tmp.31868.c49000b4bbfb",
+    "frontend/src/features/shipper/hooks/useShipmentStatus.ts.tmp.31868.a86a4695c8e4",
+    "backend/target/surefire-reports/TEST-com.freightclub.service.SmsNotificationServiceTest.xml",
+    "backend/target/surefire-reports/com.freightclub.service.SmsNotificationServiceTest.txt",
+    "backend/target/surefire-reports/TEST-com.freightclub.service.ShipperServiceTest.xml",
+    "backend/target/surefire-reports/com.freightclub.service.ShipperServiceTest.txt",
+    "backend/target/surefire-reports/TEST-com.freightclub.service.ShipperServiceTest$GetProfile.xml",
+    "backend/target/surefire-reports/com.freightclub.service.ShipperServiceTest$GetProfile.txt",
+    "backend/target/surefire-reports/TEST-com.freightclub.service.ShipperServiceTest$UpdateProfile.xml",
+    "backend/target/surefire-reports/com.freightclub.service.ShipperServiceTest$UpdateProfile.txt",
+    "backend/target/surefire-reports/TEST-com.freightclub.service.ShipperServiceTest$CalculateMinimumRpm.xml",
+    "docs/architecture/audit/US-822_ARCHITECT_Audit_Results.md",
+    "docs/architecture/ARCH_US-822_Shipment_Status_Panel_Design.md",
+    "docs/project/hfd/design/US-822_Shipment_Status_Panel_Prototype.png",
+    "docs/governance/SHELL_CONTRACT.md",
+    "docs/governance/SYSTEM_BLUEPRINT.md",
+    "docs/hfd/US-822_HFD_Audit_Results.md",
+    "docs/governance/REVIEWER_CHECKLIST.md",
+    "docs/governance/CODE_REVIEW_THREE_GATE_RUBRIC.md",
+    "docs/plans/theme-state-separation.md",
+    "docs/project/CHG_ESCALATION_BATCH_2026-06-14.md",
+    "docs/hfd/US-822_Shipment_Status_Panel_Design_Spec.md",
     "frontend/test-results/evidence/us-824-quick-actions-tablet-768x1024.png",
+    "docs/business/stories/US-822_Shipment_Status_Panel.md",
+    "frontend/test-results/evidence/us-824-quick-actions-mobile-375x667.png",
     "frontend/test-results/evidence/us-824-quick-actions-desktop-1280x720.png",
-    "frontend/test-results/evidence",
-    "backend/target/surefire/surefirebooter-20260613183512231_3.jar",
-    "backend/target/surefire",
-    "frontend/test-results",
-    "frontend/vite.config.ts.timestamp-1781375686814-c9f45729fea38.mjs",
-    "backend/target/surefire/surefirebooter-20260613182908636_3.jar",
-    "backend/target/surefire/surefire_0-20260613182908636_2tmp",
-    "backend/target/surefire/surefire-20260613182908636_1tmp",
-    "frontend/playwright-report/data/4de58c5157fe49d479b6d8d22fc8505828365d10.png",
-    "frontend/test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/error-context.md",
-    "frontend/test-results/us-824-quick-actions-US-82-471f8--to-dashboard-shipper-loads-chromium/test-failed-1.png",
-    "frontend/playwright-report/data/93d76c9ba8924197881b14a3ea3e1bd0763f7790.md",
-    "frontend/playwright-report/data/eb8c6d2fb756c13e404c01b33d4722fe417b46d2.png",
-    "frontend/playwright-report/data/d0adfbac3840a96d6fbf66ddc97d2c62e6f641e5.md",
-    "frontend/playwright-report/data/3842097c009802d3dc1e22ea9299e7dece736561.png",
-    "frontend/playwright-report/data/285ac852d806c2f5c1fade219f9b18a4a69bec5a.md",
-    "frontend/playwright-report/data/a7e1d46c9e82abc93e889f728c4da7bd1742ed35.png",
-    "frontend/test-results/tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium/error-context.md",
-    "frontend/test-results/tests-us-820-kpi-summary-U-3d46e-trics-load-within-2-seconds-chromium/test-failed-1.png",
-    "frontend/test-results/evidence/shipper_desktop_final.png",
-    "frontend/test-results/shipper-preferred-carriers-d1b7a-ble-via-keyboard-navigation-chromium/error-context.md",
-    "frontend/playwright-report/data/89111472dd598aa790b943a2934909371d962929.md",
-    "frontend/playwright-report/data/bd6138e0f0e72a27229dea09ebdf32197f80a07d.md",
-    "frontend/playwright-report/data/f5ce3bf72ac31f3a6204551b45869a2e16adf34c.md",
-    "frontend/playwright-report/data/e65aaf11dd80c0bceb7a76db63a9841235ad665f.md",
-    "frontend/test-results/us-824-quick-actions-US-82-84830-l-four-quick-action-buttons-chromium/error-context.md",
-    "frontend/playwright-report/data/de2a0a81f6a9f8d298d6f3edb8bcb1436253d32c.md",
-    "frontend/playwright-report/data/482f1850336a0eb0c55a7353e58e3ac02f967d0d.md",
-    "frontend/playwright-report/data/09323ac40a5d516bd38960d596432e5464d42123.md",
-    "frontend/playwright-report/data/a6c16ebf9ab29d3dc28c30c404ed36a776e04360.md",
-    "frontend/playwright-report/data/5446c0e2b1deaa7f031e1a1b16fbe012838d1c71.md",
-    "frontend/playwright-report/data/c4db2bb429a35c66eff42cfab27d25c93e682024.md",
-    "frontend/playwright-report/data/38f5e8746679e87d2e9812c04a28dadbe2c1d232.md",
-    "frontend/playwright-report/data/04aa4e5d5b31d260a1ca2bc0121e664c83072ac1.md",
-    "frontend/playwright-report/data/0ef9fd51a5c7f8c2ea6491f3b4abab87eeb16c8e.md",
-    "frontend/playwright-report/data/beac09635d89dd7a9f9a08afeb8d66168da9e6f6.md",
-    "frontend/test-results/us-824-quick-actions-US-82-ecad9-sive-design-mobile-375x667--chromium/error-context.md",
-    "frontend/test-results/us-824-quick-actions-US-82-3ef69-ive-design-tablet-768x1024--chromium/error-context.md",
-    "frontend/test-results/us-824-quick-actions-US-82-2dc34-ve-design-desktop-1280x720--chromium/error-context.md",
-    "frontend/test-results/us-824-quick-actions-US-82-c126b-board-accessible-Tab-Enter--chromium/error-context.md"
+    "docs/project/specs/shipment-panel-prototype.png",
+    "docs/business/stories/US-826_Shipment_Status_Panel.md",
+    "frontend/test-results/evidence/chg-003-ac5-prototype-match.png",
+    "frontend/test-results/evidence/chg-003-ac4-mobile-1col.png",
+    "frontend/test-results/evidence/chg-003-ac3-desktop-2col.png",
+    "frontend/test-results/evidence/chg-003-ac2-carrier-search-panel.png",
+    "frontend/test-results/evidence/chg-003-ac1-quick-actions-panel.png",
+    "frontend/playwright-report/data/b59abef38ca410949b28d5d6e0ecd5c92d58aa57.md",
+    "frontend/test-results/chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium/error-context.md",
+    "frontend/playwright-report/data/4caaa7c6fb65916b32f005cebb1b1c4d78594e89.md",
+    "frontend/playwright-report/data/e03790746f036e63d9552e4c4deb0a744cab56e2.md",
+    "frontend/playwright-report/data/6ce2161908586f562dd6ff89c00c0651bf5478ce.md",
+    "frontend/playwright-report/data/671d6fa31213cc56a665d94c14002a90a78d5afc.md",
+    "frontend/test-results/chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium/error-context.md",
+    "frontend/test-results/chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium/error-context.md",
+    "frontend/test-results/chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium/error-context.md",
+    "frontend/playwright-report/data/90c5018f717dbdc02e7b3eddd3bbe971f0c42cac.md",
+    "frontend/playwright-report/data/7b917da1c4da408865e118fb94df4a2ea24a5241.md",
+    "frontend/test-results/chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium/error-context.md",
+    "frontend/playwright-report/data/95b7d1e00df03e8e38f0320f66bc39c63e4bee43.md"
   ]
 }

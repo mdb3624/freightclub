@@ -52,6 +52,7 @@
 | US-820 | KPI Summary Display | ✅ COMPLETED | 2026-06-10 | 100% | ✅ REVIEWER_PASS + LIBRARIAN (2026-06-13) |
 | US-821 | Shipper Header Navigation | ✅ COMPLETED | 2026-06-10 | 100% | ✅ REVIEWER_PASS + LIBRARIAN (2026-06-13) |
 | US-823 | Dashboard Layout Skeleton (Grid + Placeholders) | ✅ COMPLETED | 2026-06-13 | 100% | ✅ REVIEWER_PASS (8 gates) + LIBRARIAN (2026-06-13) |
+| US-822 | Shipment Status Panel (Active Shipments List) | READY_FOR_DESIGN | — | — | ✅ Audited by BA; HFD Spec Complete: `docs/hfd/US-822_Shipment_Status_Panel_Design_Spec.md` |
 
 ## Infrastructure Progress: Performance & Optimization
 

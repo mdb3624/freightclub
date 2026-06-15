@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>US-826 Shipment Status Panel - Design Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fafafa;
+        }
+
+        .title {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            letter-spacing: -0.3px;
+        }
+
+        .action-button {
+            padding: 8px 16px;
+            background: linear-gradient(180deg, #c9a46a 0%, #b08d57 45%, #8c6d3f 100%);
+            color: white;
+            border: 1px solid #7a5f3a;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Search */
+        .search-container {
+            padding: 16px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            background: white;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .header-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1.2fr 0.8fr 1fr 1.2fr;
+            gap: 12px;
+            padding: 12px 24px;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6b7280;
+            position: sticky;
+            top: 0;
+        }
+
+        .data-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1.2fr 0.8fr 1fr 1.2fr;
+            gap: 12px;
+            padding: 14px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            align-items: center;
+            font-size: 14px;
+            color: #1f2937;
+            transition: background-color 0.1s ease;
+        }
+
+        .data-row:hover {
+            background-color: #f9fafb;
+        }
+
+        .load-id {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .badge-urgent {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-okay {
+            background: #dbeafe;
+            color: #0c4a6e;
+        }
+
+        .badge-idle {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .carrier-name {
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .rating {
+            font-family: 'Courier New', monospace;
+            color: #b08d57;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .equipment {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .destination {
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 12px 24px;
+            background: #fafafa;
+            border-top: 1px solid #f0f0f0;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .list-container {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        /* Scrollbar */
+        .list-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .list-container::-webkit-scrollbar-track {
+            background: #f3f4f6;
+        }
+
+        .list-container::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+
+        .page-title {
+            margin-bottom: 20px;
+            font-family: Georgia, serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .description {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #166534;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="page-title">US-826: Shipment Status Panel</h1>
+
+        <div class="description">
+            <strong>Design Vision:</strong> Refined professional dashboard for shipper operations managers.
+            Clean grid layout with strong hierarchy, selective bronze accent, and color-coded status badges.
+            Desktop-first for office workspace use.
+        </div>
+
+        <div class="panel">
+            <!-- Header -->
+            <div class="header">
+                <h2 class="title">Shipment Status</h2>
+                <button class="action-button">Track Shipments</button>
+            </div>
+
+            <!-- Search -->
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search by Load ID, destination, or carrier...">
+            </div>
+
+            <!-- List -->
+            <div class="list-container">
+                <!-- Column Headers -->
+                <div class="header-row">
+                    <div>Load ID</div>
+                    <div>Status</div>
+                    <div>Carrier</div>
+                    <div>Rating</div>
+                    <div>Equipment</div>
+                    <div>Destination</div>
+                </div>
+
+                <!-- Data Row 1 -->
+                <div class="data-row">
+                    <div class="load-id">LOAD-0001-URGENT</div>
+                    <div><span class="badge badge-urgent">Urgent</span></div>
+                    <div class="carrier-name">—</div>
+                    <div class="rating">—</div>
+                    <div class="equipment">Flatbed</div>
+                    <div class="destination">Dallas, TX</div>
+                </div>
+
+                <!-- Data Row 2 -->
+                <div class="data-row">
+                    <div class="load-id">LOAD-0002-OKAY</div>
+                    <div><span class="badge badge-okay">In Transit</span></div>
+                    <div class="carrier-name">Smith Trucking</div>
+                    <div class="rating">★★★★☆</div>
+                    <div class="equipment">Box Truck</div>
+                    <div class="destination">Houston, TX</div>
+                </div>
+
+                <!-- Data Row 3 -->
+                <div class="data-row">
+                    <div class="load-id">LOAD-0003-OKAY</div>
+                    <div><span class="badge badge-okay">Claimed</span></div>
+                    <div class="carrier-name">Jones Logistics</div>
+                    <div class="rating">★★★★★</div>
+                    <div class="equipment">Refrigerated</div>
+                    <div class="destination">Austin, TX</div>
+                </div>
+
+                <!-- Data Row 4 -->
+                <div class="data-row">
+                    <div class="load-id">LOAD-0004-OKAY</div>
+                    <div><span class="badge badge-okay">Picked Up</span></div>
+                    <div class="carrier-name">Green Express</div>
+                    <div class="rating">★★★★☆</div>
+                    <div class="equipment">Tanker</div>
+                    <div class="destination">San Antonio, TX</div>
+                </div>
+
+                <!-- Data Row 5 -->
+                <div class="data-row">
+                    <div class="load-id">LOAD-0005-OKAY</div>
+                    <div><span class="badge badge-okay">In Transit</span></div>
+                    <div class="carrier-name">Midwest Carriers</div>
+                    <div class="rating">★★★☆☆</div>
+                    <div class="equipment">Flatbed</div>
+                    <div class="destination">Fort Worth, TX</div>
+                </div>
+
+                <!-- Data Row 6 (Idle/Delivered) -->
+                <div class="data-row">
+                    <div class="load-id">LOAD-0006-IDLE</div>
+                    <div><span class="badge badge-idle">Delivered</span></div>
+                    <div class="carrier-name">Premium Transport</div>
+                    <div class="rating">★★★★★</div>
+                    <div class="equipment">Box Truck</div>
+                    <div class="destination">Corpus Christi, TX</div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                Showing 6 of 12 active shipments
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: white; border-radius: 6px; border: 1px solid #e5e7eb;">
+            <h3 style="margin-bottom: 10px; color: #1f2937;">Design Features:</h3>
+            <ul style="color: #6b7280; line-height: 1.8; list-position: inside;">
+                <li><strong>Header:</strong> Title + "Track Shipments" action button (bronze gradient)</li>
+                <li><strong>Search:</strong> Real-time filter by Load ID, destination, or carrier name</li>
+                <li><strong>Status Badges:</strong> Color-coded (Red=Urgent, Blue=OK, Green=Delivered)</li>
+                <li><strong>Carrier Rating:</strong> Star display (★★★★☆) for quick quality assessment</li>
+                <li><strong>Grid Layout:</strong> 6-column responsive grid, sticky header, hover states</li>
+                <li><strong>Typography:</strong> Georgia serif for headings, clean sans-serif for data</li>
+                <li><strong>Color Palette:</strong> White bg, bronze accent (#b08d57), status colors</li>
+                <li><strong>Refinement:</strong> Generous whitespace, subtle shadows, professional tone</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -11,11 +11,14 @@
 import React, { useState } from 'react';
 import { ShipperPageLayout } from '../components/ShipperPageLayout';
 import { KPISummaryPanel } from '../components/KPISummaryPanel';
+import { ShipmentStatusPanel } from '../components/ShipmentStatusPanel';
 import { MessagesAlertsPanel } from '../dashboard/components/MessagesAlertsPanel';
 import { useQuickActionNavigation } from '../dashboard/hooks/useQuickActionNavigation';
+import { useShipmentStatus } from '../hooks/useShipmentStatus';
 
 export const ShipperDashboardPage: React.FC = () => {
   const { onPostLoad, onGetQuote, onTrackShipments, onPreferredCarriers } = useQuickActionNavigation();
+  const { data: shipments, isLoading: isShipmentLoading } = useShipmentStatus();
   const [isLoading, setIsLoading] = useState(false);
   const [loadingButtonId, setLoadingButtonId] = useState<string | null>(null);
 
@@ -32,7 +35,7 @@ export const ShipperDashboardPage: React.FC = () => {
     </div>
   );
 
-  // SLOT_B (Row 2): Shipment Status (8 columns) — Placeholder until real data hook implemented
+  // SLOT_B (Row 2): Shipment Status (8 columns) — US-822 Live Shipment Tracking
   const slotBContent = (
     <section
       className="panel"
@@ -40,18 +43,11 @@ export const ShipperDashboardPage: React.FC = () => {
       aria-label="Shipment Status"
       data-testid="shipment-status-section"
     >
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
-          Shipment Status
-        </h2>
-        <div
-          className="rounded animate-pulse"
-          style={{
-            minHeight: 'var(--skeleton-height-shipment-status)',
-            backgroundColor: 'var(--color-surface-light)',
-          }}
-        />
-      </div>
+      <ShipmentStatusPanel
+        shipments={shipments ?? []}
+        isLoading={isShipmentLoading}
+        onTrackShipments={() => onTrackShipments()}
+      />
     </section>
   );
 

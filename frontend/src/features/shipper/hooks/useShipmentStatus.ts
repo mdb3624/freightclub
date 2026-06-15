@@ -1,22 +1,24 @@
-/**
- * US-823: Mock hook for Shipment Status section
- * Returns loading state → simulates real API call
- * Enables testing of skeleton → content transition (jitter prevention)
- */
+import { useQuery } from '@tanstack/react-query';
+import { apiClient } from '../../../api/apiClient';
 
-export interface ShipmentStatusData {
-  id: string;
+// US-822: Shipment Status Panel data structure
+export interface ShipmentStatusDTO {
   loadId: string;
-  status: 'pending' | 'in-transit' | 'delivered';
-  pickupDate: string;
-  deliveryDate: string;
+  status: string;
+  progress: number;
+  equipment: string;
+  carrier: string | null;
+  rating: number | null;
+  destination: string;
 }
 
 export function useShipmentStatus() {
-  // TODO: Replace with actual API call after US-824 implementation
-  return {
-    data: null as ShipmentStatusData[] | null,
-    isLoading: true,
-    error: null as Error | null,
-  };
+  return useQuery({
+    queryKey: ['shipmentStatus'],
+    queryFn: () =>
+      apiClient
+        .get<ShipmentStatusDTO[]>('/shipper/shipments/active')
+        .then((response) => response.data),
+    refetchInterval: 60_000, // 1-minute refresh per NFR-504
+  });
 }

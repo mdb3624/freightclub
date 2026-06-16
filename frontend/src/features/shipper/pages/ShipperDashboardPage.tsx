@@ -55,7 +55,11 @@ export const ShipperDashboardPage: React.FC = () => {
   // SLOT_C: Action Zone (4 columns) - Two independent panels side-by-side
   // CHG-003 spec: Panel 1 (Quick Actions) + Panel 2 (Carrier Search)
   const slotCContent = (
-    <div className="grid grid-cols-2 gap-4" data-testid="action-zone-content">
+    <div data-testid="action-zone-content">
+      <h2 className="text-lg font-semibold mb-4" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
+        Action Zone
+      </h2>
+      <div className="grid grid-cols-2 gap-4" data-testid="action-zone-grid">
       {/* Panel 1: Quick Actions Panel */}
       <section
         className="panel"
@@ -118,6 +122,7 @@ export const ShipperDashboardPage: React.FC = () => {
           }}
         />
       </section>
+      </div>
     </div>
   );
 

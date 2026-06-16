@@ -63,7 +63,7 @@ public class ShipperController {
 
     // US-822 AC-1: Get active shipments with status, progress, and carrier info
     @GetMapping("/shipper/shipments/active")
-    @PreAuthorize("hasAnyRole('SHIPPER', 'ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ShipmentStatusDTO>> getActiveShipments() {
         String tenantId = TenantContextHolder.getTenantId();
         List<ShipmentStatusDTO> shipments = shipmentStatusService.getActiveShipments(tenantId);

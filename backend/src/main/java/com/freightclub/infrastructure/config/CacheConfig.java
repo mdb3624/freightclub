@@ -29,6 +29,7 @@ public class CacheConfig {
         "documents",           // DocumentService: BOL/document lookup by loadId+tenant
         "carrierProfiles",     // CarrierProfileService: public profile lookup (1h TTL)
         "shipper-profiles",    // ShipperProfileService: shipper profile caching
+        "shipment-status",     // US-822: Shipment Status Panel (1h TTL)
         // Phase 7: Financial Intelligence & Analytics
         "assignedLoads",       // US-708: Direct load assignment cache (5m TTL)
         "blockedCarriers",     // US-709: Blocked carrier list (1h TTL)

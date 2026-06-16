@@ -31,7 +31,8 @@ public class ShipmentStatusService {
 
         String sql = """
             SELECT l.id, l.status, l.equipment_type, l.destination_city,
-                   u.name, sr.avg_score, l.pickup_from, l.delivery_to, l.picked_up_at
+                   COALESCE(u.business_name, CONCAT(u.first_name, ' ', u.last_name)), sr.avg_score,
+                   l.pickup_from, l.delivery_to, l.picked_up_at
             FROM freightclub.loads l
             LEFT JOIN freightclub.users u ON l.trucker_id = u.id
             LEFT JOIN freightclub.shipper_reputation sr ON l.trucker_id = sr.shipper_id

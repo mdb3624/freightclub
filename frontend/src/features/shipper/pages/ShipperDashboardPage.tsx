@@ -53,9 +53,14 @@ export const ShipperDashboardPage: React.FC = () => {
   );
 
   // SLOT_C: Action Zone (4 columns) - Two independent panels side-by-side
-  // CHG-003 spec: Panel 1 (Quick Actions) + Panel 2 (Carrier Search)
+  // CHG-003 spec: Action Zone is a .panel containing Panel 1 (Quick Actions) + Panel 2 (Carrier Search)
   const slotCContent = (
-    <div data-testid="action-zone-content">
+    <section
+      className="panel"
+      role="region"
+      aria-label="Action Zone"
+      data-testid="action-zone-section"
+    >
       <h2 className="text-lg font-semibold mb-4" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
         Action Zone
       </h2>
@@ -123,7 +128,7 @@ export const ShipperDashboardPage: React.FC = () => {
         />
       </section>
       </div>
-    </div>
+    </section>
   );
 
   // SLOT_B (Row 3): Messages & Alerts (8 columns)

@@ -1,19 +1,19 @@
-<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="6" time="30.908527000000003">
-<testsuite name="shipper-dashboard.spec.ts" timestamp="2026-06-16T00:22:13.729Z" hostname="chromium" tests="6" failures="0" skipped="0" time="18.88" errors="6">
-<testcase name="Shipper Dashboard Golden Path (US-715) › should display summary cards with load statistics (US-715 AC-1)" classname="shipper-dashboard.spec.ts" time="3.301">
+<testsuites id="" name="" tests="5" failures="0" skipped="0" errors="5" time="25.491101">
+<testsuite name="chg-003-action-zone-layout.spec.ts" timestamp="2026-06-16T03:28:09.580Z" hostname="chromium" tests="5" failures="0" skipped="0" time="15.778" errors="5">
+<testcase name="CHG-003: Action Zone Structural Layout › AC-1: Quick Actions section wrapped in .panel with ARIA labels" classname="chg-003-action-zone-layout.spec.ts" time="3.288">
 <system-out>
 <![CDATA[
-[[ATTACHMENT|shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\test-failed-1.png]]
+[[ATTACHMENT|chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\test-failed-1.png]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\video.webm]]
+[[ATTACHMENT|chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\video.webm]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\error-context.md]]
+[[ATTACHMENT|chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\error-context.md]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\trace.zip]]
+[[ATTACHMENT|chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\trace.zip]]
 ]]>
 </system-out>
 <error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
-<![CDATA[  [chromium] › shipper-dashboard.spec.ts:37:3 › Shipper Dashboard Golden Path (US-715) › should display summary cards with load statistics (US-715 AC-1) 
+<![CDATA[  [chromium] › chg-003-action-zone-layout.spec.ts:31:3 › CHG-003: Action Zone Structural Layout › AC-1: Quick Actions section wrapped in .panel with ARIA labels 
 
     Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
     Call log:
@@ -22,7 +22,7 @@
         - accept: */*
         - accept-encoding: gzip,deflate,br
         - content-type: application/json
-        - content-length: 226
+        - content-length: 221
 
 
        at fixtures\test-data-seeder.ts:94
@@ -35,42 +35,42 @@
       96 |         {
       97 |           data: userData,
         at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
-        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:39:18
+        at C:\projects\freightclub\frontend\e2e\chg-003-action-zone-layout.spec.ts:33:18
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\test-failed-1.png
+    ..\test-results\chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\video.webm
+    ..\test-results\chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\error-context.md
+    Error Context: ..\test-results\chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\error-context.md
 
     attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\trace.zip
+    ..\test-results\chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\trace.zip
+        npx playwright show-trace ..\test-results\chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\trace.zip
 
     ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
 </error>
 </testcase>
-<testcase name="Shipper Dashboard Golden Path (US-715) › should display load table with expected columns (US-715 AC-2)" classname="shipper-dashboard.spec.ts" time="3.044">
+<testcase name="CHG-003: Action Zone Structural Layout › AC-2: Carrier Search section wrapped in .panel with ARIA labels" classname="chg-003-action-zone-layout.spec.ts" time="3.121">
 <system-out>
 <![CDATA[
-[[ATTACHMENT|shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\test-failed-1.png]]
+[[ATTACHMENT|chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\test-failed-1.png]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\video.webm]]
+[[ATTACHMENT|chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\video.webm]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\error-context.md]]
+[[ATTACHMENT|chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\error-context.md]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\trace.zip]]
+[[ATTACHMENT|chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\trace.zip]]
 ]]>
 </system-out>
 <error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
-<![CDATA[  [chromium] › shipper-dashboard.spec.ts:71:3 › Shipper Dashboard Golden Path (US-715) › should display load table with expected columns (US-715 AC-2) 
+<![CDATA[  [chromium] › chg-003-action-zone-layout.spec.ts:74:3 › CHG-003: Action Zone Structural Layout › AC-2: Carrier Search section wrapped in .panel with ARIA labels 
 
     Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
     Call log:
@@ -79,7 +79,7 @@
         - accept: */*
         - accept-encoding: gzip,deflate,br
         - content-type: application/json
-        - content-length: 232
+        - content-length: 221
 
 
        at fixtures\test-data-seeder.ts:94
@@ -92,42 +92,42 @@
       96 |         {
       97 |           data: userData,
         at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
-        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:73:18
+        at C:\projects\freightclub\frontend\e2e\chg-003-action-zone-layout.spec.ts:76:18
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\test-failed-1.png
+    ..\test-results\chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\video.webm
+    ..\test-results\chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\error-context.md
+    Error Context: ..\test-results\chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\error-context.md
 
     attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\trace.zip
+    ..\test-results\chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\trace.zip
+        npx playwright show-trace ..\test-results\chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\trace.zip
 
     ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
 </error>
 </testcase>
-<testcase name="Shipper Dashboard Golden Path (US-715) › should switch between Active and All Loads tabs (US-715 AC-3)" classname="shipper-dashboard.spec.ts" time="3.038">
+<testcase name="CHG-003: Action Zone Structural Layout › AC-3: Desktop (≥1024px) displays 2-column grid layout with equal width panels" classname="chg-003-action-zone-layout.spec.ts" time="3.153">
 <system-out>
 <![CDATA[
-[[ATTACHMENT|shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\test-failed-1.png]]
+[[ATTACHMENT|chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\test-failed-1.png]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\video.webm]]
+[[ATTACHMENT|chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\video.webm]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\error-context.md]]
+[[ATTACHMENT|chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\error-context.md]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\trace.zip]]
+[[ATTACHMENT|chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\trace.zip]]
 ]]>
 </system-out>
 <error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
-<![CDATA[  [chromium] › shipper-dashboard.spec.ts:102:3 › Shipper Dashboard Golden Path (US-715) › should switch between Active and All Loads tabs (US-715 AC-3) 
+<![CDATA[  [chromium] › chg-003-action-zone-layout.spec.ts:117:3 › CHG-003: Action Zone Structural Layout › AC-3: Desktop (≥1024px) displays 2-column grid layout with equal width panels 
 
     Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
     Call log:
@@ -136,7 +136,7 @@
         - accept: */*
         - accept-encoding: gzip,deflate,br
         - content-type: application/json
-        - content-length: 224
+        - content-length: 221
 
 
        at fixtures\test-data-seeder.ts:94
@@ -149,42 +149,42 @@
       96 |         {
       97 |           data: userData,
         at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
-        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:104:18
+        at C:\projects\freightclub\frontend\e2e\chg-003-action-zone-layout.spec.ts:119:18
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\test-failed-1.png
+    ..\test-results\chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\video.webm
+    ..\test-results\chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\error-context.md
+    Error Context: ..\test-results\chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\error-context.md
 
     attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\trace.zip
+    ..\test-results\chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\trace.zip
+        npx playwright show-trace ..\test-results\chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\trace.zip
 
     ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
 </error>
 </testcase>
-<testcase name="Shipper Dashboard Golden Path (US-715) › should filter loads using search input (US-715 AC-4)" classname="shipper-dashboard.spec.ts" time="3.245">
+<testcase name="CHG-003: Action Zone Structural Layout › AC-4: Mobile (&lt;1024px) displays single column vertical stack" classname="chg-003-action-zone-layout.spec.ts" time="3.172">
 <system-out>
 <![CDATA[
-[[ATTACHMENT|shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\test-failed-1.png]]
+[[ATTACHMENT|chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\test-failed-1.png]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\video.webm]]
+[[ATTACHMENT|chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\video.webm]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\error-context.md]]
+[[ATTACHMENT|chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\error-context.md]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\trace.zip]]
+[[ATTACHMENT|chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\trace.zip]]
 ]]>
 </system-out>
 <error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
-<![CDATA[  [chromium] › shipper-dashboard.spec.ts:136:3 › Shipper Dashboard Golden Path (US-715) › should filter loads using search input (US-715 AC-4) 
+<![CDATA[  [chromium] › chg-003-action-zone-layout.spec.ts:164:3 › CHG-003: Action Zone Structural Layout › AC-4: Mobile (<1024px) displays single column vertical stack 
 
     Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
     Call log:
@@ -193,7 +193,7 @@
         - accept: */*
         - accept-encoding: gzip,deflate,br
         - content-type: application/json
-        - content-length: 230
+        - content-length: 221
 
 
        at fixtures\test-data-seeder.ts:94
@@ -206,42 +206,42 @@
       96 |         {
       97 |           data: userData,
         at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
-        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:138:18
+        at C:\projects\freightclub\frontend\e2e\chg-003-action-zone-layout.spec.ts:166:18
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\test-failed-1.png
+    ..\test-results\chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\video.webm
+    ..\test-results\chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\error-context.md
+    Error Context: ..\test-results\chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\error-context.md
 
     attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\trace.zip
+    ..\test-results\chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\trace.zip
+        npx playwright show-trace ..\test-results\chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\trace.zip
 
     ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
 </error>
 </testcase>
-<testcase name="Shipper Dashboard Golden Path (US-715) › should navigate to Post Load form (US-715 AC-5)" classname="shipper-dashboard.spec.ts" time="3.19">
+<testcase name="CHG-003: Action Zone Structural Layout › AC-5: Panel structure matches master prototype with proper ARIA, spacing, and styling" classname="chg-003-action-zone-layout.spec.ts" time="3.044">
 <system-out>
 <![CDATA[
-[[ATTACHMENT|shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\test-failed-1.png]]
+[[ATTACHMENT|chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\test-failed-1.png]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\video.webm]]
+[[ATTACHMENT|chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\video.webm]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\error-context.md]]
+[[ATTACHMENT|chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\error-context.md]]
 
-[[ATTACHMENT|shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\trace.zip]]
+[[ATTACHMENT|chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\trace.zip]]
 ]]>
 </system-out>
 <error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
-<![CDATA[  [chromium] › shipper-dashboard.spec.ts:174:3 › Shipper Dashboard Golden Path (US-715) › should navigate to Post Load form (US-715 AC-5) 
+<![CDATA[  [chromium] › chg-003-action-zone-layout.spec.ts:216:3 › CHG-003: Action Zone Structural Layout › AC-5: Panel structure matches master prototype with proper ARIA, spacing, and styling 
 
     Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
     Call log:
@@ -250,7 +250,7 @@
         - accept: */*
         - accept-encoding: gzip,deflate,br
         - content-type: application/json
-        - content-length: 224
+        - content-length: 221
 
 
        at fixtures\test-data-seeder.ts:94
@@ -263,80 +263,23 @@
       96 |         {
       97 |           data: userData,
         at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
-        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:176:18
+        at C:\projects\freightclub\frontend\e2e\chg-003-action-zone-layout.spec.ts:218:18
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\test-failed-1.png
+    ..\test-results\chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\video.webm
+    ..\test-results\chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\error-context.md
+    Error Context: ..\test-results\chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\error-context.md
 
     attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\trace.zip
+    ..\test-results\chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\trace.zip
     Usage:
 
-        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\trace.zip
-
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-]]>
-</error>
-</testcase>
-<testcase name="Shipper Dashboard Golden Path (US-715) › should load dashboard without errors (US-715 AC-6)" classname="shipper-dashboard.spec.ts" time="3.062">
-<system-out>
-<![CDATA[
-[[ATTACHMENT|shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\test-failed-1.png]]
-
-[[ATTACHMENT|shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\video.webm]]
-
-[[ATTACHMENT|shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\error-context.md]]
-
-[[ATTACHMENT|shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\trace.zip]]
-]]>
-</system-out>
-<error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
-<![CDATA[  [chromium] › shipper-dashboard.spec.ts:206:3 › Shipper Dashboard Golden Path (US-715) › should load dashboard without errors (US-715 AC-6) 
-
-    Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
-    Call log:
-      - → POST http://backend-test:9091/api/test/auth/register
-        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36
-        - accept: */*
-        - accept-encoding: gzip,deflate,br
-        - content-type: application/json
-        - content-length: 229
-
-
-       at fixtures\test-data-seeder.ts:94
-
-      92 |     const freshContext = await playwrightRequest.newContext();
-      93 |     try {
-    > 94 |       const response = await freshContext.post(
-         |                                           ^
-      95 |         `${this.backendUrl}/api/test/auth/register`,
-      96 |         {
-      97 |           data: userData,
-        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
-        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:208:18
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\error-context.md
-
-    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
-    ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\trace.zip
-    Usage:
-
-        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\trace.zip
+        npx playwright show-trace ..\test-results\chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\trace.zip
 
     ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>

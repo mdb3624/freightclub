@@ -39,11 +39,12 @@ public class ShipmentStatusService {
               AND l.deleted_at IS NULL
               AND l.status NOT IN ('DRAFT', 'CANCELLED', 'SETTLED', 'DISPUTED')
             ORDER BY CASE l.status
-                WHEN 'OPEN' THEN 1
-                WHEN 'CLAIMED' THEN 2
-                WHEN 'IN_TRANSIT' THEN 3
-                WHEN 'DELIVERED' THEN 4
-                ELSE 5
+                WHEN 'DELAYED' THEN 1
+                WHEN 'OPEN' THEN 2
+                WHEN 'CLAIMED' THEN 3
+                WHEN 'IN_TRANSIT' THEN 4
+                WHEN 'DELIVERED' THEN 5
+                ELSE 6
             END ASC, l.delivery_to ASC
             """;
 

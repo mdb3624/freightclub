@@ -67,20 +67,20 @@
   },
   "suites": [
     {
-      "title": "shipper-dashboard.spec.ts",
-      "file": "shipper-dashboard.spec.ts",
+      "title": "chg-003-action-zone-layout.spec.ts",
+      "file": "chg-003-action-zone-layout.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Shipper Dashboard Golden Path (US-715)",
-          "file": "shipper-dashboard.spec.ts",
+          "title": "CHG-003: Action Zone Structural Layout",
+          "file": "chg-003-action-zone-layout.spec.ts",
           "line": 25,
           "column": 6,
           "specs": [
             {
-              "title": "should display summary cards with load statistics (US-715 AC-1)",
+              "title": "AC-1: Quick Actions section wrapped in .panel with ARIA labels",
               "ok": false,
               "tags": [],
               "tests": [
@@ -95,16 +95,16 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 3301,
+                      "duration": 3288,
                       "error": {
-                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 226\u001b[22m\n",
-                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 226\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:39:18",
+                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\chg-003-action-zone-layout.spec.ts:33:18",
                         "location": {
                           "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
                           "column": 43,
                           "line": 94
                         },
-                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m"
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n  92 |     const freshContext = await playwrightRequest.newContext();\n  93 |     try {\n> 94 |       const response = await freshContext.post(\n     |                                           ^\n  95 |         `${this.backendUrl}/api/test/auth/register`,\n  96 |         {\n  97 |           data: userData,"
                       },
                       "errors": [
                         {
@@ -113,34 +113,34 @@
                             "column": 43,
                             "line": 94
                           },
-                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 226\u001b[22m\n\n\n\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\u001b[22m\n\u001b[2m    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:39:18\u001b[22m"
+                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n\n\n   at fixtures\\test-data-seeder.ts:94\n\n  92 |     const freshContext = await playwrightRequest.newContext();\n  93 |     try {\n> 94 |       const response = await freshContext.post(\n     |                                           ^\n  95 |         `${this.backendUrl}/api/test/auth/register`,\n  96 |         {\n  97 |           data: userData,\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\chg-003-action-zone-layout.spec.ts:33:18"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-16T00:22:14.381Z",
+                      "startTime": "2026-06-16T03:28:10.159Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\\test-failed-1.png"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\\video.webm"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\\video.webm"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\\error-context.md"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\\error-context.md"
                         },
                         {
                           "name": "trace",
                           "contentType": "application/zip",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\\trace.zip"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\\trace.zip"
                         }
                       ],
                       "errorLocation": {
@@ -153,13 +153,13 @@
                   "status": "unexpected"
                 }
               ],
-              "id": "67a118b7c59db60eac84-6a52e9f1a0195482520b",
-              "file": "shipper-dashboard.spec.ts",
-              "line": 37,
+              "id": "dd83369c55476d7d04d5-40ad8671a11bacb41dc7",
+              "file": "chg-003-action-zone-layout.spec.ts",
+              "line": 31,
               "column": 3
             },
             {
-              "title": "should display load table with expected columns (US-715 AC-2)",
+              "title": "AC-2: Carrier Search section wrapped in .panel with ARIA labels",
               "ok": false,
               "tags": [],
               "tests": [
@@ -174,16 +174,16 @@
                       "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 3044,
+                      "duration": 3121,
                       "error": {
-                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 232\u001b[22m\n",
-                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 232\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:73:18",
+                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\chg-003-action-zone-layout.spec.ts:76:18",
                         "location": {
                           "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
                           "column": 43,
                           "line": 94
                         },
-                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m"
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n  92 |     const freshContext = await playwrightRequest.newContext();\n  93 |     try {\n> 94 |       const response = await freshContext.post(\n     |                                           ^\n  95 |         `${this.backendUrl}/api/test/auth/register`,\n  96 |         {\n  97 |           data: userData,"
                       },
                       "errors": [
                         {
@@ -192,34 +192,34 @@
                             "column": 43,
                             "line": 94
                           },
-                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 232\u001b[22m\n\n\n\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\u001b[22m\n\u001b[2m    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:73:18\u001b[22m"
+                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n\n\n   at fixtures\\test-data-seeder.ts:94\n\n  92 |     const freshContext = await playwrightRequest.newContext();\n  93 |     try {\n> 94 |       const response = await freshContext.post(\n     |                                           ^\n  95 |         `${this.backendUrl}/api/test/auth/register`,\n  96 |         {\n  97 |           data: userData,\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\chg-003-action-zone-layout.spec.ts:76:18"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-16T00:22:18.490Z",
+                      "startTime": "2026-06-16T03:28:14.261Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\\test-failed-1.png"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\\video.webm"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\\video.webm"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\\error-context.md"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\\error-context.md"
                         },
                         {
                           "name": "trace",
                           "contentType": "application/zip",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\\trace.zip"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\\trace.zip"
                         }
                       ],
                       "errorLocation": {
@@ -232,13 +232,13 @@
                   "status": "unexpected"
                 }
               ],
-              "id": "67a118b7c59db60eac84-e7009632cdb5eee0fc61",
-              "file": "shipper-dashboard.spec.ts",
-              "line": 71,
+              "id": "dd83369c55476d7d04d5-85ee50da4c2388e0b48d",
+              "file": "chg-003-action-zone-layout.spec.ts",
+              "line": 74,
               "column": 3
             },
             {
-              "title": "should switch between Active and All Loads tabs (US-715 AC-3)",
+              "title": "AC-3: Desktop (≥1024px) displays 2-column grid layout with equal width panels",
               "ok": false,
               "tags": [],
               "tests": [
@@ -253,16 +253,16 @@
                       "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 3038,
+                      "duration": 3153,
                       "error": {
-                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 224\u001b[22m\n",
-                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 224\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:104:18",
+                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\chg-003-action-zone-layout.spec.ts:119:18",
                         "location": {
                           "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
                           "column": 43,
                           "line": 94
                         },
-                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m"
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n  92 |     const freshContext = await playwrightRequest.newContext();\n  93 |     try {\n> 94 |       const response = await freshContext.post(\n     |                                           ^\n  95 |         `${this.backendUrl}/api/test/auth/register`,\n  96 |         {\n  97 |           data: userData,"
                       },
                       "errors": [
                         {
@@ -271,34 +271,34 @@
                             "column": 43,
                             "line": 94
                           },
-                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 224\u001b[22m\n\n\n\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\u001b[22m\n\u001b[2m    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:104:18\u001b[22m"
+                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n\n\n   at fixtures\\test-data-seeder.ts:94\n\n  92 |     const freshContext = await playwrightRequest.newContext();\n  93 |     try {\n> 94 |       const response = await freshContext.post(\n     |                                           ^\n  95 |         `${this.backendUrl}/api/test/auth/register`,\n  96 |         {\n  97 |           data: userData,\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\chg-003-action-zone-layout.spec.ts:119:18"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-16T00:22:22.361Z",
+                      "startTime": "2026-06-16T03:28:18.115Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\\test-failed-1.png"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\\video.webm"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\\video.webm"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\\error-context.md"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\\error-context.md"
                         },
                         {
                           "name": "trace",
                           "contentType": "application/zip",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\\trace.zip"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\\trace.zip"
                         }
                       ],
                       "errorLocation": {
@@ -311,13 +311,13 @@
                   "status": "unexpected"
                 }
               ],
-              "id": "67a118b7c59db60eac84-fd60817090ac8ebf569d",
-              "file": "shipper-dashboard.spec.ts",
-              "line": 102,
+              "id": "dd83369c55476d7d04d5-04cb2cb2f8a777432a5d",
+              "file": "chg-003-action-zone-layout.spec.ts",
+              "line": 117,
               "column": 3
             },
             {
-              "title": "should filter loads using search input (US-715 AC-4)",
+              "title": "AC-4: Mobile (<1024px) displays single column vertical stack",
               "ok": false,
               "tags": [],
               "tests": [
@@ -332,16 +332,16 @@
                       "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 3245,
+                      "duration": 3172,
                       "error": {
-                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 230\u001b[22m\n",
-                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 230\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:138:18",
+                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\chg-003-action-zone-layout.spec.ts:166:18",
                         "location": {
                           "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
                           "column": 43,
                           "line": 94
                         },
-                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m"
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n  92 |     const freshContext = await playwrightRequest.newContext();\n  93 |     try {\n> 94 |       const response = await freshContext.post(\n     |                                           ^\n  95 |         `${this.backendUrl}/api/test/auth/register`,\n  96 |         {\n  97 |           data: userData,"
                       },
                       "errors": [
                         {
@@ -350,34 +350,34 @@
                             "column": 43,
                             "line": 94
                           },
-                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 230\u001b[22m\n\n\n\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\u001b[22m\n\u001b[2m    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:138:18\u001b[22m"
+                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n\n\n   at fixtures\\test-data-seeder.ts:94\n\n  92 |     const freshContext = await playwrightRequest.newContext();\n  93 |     try {\n> 94 |       const response = await freshContext.post(\n     |                                           ^\n  95 |         `${this.backendUrl}/api/test/auth/register`,\n  96 |         {\n  97 |           data: userData,\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\chg-003-action-zone-layout.spec.ts:166:18"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-16T00:22:26.211Z",
+                      "startTime": "2026-06-16T03:28:22.039Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\\test-failed-1.png"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\\video.webm"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\\video.webm"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\\error-context.md"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\\error-context.md"
                         },
                         {
                           "name": "trace",
                           "contentType": "application/zip",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\\trace.zip"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\\trace.zip"
                         }
                       ],
                       "errorLocation": {
@@ -390,13 +390,13 @@
                   "status": "unexpected"
                 }
               ],
-              "id": "67a118b7c59db60eac84-abc96da3ebe73561bf18",
-              "file": "shipper-dashboard.spec.ts",
-              "line": 136,
+              "id": "dd83369c55476d7d04d5-78c14414e340d23f0ccc",
+              "file": "chg-003-action-zone-layout.spec.ts",
+              "line": 164,
               "column": 3
             },
             {
-              "title": "should navigate to Post Load form (US-715 AC-5)",
+              "title": "AC-5: Panel structure matches master prototype with proper ARIA, spacing, and styling",
               "ok": false,
               "tags": [],
               "tests": [
@@ -411,16 +411,16 @@
                       "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 3190,
+                      "duration": 3044,
                       "error": {
-                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 224\u001b[22m\n",
-                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 224\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:176:18",
+                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\chg-003-action-zone-layout.spec.ts:218:18",
                         "location": {
                           "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
                           "column": 43,
                           "line": 94
                         },
-                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m"
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n  92 |     const freshContext = await playwrightRequest.newContext();\n  93 |     try {\n> 94 |       const response = await freshContext.post(\n     |                                           ^\n  95 |         `${this.backendUrl}/api/test/auth/register`,\n  96 |         {\n  97 |           data: userData,"
                       },
                       "errors": [
                         {
@@ -429,34 +429,34 @@
                             "column": 43,
                             "line": 94
                           },
-                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 224\u001b[22m\n\n\n\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\u001b[22m\n\u001b[2m    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:176:18\u001b[22m"
+                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 221\u001b[22m\n\n\n   at fixtures\\test-data-seeder.ts:94\n\n  92 |     const freshContext = await playwrightRequest.newContext();\n  93 |     try {\n> 94 |       const response = await freshContext.post(\n     |                                           ^\n  95 |         `${this.backendUrl}/api/test/auth/register`,\n  96 |         {\n  97 |           data: userData,\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\chg-003-action-zone-layout.spec.ts:218:18"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-16T00:22:30.425Z",
+                      "startTime": "2026-06-16T03:28:26.055Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\\test-failed-1.png"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\\video.webm"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\\video.webm"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\\error-context.md"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\\error-context.md"
                         },
                         {
                           "name": "trace",
                           "contentType": "application/zip",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\\trace.zip"
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\\trace.zip"
                         }
                       ],
                       "errorLocation": {
@@ -469,88 +469,9 @@
                   "status": "unexpected"
                 }
               ],
-              "id": "67a118b7c59db60eac84-629c34671af9b3064fbe",
-              "file": "shipper-dashboard.spec.ts",
-              "line": 174,
-              "column": 3
-            },
-            {
-              "title": "should load dashboard without errors (US-715 AC-6)",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 5,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 3062,
-                      "error": {
-                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 229\u001b[22m\n",
-                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 229\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:208:18",
-                        "location": {
-                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
-                          "column": 43,
-                          "line": 94
-                        },
-                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
-                            "column": 43,
-                            "line": 94
-                          },
-                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 229\u001b[22m\n\n\n\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\u001b[22m\n\u001b[2m    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:208:18\u001b[22m"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-06-16T00:22:34.423Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\\error-context.md"
-                        },
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\\trace.zip"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
-                        "column": 43,
-                        "line": 94
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "67a118b7c59db60eac84-cb175ec82c2d7bf20c2b",
-              "file": "shipper-dashboard.spec.ts",
-              "line": 206,
+              "id": "dd83369c55476d7d04d5-fbfa41e68b62333dd969",
+              "file": "chg-003-action-zone-layout.spec.ts",
+              "line": 216,
               "column": 3
             }
           ]
@@ -560,11 +481,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-16T00:22:06.806Z",
-    "duration": 30908.527000000002,
+    "startTime": "2026-06-16T03:28:03.819Z",
+    "duration": 25491.101,
     "expected": 0,
     "skipped": 0,
-    "unexpected": 6,
+    "unexpected": 5,
     "flaky": 0
   }
 }

@@ -75,7 +75,7 @@ export const CarrierSearchPanel: React.FC<CarrierSearchPanelProps> = ({
       data-testid="dashboard-carrier-search-panel"
       role="region"
       aria-label="Carrier Search"
-      className="panel"
+      className="col-span-5 border border-widget rounded-md p-6 bg-white shadow-subtle"
     >
       {/* Search Form */}
       <div className="mb-6">

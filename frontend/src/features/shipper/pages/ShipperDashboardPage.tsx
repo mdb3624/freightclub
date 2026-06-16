@@ -67,7 +67,7 @@ export const ShipperDashboardPage: React.FC = () => {
       <div className="grid grid-cols-2 gap-4" data-testid="action-zone-grid">
       {/* Panel 1: Quick Actions Panel */}
       <section
-        className="panel"
+        className="border border-gray-300 rounded-md p-6 bg-white shadow-subtle"
         role="region"
         aria-label="Quick Actions"
         data-testid="quick-actions-panel"

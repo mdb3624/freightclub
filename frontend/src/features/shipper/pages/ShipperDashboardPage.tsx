@@ -11,11 +11,15 @@
 import React, { useState } from 'react';
 import { ShipperPageLayout } from '../components/ShipperPageLayout';
 import { KPISummaryPanel } from '../components/KPISummaryPanel';
+import { ShipmentStatusPanel } from '../components/ShipmentStatusPanel';
 import { MessagesAlertsPanel } from '../dashboard/components/MessagesAlertsPanel';
+import { CarrierSearchPanel } from '../dashboard/components/CarrierSearchPanel';
 import { useQuickActionNavigation } from '../dashboard/hooks/useQuickActionNavigation';
+import { useShipmentStatus } from '../hooks/useShipmentStatus';
 
 export const ShipperDashboardPage: React.FC = () => {
   const { onPostLoad, onGetQuote, onTrackShipments, onPreferredCarriers } = useQuickActionNavigation();
+  const { data: shipments, isLoading: isShipmentLoading } = useShipmentStatus();
   const [isLoading, setIsLoading] = useState(false);
   const [loadingButtonId, setLoadingButtonId] = useState<string | null>(null);
 
@@ -32,7 +36,7 @@ export const ShipperDashboardPage: React.FC = () => {
     </div>
   );
 
-  // SLOT_B (Row 2): Shipment Status (8 columns) — Placeholder until real data hook implemented
+  // SLOT_B (Row 2): Shipment Status (8 columns) — US-822 Live Shipment Tracking
   const slotBContent = (
     <section
       className="panel"
@@ -40,22 +44,16 @@ export const ShipperDashboardPage: React.FC = () => {
       aria-label="Shipment Status"
       data-testid="shipment-status-section"
     >
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
-          Shipment Status
-        </h2>
-        <div
-          className="rounded animate-pulse"
-          style={{
-            minHeight: 'var(--skeleton-height-shipment-status)',
-            backgroundColor: 'var(--color-surface-light)',
-          }}
-        />
-      </div>
+      <ShipmentStatusPanel
+        shipments={shipments ?? []}
+        isLoading={isShipmentLoading}
+        onTrackShipments={() => onTrackShipments()}
+      />
     </section>
   );
 
-  // SLOT_C: Action Zone (4 columns) - Quick Actions Panel only
+  // SLOT_C: Action Zone (4 columns) - Two independent panels side-by-side
+  // CHG-003 spec: Action Zone is a .panel containing Panel 1 (Quick Actions) + Panel 2 (Carrier Search)
   const slotCContent = (
     <section
       className="panel"
@@ -63,48 +61,74 @@ export const ShipperDashboardPage: React.FC = () => {
       aria-label="Action Zone"
       data-testid="action-zone-section"
     >
-      <div
+      <h2 className="text-lg font-semibold mb-4" style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
+        Action Zone
+      </h2>
+      <div className="grid grid-cols-2 gap-4" data-testid="action-zone-grid">
+      {/* Panel 1: Quick Actions Panel */}
+      <section
+        className="border border-gray-300 rounded-md p-6 bg-white shadow-subtle"
         role="region"
         aria-label="Quick Actions"
-        data-testid="dashboard-quick-actions-panel"
+        data-testid="quick-actions-panel"
       >
-        <h3 className="text-sm font-semibold mb-4" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
+        <h3 className="text-sm font-semibold mb-3" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
           Quick Actions
         </h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }} data-testid="quick-actions-buttons">
+        <div className="border border-gray-300 rounded-md p-4 bg-gray-50" data-testid="quick-actions-buttons-container">
+        <div className="space-y-2" data-testid="quick-actions-buttons">
           <button
             onClick={() => handleActionClick('quick-actions-post-load', onPostLoad)}
             disabled={isLoading && loadingButtonId === 'quick-actions-post-load'}
-            className="btn-bronze"
+            className="w-full px-4 py-2 btn-bronze font-medium rounded-md"
             data-testid="quick-actions-post-load"
           >
-            📤 Post Load
+            Create Load
           </button>
           <button
             onClick={() => handleActionClick('quick-actions-quote', onGetQuote)}
             disabled={isLoading && loadingButtonId === 'quick-actions-quote'}
-            className="btn-bronze"
+            className="w-full px-4 py-2 btn-bronze font-medium rounded-md"
             data-testid="quick-actions-quote"
           >
-            💬 Get A Quote
+            Get Quote
           </button>
           <button
             onClick={() => handleActionClick('quick-actions-track', onTrackShipments)}
             disabled={isLoading && loadingButtonId === 'quick-actions-track'}
-            className="btn-bronze"
+            className="w-full px-4 py-2 btn-bronze font-medium rounded-md"
             data-testid="quick-actions-track"
           >
-            📦 Track Shipments
+            Track Shipments
           </button>
           <button
             onClick={() => handleActionClick('quick-actions-carriers', onPreferredCarriers)}
             disabled={isLoading && loadingButtonId === 'quick-actions-carriers'}
-            className="btn-bronze"
+            className="w-full px-4 py-2 btn-bronze font-medium rounded-md"
             data-testid="quick-actions-carriers"
           >
-            ⭐ Preferred Carriers
+            My Carriers
           </button>
         </div>
+        </div>
+      </section>
+
+      {/* Panel 2: Carrier Search Panel */}
+      <section
+        className="panel"
+        role="region"
+        aria-label="Carrier Search"
+        data-testid="carrier-search-panel"
+      >
+        <h3 className="text-sm font-semibold mb-3" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
+          Search Carriers
+        </h3>
+        <CarrierSearchPanel
+          onCarrierSelect={(carrier) => {
+            console.log('Carrier selected:', carrier);
+          }}
+        />
+      </section>
       </div>
     </section>
   );

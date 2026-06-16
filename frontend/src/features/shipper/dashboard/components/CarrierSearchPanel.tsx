@@ -144,7 +144,7 @@ export const CarrierSearchPanel: React.FC<CarrierSearchPanelProps> = ({
           <button
             type="submit"
             data-testid="carrier-search-submit-btn"
-            className="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors"
+            className="w-full px-4 py-2 btn-bronze font-medium rounded-md"
           >
             Find Carriers
           </button>

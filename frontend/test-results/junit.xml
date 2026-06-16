@@ -1,94 +1,289 @@
-<testsuites id="" name="" tests="9" failures="0" skipped="0" errors="0" time="24.489852">
-<testsuite name="us-824-quick-actions.spec.ts" timestamp="2026-06-13T18:35:06.987Z" hostname="chromium" tests="9" failures="0" skipped="0" time="18.755" errors="0">
-<testcase name="US-824: Quick Actions Panel › US-824 AC-1: renders all four quick action buttons" classname="us-824-quick-actions.spec.ts" time="2.846">
+<testsuites id="" name="" tests="5" failures="0" skipped="0" errors="5" time="25.491101">
+<testsuite name="chg-003-action-zone-layout.spec.ts" timestamp="2026-06-16T03:28:09.580Z" hostname="chromium" tests="5" failures="0" skipped="0" time="15.778" errors="5">
+<testcase name="CHG-003: Action Zone Structural Layout › AC-1: Quick Actions section wrapped in .panel with ARIA labels" classname="chg-003-action-zone-layout.spec.ts" time="3.288">
 <system-out>
-<![CDATA[✅ All four quick action buttons rendered correctly
+<![CDATA[
+[[ATTACHMENT|chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\video.webm]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\error-context.md]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\trace.zip]]
 ]]>
 </system-out>
-<system-err>
-<![CDATA[Failed to delete users 13a12525-16e8-402f-b26b-a84396b770d8: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/13a12525-16e8-402f-b26b-a84396b770d8","timestamp":"2026-06-13T18:35:10.683094309Z"}
+<error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
+<![CDATA[  [chromium] › chg-003-action-zone-layout.spec.ts:31:3 › CHG-003: Action Zone Structural Layout › AC-1: Quick Actions section wrapped in .panel with ARIA labels 
+
+    Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
+    Call log:
+      - → POST http://backend-test:9091/api/test/auth/register
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: application/json
+        - content-length: 221
+
+
+       at fixtures\test-data-seeder.ts:94
+
+      92 |     const freshContext = await playwrightRequest.newContext();
+      93 |     try {
+    > 94 |       const response = await freshContext.post(
+         |                                           ^
+      95 |         `${this.backendUrl}/api/test/auth/register`,
+      96 |         {
+      97 |           data: userData,
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
+        at C:\projects\freightclub\frontend\e2e\chg-003-action-zone-layout.spec.ts:33:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\chg-003-action-zone-layout-b2022-d-in-panel-with-ARIA-labels-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
-</system-err>
+</error>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-2: Post Load button navigates to /shipper/loads/new" classname="us-824-quick-actions.spec.ts" time="1.981">
+<testcase name="CHG-003: Action Zone Structural Layout › AC-2: Carrier Search section wrapped in .panel with ARIA labels" classname="chg-003-action-zone-layout.spec.ts" time="3.121">
 <system-out>
-<![CDATA[✅ Post Load button navigates correctly
+<![CDATA[
+[[ATTACHMENT|chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\video.webm]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\error-context.md]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\trace.zip]]
 ]]>
 </system-out>
-<system-err>
-<![CDATA[Failed to delete users 7c37c813-2f8b-4da4-b49f-7a5bfc90c723: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/7c37c813-2f8b-4da4-b49f-7a5bfc90c723","timestamp":"2026-06-13T18:35:12.516145822Z"}
+<error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
+<![CDATA[  [chromium] › chg-003-action-zone-layout.spec.ts:74:3 › CHG-003: Action Zone Structural Layout › AC-2: Carrier Search section wrapped in .panel with ARIA labels 
+
+    Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
+    Call log:
+      - → POST http://backend-test:9091/api/test/auth/register
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: application/json
+        - content-length: 221
+
+
+       at fixtures\test-data-seeder.ts:94
+
+      92 |     const freshContext = await playwrightRequest.newContext();
+      93 |     try {
+    > 94 |       const response = await freshContext.post(
+         |                                           ^
+      95 |         `${this.backendUrl}/api/test/auth/register`,
+      96 |         {
+      97 |           data: userData,
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
+        at C:\projects\freightclub\frontend\e2e\chg-003-action-zone-layout.spec.ts:76:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\chg-003-action-zone-layout-7db19-d-in-panel-with-ARIA-labels-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
-</system-err>
+</error>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-3: Get A Quote button navigates to /shipper/quote" classname="us-824-quick-actions.spec.ts" time="2.08">
+<testcase name="CHG-003: Action Zone Structural Layout › AC-3: Desktop (≥1024px) displays 2-column grid layout with equal width panels" classname="chg-003-action-zone-layout.spec.ts" time="3.153">
 <system-out>
-<![CDATA[✅ Get A Quote button navigates correctly
+<![CDATA[
+[[ATTACHMENT|chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\video.webm]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\error-context.md]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\trace.zip]]
 ]]>
 </system-out>
-<system-err>
-<![CDATA[Failed to delete users 5e9c2bce-6fde-43ba-a153-6bdb30dc800c: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/5e9c2bce-6fde-43ba-a153-6bdb30dc800c","timestamp":"2026-06-13T18:35:14.609539531Z"}
+<error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
+<![CDATA[  [chromium] › chg-003-action-zone-layout.spec.ts:117:3 › CHG-003: Action Zone Structural Layout › AC-3: Desktop (≥1024px) displays 2-column grid layout with equal width panels 
+
+    Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
+    Call log:
+      - → POST http://backend-test:9091/api/test/auth/register
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: application/json
+        - content-length: 221
+
+
+       at fixtures\test-data-seeder.ts:94
+
+      92 |     const freshContext = await playwrightRequest.newContext();
+      93 |     try {
+    > 94 |       const response = await freshContext.post(
+         |                                           ^
+      95 |         `${this.backendUrl}/api/test/auth/register`,
+      96 |         {
+      97 |           data: userData,
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
+        at C:\projects\freightclub\frontend\e2e\chg-003-action-zone-layout.spec.ts:119:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\chg-003-action-zone-layout-69f39-out-with-equal-width-panels-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
-</system-err>
+</error>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-4: Track Shipments button navigates to /dashboard/shipper/loads" classname="us-824-quick-actions.spec.ts" time="1.967">
+<testcase name="CHG-003: Action Zone Structural Layout › AC-4: Mobile (&lt;1024px) displays single column vertical stack" classname="chg-003-action-zone-layout.spec.ts" time="3.172">
 <system-out>
-<![CDATA[✅ Track Shipments button navigates correctly
+<![CDATA[
+[[ATTACHMENT|chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\video.webm]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\error-context.md]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\trace.zip]]
 ]]>
 </system-out>
-<system-err>
-<![CDATA[Failed to delete users 21bf8537-5bec-4f32-b870-750881b65fb8: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/21bf8537-5bec-4f32-b870-750881b65fb8","timestamp":"2026-06-13T18:35:16.638273171Z"}
+<error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
+<![CDATA[  [chromium] › chg-003-action-zone-layout.spec.ts:164:3 › CHG-003: Action Zone Structural Layout › AC-4: Mobile (<1024px) displays single column vertical stack 
+
+    Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
+    Call log:
+      - → POST http://backend-test:9091/api/test/auth/register
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: application/json
+        - content-length: 221
+
+
+       at fixtures\test-data-seeder.ts:94
+
+      92 |     const freshContext = await playwrightRequest.newContext();
+      93 |     try {
+    > 94 |       const response = await freshContext.post(
+         |                                           ^
+      95 |         `${this.backendUrl}/api/test/auth/register`,
+      96 |         {
+      97 |           data: userData,
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
+        at C:\projects\freightclub\frontend\e2e\chg-003-action-zone-layout.spec.ts:166:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\chg-003-action-zone-layout-c808f-ingle-column-vertical-stack-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
-</system-err>
+</error>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-5: Preferred Carriers button navigates to /settings/preferred-carriers" classname="us-824-quick-actions.spec.ts" time="2.056">
+<testcase name="CHG-003: Action Zone Structural Layout › AC-5: Panel structure matches master prototype with proper ARIA, spacing, and styling" classname="chg-003-action-zone-layout.spec.ts" time="3.044">
 <system-out>
-<![CDATA[✅ Preferred Carriers button navigates correctly
+<![CDATA[
+[[ATTACHMENT|chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\video.webm]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\error-context.md]]
+
+[[ATTACHMENT|chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\trace.zip]]
 ]]>
 </system-out>
-<system-err>
-<![CDATA[Failed to delete users dff0f0cc-f1b0-44fb-9c35-19f1220aa3fb: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/dff0f0cc-f1b0-44fb-9c35-19f1220aa3fb","timestamp":"2026-06-13T18:35:18.653040607Z"}
+<error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
+<![CDATA[  [chromium] › chg-003-action-zone-layout.spec.ts:216:3 › CHG-003: Action Zone Structural Layout › AC-5: Panel structure matches master prototype with proper ARIA, spacing, and styling 
+
+    Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
+    Call log:
+      - → POST http://backend-test:9091/api/test/auth/register
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: application/json
+        - content-length: 221
+
+
+       at fixtures\test-data-seeder.ts:94
+
+      92 |     const freshContext = await playwrightRequest.newContext();
+      93 |     try {
+    > 94 |       const response = await freshContext.post(
+         |                                           ^
+      95 |         `${this.backendUrl}/api/test/auth/register`,
+      96 |         {
+      97 |           data: userData,
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
+        at C:\projects\freightclub\frontend\e2e\chg-003-action-zone-layout.spec.ts:218:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\chg-003-action-zone-layout-dcafd-er-ARIA-spacing-and-styling-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
-</system-err>
-</testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-6: buttons are keyboard accessible (Tab + Enter)" classname="us-824-quick-actions.spec.ts" time="2.101">
-<system-out>
-<![CDATA[✅ Buttons are keyboard accessible
-]]>
-</system-out>
-<system-err>
-<![CDATA[Failed to delete users ae0b5e71-10d8-43c4-81e9-e84a8d648c03: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/ae0b5e71-10d8-43c4-81e9-e84a8d648c03","timestamp":"2026-06-13T18:35:20.776731669Z"}
-]]>
-</system-err>
-</testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-7a: responsive design (desktop 1280x720)" classname="us-824-quick-actions.spec.ts" time="1.882">
-<system-out>
-<![CDATA[✅ Desktop responsive screenshot captured
-]]>
-</system-out>
-<system-err>
-<![CDATA[Failed to delete users bbc68745-b281-4244-b288-74f30a4dc1e8: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/bbc68745-b281-4244-b288-74f30a4dc1e8","timestamp":"2026-06-13T18:35:22.742848122Z"}
-]]>
-</system-err>
-</testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-7b: responsive design (tablet 768x1024)" classname="us-824-quick-actions.spec.ts" time="1.965">
-<system-out>
-<![CDATA[✅ Tablet responsive screenshot captured
-]]>
-</system-out>
-<system-err>
-<![CDATA[Failed to delete users 16810021-7ceb-4ee9-89d7-657f711b1a8d: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/16810021-7ceb-4ee9-89d7-657f711b1a8d","timestamp":"2026-06-13T18:35:24.688915288Z"}
-]]>
-</system-err>
-</testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-7c: responsive design (mobile 375x667)" classname="us-824-quick-actions.spec.ts" time="1.877">
-<system-out>
-<![CDATA[✅ Mobile responsive screenshot captured
-]]>
-</system-out>
-<system-err>
-<![CDATA[Failed to delete users 6080f18a-2daa-4c71-ad5c-4113abddf8db: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/6080f18a-2daa-4c71-ad5c-4113abddf8db","timestamp":"2026-06-13T18:35:26.788747148Z"}
-]]>
-</system-err>
+</error>
 </testcase>
 </testsuite>
 </testsuites>

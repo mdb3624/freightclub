@@ -1,0 +1,383 @@
+/**
+ * US-822: Shipment Status Panel Styles
+ * Per HFD Spec: Classic Cream & Metallic Bronze (§1)
+ * Container & layout per §6.5 Widget Card specification
+ * Typography per §2 and §6.2 specifications
+ */
+
+.panel {
+  background: #FFFFFF;
+  border: 1px solid #D0D0D0;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ====== HEADER ====== */
+.header {
+  margin-bottom: 16px;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.title {
+  margin: 0;
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #1A1A1A;
+}
+
+.headerActions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.headerLink {
+  font-size: 14px;
+  color: #636E72;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.headerLink:hover {
+  color: #1A1A1A;
+}
+
+.headerLinkBronze {
+  font-size: 14px;
+  font-weight: 700;
+  color: #B08D57;
+  text-decoration: none;
+  transition: color 0.15s ease;
+  cursor: pointer;
+}
+
+.headerLinkBronze:hover {
+  color: #8C6D3F;
+}
+
+/* ====== SEARCH ====== */
+.searchContainer {
+  margin-bottom: 16px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #D0D0D0;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #B08D57;
+  box-shadow: 0 0 0 3px rgba(176, 141, 87, 0.1);
+}
+
+.searchInput::placeholder {
+  color: #9CA3AF;
+}
+
+/* ====== LIST CONTAINER ====== */
+.listContainer {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 600px;
+}
+
+/* ====== COLUMN HEADERS (per §3.1: 12px, 600, UPPERCASE, #636E72) ====== */
+.headerRow {
+  display: grid;
+  grid-template-columns:
+    1fr           /* Load ID */
+    0.8fr         /* Status */
+    0.8fr         /* Progress */
+    0.8fr         /* Equipment */
+    1fr           /* Carrier */
+    0.6fr         /* Rating */
+    1fr;          /* Destination */
+  gap: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid #E8E3D8;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #636E72;
+  letter-spacing: 0.3px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #FFFFFF;
+}
+
+.colLoadId,
+.colStatus,
+.colProgress,
+.colEquipment,
+.colCarrier,
+.colRating,
+.colDestination {
+  padding: 0 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ====== SHIPMENT ROW (per §3.1: 48px height, 12px×16px cell padding) ====== */
+.row {
+  display: grid;
+  grid-template-columns:
+    1fr           /* Load ID */
+    0.8fr         /* Status */
+    0.8fr         /* Progress */
+    0.8fr         /* Equipment */
+    1fr           /* Carrier */
+    0.6fr         /* Rating */
+    1fr;          /* Destination */
+  gap: 0;
+  height: 48px;
+  padding: 0;
+  border-bottom: 1px solid #E8E3D8;
+  align-items: center;
+  font-size: 14px;
+  color: #1A1A1A;
+  transition: background-color 0.1s ease;
+}
+
+.row:hover {
+  background-color: #F8F9FB;
+}
+
+.row > div {
+  padding: 12px 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+/* ====== CELL CONTENT ====== */
+.loadId {
+  font-weight: 700;
+  color: #1A1A1A;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+/* Status Badge (per §4.2 color coding) */
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  color: #FFFFFF;
+}
+
+.badge-urgent {
+  background-color: #E74C3C;
+}
+
+.badge-warning {
+  background-color: #F39C12;
+}
+
+.badge-info {
+  background-color: #3498DB;
+}
+
+.badge-success {
+  background-color: #27AE60;
+}
+
+/* Progress Bar (per §3.4: Recessed Bronze Track) */
+.colProgress {
+  padding: 12px 16px !important;
+}
+
+.progressTrack {
+  width: 100%;
+  height: 8px;
+  background-color: #E8E3D8;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(135deg, #B08D57 0%, #D4AF37 100%);
+  transition: width 0.3s ease;
+}
+
+.equipment {
+  color: #636E72;
+  font-size: 13px;
+}
+
+.carrierName {
+  color: #1A1A1A;
+  font-weight: 500;
+}
+
+.rating {
+  font-family: monospace;
+  color: #B08D57;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.destination {
+  color: #1A1A1A;
+  font-weight: 500;
+}
+
+/* ====== EMPTY STATE ====== */
+.emptyState {
+  padding: 60px 24px;
+  text-align: center;
+  color: #9CA3AF;
+}
+
+.emptyState p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.emptyState p:first-child {
+  color: #1A1A1A;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.emptySubtext {
+  font-size: 13px;
+  color: #9CA3AF;
+}
+
+/* ====== LOADING SKELETON ====== */
+.skeleton {
+  padding: 40px 24px;
+  text-align: center;
+  color: #9CA3AF;
+  font-size: 14px;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ====== FOOTER ====== */
+.footer {
+  padding: 12px 0;
+  margin-top: 12px;
+  border-top: 1px solid #E8E3D8;
+  font-size: 12px;
+  color: #636E72;
+}
+
+.resultCount {
+  margin: 0;
+}
+
+/* ====== SCROLLBAR STYLING ====== */
+.listContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.listContainer::-webkit-scrollbar-track {
+  background: #F8F9FB;
+}
+
+.listContainer::-webkit-scrollbar-thumb {
+  background: #D0D0D0;
+  border-radius: 4px;
+}
+
+.listContainer::-webkit-scrollbar-thumb:hover {
+  background: #B08D57;
+}
+
+/* ====== RESPONSIVE (per §5) ====== */
+@media (max-width: 1024px) {
+  .headerRow,
+  .row {
+    grid-template-columns:
+      1fr           /* Load ID */
+      0.8fr         /* Status */
+      1fr           /* Carrier */
+      0.6fr         /* Rating */;
+  }
+
+  .colProgress,
+  .colEquipment {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .panel {
+    border-radius: 0;
+    padding: 16px;
+    box-shadow: none;
+  }
+
+  .headerContent {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .headerRow,
+  .row {
+    grid-template-columns: 1fr;
+    height: auto;
+    padding: 12px 0;
+  }
+
+  .colLoadId,
+  .colStatus,
+  .colProgress,
+  .colEquipment,
+  .colCarrier,
+  .colRating,
+  .colDestination {
+    padding: 4px 0;
+    display: block;
+  }
+
+  .row > div::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 600;
+    color: #636E72;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 2px;
+  }
+}

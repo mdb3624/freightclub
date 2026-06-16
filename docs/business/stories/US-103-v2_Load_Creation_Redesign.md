@@ -180,15 +180,19 @@ And the load remains visible in the panel
   And the shipper can track progress through IN_TRANSIT → DELIVERED
 ```
 
-### AC-9: Draft Functionality (Optional for Shipper)
+### AC-9: Facility Address Book Integration
 
 ```gherkin
-Given the shipper is filling out the form
-When they want to save without publishing
-Then they can click "Save as Draft"
-  And the form is saved with incomplete data
-  And the draft is stored in "My Drafts" section on the dashboard
-  And they can return later to complete and publish the draft
+Given the shipper is entering a pickup or delivery location
+When they click the address field
+Then they see an option to "Select from Address Book"
+  And a searchable list of saved facilities appears (Name, Street, City, State, ZIP)
+  And they can select a saved facility to auto-populate all address fields
+
+When they enter a new address not in the book
+Then they see an option: "Save this address to Address Book?"
+  And if they confirm, the facility is saved for future use
+  And the saved facility appears in the dropdown next time
 ```
 
 ### AC-10: Form Validation & Error Handling
@@ -323,7 +327,7 @@ And validation prevents:
 | AC-6 | Special handling noted | Free-text field for instructions |
 | AC-7 | Successful publishing | Load created + marked POSTED |
 | AC-8 | Real-time visibility | Load appears in dashboard Shipment Panel immediately |
-| AC-9 | Draft workflow | Optional: save incomplete loads |
+| AC-9 | Recurring location reuse | Address book eliminates manual entry for frequent locations |
 | AC-10 | Error recovery | Clear validation feedback + server error handling |
 
 ---

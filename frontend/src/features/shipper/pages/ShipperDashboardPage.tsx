@@ -52,71 +52,67 @@ export const ShipperDashboardPage: React.FC = () => {
     </section>
   );
 
-  // SLOT_C: Action Zone (4 columns) - Quick Actions (left) & Carrier Search (right) side-by-side
+  // SLOT_C: Action Zone (4 columns) - Split layout: Quick Actions (left) + Carrier Search (right)
   const slotCContent = (
-    <div className="grid grid-cols-2 gap-6" data-testid="slot-c-content">
-      {/* Quick Actions Panel (Left) */}
-      <section
-        className="panel"
-        role="region"
-        aria-label="Quick Actions"
-        data-testid="quick-actions-panel"
-      >
-        <div
-          role="region"
-          aria-label="Quick Actions"
-          data-testid="dashboard-quick-actions-panel"
-        >
-          <h3 className="text-sm font-semibold mb-4" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
+    <section
+      className="panel"
+      role="region"
+      aria-label="Action Zone"
+      data-testid="action-zone-section"
+    >
+      <div className="grid grid-cols-2 gap-4" data-testid="action-zone-grid">
+        {/* Left: Quick Action Buttons */}
+        <div className="space-y-2" data-testid="quick-actions-buttons">
+          <h3 className="text-sm font-semibold mb-3" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
             Quick Actions
           </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }} data-testid="quick-actions-buttons">
-            <button
-              onClick={() => handleActionClick('quick-actions-post-load', onPostLoad)}
-              disabled={isLoading && loadingButtonId === 'quick-actions-post-load'}
-              className="btn-bronze"
-              data-testid="quick-actions-post-load"
-            >
-              📤 Post Load
-            </button>
-            <button
-              onClick={() => handleActionClick('quick-actions-quote', onGetQuote)}
-              disabled={isLoading && loadingButtonId === 'quick-actions-quote'}
-              className="btn-bronze"
-              data-testid="quick-actions-quote"
-            >
-              💬 Get A Quote
-            </button>
-            <button
-              onClick={() => handleActionClick('quick-actions-track', onTrackShipments)}
-              disabled={isLoading && loadingButtonId === 'quick-actions-track'}
-              className="btn-bronze"
-              data-testid="quick-actions-track"
-            >
-              📦 Track Shipments
-            </button>
-            <button
-              onClick={() => handleActionClick('quick-actions-carriers', onPreferredCarriers)}
-              disabled={isLoading && loadingButtonId === 'quick-actions-carriers'}
-              className="btn-bronze"
-              data-testid="quick-actions-carriers"
-            >
-              ⭐ Preferred Carriers
-            </button>
-          </div>
+          <button
+            onClick={() => handleActionClick('quick-actions-post-load', onPostLoad)}
+            disabled={isLoading && loadingButtonId === 'quick-actions-post-load'}
+            className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
+            data-testid="quick-actions-post-load"
+          >
+            Create Load
+          </button>
+          <button
+            onClick={() => handleActionClick('quick-actions-quote', onGetQuote)}
+            disabled={isLoading && loadingButtonId === 'quick-actions-quote'}
+            className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
+            data-testid="quick-actions-quote"
+          >
+            Get Quote
+          </button>
+          <button
+            onClick={() => handleActionClick('quick-actions-track', onTrackShipments)}
+            disabled={isLoading && loadingButtonId === 'quick-actions-track'}
+            className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
+            data-testid="quick-actions-track"
+          >
+            Track Shipments
+          </button>
+          <button
+            onClick={() => handleActionClick('quick-actions-carriers', onPreferredCarriers)}
+            disabled={isLoading && loadingButtonId === 'quick-actions-carriers'}
+            className="w-full px-3 py-2 rounded text-white text-sm font-medium btn-bronze hover:opacity-90"
+            data-testid="quick-actions-carriers"
+          >
+            My Carriers
+          </button>
         </div>
-      </section>
 
-      {/* Carrier Search Panel (Right) */}
-      <section
-        className="panel"
-        role="region"
-        aria-label="Carrier Search"
-        data-testid="carrier-search-panel"
-      >
-        <CarrierSearchPanel />
-      </section>
-    </div>
+        {/* Right: Carrier Search Form */}
+        <div data-testid="carrier-search-inline">
+          <h3 className="text-sm font-semibold mb-3" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
+            Search Carriers
+          </h3>
+          <CarrierSearchPanel
+            onCarrierSelect={(carrier) => {
+              console.log('Carrier selected:', carrier);
+            }}
+          />
+        </div>
+      </div>
+    </section>
   );
 
   // SLOT_B (Row 3): Messages & Alerts (8 columns)

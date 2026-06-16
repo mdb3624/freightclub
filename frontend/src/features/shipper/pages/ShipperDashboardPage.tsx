@@ -52,14 +52,15 @@ export const ShipperDashboardPage: React.FC = () => {
     </section>
   );
 
-  // SLOT_C: Action Zone (4 columns) - Quick Actions & Carrier Search Panels
+  // SLOT_C: Action Zone (4 columns) - Quick Actions (left) & Carrier Search (right) side-by-side
   const slotCContent = (
-    <div className="flex flex-col gap-6" data-testid="slot-c-content">
+    <div className="grid grid-cols-2 gap-6" data-testid="slot-c-content">
+      {/* Quick Actions Panel (Left) */}
       <section
         className="panel"
         role="region"
         aria-label="Quick Actions"
-        data-testid="action-zone-section"
+        data-testid="quick-actions-panel"
       >
         <div
           role="region"
@@ -106,11 +107,12 @@ export const ShipperDashboardPage: React.FC = () => {
         </div>
       </section>
 
+      {/* Carrier Search Panel (Right) */}
       <section
         className="panel"
         role="region"
         aria-label="Carrier Search"
-        data-testid="carrier-search-section"
+        data-testid="carrier-search-panel"
       >
         <CarrierSearchPanel />
       </section>

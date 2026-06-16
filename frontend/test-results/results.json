@@ -1,11 +1,11 @@
 {
   "config": {
-    "configFile": "/app/playwright.config.ts",
-    "rootDir": "/app/e2e",
+    "configFile": "C:\\projects\\freightclub\\frontend\\playwright.config.ts",
+    "rootDir": "C:/projects/freightclub/frontend/e2e",
     "forbidOnly": false,
     "fullyParallel": false,
-    "globalSetup": "/app/e2e/fixtures/global-setup.ts",
-    "globalTeardown": "/app/e2e/fixtures/global-teardown.ts",
+    "globalSetup": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\global-setup.ts",
+    "globalTeardown": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\global-teardown.ts",
     "globalTimeout": 0,
     "grep": {},
     "grepInvert": null,
@@ -16,7 +16,7 @@
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "/app/test-results",
+        "outputDir": "C:/projects/freightclub/frontend/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -24,7 +24,7 @@
         },
         "id": "chromium",
         "name": "chromium",
-        "testDir": "/app/e2e",
+        "testDir": "C:/projects/freightclub/frontend/e2e",
         "testIgnore": [],
         "testMatch": [
           "**/*.spec.ts"
@@ -67,21 +67,21 @@
   },
   "suites": [
     {
-      "title": "us-824-quick-actions.spec.ts",
-      "file": "us-824-quick-actions.spec.ts",
+      "title": "shipper-dashboard.spec.ts",
+      "file": "shipper-dashboard.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "US-824: Quick Actions Panel",
-          "file": "us-824-quick-actions.spec.ts",
-          "line": 23,
+          "title": "Shipper Dashboard Golden Path (US-715)",
+          "file": "shipper-dashboard.spec.ts",
+          "line": 25,
           "column": 6,
           "specs": [
             {
-              "title": "US-824 AC-1: renders all four quick action buttons",
-              "ok": true,
+              "title": "should display summary cards with load statistics (US-715 AC-1)",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -94,36 +94,73 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2846,
-                      "errors": [],
-                      "stdout": [
+                      "status": "failed",
+                      "duration": 3301,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 226\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 226\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:39:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 43,
+                          "line": 94
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ All four quick action buttons rendered correctly\n"
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 43,
+                            "line": 94
+                          },
+                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 226\u001b[22m\n\n\n\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\u001b[22m\n\u001b[2m    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:39:18\u001b[22m"
                         }
                       ],
-                      "stderr": [
-                        {
-                          "text": "Failed to delete users 13a12525-16e8-402f-b26b-a84396b770d8: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/13a12525-16e8-402f-b26b-a84396b770d8\",\"timestamp\":\"2026-06-13T18:35:10.683094309Z\"}\n"
-                        }
-                      ],
+                      "stdout": [],
+                      "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:35:07.898Z",
+                      "startTime": "2026-06-16T00:22:14.381Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 43,
+                        "line": 94
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
-              "id": "5ed864e83a3995c521fc-8da6738705ebdb2bc74e",
-              "file": "us-824-quick-actions.spec.ts",
-              "line": 27,
+              "id": "67a118b7c59db60eac84-6a52e9f1a0195482520b",
+              "file": "shipper-dashboard.spec.ts",
+              "line": 37,
               "column": 3
             },
             {
-              "title": "US-824 AC-2: Post Load button navigates to /shipper/loads/new",
-              "ok": true,
+              "title": "should display load table with expected columns (US-715 AC-2)",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -134,38 +171,75 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1981,
-                      "errors": [],
-                      "stdout": [
+                      "status": "failed",
+                      "duration": 3044,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 232\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 232\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:73:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 43,
+                          "line": 94
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ Post Load button navigates correctly\n"
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 43,
+                            "line": 94
+                          },
+                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 232\u001b[22m\n\n\n\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\u001b[22m\n\u001b[2m    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:73:18\u001b[22m"
                         }
                       ],
-                      "stderr": [
-                        {
-                          "text": "Failed to delete users 7c37c813-2f8b-4da4-b49f-7a5bfc90c723: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/7c37c813-2f8b-4da4-b49f-7a5bfc90c723\",\"timestamp\":\"2026-06-13T18:35:12.516145822Z\"}\n"
-                        }
-                      ],
+                      "stdout": [],
+                      "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:35:10.865Z",
+                      "startTime": "2026-06-16T00:22:18.490Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 43,
+                        "line": 94
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
-              "id": "5ed864e83a3995c521fc-e5ab5262b3939d9455a7",
-              "file": "us-824-quick-actions.spec.ts",
-              "line": 73,
+              "id": "67a118b7c59db60eac84-e7009632cdb5eee0fc61",
+              "file": "shipper-dashboard.spec.ts",
+              "line": 71,
               "column": 3
             },
             {
-              "title": "US-824 AC-3: Get A Quote button navigates to /shipper/quote",
-              "ok": true,
+              "title": "should switch between Active and All Loads tabs (US-715 AC-3)",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -176,38 +250,75 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2080,
-                      "errors": [],
-                      "stdout": [
+                      "status": "failed",
+                      "duration": 3038,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 224\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 224\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:104:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 43,
+                          "line": 94
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ Get A Quote button navigates correctly\n"
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 43,
+                            "line": 94
+                          },
+                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 224\u001b[22m\n\n\n\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\u001b[22m\n\u001b[2m    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:104:18\u001b[22m"
                         }
                       ],
-                      "stderr": [
-                        {
-                          "text": "Failed to delete users 5e9c2bce-6fde-43ba-a153-6bdb30dc800c: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/5e9c2bce-6fde-43ba-a153-6bdb30dc800c\",\"timestamp\":\"2026-06-13T18:35:14.609539531Z\"}\n"
-                        }
-                      ],
+                      "stdout": [],
+                      "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:35:12.867Z",
+                      "startTime": "2026-06-16T00:22:22.361Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 43,
+                        "line": 94
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
-              "id": "5ed864e83a3995c521fc-6011e644fb180fd3a5dd",
-              "file": "us-824-quick-actions.spec.ts",
-              "line": 107,
+              "id": "67a118b7c59db60eac84-fd60817090ac8ebf569d",
+              "file": "shipper-dashboard.spec.ts",
+              "line": 102,
               "column": 3
             },
             {
-              "title": "US-824 AC-4: Track Shipments button navigates to /dashboard/shipper/loads",
-              "ok": true,
+              "title": "should filter loads using search input (US-715 AC-4)",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -218,38 +329,75 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1967,
-                      "errors": [],
-                      "stdout": [
+                      "status": "failed",
+                      "duration": 3245,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 230\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 230\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:138:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 43,
+                          "line": 94
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ Track Shipments button navigates correctly\n"
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 43,
+                            "line": 94
+                          },
+                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 230\u001b[22m\n\n\n\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\u001b[22m\n\u001b[2m    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:138:18\u001b[22m"
                         }
                       ],
-                      "stderr": [
-                        {
-                          "text": "Failed to delete users 21bf8537-5bec-4f32-b870-750881b65fb8: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/21bf8537-5bec-4f32-b870-750881b65fb8\",\"timestamp\":\"2026-06-13T18:35:16.638273171Z\"}\n"
-                        }
-                      ],
+                      "stdout": [],
+                      "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:35:14.965Z",
+                      "startTime": "2026-06-16T00:22:26.211Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 43,
+                        "line": 94
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
-              "id": "5ed864e83a3995c521fc-6f75f640b1c66e76fb4e",
-              "file": "us-824-quick-actions.spec.ts",
-              "line": 139,
+              "id": "67a118b7c59db60eac84-abc96da3ebe73561bf18",
+              "file": "shipper-dashboard.spec.ts",
+              "line": 136,
               "column": 3
             },
             {
-              "title": "US-824 AC-5: Preferred Carriers button navigates to /settings/preferred-carriers",
-              "ok": true,
+              "title": "should navigate to Post Load form (US-715 AC-5)",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -260,38 +408,75 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2056,
-                      "errors": [],
-                      "stdout": [
+                      "status": "failed",
+                      "duration": 3190,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 224\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 224\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:176:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 43,
+                          "line": 94
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ Preferred Carriers button navigates correctly\n"
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 43,
+                            "line": 94
+                          },
+                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 224\u001b[22m\n\n\n\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\u001b[22m\n\u001b[2m    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:176:18\u001b[22m"
                         }
                       ],
-                      "stderr": [
-                        {
-                          "text": "Failed to delete users dff0f0cc-f1b0-44fb-9c35-19f1220aa3fb: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/dff0f0cc-f1b0-44fb-9c35-19f1220aa3fb\",\"timestamp\":\"2026-06-13T18:35:18.653040607Z\"}\n"
-                        }
-                      ],
+                      "stdout": [],
+                      "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:35:16.948Z",
+                      "startTime": "2026-06-16T00:22:30.425Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 43,
+                        "line": 94
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
-              "id": "5ed864e83a3995c521fc-fd11a2f47153800a95a0",
-              "file": "us-824-quick-actions.spec.ts",
-              "line": 171,
+              "id": "67a118b7c59db60eac84-629c34671af9b3064fbe",
+              "file": "shipper-dashboard.spec.ts",
+              "line": 174,
               "column": 3
             },
             {
-              "title": "US-824 AC-6: buttons are keyboard accessible (Tab + Enter)",
-              "ok": true,
+              "title": "should load dashboard without errors (US-715 AC-6)",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -302,159 +487,70 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 5,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2101,
-                      "errors": [],
-                      "stdout": [
+                      "status": "failed",
+                      "duration": 3062,
+                      "error": {
+                        "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 229\u001b[22m\n",
+                        "stack": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 229\u001b[22m\n\n    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\n    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:208:18",
+                        "location": {
+                          "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                          "column": 43,
+                          "line": 94
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "✅ Buttons are keyboard accessible\n"
+                          "location": {
+                            "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                            "column": 43,
+                            "line": 94
+                          },
+                          "message": "Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test\nCall log:\n\u001b[2m  - → POST http://backend-test:9091/api/test/auth/register\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 229\u001b[22m\n\n\n\u001b[90m   at \u001b[39mfixtures\\test-data-seeder.ts:94\n\n\u001b[0m \u001b[90m 92 |\u001b[39m     \u001b[36mconst\u001b[39m freshContext \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m playwrightRequest\u001b[33m.\u001b[39mnewContext()\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mtry\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 94 |\u001b[39m       \u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m freshContext\u001b[33m.\u001b[39mpost(\n \u001b[90m    |\u001b[39m                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 95 |\u001b[39m         \u001b[32m`${this.backendUrl}/api/test/auth/register`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 96 |\u001b[39m         {\n \u001b[90m 97 |\u001b[39m           data\u001b[33m:\u001b[39m userData\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at TestDataSeeder.createTestUser (C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts:94:43)\u001b[22m\n\u001b[2m    at C:\\projects\\freightclub\\frontend\\e2e\\shipper-dashboard.spec.ts:208:18\u001b[22m"
                         }
                       ],
-                      "stderr": [
-                        {
-                          "text": "Failed to delete users ae0b5e71-10d8-43c4-81e9-e84a8d648c03: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/ae0b5e71-10d8-43c4-81e9-e84a8d648c03\",\"timestamp\":\"2026-06-13T18:35:20.776731669Z\"}\n"
-                        }
-                      ],
+                      "stdout": [],
+                      "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-13T18:35:19.023Z",
+                      "startTime": "2026-06-16T00:22:34.423Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\projects\\freightclub\\frontend\\test-results\\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\projects\\freightclub\\frontend\\e2e\\fixtures\\test-data-seeder.ts",
+                        "column": 43,
+                        "line": 94
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
-              "id": "5ed864e83a3995c521fc-a5e1f6a516c6e2f3834b",
-              "file": "us-824-quick-actions.spec.ts",
-              "line": 203,
-              "column": 3
-            },
-            {
-              "title": "US-824 AC-7a: responsive design (desktop 1280x720)",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1882,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "✅ Desktop responsive screenshot captured\n"
-                        }
-                      ],
-                      "stderr": [
-                        {
-                          "text": "Failed to delete users bbc68745-b281-4244-b288-74f30a4dc1e8: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/bbc68745-b281-4244-b288-74f30a4dc1e8\",\"timestamp\":\"2026-06-13T18:35:22.742848122Z\"}\n"
-                        }
-                      ],
-                      "retry": 0,
-                      "startTime": "2026-06-13T18:35:21.141Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "5ed864e83a3995c521fc-0f7144fbf9bd84bb5843",
-              "file": "us-824-quick-actions.spec.ts",
-              "line": 245,
-              "column": 3
-            },
-            {
-              "title": "US-824 AC-7b: responsive design (tablet 768x1024)",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1965,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "✅ Tablet responsive screenshot captured\n"
-                        }
-                      ],
-                      "stderr": [
-                        {
-                          "text": "Failed to delete users 16810021-7ceb-4ee9-89d7-657f711b1a8d: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/16810021-7ceb-4ee9-89d7-657f711b1a8d\",\"timestamp\":\"2026-06-13T18:35:24.688915288Z\"}\n"
-                        }
-                      ],
-                      "retry": 0,
-                      "startTime": "2026-06-13T18:35:23.048Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "5ed864e83a3995c521fc-d701b96614e71ae15f5d",
-              "file": "us-824-quick-actions.spec.ts",
-              "line": 284,
-              "column": 3
-            },
-            {
-              "title": "US-824 AC-7c: responsive design (mobile 375x667)",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1877,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "✅ Mobile responsive screenshot captured\n"
-                        }
-                      ],
-                      "stderr": [
-                        {
-                          "text": "Failed to delete users 6080f18a-2daa-4c71-ad5c-4113abddf8db: 500 {\"status\":500,\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred\",\"path\":\"/api/test/users/6080f18a-2daa-4c71-ad5c-4113abddf8db\",\"timestamp\":\"2026-06-13T18:35:26.788747148Z\"}\n"
-                        }
-                      ],
-                      "retry": 0,
-                      "startTime": "2026-06-13T18:35:25.033Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "5ed864e83a3995c521fc-37371d05b035e5bb18e3",
-              "file": "us-824-quick-actions.spec.ts",
-              "line": 323,
+              "id": "67a118b7c59db60eac84-cb175ec82c2d7bf20c2b",
+              "file": "shipper-dashboard.spec.ts",
+              "line": 206,
               "column": 3
             }
           ]
@@ -464,11 +560,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-13T18:35:03.265Z",
-    "duration": 24489.852,
-    "expected": 9,
+    "startTime": "2026-06-16T00:22:06.806Z",
+    "duration": 30908.527000000002,
+    "expected": 0,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 6,
     "flaky": 0
   }
 }

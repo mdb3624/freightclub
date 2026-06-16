@@ -44,6 +44,12 @@ services:
       app.cookie.secure: "false"
     volumes:
       - uploads_test_data:/app/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   backend-tester:
     image: maven:3.9-eclipse-temurin-21
@@ -60,7 +66,7 @@ services:
       DB_URL: jdbc:postgresql://test-db:5432/freightclub_test?currentSchema=freightclub
       DB_USERNAME: freightclub_runtime
       DB_PASSWORD: freightclub
-    command: mvn test -Dspring.profiles.active=test
+    command: mvn test
 
   frontend-test:
     build:

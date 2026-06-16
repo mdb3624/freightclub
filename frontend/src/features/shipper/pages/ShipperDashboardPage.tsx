@@ -13,6 +13,7 @@ import { ShipperPageLayout } from '../components/ShipperPageLayout';
 import { KPISummaryPanel } from '../components/KPISummaryPanel';
 import { ShipmentStatusPanel } from '../components/ShipmentStatusPanel';
 import { MessagesAlertsPanel } from '../dashboard/components/MessagesAlertsPanel';
+import { CarrierSearchPanel } from '../dashboard/components/CarrierSearchPanel';
 import { useQuickActionNavigation } from '../dashboard/hooks/useQuickActionNavigation';
 import { useShipmentStatus } from '../hooks/useShipmentStatus';
 
@@ -51,58 +52,69 @@ export const ShipperDashboardPage: React.FC = () => {
     </section>
   );
 
-  // SLOT_C: Action Zone (4 columns) - Quick Actions Panel only
+  // SLOT_C: Action Zone (4 columns) - Quick Actions & Carrier Search Panels
   const slotCContent = (
-    <section
-      className="panel"
-      role="region"
-      aria-label="Action Zone"
-      data-testid="action-zone-section"
-    >
-      <div
+    <div className="flex flex-col gap-6" data-testid="slot-c-content">
+      <section
+        className="panel"
         role="region"
         aria-label="Quick Actions"
-        data-testid="dashboard-quick-actions-panel"
+        data-testid="action-zone-section"
       >
-        <h3 className="text-sm font-semibold mb-4" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
-          Quick Actions
-        </h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }} data-testid="quick-actions-buttons">
-          <button
-            onClick={() => handleActionClick('quick-actions-post-load', onPostLoad)}
-            disabled={isLoading && loadingButtonId === 'quick-actions-post-load'}
-            className="btn-bronze"
-            data-testid="quick-actions-post-load"
-          >
-            📤 Post Load
-          </button>
-          <button
-            onClick={() => handleActionClick('quick-actions-quote', onGetQuote)}
-            disabled={isLoading && loadingButtonId === 'quick-actions-quote'}
-            className="btn-bronze"
-            data-testid="quick-actions-quote"
-          >
-            💬 Get A Quote
-          </button>
-          <button
-            onClick={() => handleActionClick('quick-actions-track', onTrackShipments)}
-            disabled={isLoading && loadingButtonId === 'quick-actions-track'}
-            className="btn-bronze"
-            data-testid="quick-actions-track"
-          >
-            📦 Track Shipments
-          </button>
-          <button
-            onClick={() => handleActionClick('quick-actions-carriers', onPreferredCarriers)}
-            disabled={isLoading && loadingButtonId === 'quick-actions-carriers'}
-            className="btn-bronze"
-            data-testid="quick-actions-carriers"
-          >
-            ⭐ Preferred Carriers
-          </button>
+        <div
+          role="region"
+          aria-label="Quick Actions"
+          data-testid="dashboard-quick-actions-panel"
+        >
+          <h3 className="text-sm font-semibold mb-4" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
+            Quick Actions
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }} data-testid="quick-actions-buttons">
+            <button
+              onClick={() => handleActionClick('quick-actions-post-load', onPostLoad)}
+              disabled={isLoading && loadingButtonId === 'quick-actions-post-load'}
+              className="btn-bronze"
+              data-testid="quick-actions-post-load"
+            >
+              📤 Post Load
+            </button>
+            <button
+              onClick={() => handleActionClick('quick-actions-quote', onGetQuote)}
+              disabled={isLoading && loadingButtonId === 'quick-actions-quote'}
+              className="btn-bronze"
+              data-testid="quick-actions-quote"
+            >
+              💬 Get A Quote
+            </button>
+            <button
+              onClick={() => handleActionClick('quick-actions-track', onTrackShipments)}
+              disabled={isLoading && loadingButtonId === 'quick-actions-track'}
+              className="btn-bronze"
+              data-testid="quick-actions-track"
+            >
+              📦 Track Shipments
+            </button>
+            <button
+              onClick={() => handleActionClick('quick-actions-carriers', onPreferredCarriers)}
+              disabled={isLoading && loadingButtonId === 'quick-actions-carriers'}
+              className="btn-bronze"
+              data-testid="quick-actions-carriers"
+            >
+              ⭐ Preferred Carriers
+            </button>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section
+        className="panel"
+        role="region"
+        aria-label="Carrier Search"
+        data-testid="carrier-search-section"
+      >
+        <CarrierSearchPanel />
+      </section>
+    </div>
   );
 
   // SLOT_B (Row 3): Messages & Alerts (8 columns)

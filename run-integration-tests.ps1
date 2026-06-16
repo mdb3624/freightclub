@@ -46,7 +46,7 @@ $attempt = 0
 $allHealthy = $false
 
 while ($attempt -lt $maxAttempts) {
-    $dbStatus = docker-compose -f docker-compose.test.yml ps db-test 2>$null | Select-String "healthy"
+    $dbStatus = docker-compose -f docker-compose.test.yml ps test-db 2>$null | Select-String "healthy"
     $backendStatus = docker-compose -f docker-compose.test.yml ps backend-test 2>$null | Select-String "healthy"
     $frontendStatus = docker-compose -f docker-compose.test.yml ps frontend-test 2>$null | Select-String "healthy"
 
@@ -74,7 +74,7 @@ Start-Sleep -Seconds 5
 # Backend tests
 Write-Status "Running backend integration tests" "warning"
 Push-Location backend
-mvn clean test -Dspring.profiles.active=test 2>&1 | Select-Object -Last 100
+mvn clean test "-Dspring.profiles.active=test" 2>&1 | Select-Object -Last 100
 if ($LASTEXITCODE -ne 0) {
     Write-Status "Backend tests failed" "error"
     docker-compose -f ../docker-compose.test.yml logs backend-test

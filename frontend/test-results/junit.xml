@@ -1,94 +1,346 @@
-<testsuites id="" name="" tests="9" failures="0" skipped="0" errors="0" time="24.489852">
-<testsuite name="us-824-quick-actions.spec.ts" timestamp="2026-06-13T18:35:06.987Z" hostname="chromium" tests="9" failures="0" skipped="0" time="18.755" errors="0">
-<testcase name="US-824: Quick Actions Panel › US-824 AC-1: renders all four quick action buttons" classname="us-824-quick-actions.spec.ts" time="2.846">
+<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="6" time="30.908527000000003">
+<testsuite name="shipper-dashboard.spec.ts" timestamp="2026-06-16T00:22:13.729Z" hostname="chromium" tests="6" failures="0" skipped="0" time="18.88" errors="6">
+<testcase name="Shipper Dashboard Golden Path (US-715) › should display summary cards with load statistics (US-715 AC-1)" classname="shipper-dashboard.spec.ts" time="3.301">
 <system-out>
-<![CDATA[✅ All four quick action buttons rendered correctly
+<![CDATA[
+[[ATTACHMENT|shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\trace.zip]]
 ]]>
 </system-out>
-<system-err>
-<![CDATA[Failed to delete users 13a12525-16e8-402f-b26b-a84396b770d8: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/13a12525-16e8-402f-b26b-a84396b770d8","timestamp":"2026-06-13T18:35:10.683094309Z"}
+<error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
+<![CDATA[  [chromium] › shipper-dashboard.spec.ts:37:3 › Shipper Dashboard Golden Path (US-715) › should display summary cards with load statistics (US-715 AC-1) 
+
+    Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
+    Call log:
+      - → POST http://backend-test:9091/api/test/auth/register
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: application/json
+        - content-length: 226
+
+
+       at fixtures\test-data-seeder.ts:94
+
+      92 |     const freshContext = await playwrightRequest.newContext();
+      93 |     try {
+    > 94 |       const response = await freshContext.post(
+         |                                           ^
+      95 |         `${this.backendUrl}/api/test/auth/register`,
+      96 |         {
+      97 |           data: userData,
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
+        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:39:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--06cc6-oad-statistics-US-715-AC-1--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
-</system-err>
+</error>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-2: Post Load button navigates to /shipper/loads/new" classname="us-824-quick-actions.spec.ts" time="1.981">
+<testcase name="Shipper Dashboard Golden Path (US-715) › should display load table with expected columns (US-715 AC-2)" classname="shipper-dashboard.spec.ts" time="3.044">
 <system-out>
-<![CDATA[✅ Post Load button navigates correctly
+<![CDATA[
+[[ATTACHMENT|shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\trace.zip]]
 ]]>
 </system-out>
-<system-err>
-<![CDATA[Failed to delete users 7c37c813-2f8b-4da4-b49f-7a5bfc90c723: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/7c37c813-2f8b-4da4-b49f-7a5bfc90c723","timestamp":"2026-06-13T18:35:12.516145822Z"}
+<error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
+<![CDATA[  [chromium] › shipper-dashboard.spec.ts:71:3 › Shipper Dashboard Golden Path (US-715) › should display load table with expected columns (US-715 AC-2) 
+
+    Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
+    Call log:
+      - → POST http://backend-test:9091/api/test/auth/register
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: application/json
+        - content-length: 232
+
+
+       at fixtures\test-data-seeder.ts:94
+
+      92 |     const freshContext = await playwrightRequest.newContext();
+      93 |     try {
+    > 94 |       const response = await freshContext.post(
+         |                                           ^
+      95 |         `${this.backendUrl}/api/test/auth/register`,
+      96 |         {
+      97 |           data: userData,
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
+        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:73:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--88087-pected-columns-US-715-AC-2--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
-</system-err>
+</error>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-3: Get A Quote button navigates to /shipper/quote" classname="us-824-quick-actions.spec.ts" time="2.08">
+<testcase name="Shipper Dashboard Golden Path (US-715) › should switch between Active and All Loads tabs (US-715 AC-3)" classname="shipper-dashboard.spec.ts" time="3.038">
 <system-out>
-<![CDATA[✅ Get A Quote button navigates correctly
+<![CDATA[
+[[ATTACHMENT|shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\trace.zip]]
 ]]>
 </system-out>
-<system-err>
-<![CDATA[Failed to delete users 5e9c2bce-6fde-43ba-a153-6bdb30dc800c: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/5e9c2bce-6fde-43ba-a153-6bdb30dc800c","timestamp":"2026-06-13T18:35:14.609539531Z"}
+<error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
+<![CDATA[  [chromium] › shipper-dashboard.spec.ts:102:3 › Shipper Dashboard Golden Path (US-715) › should switch between Active and All Loads tabs (US-715 AC-3) 
+
+    Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
+    Call log:
+      - → POST http://backend-test:9091/api/test/auth/register
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: application/json
+        - content-length: 224
+
+
+       at fixtures\test-data-seeder.ts:94
+
+      92 |     const freshContext = await playwrightRequest.newContext();
+      93 |     try {
+    > 94 |       const response = await freshContext.post(
+         |                                           ^
+      95 |         `${this.backendUrl}/api/test/auth/register`,
+      96 |         {
+      97 |           data: userData,
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
+        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:104:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--8d9dc-All-Loads-tabs-US-715-AC-3--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
-</system-err>
+</error>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-4: Track Shipments button navigates to /dashboard/shipper/loads" classname="us-824-quick-actions.spec.ts" time="1.967">
+<testcase name="Shipper Dashboard Golden Path (US-715) › should filter loads using search input (US-715 AC-4)" classname="shipper-dashboard.spec.ts" time="3.245">
 <system-out>
-<![CDATA[✅ Track Shipments button navigates correctly
+<![CDATA[
+[[ATTACHMENT|shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\trace.zip]]
 ]]>
 </system-out>
-<system-err>
-<![CDATA[Failed to delete users 21bf8537-5bec-4f32-b870-750881b65fb8: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/21bf8537-5bec-4f32-b870-750881b65fb8","timestamp":"2026-06-13T18:35:16.638273171Z"}
+<error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
+<![CDATA[  [chromium] › shipper-dashboard.spec.ts:136:3 › Shipper Dashboard Golden Path (US-715) › should filter loads using search input (US-715 AC-4) 
+
+    Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
+    Call log:
+      - → POST http://backend-test:9091/api/test/auth/register
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: application/json
+        - content-length: 230
+
+
+       at fixtures\test-data-seeder.ts:94
+
+      92 |     const freshContext = await playwrightRequest.newContext();
+      93 |     try {
+    > 94 |       const response = await freshContext.post(
+         |                                           ^
+      95 |         `${this.backendUrl}/api/test/auth/register`,
+      96 |         {
+      97 |           data: userData,
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
+        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:138:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--6339c-g-search-input-US-715-AC-4--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
-</system-err>
+</error>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-5: Preferred Carriers button navigates to /settings/preferred-carriers" classname="us-824-quick-actions.spec.ts" time="2.056">
+<testcase name="Shipper Dashboard Golden Path (US-715) › should navigate to Post Load form (US-715 AC-5)" classname="shipper-dashboard.spec.ts" time="3.19">
 <system-out>
-<![CDATA[✅ Preferred Carriers button navigates correctly
+<![CDATA[
+[[ATTACHMENT|shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\trace.zip]]
 ]]>
 </system-out>
-<system-err>
-<![CDATA[Failed to delete users dff0f0cc-f1b0-44fb-9c35-19f1220aa3fb: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/dff0f0cc-f1b0-44fb-9c35-19f1220aa3fb","timestamp":"2026-06-13T18:35:18.653040607Z"}
+<error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
+<![CDATA[  [chromium] › shipper-dashboard.spec.ts:174:3 › Shipper Dashboard Golden Path (US-715) › should navigate to Post Load form (US-715 AC-5) 
+
+    Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
+    Call log:
+      - → POST http://backend-test:9091/api/test/auth/register
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: application/json
+        - content-length: 224
+
+
+       at fixtures\test-data-seeder.ts:94
+
+      92 |     const freshContext = await playwrightRequest.newContext();
+      93 |     try {
+    > 94 |       const response = await freshContext.post(
+         |                                           ^
+      95 |         `${this.backendUrl}/api/test/auth/register`,
+      96 |         {
+      97 |           data: userData,
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
+        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:176:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--98bce-Post-Load-form-US-715-AC-5--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
-</system-err>
+</error>
 </testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-6: buttons are keyboard accessible (Tab + Enter)" classname="us-824-quick-actions.spec.ts" time="2.101">
+<testcase name="Shipper Dashboard Golden Path (US-715) › should load dashboard without errors (US-715 AC-6)" classname="shipper-dashboard.spec.ts" time="3.062">
 <system-out>
-<![CDATA[✅ Buttons are keyboard accessible
+<![CDATA[
+[[ATTACHMENT|shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\video.webm]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\error-context.md]]
+
+[[ATTACHMENT|shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\trace.zip]]
 ]]>
 </system-out>
-<system-err>
-<![CDATA[Failed to delete users ae0b5e71-10d8-43c4-81e9-e84a8d648c03: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/ae0b5e71-10d8-43c4-81e9-e84a8d648c03","timestamp":"2026-06-13T18:35:20.776731669Z"}
+<error message="apiRequestContext.post: getaddrinfo ENOTFOUND backend-test" type="Error">
+<![CDATA[  [chromium] › shipper-dashboard.spec.ts:206:3 › Shipper Dashboard Golden Path (US-715) › should load dashboard without errors (US-715 AC-6) 
+
+    Error: apiRequestContext.post: getaddrinfo ENOTFOUND backend-test
+    Call log:
+      - → POST http://backend-test:9091/api/test/auth/register
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: application/json
+        - content-length: 229
+
+
+       at fixtures\test-data-seeder.ts:94
+
+      92 |     const freshContext = await playwrightRequest.newContext();
+      93 |     try {
+    > 94 |       const response = await freshContext.post(
+         |                                           ^
+      95 |         `${this.backendUrl}/api/test/auth/register`,
+      96 |         {
+      97 |           data: userData,
+        at TestDataSeeder.createTestUser (C:\projects\freightclub\frontend\e2e\fixtures\test-data-seeder.ts:94:43)
+        at C:\projects\freightclub\frontend\e2e\shipper-dashboard.spec.ts:208:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\shipper-dashboard-Shipper--25737-without-errors-US-715-AC-6--chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
-</system-err>
-</testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-7a: responsive design (desktop 1280x720)" classname="us-824-quick-actions.spec.ts" time="1.882">
-<system-out>
-<![CDATA[✅ Desktop responsive screenshot captured
-]]>
-</system-out>
-<system-err>
-<![CDATA[Failed to delete users bbc68745-b281-4244-b288-74f30a4dc1e8: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/bbc68745-b281-4244-b288-74f30a4dc1e8","timestamp":"2026-06-13T18:35:22.742848122Z"}
-]]>
-</system-err>
-</testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-7b: responsive design (tablet 768x1024)" classname="us-824-quick-actions.spec.ts" time="1.965">
-<system-out>
-<![CDATA[✅ Tablet responsive screenshot captured
-]]>
-</system-out>
-<system-err>
-<![CDATA[Failed to delete users 16810021-7ceb-4ee9-89d7-657f711b1a8d: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/16810021-7ceb-4ee9-89d7-657f711b1a8d","timestamp":"2026-06-13T18:35:24.688915288Z"}
-]]>
-</system-err>
-</testcase>
-<testcase name="US-824: Quick Actions Panel › US-824 AC-7c: responsive design (mobile 375x667)" classname="us-824-quick-actions.spec.ts" time="1.877">
-<system-out>
-<![CDATA[✅ Mobile responsive screenshot captured
-]]>
-</system-out>
-<system-err>
-<![CDATA[Failed to delete users 6080f18a-2daa-4c71-ad5c-4113abddf8db: 500 {"status":500,"error":"Internal Server Error","message":"An unexpected error occurred","path":"/api/test/users/6080f18a-2daa-4c71-ad5c-4113abddf8db","timestamp":"2026-06-13T18:35:26.788747148Z"}
-]]>
-</system-err>
+</error>
 </testcase>
 </testsuite>
 </testsuites>

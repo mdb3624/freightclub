@@ -179,17 +179,24 @@
 
 ---
 
-## Phase 10: Shipper Dashboard Refinement (6 stories)
+## Phase 10: Shipper Dashboard Refinement (5 stories) — ✅ COMPLETE
 
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
 | US-820 | **KPI Summary Display (Active Shipments, On-Time %, Cost/Mile)** | **✅ COMPLETED** | **10** | **US-760** | **✅ REVIEWER APPROVED | ✅ E2E: 7.2s PASS | ✅ KPI tiles always visible with "No data" state | ✅ Design system shadows** |
 | US-821 | **Shipper Header Navigation (Logo, Notification Bell, Avatar Dropdown)** | **✅ COMPLETED** | **10** | **US-760** | **✅ REVIEWER APPROVED | ✅ E2E: 7.2s PASS | ✅ Notification bell dropdown (not page nav) | ✅ Smart red badge (only show with unread)** |
 | US-822 | **Shipment Status Panel (Active Shipments List)** | **✅ COMPLETED** | **10** | **US-823** | **✅ REVIEWER APPROVED (6/6 gates PASS) | ✅ LIBRARIAN CLOSED (2026-06-16) | ✅ 91.4% test coverage | ✅ Cache + DB queries fixed** |
-| US-823 | **Shipper Dashboard Layout Skeleton (Grid + Placeholders)** | **✅ COMPLETED** | **10** | **US-820, US-821** | **✅ REVIEWER APPROVED (8 gates PASS) | ✅ Merged to main | ✅ 11/11 E2E tests PASS | ✅ 100% CSS token compliance | ✅ GitHub #3 created for US-824/825/826** |
+| US-823 | **Shipper Dashboard Layout Skeleton (Grid + Placeholders)** | **✅ COMPLETED** | **10** | **US-820, US-821** | **✅ REVIEWER APPROVED (8 gates PASS) | ✅ Merged to main | ✅ 11/11 E2E tests PASS | ✅ 100% CSS token compliance** |
 | US-824 | **Quick Actions Panel (Post Load, Get Quote, Track, Preferences)** | **✅ COMPLETED** | **10** | **US-823** | **✅ MERGED TO MAIN | ✅ All 4 action buttons implemented | ✅ E2E tests PASS | ✅ Bronze button styling** |
 | US-825 | **Carrier Search Panel (Origin/Destination Search + Results)** | **✅ COMPLETED** | **10** | **US-823** | **✅ MERGED TO MAIN | ✅ Form validation + API wired | ✅ E2E tests PASS | ✅ Search results display working** |
-| US-826 | **Messages & Alerts Panel (Load Notifications)** | **READY_FOR_DESIGN** | **10** | **US-823** | **✅ BA Story READY_FOR_DESIGN | Reuses useNotifications hook** |
+
+---
+
+## Backlog (Deferred)
+
+| ID     | Title                                  | Status      | Depends On | Rationale |
+| :----- | :------------------------------------- | :---------- | :--------- | :--------- |
+| US-826 | **Messages & Alerts Panel (Load Notifications)** | **BACKLOG** | **US-823** | Deferred: Reuses existing useNotifications hook; not critical for Phase 10 MVP completion (2026-06-16) |
 
 ---
 

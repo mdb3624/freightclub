@@ -52,20 +52,21 @@ export const ShipperDashboardPage: React.FC = () => {
     </section>
   );
 
-  // SLOT_C: Action Zone (4 columns) - Split layout: Quick Actions (left) + Carrier Search (right)
+  // SLOT_C: Action Zone (4 columns) - Two independent panels side-by-side
+  // CHG-003 spec: Panel 1 (Quick Actions) + Panel 2 (Carrier Search)
   const slotCContent = (
-    <section
-      className="panel"
-      role="region"
-      aria-label="Action Zone"
-      data-testid="action-zone-section"
-    >
-      <div className="grid grid-cols-2 gap-4" data-testid="action-zone-grid">
-        {/* Left: Quick Action Buttons */}
+    <div className="grid grid-cols-2 gap-4" data-testid="action-zone-content">
+      {/* Panel 1: Quick Actions Panel */}
+      <section
+        className="panel"
+        role="region"
+        aria-label="Quick Actions"
+        data-testid="quick-actions-panel"
+      >
+        <h3 className="text-sm font-semibold mb-3" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
+          Quick Actions
+        </h3>
         <div className="space-y-2" data-testid="quick-actions-buttons">
-          <h3 className="text-sm font-semibold mb-3" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
-            Quick Actions
-          </h3>
           <button
             onClick={() => handleActionClick('quick-actions-post-load', onPostLoad)}
             disabled={isLoading && loadingButtonId === 'quick-actions-post-load'}
@@ -99,20 +100,25 @@ export const ShipperDashboardPage: React.FC = () => {
             My Carriers
           </button>
         </div>
+      </section>
 
-        {/* Right: Carrier Search Form */}
-        <div data-testid="carrier-search-inline">
-          <h3 className="text-sm font-semibold mb-3" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
-            Search Carriers
-          </h3>
-          <CarrierSearchPanel
-            onCarrierSelect={(carrier) => {
-              console.log('Carrier selected:', carrier);
-            }}
-          />
-        </div>
-      </div>
-    </section>
+      {/* Panel 2: Carrier Search Panel */}
+      <section
+        className="panel"
+        role="region"
+        aria-label="Carrier Search"
+        data-testid="carrier-search-panel"
+      >
+        <h3 className="text-sm font-semibold mb-3" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
+          Search Carriers
+        </h3>
+        <CarrierSearchPanel
+          onCarrierSelect={(carrier) => {
+            console.log('Carrier selected:', carrier);
+          }}
+        />
+      </section>
+    </div>
   );
 
   // SLOT_B (Row 3): Messages & Alerts (8 columns)

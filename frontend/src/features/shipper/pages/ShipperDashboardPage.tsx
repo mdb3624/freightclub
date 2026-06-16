@@ -75,6 +75,7 @@ export const ShipperDashboardPage: React.FC = () => {
         <h3 className="text-sm font-semibold mb-3" style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
           Quick Actions
         </h3>
+        <div className="border border-gray-300 rounded-md p-4 bg-gray-50" data-testid="quick-actions-buttons-container">
         <div className="space-y-2" data-testid="quick-actions-buttons">
           <button
             onClick={() => handleActionClick('quick-actions-post-load', onPostLoad)}
@@ -108,6 +109,7 @@ export const ShipperDashboardPage: React.FC = () => {
           >
             My Carriers
           </button>
+        </div>
         </div>
       </section>
 

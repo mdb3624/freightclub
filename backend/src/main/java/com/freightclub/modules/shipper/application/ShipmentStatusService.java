@@ -31,9 +31,9 @@ public class ShipmentStatusService {
 
         String sql = """
             SELECT l.id, l.status, l.equipment_type, l.destination_city,
-                   c.name, sr.avg_score, l.pickup_from, l.delivery_to, l.picked_up_at
+                   u.name, sr.avg_score, l.pickup_from, l.delivery_to, l.picked_up_at
             FROM freightclub.loads l
-            LEFT JOIN freightclub.carriers c ON l.trucker_id = c.id
+            LEFT JOIN freightclub.users u ON l.trucker_id = u.id
             LEFT JOIN freightclub.shipper_reputation sr ON l.trucker_id = sr.shipper_id
             WHERE l.tenant_id = :tid
               AND l.deleted_at IS NULL

@@ -263,60 +263,74 @@ export function LoadForm({ onSubmit, onSaveDraft, onCancel, defaultValues, isSub
     : null
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-0">
       {errorMessage && <ErrorBanner message={errorMessage} />}
 
-      <AddressSection prefix="origin" register={register} errors={errors} />
-      <AddressSection prefix="destination" register={register} errors={errors} />
+      {/* Origin Section */}
+      <div className="pb-6 mb-6 border-b border-gray-200">
+        <AddressSection prefix="origin" register={register} errors={errors} />
+      </div>
+
+      {/* Destination Section */}
+      <div className="pb-6 mb-6 border-b border-gray-200">
+        <AddressSection prefix="destination" register={register} errors={errors} />
+      </div>
 
       {/* Distance (auto-calculated) */}
-      <div className="rounded-lg bg-gray-50 border border-gray-200 px-4 py-3">
-        {distanceLoading ? (
-          <p className="text-sm text-gray-500">Calculating distance...</p>
-        ) : distanceMiles != null ? (
-          <p className="text-sm text-gray-900">
-            <span className="font-semibold">{distanceMiles.toLocaleString()} mi</span>
-            <span className="text-gray-500 ml-1">(estimated road distance)</span>
-          </p>
-        ) : (
-          <p className="text-sm text-gray-400">Distance will calculate automatically once both addresses are filled in</p>
-        )}
-        {distanceError && <p className="text-xs text-red-600 mt-0.5">{distanceError}</p>}
+      <div className="pb-6 mb-6 border-b border-gray-200">
+        <div className="rounded-lg bg-gray-50 border border-gray-200 px-4 py-3">
+          {distanceLoading ? (
+            <p className="text-sm text-gray-500">Calculating distance...</p>
+          ) : distanceMiles != null ? (
+            <p className="text-sm text-gray-900">
+              <span className="font-semibold">{distanceMiles.toLocaleString()} mi</span>
+              <span className="text-gray-500 ml-1">(estimated road distance)</span>
+            </p>
+          ) : (
+            <p className="text-sm text-gray-400">Distance will calculate automatically once both addresses are filled in</p>
+          )}
+          {distanceError && <p className="text-xs text-red-600 mt-0.5">{distanceError}</p>}
+        </div>
       </div>
 
-      {/* Schedule */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Input
-          label="Earliest Pickup"
-          type="datetime-local"
-          error={errors.pickupFrom?.message}
-          {...register('pickupFrom')}
-        />
-        <Input
-          label="Latest Pickup"
-          type="datetime-local"
-          error={errors.pickupTo?.message}
-          {...register('pickupTo')}
-        />
+      {/* Schedule Section */}
+      <div className="pb-6 mb-6 border-b border-gray-200">
+        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Schedule</h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Input
+            label="Earliest Pickup"
+            type="datetime-local"
+            error={errors.pickupFrom?.message}
+            {...register('pickupFrom')}
+          />
+          <Input
+            label="Latest Pickup"
+            type="datetime-local"
+            error={errors.pickupTo?.message}
+            {...register('pickupTo')}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 mt-4">
+          <Input
+            label="Earliest Delivery"
+            type="datetime-local"
+            error={errors.deliveryFrom?.message}
+            {...register('deliveryFrom')}
+          />
+          <Input
+            label="Latest Delivery"
+            type="datetime-local"
+            error={errors.deliveryTo?.message}
+            {...register('deliveryTo')}
+          />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Input
-          label="Earliest Delivery"
-          type="datetime-local"
-          error={errors.deliveryFrom?.message}
-          {...register('deliveryFrom')}
-        />
-        <Input
-          label="Latest Delivery"
-          type="datetime-local"
-          error={errors.deliveryTo?.message}
-          {...register('deliveryTo')}
-        />
-      </div>
-
-      {/* Cargo */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* Cargo Section */}
+      <div className="pb-6 mb-6 border-b border-gray-200">
+        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Cargo Details</h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Input
           label="Commodity"
           error={errors.commodity?.message}
@@ -400,89 +414,97 @@ export function LoadForm({ onSubmit, onSaveDraft, onCancel, defaultValues, isSub
           )
         })}
       </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="equipmentType" className="text-sm font-medium text-gray-700">
-            Equipment Type
+      </div>
+
+      {/* Equipment & Payment Section */}
+      <div className="pb-6 mb-6 border-b border-gray-200">
+        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Equipment & Payment</h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="equipmentType" className="text-sm font-medium text-gray-700">
+              Equipment Type
+            </label>
+            <select
+              id="equipmentType"
+              className={selectClass}
+              {...register('equipmentType')}
+            >
+              <option value="DRY_VAN">Dry Van</option>
+              <option value="FLATBED">Flatbed</option>
+              <option value="REFRIGERATED">Refrigerated</option>
+              <option value="TANKER">Tanker</option>
+              <option value="SPECIALIZED">Specialized</option>
+              <option value="STEP_DECK">Step Deck</option>
+            </select>
+            {errors.equipmentType && (
+              <p className="text-xs text-red-600">{errors.equipmentType.message}</p>
+            )}
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Pay Rate</label>
+            <div role="group" aria-label="Pay rate type" className="flex gap-1 mb-1">
+              {(['FLAT_RATE', 'PER_MILE'] as const).map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  role="radio"
+                  aria-checked={payRateType === type}
+                  onClick={() => setValue('payRateType', type, { shouldValidate: true })}
+                  className={`flex-1 rounded py-1 text-xs font-medium transition-colors ${
+                    payRateType === type
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {type === 'FLAT_RATE' ? 'Flat Rate' : 'Per Mile'}
+                </button>
+              ))}
+            </div>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">$</span>
+              <input
+                type="number"
+                step="0.01"
+                min="0.01"
+                className={`w-full rounded-md border px-3 py-2 pl-6 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 ${errors.payRate ? 'border-red-500' : 'border-gray-300'}`}
+                {...register('payRate', { valueAsNumber: true })}
+              />
+            </div>
+            <p className="text-xs text-gray-500">
+              {payRateType === 'PER_MILE' ? (
+                distanceMiles != null && payRate > 0
+                  ? `≈ $${(payRate * distanceMiles).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} estimated total`
+                  : 'per mile'
+              ) : 'flat rate'}
+            </p>
+            {errors.payRate && <p className="text-xs text-red-600">{errors.payRate.message}</p>}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1 mt-4">
+          <label htmlFor="paymentTerms" className="text-sm font-medium text-gray-700">
+            Payment Terms
           </label>
           <select
-            id="equipmentType"
-            className={selectClass}
-            {...register('equipmentType')}
+            id="paymentTerms"
+            className={`${selectClass} max-w-xs`}
+            {...register('paymentTerms')}
           >
-            <option value="DRY_VAN">Dry Van</option>
-            <option value="FLATBED">Flatbed</option>
-            <option value="REFRIGERATED">Refrigerated</option>
-            <option value="TANKER">Tanker</option>
-            <option value="SPECIALIZED">Specialized</option>
-            <option value="STEP_DECK">Step Deck</option>
+            <option value="">Not specified</option>
+            <option value="IMMEDIATE">Immediate (Same/Next Day)</option>
+            <option value="NET_7">Net 7</option>
+            <option value="NET_14">Net 14</option>
+            <option value="NET_30">Net 30</option>
           </select>
-          {errors.equipmentType && (
-            <p className="text-xs text-red-600">{errors.equipmentType.message}</p>
-          )}
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Pay Rate</label>
-          <div role="group" aria-label="Pay rate type" className="flex gap-1 mb-1">
-            {(['FLAT_RATE', 'PER_MILE'] as const).map((type) => (
-              <button
-                key={type}
-                type="button"
-                role="radio"
-                aria-checked={payRateType === type}
-                onClick={() => setValue('payRateType', type, { shouldValidate: true })}
-                className={`flex-1 rounded py-1 text-xs font-medium transition-colors ${
-                  payRateType === type
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {type === 'FLAT_RATE' ? 'Flat Rate' : 'Per Mile'}
-              </button>
-            ))}
-          </div>
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">$</span>
-            <input
-              type="number"
-              step="0.01"
-              min="0.01"
-              className={`w-full rounded-md border px-3 py-2 pl-6 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 ${errors.payRate ? 'border-red-500' : 'border-gray-300'}`}
-              {...register('payRate', { valueAsNumber: true })}
-            />
-          </div>
           <p className="text-xs text-gray-500">
-            {payRateType === 'PER_MILE' ? (
-              distanceMiles != null && payRate > 0
-                ? `≈ $${(payRate * distanceMiles).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} estimated total`
-                : 'per mile'
-            ) : 'flat rate'}
+            Immediate = same day or next day. Net 7/14/30 = days after delivery.
           </p>
-          {errors.payRate && <p className="text-xs text-red-600">{errors.payRate.message}</p>}
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="paymentTerms" className="text-sm font-medium text-gray-700">
-          Payment Terms
-        </label>
-        <select
-          id="paymentTerms"
-          className={`${selectClass} max-w-xs`}
-          {...register('paymentTerms')}
-        >
-          <option value="">Not specified</option>
-          <option value="IMMEDIATE">Immediate (Same/Next Day)</option>
-          <option value="NET_7">Net 7</option>
-          <option value="NET_14">Net 14</option>
-          <option value="NET_30">Net 30</option>
-        </select>
-        <p className="text-xs text-gray-500">
-          Immediate = same day or next day. Net 7/14/30 = days after delivery.
-        </p>
-      </div>
-
+      {/* Special Requirements Section */}
       <div>
+        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Additional Information</h3>
         <label htmlFor="specialRequirements" className="block text-sm font-medium text-gray-700">
           Special Requirements
         </label>

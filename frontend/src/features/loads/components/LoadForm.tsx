@@ -50,10 +50,10 @@ const schema = z.object({
   widthIn: z.union([z.number().min(0), z.literal('')]).optional(),
   heightFt: z.union([z.number().min(0), z.literal('')]).optional(),
   heightIn: z.union([z.number().min(0), z.literal('')]).optional(),
-  equipmentType: z.enum(['DRY_VAN', 'FLATBED', 'REEFER', 'STEP_DECK']),
+  equipmentType: z.enum(['DRY_VAN', 'FLATBED', 'REEFER', 'STEP_DECK', 'REFRIGERATED', 'TANKER', 'SPECIALIZED']),
   payRate: z.number({ invalid_type_error: 'Pay rate is required' }).min(0.01, 'Pay rate must be > 0'),
   payRateType: z.enum(['PER_MILE', 'FLAT_RATE']),
-  paymentTerms: z.enum(['QUICK_PAY', 'NET_7', 'NET_15', 'NET_30']).or(z.literal('')),
+  paymentTerms: z.enum(['QUICK_PAY', 'NET_7', 'NET_15', 'NET_30', 'IMMEDIATE', 'NET_14']).or(z.literal('')),
   specialRequirements: z.string().optional().default(''),
   overweightAcknowledged: z.boolean().optional().default(false),
 }).superRefine((data, ctx) => {
@@ -151,6 +151,7 @@ function AddressSection({ prefix, register, errors }: AddressSectionProps) {
 interface LoadFormProps {
   onSubmit: (values: LoadFormValues) => void
   onSaveDraft?: (values: LoadFormValues) => void
+  onCancel?: () => void
   defaultValues?: Partial<LoadFormValues>
   isSubmitting: boolean
   isDraftSaving?: boolean
@@ -158,7 +159,7 @@ interface LoadFormProps {
   submitLabel: string
 }
 
-export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, isDraftSaving, error, submitLabel }: LoadFormProps) {
+export function LoadForm({ onSubmit, onSaveDraft, onCancel, defaultValues, isSubmitting, isDraftSaving, error, submitLabel }: LoadFormProps) {
   const [distanceLoading, setDistanceLoading] = useState(false)
   const [distanceError, setDistanceError] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -169,7 +170,7 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
     watch,
     control,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<LoadFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -411,7 +412,9 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
           >
             <option value="DRY_VAN">Dry Van</option>
             <option value="FLATBED">Flatbed</option>
-            <option value="REEFER">Reefer</option>
+            <option value="REFRIGERATED">Refrigerated</option>
+            <option value="TANKER">Tanker</option>
+            <option value="SPECIALIZED">Specialized</option>
             <option value="STEP_DECK">Step Deck</option>
           </select>
           {errors.equipmentType && (
@@ -469,13 +472,13 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
           {...register('paymentTerms')}
         >
           <option value="">Not specified</option>
-          <option value="QUICK_PAY">Quick Pay</option>
+          <option value="IMMEDIATE">Immediate (Same/Next Day)</option>
           <option value="NET_7">Net 7</option>
-          <option value="NET_15">Net 15</option>
+          <option value="NET_14">Net 14</option>
           <option value="NET_30">Net 30</option>
         </select>
         <p className="text-xs text-gray-500">
-          Quick Pay = same day or next day. Net 7/15/30 = days after delivery.
+          Immediate = same day or next day. Net 7/14/30 = days after delivery.
         </p>
       </div>
 
@@ -492,25 +495,45 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
         />
       </div>
 
-      <div className="flex justify-end gap-3">
-        {onSaveDraft && (
+      <div className="flex justify-between gap-3">
+        <div className="flex gap-3">
+          {onCancel && (
+            <button
+              type="button"
+              onClick={() => {
+                if (isDirty) {
+                  if (!window.confirm('Discard this load? Any changes will be lost.')) {
+                    return
+                  }
+                }
+                onCancel()
+              }}
+              className="text-gray-600 hover:text-gray-900 hover:underline text-sm font-medium transition-colors"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+        <div className="flex gap-3">
+          {onSaveDraft && (
+            <Button
+              type="button"
+              variant="secondary"
+              isLoading={isDraftSaving}
+              onClick={handleSubmit(onSaveDraft)}
+            >
+              Save as Draft
+            </Button>
+          )}
           <Button
-            type="button"
-            variant="secondary"
-            isLoading={isDraftSaving}
-            onClick={handleSubmit(onSaveDraft)}
+            type="submit"
+            isLoading={isSubmitting}
+            disabled={isOverweight && !overweightAcknowledged}
+            title={isOverweight && !overweightAcknowledged ? 'Acknowledge the overweight warning above to continue' : undefined}
           >
-            Save as Draft
+            {submitLabel}
           </Button>
-        )}
-        <Button
-          type="submit"
-          isLoading={isSubmitting}
-          disabled={isOverweight && !overweightAcknowledged}
-          title={isOverweight && !overweightAcknowledged ? 'Acknowledge the overweight warning above to continue' : undefined}
-        >
-          {submitLabel}
-        </Button>
+        </div>
       </div>
     </form>
   )

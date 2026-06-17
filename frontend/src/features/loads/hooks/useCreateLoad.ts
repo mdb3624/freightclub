@@ -1,17 +1,27 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
+import type { LoadResponse } from '../types'
 import { loadsApi } from '../api'
 
-export function useCreateLoad() {
+interface UseCreateLoadOptions {
+  onSuccess?: (data: LoadResponse) => void
+}
+
+export function useCreateLoad(options?: UseCreateLoadOptions) {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
   return useMutation({
     mutationFn: loadsApi.create,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['shipper-loads-stats'] })
       queryClient.invalidateQueries({ queryKey: ['shipper-loads'] })
-      navigate('/dashboard/shipper')
+      queryClient.invalidateQueries({ queryKey: ['shipmentStatus'] })
+      if (options?.onSuccess) {
+        options.onSuccess(data)
+      } else {
+        navigate('/dashboard/shipper')
+      }
     },
   })
 }

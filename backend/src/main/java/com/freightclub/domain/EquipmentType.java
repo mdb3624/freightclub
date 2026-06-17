@@ -4,5 +4,8 @@ public enum EquipmentType {
     DRY_VAN,
     FLATBED,
     REEFER,
-    STEP_DECK
+    STEP_DECK,
+    REFRIGERATED,
+    TANKER,
+    SPECIALIZED
 }

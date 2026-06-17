@@ -4,5 +4,7 @@ public enum PaymentTerms {
     QUICK_PAY,
     NET_7,
     NET_15,
-    NET_30
+    NET_30,
+    IMMEDIATE,
+    NET_14
 }

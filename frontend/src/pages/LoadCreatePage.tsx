@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ShipperPageLayout } from '@/components/layouts/ShipperPageLayout'
+import { ShipperPageLayout } from '@/features/shipper/components/ShipperPageLayout'
 import { useCreateLoad } from '@/features/loads/hooks/useCreateLoad'
 import { useCreateDraft } from '@/features/loads/hooks/useCreateDraft'
 import { useProfile } from '@/features/profile/hooks/useProfile'
 import { LoadForm } from '@/features/loads/components/LoadForm'
-import type { LoadFormValues, LoadResponse } from '@/features/loads/types'
+import type { LoadFormValues } from '@/features/loads/types'
 
 const bronzeButtonStyle: React.CSSProperties = {
   background: 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
@@ -19,7 +19,7 @@ export function LoadCreatePage() {
   const [submittedLoadId, setSubmittedLoadId] = useState<string | null>(null)
 
   const { mutate: createLoad, isPending, error } = useCreateLoad({
-    onSuccess: (data: LoadResponse) => {
+    onSuccess: (data: any) => {
       setSubmittedLoadId(data.id)
       setSubmitted(true)
     },

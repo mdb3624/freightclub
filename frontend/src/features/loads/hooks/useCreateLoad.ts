@@ -1,10 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import type { LoadResponse } from '../types'
 import { loadsApi } from '../api'
 
 interface UseCreateLoadOptions {
-  onSuccess?: (data: LoadResponse) => void
+  onSuccess?: (data: any) => void
 }
 
 export function useCreateLoad(options?: UseCreateLoadOptions) {

@@ -326,12 +326,13 @@ This rule applies to: BA, ARCH, HFD, CODER, REVIEWER, LIBRARIAN, and all automat
 4. **Verify:** Ensure 80%+ branch coverage via JaCoCo.
 
 ## Build & Maven Setup
-- **Maven Location:** `C:\tools\apache-maven-3.9.9\bin\mvn.cmd` (local installation, not wrapper)
-- **Build Directory:** Always run Maven from `backend/` directory
-- **VS Code Tasks:** `.vscode/tasks.json` defines all build tasks (BuildBackend, BuildBackend + Tests, Test Backend, Coverage Report)
+- **Maven Location:** `C:\tools\apache-maven-3.9.9\bin\mvn.cmd`
+- **Clean Build:** `.\build-all.ps1`
+- **Testing (Light):** `.\test-light.ps1`
+- **Testing (Full):** `.\build-and-test-full.ps1`
+- **Deployment (Prod):** `.\deploy-prod.ps1`
 - **Command Line:** `C:\tools\apache-maven-3.9.9\bin\mvn.cmd clean verify` from backend directory
-- **Test Coverage:** Enforced at **80%+ branch coverage** via JaCoCo; use task "Coverage Report" to verify before PR
-- **No Wrapper Jar:** Maven Wrapper excluded (use local installation instead to avoid network issues)
+- **Test Coverage:** 80%+ branch coverage required (JaCoCo).
 
 ---
 
@@ -350,7 +351,7 @@ This rule applies to: BA, ARCH, HFD, CODER, REVIEWER, LIBRARIAN, and all automat
 - See `memory/feedback_hardcoded_service_urls.md`, `memory/feedback_cors_testing.md`, and `memory/feedback_cloud_run_dual_urls.md` for full solutions.
 - **Secret Manager writes from PowerShell**: NEVER use `echo "value" | gcloud secrets versions add`. PowerShell `echo` appends `\r\n` → password auth fails. Always use `[System.IO.File]::WriteAllText('C:\Windows\Temp\s.txt', 'value')` + `--data-file='C:\Windows\Temp\s.txt'`.
 - **Neon `neondb_owner` auth**: JDBC URL must include `channel_binding=require` for `neondb_owner` connections. Without it, authentication fails even with the correct password.
-- **Flyway vs runtime credentials**: Production uses `DB_USERNAME=neondb_owner` (required for `ALTER TABLE`). `spring.flyway.user/password/url` override properties allow Flyway to use admin credentials independently. All production secrets come from `.env.prod` → `.env.cloudrun.yaml` → Secret Manager (verify Secret Manager versions match `.env.prod`).
+- **Flyway vs runtime credentials**: Production uses `DB_USERNAME=neondb_owner` (required for `ALTER TABLE`). `spring.flyway.user/password/url` override properties allow Flyway to use admin credentials independently. All production secrets come from `.env.prod` → Secret Manager (verify Secret Manager versions match `.env.prod`).
 
 ## 🧪 Test Environment Setup
 

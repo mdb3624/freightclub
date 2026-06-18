@@ -1,6 +1,12 @@
 # Shipper & Administrator Style Guide.md
 
+**Version:** 2.1 (Updated 2026-06-17)  
+**Status:** 🔒 LOCKED — System of Record  
+**Authority:** LIBRARIAN + Design System Governance  
+
 This style guide for the desktop Shipper Dashboard is defined by a focus on high clarity, high density data management, and user-centric navigation. It balances a **"Classic Cream & Metallic Bronze" industrial aesthetic** with structural layout configurations built to streamline office operations.
+
+**Mandatory Requirement:** All shipper-facing pages MUST use ShipperPageLayout component (see §7). This is a non-negotiable design system rule enforced at code review.
 
 ### 1. Color Palette: "Classic Cream & Metallic Bronze"
 * **Primary Background (Canvas):** A warm, soft cream/beige tint (`#EFEBE0`) that reduces eye strain and maintains a premium look under bright office environment lighting.
@@ -165,21 +171,90 @@ The following values are the **ONLY** values permitted for these components. Any
 
 ---
 
+## 7. Mandatory ShipperPageLayout Conformance
+
+**Authority:** LIBRARIAN (Sequential Lock Protocol)  
+**Effective:** 2026-06-17  
+**Status:** MANDATORY — No exceptions permitted
+
+### The Rule
+
+**ALL Shipper persona pages MUST be built using the `ShipperPageLayout` component.**
+
+This includes:
+- Dashboard pages (US-760, US-820, US-821, US-823, US-824, US-825, US-826)
+- Load management pages (US-103-v2, Load edit/detail)
+- Profile & settings pages (US-713)
+- Any new shipper-facing pages in Phase 11+
+
+**NOT Permitted:**
+- ❌ Custom page shells or layouts
+- ❌ Removing ShipperPageLayout wrapper
+- ❌ Creating shipper pages with different header/navigation structure
+- ❌ Ad-hoc layouts that don't conform to the established shell
+
+### ShipperPageLayout Component Structure
+
+**Location:** `frontend/src/components/layouts/ShipperPageLayout.tsx` (or similar)
+
+**Component Provides:**
+- **Header:** Logo + Notification Bell + Avatar Profile Badge (per US-821)
+- **Navigation Sidebar:** Vertical navigation (My Loads, Dashboard, Profile, Settings)
+- **Content Slot:** Main area for page-specific content
+- **Footer:** Copyright + links (optional)
+- **Styling:** Consistent with Shipper & Administrator Style Guide (Classic Cream & Metallic Bronze)
+
+**Usage Pattern:**
+```tsx
+<ShipperPageLayout>
+  <YourPageContent />
+</ShipperPageLayout>
+```
+
+### Enforcement Mechanism
+
+**REVIEWER Gate:** Every Shipper page PR is rejected if:
+- ❌ Missing `<ShipperPageLayout>` wrapper
+- ❌ Implements custom header/navigation instead of using layout
+- ❌ Contains CSS that overrides layout styling without documented exception
+- ❌ Has different visual hierarchy than established dashboard pages
+
+**Exception Process:**
+If a shipper page genuinely cannot use ShipperPageLayout (edge case):
+1. Document rationale in code comment + PR description
+2. Provide visual mockup showing why the exception is necessary
+3. Obtain ARCHITECT + LIBRARIAN approval BEFORE coding
+4. Log exception in VISUAL_DEBT_LOG.md with resolution plan
+5. **Note:** This should be rare; most shipper pages can use the standard layout
+
+### Rationale (Why This Matters)
+
+**Consistency:** Users (shippers, operations managers) expect the same navigation + header structure on every page. Deviations cause confusion and reduce trust.
+
+**Accessibility:** ShipperPageLayout includes standardized ARIA labels, keyboard navigation, and focus management. Custom layouts risk breaking accessibility.
+
+**Maintenance:** Single layout component = single source of truth for header/nav updates. Changes propagate to all shipper pages automatically.
+
+**Design System Integrity:** The Shipper & Administrator Style Guide defines shipper brand aesthetic. ShipperPageLayout enforces it. Custom layouts bypass the design system.
+
+---
+
 ## Authority & Governance
 
 **Document Status:** System of Record (LOCKED)  
-**Version:** 2.0 (Updated 2026-06-10 — Added Atomic Component Specifications §6)  
+**Version:** 2.1 (Updated 2026-06-17 — Added §7 Mandatory ShipperPageLayout Conformance)  
 **Authority:** LIBRARIAN + Design System  
-**Enforcement:** HFD and CODER must cite section 6 values in every specification and implementation  
+**Enforcement:** HFD and CODER must cite section 6 values in every specification and implementation; REVIEWER must enforce §7 ShipperPageLayout rule  
 
 **Deviation Protocol:** Any deviation from §6 values requires:
 1. Formal exception request (document in VISUAL_DEBT_LOG.md)
 2. ARCHITECT approval
 3. Justification in design spec or code comments
 
-**Automatic Rejection Criteria:**
+**Automatic Rejection Criteria (Hard Gates):**
 - ❌ Row heights other than 48px (without exception)
 - ❌ Padding/margin NOT a multiple of 8px
 - ❌ Form borders other than 4px (without exception)
 - ❌ Status colors using custom hex values instead of §6 palette
 - ❌ Helper text font size other than 12px (without exception)
+- ❌ **Shipper page NOT wrapped in ShipperPageLayout (§7 violation — automatic rejection, no exception process)**

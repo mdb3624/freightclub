@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Creation — US-103-v2 Final Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: #EFEBE0;
+            color: #1A1A1A;
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: #FFFFFF;
+            border-bottom: 1px solid #D0D0D0;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            height: 64px;
+        }
+
+        .header-brand {
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #B08D57, #8C6D3F);
+        }
+
+        /* Main Container */
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 64px);
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px 32px;
+            overflow-y: auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            min-height: 64px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #1A1A1A;
+            line-height: 1.2;
+        }
+
+        .page-header-subtitle {
+            margin-left: 40px;
+            padding-left: 40px;
+            border-left: 2px solid #D0D0D0;
+            font-size: 14px;
+            color: #636E72;
+            font-weight: 400;
+        }
+
+        /* Main Form Container Panel */
+        .form-container {
+            background: #FFFFFF;
+            border: 2px solid #C9A46A;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        /* Full-Width Layout */
+        .form-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Section Panel */
+        .section-panel {
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFFBF7 100%);
+            border: 1px solid #E8E3D8;
+            border-left: 4px solid #B08D57;
+            border-radius: 8px;
+            padding: 20px;
+            transition: box-shadow 0.2s;
+        }
+
+        .section-panel:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Three-Column Grid Layout */
+        .three-column-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 24px;
+        }
+
+        .form-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-column .section-panel {
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Schedule Panel - Compact */
+        .section-panel.schedule-hero {
+            /* Inherits gradient + border-left from base .section-panel */
+        }
+
+        /* Two-Column Layout for Pickup + Delivery */
+        .schedule-pair {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 0;
+        }
+
+        .schedule-pair .section-panel {
+            margin: 0;
+            padding: 16px;
+        }
+
+        /* Spacious Address Panels */
+        .section-panel.spacious {
+            padding: 28px;
+        }
+
+        /* Two-Column Layout for Addresses */
+        .address-pair {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .address-pair .section-panel {
+            margin: 0;
+            padding: 24px;
+        }
+
+        /* Payment + Cargo Row */
+        .payment-cargo-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .payment-cargo-row .section-panel {
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Section Header */
+        .section-header {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #1A1A1A;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #E8E3D8;
+        }
+
+        /* Section Subheader */
+        .section-subheader {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #A68B5B;
+            margin: 0 0 10px 0;
+        }
+
+        .section-subheader:first-child {
+            margin-top: 0;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #1A1A1A;
+            margin-bottom: 4px;
+            letter-spacing: 0.2px;
+        }
+
+        .schedule-pair .form-label {
+            font-size: 10px;
+            margin-bottom: 3px;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: #E74C3C;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            height: 36px;
+            padding: 6px 10px;
+            border: 1px solid #D0D0D0;
+            border-radius: 5px;
+            font-size: 13px;
+            font-family: inherit;
+            background: #FFFFFF;
+            color: #1A1A1A;
+            transition: all 0.15s;
+        }
+
+        .schedule-pair .form-input,
+        .schedule-pair .form-select {
+            height: 32px;
+            font-size: 12px;
+            padding: 5px 8px;
+        }
+
+        .form-input::placeholder {
+            color: #999999;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #B08D57;
+            box-shadow: 0 0 0 3px rgba(176, 141, 87, 0.08);
+            background: #FFFBF7;
+        }
+
+        /* Schedule Grid - 4 Column Ultra Compact */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 1fr 0.8fr 1fr 0.8fr;
+            gap: 8px;
+        }
+
+        /* Compact schedule subheader positioning */
+        .schedule-pair .section-panel {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .schedule-window-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .schedule-row {
+            display: contents;
+        }
+
+        .schedule-window-label {
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #A68B5B;
+            margin-bottom: 4px;
+        }
+
+        .schedule-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .schedule-input-wrapper input {
+            margin-bottom: 0;
+            width: 100%;
+        }
+
+        /* Address Layout - 2 Rows */
+        .address-row-1 {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .address-row-2 {
+            display: grid;
+            grid-template-columns: 2fr 0.8fr 1.2fr;
+            gap: 12px;
+        }
+
+        /* Payment/Cargo Layout */
+        .compact-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .payment-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* Distance Display */
+        .distance-display {
+            background: linear-gradient(135deg, #F8F9FB 0%, #F5F7FA 100%);
+            border: 1px solid #D0D0D0;
+            border-radius: 5px;
+            padding: 12px;
+            margin-top: 10px;
+            border-top: 1px solid #D0D0D0;
+        }
+
+        .distance-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1A1A1A;
+        }
+
+        .distance-note {
+            font-size: 11px;
+            color: #636E72;
+            margin-top: 2px;
+        }
+
+        /* Helper Text */
+        .form-helper {
+            font-size: 10px;
+            color: #636E72;
+            margin-top: 2px;
+            font-style: italic;
+        }
+
+        /* Rate Type Buttons */
+        .rate-type-group {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .rate-button {
+            flex: 1;
+            height: 26px;
+            padding: 0;
+            border: 1px solid #D0D0D0;
+            border-radius: 4px;
+            background: #F8F9FB;
+            color: #636E72;
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .rate-button:hover {
+            border-color: #B08D57;
+            background: #FFFBF7;
+            color: #B08D57;
+        }
+
+        .rate-button.active {
+            background: #B08D57;
+            border-color: #B08D57;
+            color: #FFFFFF;
+        }
+
+        /* Dimensions - Horizontal 3-Column */
+        .dimensions-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #E8E3D8;
+        }
+
+        .dimensions-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #636E72;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .dimensions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .dimension-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .dimension-input-group label {
+            font-size: 9px;
+            font-weight: 600;
+            color: #1A1A1A;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .dimension-pair {
+            display: grid;
+            grid-template-columns: 1fr 0.6fr;
+            gap: 4px;
+        }
+
+        .dimension-pair input {
+            height: 28px;
+            font-size: 11px;
+            padding: 4px 6px;
+        }
+
+        .dimension-suffix {
+            font-size: 10px;
+            color: #636E72;
+            align-self: center;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Sticky Footer */
+        .footer {
+            background: #FFFFFF;
+            border-top: 1px solid #D0D0D0;
+            padding: 20px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            height: 44px;
+            padding: 0 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%);
+            color: #FFFFFF;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25), inset 0 -1px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.12);
+            border: 1px solid #7A5F3A;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .btn-primary:hover {
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25), inset 0 -1px 2px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%);
+            color: #FFFFFF;
+            border: 1px solid #7A5F3A;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25), inset 0 -1px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25), inset 0 -1px 2px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .btn-tertiary {
+            background: transparent;
+            color: #636E72;
+            border: none;
+            padding: 0 16px;
+        }
+
+        .btn-tertiary:hover {
+            color: #1A1A1A;
+            text-decoration: underline;
+        }
+
+        /* Textarea styling */
+        textarea.form-input {
+            font-family: inherit;
+            padding: 8px 10px;
+            border: 1px solid #D0D0D0;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #E8E3D8;
+            justify-content: flex-end;
+        }
+
+        .form-actions .btn {
+            min-width: 140px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .three-column-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .three-column-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .schedule-pair {
+                grid-template-columns: 1fr;
+            }
+
+            .payment-cargo-row {
+                grid-template-columns: 1fr;
+            }
+
+            .address-pair {
+                grid-template-columns: 1fr;
+            }
+
+            .dimensions-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px 16px;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .address-row-1 {
+                grid-template-columns: 1fr;
+            }
+
+            .address-row-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .payment-row {
+                grid-template-columns: 1fr;
+            }
+
+            .dimensions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer {
+                flex-direction: column;
+                padding: 16px;
+            }
+
+            .button-group {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: none;
+            }
+        }
+
+        .form-input:focus-visible,
+        .form-select:focus-visible,
+        .btn:focus-visible {
+            outline: 2px solid #B08D57;
+            outline-offset: 2px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-brand">🚚 FreightClub</div>
+        <div class="header-controls">
+            <div style="font-size: 18px;">🔔</div>
+            <div class="avatar"></div>
+        </div>
+    </div>
+
+    <!-- Main Wrapper -->
+    <div class="wrapper">
+        <!-- Content -->
+        <div class="content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>Create New Load</h1>
+                <div class="page-header-subtitle">Post a load to the board. Fill in pickup and delivery details below.</div>
+            </div>
+
+            <!-- Form Container Panel -->
+            <div class="form-container">
+                <div class="form-layout">
+                    <!-- THREE-COLUMN LAYOUT -->
+                    <div class="three-column-grid">
+                        <!-- LEFT: Logistics & Timing -->
+                        <div class="form-column">
+                            <!-- Origin --><div class="section-panel"><div class="section-header">1. ORIGIN</div><div class="address-row-1"><div class="form-group"><label class="form-label required">Street</label><input type="text" class="form-input" placeholder="123 Industrial Way"></div><div class="form-group"><label class="form-label">Suite/Unit</label><input type="text" class="form-input" placeholder="Suite A"></div></div><div class="address-row-2"><div class="form-group"><label class="form-label required">City</label><input type="text" class="form-input" placeholder="Chicago"></div><div class="form-group"><label class="form-label required">State</label><select class="form-select"><option>IL</option><option>IN</option></select></div><div class="form-group"><label class="form-label required">ZIP</label><input type="text" class="form-input" placeholder="60601"></div></div></div>
+
+                            <!-- Destination --><div class="section-panel"><div class="section-header">2. DESTINATION</div><div class="address-row-1"><div class="form-group"><label class="form-label required">Street</label><input type="text" class="form-input" placeholder="456 Distribution"></div><div class="form-group"><label class="form-label">Suite/Unit</label><input type="text" class="form-input" placeholder="Suite B"></div></div><div class="address-row-2"><div class="form-group"><label class="form-label required">City</label><input type="text" class="form-input" placeholder="Indianapolis"></div><div class="form-group"><label class="form-label required">State</label><select class="form-select"><option>IL</option><option>IN</option></select></div><div class="form-group"><label class="form-label required">ZIP</label><input type="text" class="form-input" placeholder="46201"></div></div></div>
+
+                            <!-- Schedule --><div class="section-panel schedule-hero"><div class="section-header">3. SCHEDULE</div><div class="schedule-pair"><div class="section-panel" style="border-left: 3px solid #B08D57; background: #FFFBF7;"><div class="section-subheader">Pickup</div><div class="schedule-window-content"><div class="schedule-input-wrapper"><div class="schedule-window-label">Earliest Date *</div><input type="date" class="form-input" value="2026-06-18"></div><div class="schedule-input-wrapper"><div class="schedule-window-label">Earliest Time *</div><input type="time" class="form-input" value="08:00"></div><div class="schedule-input-wrapper"><div class="schedule-window-label">Latest Date *</div><input type="date" class="form-input" value="2026-06-18"></div><div class="schedule-input-wrapper"><div class="schedule-window-label">Latest Time *</div><input type="time" class="form-input" value="14:00"></div></div></div><div class="section-panel" style="border-left: 3px solid #B08D57; background: #FFFBF7;"><div class="section-subheader">Delivery</div><div class="schedule-window-content"><div class="schedule-input-wrapper"><div class="schedule-window-label">Earliest Date *</div><input type="date" class="form-input" value="2026-06-18"></div><div class="schedule-input-wrapper"><div class="schedule-window-label">Earliest Time *</div><input type="time" class="form-input" value="16:00"></div><div class="schedule-input-wrapper"><div class="schedule-window-label">Latest Date *</div><input type="date" class="form-input" value="2026-06-19"></div><div class="schedule-input-wrapper"><div class="schedule-window-label">Latest Time *</div><input type="time" class="form-input" value="18:00"></div></div></div></div></div>
+                        </div>
+
+                        <!-- MIDDLE: Cargo & Equipment -->
+                        <div class="form-column">
+                            <div class="section-panel"><div class="section-header">4. CARGO & EQUIPMENT</div><div class="compact-layout">
+                                <div class="form-group"><label class="form-label required">Commodity</label><input type="text" class="form-input" placeholder="Steel, Electronics"></div>
+                                <div class="form-group"><label class="form-label required">Weight</label><input type="number" class="form-input" placeholder="0.00" min="0.01" step="0.01"><div class="form-helper">lbs • Max: 80,000</div></div>
+                                <div class="dimensions-section"><div class="dimensions-label">Dimensions (Optional)</div><div class="dimensions-grid"><div class="dimension-input-group"><label>Length</label><div class="dimension-pair"><input type="number" placeholder="0" min="0"><div class="dimension-suffix">ft</div></div><div class="dimension-pair"><input type="number" placeholder="0" min="0" max="11"><div class="dimension-suffix">in</div></div></div><div class="dimension-input-group"><label>Width</label><div class="dimension-pair"><input type="number" placeholder="0" min="0"><div class="dimension-suffix">ft</div></div><div class="dimension-pair"><input type="number" placeholder="0" min="0" max="11"><div class="dimension-suffix">in</div></div></div><div class="dimension-input-group"><label>Height</label><div class="dimension-pair"><input type="number" placeholder="0" min="0"><div class="dimension-suffix">ft</div></div><div class="dimension-pair"><input type="number" placeholder="0" min="0" max="11"><div class="dimension-suffix">in</div></div></div></div></div>
+                            </div></div>
+                        </div>
+
+                        <!-- RIGHT: Payment & Terms -->
+                        <div class="form-column">
+                            <div class="section-panel"><div class="section-header">5. PAYMENT & TERMS</div><div class="compact-layout">
+                                <div class="form-group"><label class="form-label required">Equipment Type</label><select class="form-select"><option>Dry Van</option><option>Flatbed</option><option>Refrigerated</option><option>Tanker</option></select></div>
+                                <div class="form-group"><label class="form-label required">Terms</label><select class="form-select"><option>Not specified</option><option>Immediate</option><option>Net 7</option><option>Net 14</option></select></div>
+                                <div class="form-group"><label class="form-label required">Pay Rate</label><input type="number" class="form-input" placeholder="0.00" min="0.01" step="0.01"><div class="rate-type-group"><button type="button" class="rate-button active">Flat Rate</button><button type="button" class="rate-button">Per Mile</button></div></div>
+                            </div></div>
+
+                            <div class="section-panel"><div class="section-header">6. SPECIAL INSTRUCTIONS</div><div class="compact-layout">
+                                <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" placeholder="Any special loading/unloading instructions..." style="min-height: 100px; resize: vertical;"></textarea></div>
+                            </div></div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-actions">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-secondary">Save as Draft</button>
+                        <button class="btn btn-primary">Create & Post Load</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

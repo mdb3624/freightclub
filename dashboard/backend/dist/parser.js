@@ -1,0 +1,209 @@
+"use strict";
+/**
+ * Markdown parser for extracting story data from Story_Map.md
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.parseMarkdown = parseMarkdown;
+exports.validate = validate;
+const fs_1 = __importDefault(require("fs"));
+const VALID_STATUSES = ['COMPLETED', 'IN_PROGRESS', 'READY_FOR_DESIGN', 'BACKLOG', 'MIGRATION_PENDING'];
+const VALID_PHASES = [1, 2, 3, 4, 5, 6, 7, 10, 11, 'cross'];
+/**
+ * Parse a markdown file and extract story data
+ */
+function parseMarkdown(filepath) {
+    if (!fs_1.default.existsSync(filepath)) {
+        throw new Error(`File not found: ${filepath}`);
+    }
+    const content = fs_1.default.readFileSync(filepath, 'utf-8');
+    const lines = content.split('\n');
+    const stories = parseTableRows(lines);
+    const activeStories = stories.filter(s => s.status === 'IN_PROGRESS' || s.status === 'READY_FOR_DESIGN');
+    const currentSprint = {
+        number: 1,
+        stories: stories.filter(s => [1, 2, 3].includes(s.phase) && s.status !== 'BACKLOG'),
+        completedCount: stories.filter(s => s.status === 'COMPLETED').length,
+        totalCount: stories.length,
+    };
+    const backlog = stories.filter(s => s.status === 'BACKLOG' || s.phase === 'cross' || ![1, 2, 3].includes(s.phase));
+    return {
+        lastUpdated: new Date().toISOString(),
+        activeStories,
+        currentSprint,
+        backlog,
+    };
+}
+/**
+ * Parse table rows from markdown content
+ */
+function parseTableRows(lines) {
+    const stories = [];
+    let headerFound = false;
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        // Skip the markdown separator line (contains ---)
+        if (line.includes('---')) {
+            if (line.includes('|')) {
+                headerFound = true;
+            }
+            continue;
+        }
+        // Process table rows (must start with | and have cells)
+        if (headerFound && line.startsWith('|') && !line.includes('---')) {
+            const cells = parseTableRow(line);
+            if (cells.length >= 5) {
+                const story = createStoryFromRow(cells);
+                if (story) {
+                    stories.push(story);
+                }
+            }
+        }
+        // Stop when we exit the table (empty line after data rows)
+        if (headerFound && !line.startsWith('|') && line.length > 0) {
+            headerFound = false;
+        }
+    }
+    return stories;
+}
+/**
+ * Parse a single table row
+ */
+function parseTableRow(line) {
+    return line
+        .split('|')
+        .map(cell => cell.trim())
+        .filter(cell => cell.length > 0);
+}
+/**
+ * Create a Story object from a table row
+ */
+function createStoryFromRow(cells) {
+    if (cells.length < 5) {
+        return null;
+    }
+    const id = cells[0];
+    const title = cells[1];
+    const status = cells[2];
+    const phase = cells[3];
+    const dependsOn = cells[4];
+    // Validate status
+    if (!VALID_STATUSES.includes(status)) {
+        console.warn(`Invalid status "${status}" for story ${id}`);
+        return null;
+    }
+    // Parse and validate phase
+    let parsedPhase;
+    if (phase === 'cross') {
+        parsedPhase = 'cross';
+    }
+    else {
+        const phaseNum = parseInt(phase, 10);
+        if (!VALID_PHASES.includes(phaseNum)) {
+            console.warn(`Invalid phase "${phase}" for story ${id}`);
+            return null;
+        }
+        parsedPhase = phaseNum;
+    }
+    // Parse dependencies
+    const dependencies = dependsOn
+        .split(',')
+        .map(dep => dep.trim())
+        .filter(dep => dep.length > 0);
+    return {
+        id,
+        title,
+        status: status,
+        phase: parsedPhase,
+        dependencies,
+        roles: [],
+        coverage: 0,
+    };
+}
+/**
+ * Validate a markdown file for correctness
+ */
+function validate(filepath) {
+    const errors = [];
+    try {
+        if (!fs_1.default.existsSync(filepath)) {
+            return {
+                valid: false,
+                errors: [{ line: 0, message: `File not found: ${filepath}` }],
+            };
+        }
+        const content = fs_1.default.readFileSync(filepath, 'utf-8');
+        const lines = content.split('\n');
+        const stories = parseTableRows(lines);
+        const seenIds = new Set();
+        let headerFound = false;
+        let lineNumber = 0;
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            // Track header line
+            if (line.includes('---') && line.includes('|')) {
+                headerFound = true;
+                continue;
+            }
+            // Skip separator lines
+            if (line.includes('---')) {
+                continue;
+            }
+            // Only process lines that are table rows (start with |)
+            if (!headerFound || !line.startsWith('|')) {
+                continue;
+            }
+            lineNumber = i + 1;
+            const cells = parseTableRow(line);
+            if (cells.length < 5) {
+                continue;
+            }
+            const id = cells[0];
+            const status = cells[2];
+            const phase = cells[3];
+            // Check for duplicate IDs
+            if (seenIds.has(id)) {
+                errors.push({
+                    line: lineNumber,
+                    message: `Duplicate story ID: ${id}`,
+                });
+            }
+            seenIds.add(id);
+            // Validate status
+            if (!VALID_STATUSES.includes(status)) {
+                errors.push({
+                    line: lineNumber,
+                    message: `Invalid status "${status}" for story ${id}. Valid: ${VALID_STATUSES.join(', ')}`,
+                });
+            }
+            // Validate phase
+            if (phase !== 'cross') {
+                const phaseNum = parseInt(phase, 10);
+                if (isNaN(phaseNum) || !VALID_PHASES.includes(phaseNum)) {
+                    errors.push({
+                        line: lineNumber,
+                        message: `Invalid phase "${phase}" for story ${id}. Valid: ${VALID_PHASES.join(', ')}`,
+                    });
+                }
+            }
+        }
+        return {
+            valid: errors.length === 0,
+            errors,
+        };
+    }
+    catch (error) {
+        return {
+            valid: false,
+            errors: [
+                {
+                    line: 0,
+                    message: `Validation error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                },
+            ],
+        };
+    }
+}
+//# sourceMappingURL=parser.js.map

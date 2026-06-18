@@ -116,13 +116,13 @@ A complete cross-referenced guide to all project documentation. Use this as your
 ### Testing Documentation
 - [[TEST_ENVIRONMENT.md]] — Test environment setup
 - [[testing_standards.md|.claude/rules/testing_standards.md]] — Testing requirements
-- [[CRITICAL_ISSUE_TEST_PLAN.md]] — Critical issue testing
+- [[CRITICAL_ISSUE_TEST_PLAN|docs/archive/CRITICAL_ISSUE_TEST_PLAN.md]] — Critical issue testing
 - [[docs/testing/]] — Testing documentation
 
 ### Coverage & Audits
 - [[BACKEND_COVERAGE_REMEDIATION_ROADMAP.md]] — Coverage targets
 - [[CONFIGURATION_COMPLIANCE_REVIEW.md]] — Compliance status
-- [[GATE_AUDIT_FINAL_2026_05_15.md]] — Final gate audit
+- [[GATE_AUDIT_FINAL_2026_05_15|docs/archive/audits/GATE_AUDIT_FINAL_2026_05_15.md]] — Final gate audit
 
 ---
 
@@ -130,10 +130,10 @@ A complete cross-referenced guide to all project documentation. Use this as your
 
 ### Deployment Guides
 - [[DEPLOYMENT.md]] — Deployment procedures
-- [[DEPLOYMENT_CHECKLIST.md]] — Pre-deployment checklist
-- [[GCP_DEPLOYMENT_SETUP.md]] — Google Cloud setup
-- [[GOOGLE_CLOUD_DEPLOYMENT_READY.md]] — Cloud readiness status
-- [[PRODUCTION_DEPLOYMENT_READY.md]] — Production readiness
+- [[DEPLOYMENT_CHECKLIST|docs/archive/DEPLOYMENT_CHECKLIST.md]] — Pre-deployment checklist
+- [[GCP_DEPLOYMENT_SETUP|docs/archive/GCP_DEPLOYMENT_SETUP.md]] — Google Cloud setup
+- [[GOOGLE_CLOUD_DEPLOYMENT_READY|docs/archive/GOOGLE_CLOUD_DEPLOYMENT_READY.md]] — Cloud readiness status
+- [[PRODUCTION_DEPLOYMENT_READY|docs/archive/PRODUCTION_DEPLOYMENT_READY.md]] — Production readiness
 
 ### Configuration
 - [[MAVEN_LOCAL_SETUP.md]] — Maven setup (Windows)
@@ -149,22 +149,24 @@ A complete cross-referenced guide to all project documentation. Use this as your
 ## 📊 Reports & Status
 
 ### Completion Reports
-- [[PHASE_7_COMPLETION_SUMMARY.md]] — Phase 7 summary
-- [[LIBRARIAN_SIGN_OFF_PHASE_7.md]] — Librarian approval
-- [[REVIEWER_SIGN_OFF_PHASE_7.md]] — Reviewer approval
-- [[PHASE7_COMPLETION_STATUS.md]] — Detailed status
-- [[PHASE7_ANALYTICS_STATUS_CORRECTED.md]] — Analytics corrections
+- [[PHASE_7_COMPLETION_SUMMARY|docs/archive/phases/PHASE_7_COMPLETION_SUMMARY.md]] — Phase 7 summary
+- [[LIBRARIAN_SIGN_OFF_PHASE_7|docs/archive/phases/LIBRARIAN_SIGN_OFF_PHASE_7.md]] — Librarian approval
+- [[REVIEWER_SIGN_OFF_PHASE_7|docs/archive/phases/REVIEWER_SIGN_OFF_PHASE_7.md]] — Reviewer approval
+- [[PHASE7_COMPLETION_STATUS|docs/archive/phases/PHASE7_COMPLETION_STATUS.md]] — Detailed status
+- [[PHASE7_ANALYTICS_STATUS_CORRECTED|docs/archive/phases/PHASE7_ANALYTICS_STATUS_CORRECTED.md]] — Analytics corrections
+
 
 ### Critical Issues
-- [[CRITICAL_ISSUES_STATUS.md]] — Open issues tracker
+- [[CRITICAL_ISSUES_STATUS|docs/archive/CRITICAL_ISSUES_STATUS.md]] — Open issues tracker
 - [[KNOWN_ISSUES.md]] — Known issues
 - [[REMEDIATION_PLAN.md]] — Fix roadmap
 
 ### Analysis & Audits
-- [[PROJECT_AUDIT_REPORT_2026_05_19.md]] — Comprehensive audit
-- [[ARCHITECTURE_AUDIT_2026-05-07.md]] — Architecture review
-- [[GLOBAL_MIGRATION_READINESS_REPORT.md]] — Migration status
-- [[GLOBAL_HARDENING_REPORT.md]] — Security hardening status
+- [[FILE_AUDIT_2026_06_17|docs/project/audit/FILE_AUDIT_2026_06_17.md]] — Project cleanup and file audit (NEW)
+- [[PROJECT_AUDIT_REPORT_2026_05_19|docs/archive/audits/PROJECT_AUDIT_REPORT_2026_05_19.md]] — Comprehensive audit
+- [[ARCHITECTURE_AUDIT_2026-05-07|docs/archive/audits/ARCHITECTURE_AUDIT_2026-05-07.md]] — Architecture review
+- [[GLOBAL_MIGRATION_READINESS_REPORT|docs/archive/GLOBAL_MIGRATION_READINESS_REPORT.md]] — Migration status
+- [[GLOBAL_HARDENING_REPORT|docs/archive/GLOBAL_HARDENING_REPORT.md]] — Security hardening status
 
 ---
 
@@ -172,7 +174,7 @@ A complete cross-referenced guide to all project documentation. Use this as your
 
 ### API & Integration
 - [[API.md]] — API documentation
-- [[INTEGRATION_TEST_IMPLEMENTATION_GUIDE.md]] — Integration testing
+- [[INTEGRATION_TEST_IMPLEMENTATION_GUIDE|docs/archive/INTEGRATION_TEST_IMPLEMENTATION_GUIDE.md]] — Integration testing
 
 ### Feature Specs
 - [[Quick_Pay_Settlement_Design|docs/architecture/Quick_Pay_Settlement_Design.md]]
@@ -180,8 +182,8 @@ A complete cross-referenced guide to all project documentation. Use this as your
 
 ### Debugging & Troubleshooting
 - [[DEBUG_REGISTRATION.md]] — Registration debugging
-- [[BUNDLE_ANALYSIS_GOLDEN_PATH.md]] — Bundle analysis
-- [[BUNDLE_ANALYSIS_LOGIN_ROUTE.md]] — Login performance
+- [[BUNDLE_ANALYSIS_GOLDEN_PATH|docs/archive/BUNDLE_ANALYSIS_GOLDEN_PATH.md]] — Bundle analysis
+- [[BUNDLE_ANALYSIS_LOGIN_ROUTE|docs/archive/BUNDLE_ANALYSIS_LOGIN_ROUTE.md]] — Login performance
 
 ---
 
@@ -189,7 +191,7 @@ A complete cross-referenced guide to all project documentation. Use this as your
 
 ### Changes
 - [[docs/changes/]] — Change request directory
-- [[CHG-703.md]] — Change request example
+- [[CHG-703|docs/archive/CHG-703.md]] — Change request example
 - [[change-request-protocol.md|.claude/rules/change-request-protocol.md]] — CHG protocol
 
 ### Technical Debt
@@ -216,9 +218,9 @@ A complete cross-referenced guide to all project documentation. Use this as your
 - [[STORY_MAP_GUARDRAILS_TEMPLATE.md]] — Story template
 
 ### Quick References
-- [[ROLE_QUICK_REFERENCE.md]] — Role cheat sheet
-- [[ROLE_INTERACTIONS.md]] — How roles interact
-- [[ROLE_DATA_FLOW.md]] — Data flow across roles
+- [[ROLE_QUICK_REFERENCE|docs/archive/ROLE_QUICK_REFERENCE.md]] — Role cheat sheet
+- [[ROLE_INTERACTIONS|docs/archive/ROLE_INTERACTIONS.md]] — How roles interact
+- [[ROLE_DATA_FLOW|docs/archive/ROLE_DATA_FLOW.md]] — Data flow across roles
 
 ---
 
@@ -262,6 +264,6 @@ README.md
 
 ---
 
-**Last Updated:** 2026-06-12  
+**Last Updated:** 2026-06-17  
 **Maintainer:** Librarian  
 **Status:** 🟢 Complete cross-reference system

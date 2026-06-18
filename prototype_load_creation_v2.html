@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Creation — US-103-v2 Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: #EFEBE0;
+            color: #1A1A1A;
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: #FFFFFF;
+            border-bottom: 1px solid #D0D0D0;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            height: 64px;
+        }
+
+        .header-brand {
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #B08D57, #8C6D3F);
+        }
+
+        /* Main Container */
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 64px);
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px 32px;
+            overflow-y: auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            min-height: 64px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #1A1A1A;
+            line-height: 1.2;
+        }
+
+        .page-header-subtitle {
+            margin-left: 40px;
+            padding-left: 40px;
+            border-left: 2px solid #D0D0D0;
+            font-size: 14px;
+            color: #636E72;
+            font-weight: 400;
+        }
+
+        /* Main Form Container Panel */
+        .form-container {
+            background: #FFFFFF;
+            border: 2px solid #C9A46A;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            max-width: 1400px;
+        }
+
+        /* Two-Column Layout */
+        .form-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 32px;
+            align-items: start;
+        }
+
+        /* Left Column */
+        .form-column-left {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Right Column */
+        .form-column-right {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Container Panel (wraps multiple sections) */
+        .container-panel {
+            background: #FFFFFF;
+            border: 1px solid #E8E3D8;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Section Panel */
+        .section-panel {
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin-bottom: 24px;
+        }
+
+        .section-panel:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Schedule Panel - Special Styling */
+        .section-panel.schedule {
+            background: #FFFFFF;
+            border: 1px solid #E8E3D8;
+            border-radius: 8px;
+            border-left: 4px solid #B08D57;
+            padding: 24px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFFBF7 100%);
+            margin: 0;
+        }
+
+        /* Standalone Panels (Cargo, Equipment) */
+        .standalone-panel {
+            background: #FFFFFF;
+            border: 1px solid #E8E3D8;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Section Header */
+        .section-header {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #1A1A1A;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #E8E3D8;
+        }
+
+        .section-panel .section-header {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 16px;
+        }
+
+        /* Section Subheader */
+        .section-subheader {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #A68B5B;
+            margin: 16px 0 12px 0;
+        }
+
+        .section-subheader:first-child {
+            margin-top: 0;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #1A1A1A;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: #E74C3C;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            height: 40px;
+            padding: 8px 12px;
+            border: 1px solid #D0D0D0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #FFFFFF;
+            color: #1A1A1A;
+            transition: all 0.15s;
+        }
+
+        .form-input::placeholder {
+            color: #999999;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #B08D57;
+            box-shadow: 0 0 0 3px rgba(176, 141, 87, 0.08);
+            background: #FFFBF7;
+        }
+
+        /* Address Layout */
+        .address-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .address-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1.2fr;
+            gap: 12px;
+        }
+
+        /* Distance Display */
+        .distance-display {
+            background: linear-gradient(135deg, #F8F9FB 0%, #F5F7FA 100%);
+            border: 1px solid #D0D0D0;
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #D0D0D0;
+        }
+
+        .distance-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1A1A1A;
+        }
+
+        .distance-note {
+            font-size: 12px;
+            color: #636E72;
+            margin-top: 4px;
+        }
+
+        /* Schedule Grid - 4 Columns */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .schedule-cell .form-label {
+            font-size: 12px;
+        }
+
+        /* Cargo Details Grid */
+        .cargo-layout {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 16px;
+        }
+
+        .cargo-left {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .cargo-right {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Dimensions */
+        .dimensions-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #E8E3D8;
+        }
+
+        .dimensions-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #636E72;
+            margin-bottom: 12px;
+        }
+
+        .dimension-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .dimension-pair {
+            display: grid;
+            grid-template-columns: 1fr 0.7fr;
+            gap: 6px;
+        }
+
+        .dimension-suffix {
+            font-size: 12px;
+            color: #636E72;
+            align-self: center;
+            text-align: center;
+        }
+
+        /* Helper Text */
+        .form-helper {
+            font-size: 12px;
+            color: #636E72;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        /* Rate Type Buttons */
+        .rate-type-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .rate-button {
+            flex: 1;
+            height: 32px;
+            padding: 0;
+            border: 1px solid #D0D0D0;
+            border-radius: 5px;
+            background: #F8F9FB;
+            color: #636E72;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .rate-button:hover {
+            border-color: #B08D57;
+            background: #FFFBF7;
+            color: #B08D57;
+        }
+
+        .rate-button.active {
+            background: #B08D57;
+            border-color: #B08D57;
+            color: #FFFFFF;
+        }
+
+        /* Sticky Footer */
+        .footer {
+            background: #FFFFFF;
+            border-top: 1px solid #D0D0D0;
+            padding: 20px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            height: 44px;
+            padding: 0 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%);
+            color: #FFFFFF;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25), inset 0 -1px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.12);
+            border: 1px solid #7A5F3A;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .btn-primary:hover {
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25), inset 0 -1px 2px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #F8F9FB;
+            color: #1A1A1A;
+            border: 1px solid #D0D0D0;
+        }
+
+        .btn-secondary:hover {
+            background: #FFFFFF;
+            border-color: #B08D57;
+            color: #B08D57;
+        }
+
+        .btn-tertiary {
+            background: transparent;
+            color: #636E72;
+            border: none;
+            padding: 0 16px;
+        }
+
+        .btn-tertiary:hover {
+            color: #1A1A1A;
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .form-layout {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .schedule-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px 16px;
+            }
+
+            .form-container {
+                padding: 20px;
+                border-radius: 8px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                min-height: auto;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+                margin-bottom: 8px;
+            }
+
+            .page-header-subtitle {
+                margin-left: 0;
+                padding-left: 0;
+                border-left: none;
+            }
+
+            .address-row {
+                grid-template-columns: 1fr;
+            }
+
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cargo-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .footer {
+                flex-direction: column;
+                padding: 16px;
+            }
+
+            .button-group {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: none;
+            }
+        }
+
+        /* Focus visible for accessibility */
+        .form-input:focus-visible,
+        .form-select:focus-visible,
+        .btn:focus-visible {
+            outline: 2px solid #B08D57;
+            outline-offset: 2px;
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-brand">🚚 FreightClub</div>
+        <div class="header-controls">
+            <div style="font-size: 18px;">🔔</div>
+            <div class="avatar"></div>
+        </div>
+    </div>
+
+    <!-- Main Wrapper -->
+    <div class="wrapper">
+        <!-- Content -->
+        <div class="content">
+            <!-- Page Header (matched to header height) -->
+            <div class="page-header">
+                <h1>Create New Load</h1>
+                <div class="page-header-subtitle">Post a load to the board. Fill in pickup and delivery details below.</div>
+            </div>
+
+            <!-- Form Container Panel -->
+            <div class="form-container">
+                <div class="form-layout">
+                    <!-- LEFT COLUMN: Addresses + Distance (in container) -->
+                    <div class="form-column-left">
+                        <!-- Address Container Panel (wraps Origin + Destination + Distance) -->
+                        <div class="container-panel">
+                            <!-- Origin Section -->
+                            <div class="section-panel">
+                                <div class="section-header">Origin</div>
+                                <div class="address-fields">
+                                    <div class="form-group">
+                                        <label class="form-label required">Street Address</label>
+                                        <input type="text" class="form-input" placeholder="123 Industrial Way">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Suite / Unit</label>
+                                        <input type="text" class="form-input" placeholder="Suite A, Dock 3 (optional)">
+                                    </div>
+                                    <div class="address-row">
+                                        <div class="form-group">
+                                            <label class="form-label required">City</label>
+                                            <input type="text" class="form-input" placeholder="Chicago">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label required">State</label>
+                                            <select class="form-select">
+                                                <option value="">Select</option>
+                                                <option value="IL">Illinois</option>
+                                                <option value="CA">California</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label required">ZIP</label>
+                                            <input type="text" class="form-input" placeholder="60601">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Destination Section -->
+                            <div class="section-panel">
+                                <div class="section-header">Destination</div>
+                                <div class="address-fields">
+                                    <div class="form-group">
+                                        <label class="form-label required">Street Address</label>
+                                        <input type="text" class="form-input" placeholder="456 Commerce Blvd">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Suite / Unit</label>
+                                        <input type="text" class="form-input" placeholder="Suite B, Dock 1 (optional)">
+                                    </div>
+                                    <div class="address-row">
+                                        <div class="form-group">
+                                            <label class="form-label required">City</label>
+                                            <input type="text" class="form-input" placeholder="Detroit">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label required">State</label>
+                                            <select class="form-select">
+                                                <option value="">Select</option>
+                                                <option value="MI">Michigan</option>
+                                                <option value="CA">California</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label required">ZIP</label>
+                                            <input type="text" class="form-input" placeholder="48201">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Distance Display (associated with addresses) -->
+                            <div class="distance-display">
+                                <div class="distance-value">📍 847 miles</div>
+                                <div class="distance-note">Estimated road distance • Automatically calculated</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: Schedule + Cargo + Equipment -->
+                    <div class="form-column-right">
+                        <!-- Schedule Panel -->
+                        <div class="section-panel schedule">
+                            <div class="section-header">Schedule</div>
+
+                            <!-- Pickup Window -->
+                            <div class="section-subheader">Pickup Window</div>
+                            <div class="schedule-grid">
+                                <div class="form-group schedule-cell">
+                                    <label class="form-label required">Date</label>
+                                    <input type="date" class="form-input" value="2026-06-18">
+                                </div>
+                                <div class="form-group schedule-cell">
+                                    <label class="form-label required">Time</label>
+                                    <input type="time" class="form-input" value="08:00">
+                                </div>
+                                <div class="form-group schedule-cell">
+                                    <label class="form-label required">Latest Date</label>
+                                    <input type="date" class="form-input" value="2026-06-18">
+                                </div>
+                                <div class="form-group schedule-cell">
+                                    <label class="form-label required">Latest Time</label>
+                                    <input type="time" class="form-input" value="14:00">
+                                </div>
+                            </div>
+
+                            <!-- Delivery Window -->
+                            <div class="section-subheader">Delivery Window</div>
+                            <div class="schedule-grid">
+                                <div class="form-group schedule-cell">
+                                    <label class="form-label required">Date</label>
+                                    <input type="date" class="form-input" value="2026-06-18">
+                                </div>
+                                <div class="form-group schedule-cell">
+                                    <label class="form-label required">Time</label>
+                                    <input type="time" class="form-input" value="16:00">
+                                </div>
+                                <div class="form-group schedule-cell">
+                                    <label class="form-label required">Latest Date</label>
+                                    <input type="date" class="form-input" value="2026-06-19">
+                                </div>
+                                <div class="form-group schedule-cell">
+                                    <label class="form-label required">Latest Time</label>
+                                    <input type="time" class="form-input" value="18:00">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cargo Details Panel -->
+                        <div class="standalone-panel">
+                            <div class="section-header">Cargo Details</div>
+                            <div class="cargo-layout">
+                                <div class="cargo-left">
+                                    <div class="form-group">
+                                        <label class="form-label required">Commodity</label>
+                                        <input type="text" class="form-input" placeholder="Steel coils, Electronics, etc.">
+                                        <div class="form-helper">Be specific to help carriers assess the load</div>
+                                    </div>
+                                </div>
+                                <div class="cargo-right">
+                                    <div class="form-group">
+                                        <label class="form-label required">Weight</label>
+                                        <input type="number" class="form-input" placeholder="0.00" min="0.01" max="150000" step="0.01">
+                                        <div class="form-helper">lbs • Max: 80,000</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="dimensions-section">
+                                <div class="dimensions-label">Dimensions (Optional)</div>
+                                <div class="dimension-row">
+                                    <div class="dimension-pair">
+                                        <input type="number" class="form-input" placeholder="0" min="0">
+                                        <div class="dimension-suffix">ft</div>
+                                    </div>
+                                    <div class="dimension-pair">
+                                        <input type="number" class="form-input" placeholder="0" min="0" max="11">
+                                        <div class="dimension-suffix">in</div>
+                                    </div>
+                                </div>
+                                <div class="form-helper" style="margin-top: 8px;">Length</div>
+                            </div>
+                        </div>
+
+                        <!-- Equipment & Payment Panel -->
+                        <div class="standalone-panel">
+                            <div class="section-header">Equipment & Payment</div>
+
+                            <div class="form-group">
+                                <label class="form-label required">Equipment Type</label>
+                                <select class="form-select">
+                                    <option value="DRY_VAN">Dry Van</option>
+                                    <option value="FLATBED">Flatbed</option>
+                                    <option value="REFRIGERATED">Refrigerated</option>
+                                    <option value="TANKER">Tanker</option>
+                                    <option value="SPECIALIZED">Specialized</option>
+                                    <option value="STEP_DECK">Step Deck</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label required">Pay Rate</label>
+                                <input type="number" class="form-input" placeholder="0.00" min="0.01" max="99999.99" step="0.01">
+                                <div class="rate-type-group">
+                                    <button type="button" class="rate-button active">Flat Rate</button>
+                                    <button type="button" class="rate-button">Per Mile</button>
+                                </div>
+                                <div class="form-helper">$2,118 estimated (847 mi × $2.50/mi)</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Payment Terms</label>
+                                <select class="form-select">
+                                    <option value="">Not specified</option>
+                                    <option value="IMMEDIATE">Immediate (Same/Next Day)</option>
+                                    <option value="NET_7">Net 7</option>
+                                    <option value="NET_14">Net 14</option>
+                                    <option value="NET_30">Net 30</option>
+                                </select>
+                                <div class="form-helper">Days after delivery</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sticky Footer -->
+        <div class="footer">
+            <button class="btn btn-tertiary">Cancel</button>
+            <div class="button-group">
+                <button class="btn btn-secondary">Save as Draft</button>
+                <button class="btn btn-primary">Create & Post Load</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

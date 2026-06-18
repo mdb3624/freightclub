@@ -11,7 +11,7 @@ import { parseMarkdown } from './parser';
 import { Dashboard } from './types';
 
 const app: Express = express();
-const PORT = 3000;
+const PORT = 3001;
 
 // Dashboard cache
 let dashboardCache: Dashboard | null = null;

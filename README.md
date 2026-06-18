@@ -28,15 +28,15 @@ See [PROJECT_PLAN.md](./PROJECT_PLAN.md) for the full roadmap.
 
 ## Running Locally
 
-**Backend** (port 9090):
-```bash
-/c/tools/apache-maven-3.9.9/bin/mvn package -Dmaven.test.skip=true -q -f backend/pom.xml
-"$JAVA_HOME/bin/java" -jar backend/target/freightclub-backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev &
+**Full Stack** (Backend 8080 / Frontend 5173):
+```powershell
+.\dev.ps1
 ```
 
-**Frontend** (port 8080):
-```bash
-cd frontend && npm run dev
+**Testing**:
+```powershell
+.\test-light.ps1       # Fast integration tests
+.\build-and-test-full.ps1  # Full Docker-based test suite
 ```
 
 See [CLAUDE.md](./CLAUDE.md) for full environment setup, conventions, and debugging guidance.

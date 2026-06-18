@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { AxiosError } from 'axios'
 import { Input } from '@/components/ui/Input'
-import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { calculateDistanceMiles } from '../utils/distance'
 import type { LoadFormValues } from '../types'
@@ -50,10 +49,10 @@ const schema = z.object({
   widthIn: z.union([z.number().min(0), z.literal('')]).optional(),
   heightFt: z.union([z.number().min(0), z.literal('')]).optional(),
   heightIn: z.union([z.number().min(0), z.literal('')]).optional(),
-  equipmentType: z.enum(['DRY_VAN', 'FLATBED', 'REEFER', 'STEP_DECK']),
+  equipmentType: z.enum(['DRY_VAN', 'FLATBED', 'REEFER', 'STEP_DECK', 'REFRIGERATED', 'TANKER', 'SPECIALIZED']),
   payRate: z.number({ invalid_type_error: 'Pay rate is required' }).min(0.01, 'Pay rate must be > 0'),
   payRateType: z.enum(['PER_MILE', 'FLAT_RATE']),
-  paymentTerms: z.enum(['QUICK_PAY', 'NET_7', 'NET_15', 'NET_30']).or(z.literal('')),
+  paymentTerms: z.enum(['QUICK_PAY', 'NET_7', 'NET_15', 'NET_30', 'IMMEDIATE', 'NET_14']).or(z.literal('')),
   specialRequirements: z.string().optional().default(''),
   overweightAcknowledged: z.boolean().optional().default(false),
 }).superRefine((data, ctx) => {
@@ -87,57 +86,112 @@ const schema = z.object({
   }
 })
 
+// Style constants per Shipper Style Guide §6
 const selectClass = 'rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500'
+
+const formContainerStyle: React.CSSProperties = {
+  background: '#FFFFFF',
+  border: '2px solid #C9A46A',
+  borderRadius: '12px',
+  padding: '32px',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+  display: 'block',
+  width: '100%',
+}
+
+const sectionPanelStyle: React.CSSProperties = {
+  background: 'linear-gradient(135deg, #FFFFFF 0%, #FFFBF7 100%)',
+  border: '1px solid #E8E3D8',
+  borderLeft: '4px solid #B08D57',
+  borderRadius: '8px',
+  padding: '20px',
+}
+
+const bronzeButtonStyle: React.CSSProperties = {
+  background: 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
+  boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)',
+  border: '1px solid #7A5F3A',
+  color: '#FFFFFF',
+  height: '44px',
+  padding: '0 24px',
+  borderRadius: '6px',
+  fontWeight: 500,
+  cursor: 'pointer',
+  fontSize: '14px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minWidth: '140px',
+  transition: 'all 0.2s',
+  whiteSpace: 'nowrap',
+}
+
+const formActionsStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: '12px',
+  marginTop: '24px',
+  paddingTop: '24px',
+  borderTop: '1px solid #E8E3D8',
+  justifyContent: 'flex-end',
+}
 
 interface AddressSectionProps {
   prefix: 'origin' | 'destination'
+  label: string
   register: UseFormRegister<LoadFormValues>
   errors: FieldErrors<LoadFormValues>
 }
 
-function AddressSection({ prefix, register, errors }: AddressSectionProps) {
+function AddressSection({ prefix, label, register, errors }: AddressSectionProps) {
   const addr1Key = `${prefix}Address1` as const
   const addr2Key = `${prefix}Address2` as const
   const cityKey = `${prefix}City` as const
   const stateKey = `${prefix}State` as const
   const zipKey = `${prefix}Zip` as const
-  const label = prefix === 'origin' ? 'Origin' : 'Destination'
 
   return (
-    <div className="space-y-3">
-      <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">{label}</h3>
-      <Input
-        label="Street Address"
-        error={errors[addr1Key]?.message}
-        placeholder={prefix === 'origin' ? 'e.g. 123 Main St' : 'e.g. 456 Industrial Blvd'}
-        {...register(addr1Key)}
-      />
-      <Input
-        label="Suite / Unit"
-        placeholder="Suite, unit, building (optional)"
-        {...register(addr2Key)}
-      />
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <div>
+      {label && (
+        <h3 style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.2px', color: '#1A1A1A', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid #E8E3D8' }}>
+          {label}
+        </h3>
+      )}
+      <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', gap: '12px', marginBottom: '12px' }}>
+        <Input
+          label="Street Address"
+          error={errors[addr1Key]?.message}
+          placeholder={prefix === 'origin' ? 'e.g. 123 Main St' : 'e.g. 456 Industrial Blvd'}
+          {...register(addr1Key)}
+        />
+        <Input
+          label="Suite / Unit"
+          placeholder="Suite (optional)"
+          {...register(addr2Key)}
+        />
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px', marginBottom: '12px' }}>
         <Input
           label="City"
           error={errors[cityKey]?.message}
           placeholder={prefix === 'origin' ? 'e.g. Chicago' : 'e.g. Detroit'}
           {...register(cityKey)}
         />
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">State</label>
-          <select className={selectClass} {...register(stateKey)}>
-            <option value="">Select state</option>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          <label style={{ fontSize: '12px', fontWeight: 500, color: '#1A1A1A' }}>State</label>
+          <select className={selectClass} {...register(stateKey)} style={{ height: '40px' }}>
+            <option value="">Select</option>
             {US_STATES.map(([abbr, name]) => (
               <option key={abbr} value={abbr}>{abbr} — {name}</option>
             ))}
           </select>
           {errors[stateKey] && (
-            <p className="text-xs text-red-600">{errors[stateKey]?.message}</p>
+            <p style={{ fontSize: '12px', color: '#E74C3C' }}>{errors[stateKey]?.message}</p>
           )}
         </div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
         <Input
-          label="Zip Code"
+          label="ZIP"
           error={errors[zipKey]?.message}
           placeholder="e.g. 60601"
           maxLength={10}
@@ -151,6 +205,7 @@ function AddressSection({ prefix, register, errors }: AddressSectionProps) {
 interface LoadFormProps {
   onSubmit: (values: LoadFormValues) => void
   onSaveDraft?: (values: LoadFormValues) => void
+  onCancel?: () => void
   defaultValues?: Partial<LoadFormValues>
   isSubmitting: boolean
   isDraftSaving?: boolean
@@ -158,7 +213,7 @@ interface LoadFormProps {
   submitLabel: string
 }
 
-export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, isDraftSaving, error, submitLabel }: LoadFormProps) {
+export function LoadForm({ onSubmit, onSaveDraft, onCancel, defaultValues, isSubmitting, isDraftSaving, error, submitLabel }: LoadFormProps) {
   const [distanceLoading, setDistanceLoading] = useState(false)
   const [distanceError, setDistanceError] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -169,7 +224,7 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
     watch,
     control,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<LoadFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -262,255 +317,338 @@ export function LoadForm({ onSubmit, onSaveDraft, defaultValues, isSubmitting, i
     : null
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full" style={formContainerStyle}>
       {errorMessage && <ErrorBanner message={errorMessage} />}
 
-      <AddressSection prefix="origin" register={register} errors={errors} />
-      <AddressSection prefix="destination" register={register} errors={errors} />
+      {/* 3-Column Grid Layout */}
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" style={{ marginBottom: '24px' }}>
 
-      {/* Distance (auto-calculated) */}
-      <div className="rounded-lg bg-gray-50 border border-gray-200 px-4 py-3">
-        {distanceLoading ? (
-          <p className="text-sm text-gray-500">Calculating distance...</p>
-        ) : distanceMiles != null ? (
-          <p className="text-sm text-gray-900">
-            <span className="font-semibold">{distanceMiles.toLocaleString()} mi</span>
-            <span className="text-gray-500 ml-1">(estimated road distance)</span>
-          </p>
-        ) : (
-          <p className="text-sm text-gray-400">Distance will calculate automatically once both addresses are filled in</p>
-        )}
-        {distanceError && <p className="text-xs text-red-600 mt-0.5">{distanceError}</p>}
-      </div>
+        {/* LEFT COLUMN: Locations & Timing */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {/* Merged Locations Panel */}
+          <div style={sectionPanelStyle}>
+            <h3 style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.2px', color: '#1A1A1A', marginBottom: '16px', paddingBottom: '8px', borderBottom: '1px solid #E8E3D8' }}>
+              1. ORIGIN & DESTINATION
+            </h3>
 
-      {/* Schedule */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Input
-          label="Earliest Pickup"
-          type="datetime-local"
-          error={errors.pickupFrom?.message}
-          {...register('pickupFrom')}
-        />
-        <Input
-          label="Latest Pickup"
-          type="datetime-local"
-          error={errors.pickupTo?.message}
-          {...register('pickupTo')}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Input
-          label="Earliest Delivery"
-          type="datetime-local"
-          error={errors.deliveryFrom?.message}
-          {...register('deliveryFrom')}
-        />
-        <Input
-          label="Latest Delivery"
-          type="datetime-local"
-          error={errors.deliveryTo?.message}
-          {...register('deliveryTo')}
-        />
-      </div>
-
-      {/* Cargo */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Input
-          label="Commodity"
-          error={errors.commodity?.message}
-          placeholder="e.g. Steel coils"
-          {...register('commodity')}
-        />
-        <div className="flex flex-col gap-1">
-          <Input
-            label="Weight (lbs)"
-            type="number"
-            error={errors.weightLbs?.message}
-            step="0.01"
-            min="0.01"
-            {...register('weightLbs', { valueAsNumber: true })}
-          />
-          <p className="text-xs text-gray-400">Legal max: 80,000 lbs</p>
-          {isOverweight && (
-            <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 mt-1">
-              <p className="text-xs font-medium text-amber-800">
-                Exceeds federal weight limit. Confirm this load requires a special permit.
-              </p>
-              <label className="flex items-center gap-2 mt-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="rounded border-amber-400 text-amber-600 focus:ring-amber-500"
-                  {...register('overweightAcknowledged')}
-                />
-                <span className="text-xs text-amber-800">I confirm this load has or will have a special permit</span>
-              </label>
-              {errors.overweightAcknowledged && (
-                <p className="text-xs text-red-600 mt-1">{errors.overweightAcknowledged.message}</p>
-              )}
+            {/* Origin Section */}
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 600, color: '#A68B5B', marginBottom: '12px' }}>ORIGIN</div>
+              <AddressSection prefix="origin" label="" register={register} errors={errors} />
             </div>
-          )}
-        </div>
-      </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        {(['Length', 'Width', 'Height'] as const).map((label) => {
-          const ftKey = `${label.toLowerCase()}Ft` as 'lengthFt' | 'widthFt' | 'heightFt'
-          const inKey = `${label.toLowerCase()}In` as 'lengthIn' | 'widthIn' | 'heightIn'
-          return (
-            <div key={label} className="flex flex-col gap-1">
-              <span className="text-sm font-medium text-gray-700">
-                {label} <span className="text-gray-400 font-normal text-xs">(optional)</span>
-              </span>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <input
-                    type="number"
-                    min="0"
-                    step="1"
-                    placeholder="0"
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 pr-8 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    {...register(ftKey, { setValueAs: v => v === '' ? '' : Number(v) })}
+
+            {/* Destination Section */}
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 600, color: '#A68B5B', marginBottom: '12px' }}>DESTINATION</div>
+              <AddressSection prefix="destination" label="" register={register} errors={errors} />
+            </div>
+
+            {/* Distance Display */}
+            <div style={{ paddingTop: '12px', borderTop: '1px solid #E8E3D8' }}>
+              {distanceLoading ? (
+                <p style={{ fontSize: '13px', color: '#636E72' }}>Calculating distance...</p>
+              ) : distanceMiles != null ? (
+                <p style={{ fontSize: '13px', color: '#1A1A1A' }}>
+                  <span style={{ fontWeight: 'bold' }}>{distanceMiles.toLocaleString()} mi</span>
+                  <span style={{ color: '#636E72', marginLeft: '8px' }}>(estimated)</span>
+                </p>
+              ) : (
+                <p style={{ fontSize: '13px', color: '#999999' }}>Distance calculates when addresses filled</p>
+              )}
+              {distanceError && <p style={{ fontSize: '12px', color: '#E74C3C', marginTop: '4px' }}>{distanceError}</p>}
+            </div>
+          </div>
+
+          {/* Schedule Section */}
+          <div style={sectionPanelStyle}>
+            <h3 style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.2px', color: '#1A1A1A', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid #E8E3D8' }}>
+              3. SCHEDULE
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div>
+                <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: '#A68B5B', marginBottom: '4px' }}>Pickup Window</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <Input
+                    label="Earliest Date"
+                    type="datetime-local"
+                    error={errors.pickupFrom?.message}
+                    {...register('pickupFrom')}
                   />
-                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">ft</span>
-                </div>
-                <div className="relative flex-1">
-                  <input
-                    type="number"
-                    min="0"
-                    max="11"
-                    step="1"
-                    placeholder="0"
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 pr-8 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    {...register(inKey, {
-                      setValueAs: v => v === '' ? '' : Number(v),
-                      onBlur: (e) => {
-                        const n = Number(e.target.value)
-                        if (!isNaN(n) && n > 11) setValue(inKey, 0)
-                      },
-                    })}
+                  <Input
+                    label="Latest Date"
+                    type="datetime-local"
+                    error={errors.pickupTo?.message}
+                    {...register('pickupTo')}
                   />
-                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">in</span>
                 </div>
               </div>
-              {(errors[ftKey] || errors[inKey]) && (
-                <p className="text-xs text-red-600">{errors[ftKey]?.message ?? errors[inKey]?.message}</p>
-              )}
+              <div>
+                <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: '#A68B5B', marginBottom: '4px' }}>Delivery Window</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <Input
+                    label="Earliest Date"
+                    type="datetime-local"
+                    error={errors.deliveryFrom?.message}
+                    {...register('deliveryFrom')}
+                  />
+                  <Input
+                    label="Latest Date"
+                    type="datetime-local"
+                    error={errors.deliveryTo?.message}
+                    {...register('deliveryTo')}
+                  />
+                </div>
+              </div>
             </div>
-          )
-        })}
-      </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="equipmentType" className="text-sm font-medium text-gray-700">
-            Equipment Type
-          </label>
-          <select
-            id="equipmentType"
-            className={selectClass}
-            {...register('equipmentType')}
-          >
-            <option value="DRY_VAN">Dry Van</option>
-            <option value="FLATBED">Flatbed</option>
-            <option value="REEFER">Reefer</option>
-            <option value="STEP_DECK">Step Deck</option>
-          </select>
-          {errors.equipmentType && (
-            <p className="text-xs text-red-600">{errors.equipmentType.message}</p>
-          )}
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Pay Rate</label>
-          <div role="group" aria-label="Pay rate type" className="flex gap-1 mb-1">
-            {(['FLAT_RATE', 'PER_MILE'] as const).map((type) => (
-              <button
-                key={type}
-                type="button"
-                role="radio"
-                aria-checked={payRateType === type}
-                onClick={() => setValue('payRateType', type, { shouldValidate: true })}
-                className={`flex-1 rounded py-1 text-xs font-medium transition-colors ${
-                  payRateType === type
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {type === 'FLAT_RATE' ? 'Flat Rate' : 'Per Mile'}
-              </button>
-            ))}
           </div>
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">$</span>
-            <input
-              type="number"
-              step="0.01"
-              min="0.01"
-              className={`w-full rounded-md border px-3 py-2 pl-6 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 ${errors.payRate ? 'border-red-500' : 'border-gray-300'}`}
-              {...register('payRate', { valueAsNumber: true })}
-            />
+        </div>
+
+        {/* MIDDLE COLUMN: Cargo & Equipment */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={sectionPanelStyle}>
+            <h3 style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.2px', color: '#1A1A1A', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid #E8E3D8' }}>
+              4. CARGO & EQUIPMENT
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#1A1A1A', marginBottom: '4px' }}>Equipment Type</label>
+                <select
+                  className={selectClass}
+                  {...register('equipmentType')}
+                  style={{ height: '40px' }}
+                >
+                  <option value="DRY_VAN">Dry Van</option>
+                  <option value="FLATBED">Flatbed</option>
+                  <option value="REFRIGERATED">Refrigerated</option>
+                  <option value="TANKER">Tanker</option>
+                  <option value="SPECIALIZED">Specialized</option>
+                  <option value="STEP_DECK">Step Deck</option>
+                </select>
+                {errors.equipmentType && (
+                  <p style={{ fontSize: '12px', color: '#E74C3C', marginTop: '4px' }}>{errors.equipmentType.message}</p>
+                )}
+              </div>
+              <Input
+                label="Commodity"
+                error={errors.commodity?.message}
+                placeholder="e.g. Steel coils"
+                {...register('commodity')}
+              />
+              <div>
+                <Input
+                  label="Weight (lbs)"
+                  type="number"
+                  error={errors.weightLbs?.message}
+                  step="0.01"
+                  min="0.01"
+                  {...register('weightLbs', { valueAsNumber: true })}
+                />
+                <p style={{ fontSize: '12px', color: '#636E72', marginTop: '4px' }}>Legal max: 80,000 lbs</p>
+                {isOverweight && (
+                  <div style={{ borderRadius: '4px', border: '1px solid #F39C12', background: '#FFFBF7', padding: '12px', marginTop: '8px' }}>
+                    <p style={{ fontSize: '12px', fontWeight: 500, color: '#1A1A1A' }}>
+                      Exceeds federal weight limit. Confirm special permit.
+                    </p>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        style={{ cursor: 'pointer' }}
+                        {...register('overweightAcknowledged')}
+                      />
+                      <span style={{ fontSize: '12px', color: '#1A1A1A' }}>I confirm special permit</span>
+                    </label>
+                    {errors.overweightAcknowledged && (
+                      <p style={{ fontSize: '12px', color: '#E74C3C', marginTop: '4px' }}>{errors.overweightAcknowledged.message}</p>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div>
+                <div style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#636E72', marginBottom: '8px' }}>Dimensions (Optional)</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                  {(['Length', 'Width', 'Height'] as const).map((label) => {
+                    const ftKey = `${label.toLowerCase()}Ft` as 'lengthFt' | 'widthFt' | 'heightFt'
+                    const inKey = `${label.toLowerCase()}In` as 'lengthIn' | 'widthIn' | 'heightIn'
+                    return (
+                      <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 500, color: '#1A1A1A' }}>{label}</span>
+                        <div style={{ display: 'flex', gap: '4px' }}>
+                          <div style={{ position: 'relative', flex: 1 }}>
+                            <input
+                              type="number"
+                              min="0"
+                              step="1"
+                              placeholder="0"
+                              style={{ width: '100%', height: '40px', borderRadius: '4px', border: '1px solid #D0D0D0', padding: '8px 8px', fontSize: '13px', paddingRight: '24px' }}
+                              {...register(ftKey, { setValueAs: v => v === '' ? '' : Number(v) })}
+                            />
+                            <span style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', color: '#999999', pointerEvents: 'none' }}>ft</span>
+                          </div>
+                          <div style={{ position: 'relative', flex: 1 }}>
+                            <input
+                              type="number"
+                              min="0"
+                              max="11"
+                              step="1"
+                              placeholder="0"
+                              style={{ width: '100%', height: '40px', borderRadius: '4px', border: '1px solid #D0D0D0', padding: '8px 8px', fontSize: '13px', paddingRight: '24px' }}
+                              {...register(inKey, {
+                                setValueAs: v => v === '' ? '' : Number(v),
+                                onBlur: (e) => {
+                                  const n = Number(e.target.value)
+                                  if (!isNaN(n) && n > 11) setValue(inKey, 0)
+                                },
+                              })}
+                            />
+                            <span style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', color: '#999999', pointerEvents: 'none' }}>in</span>
+                          </div>
+                        </div>
+                        {(errors[ftKey] || errors[inKey]) && (
+                          <p style={{ fontSize: '12px', color: '#E74C3C' }}>{errors[ftKey]?.message ?? errors[inKey]?.message}</p>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+              <div>
+                <h4 style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', color: '#1A1A1A', marginBottom: '12px', paddingTop: '12px', borderTop: '1px solid #E8E3D8' }}>Special Instructions</h4>
+                <label htmlFor="specialRequirements" style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#1A1A1A', marginBottom: '4px' }}>
+                  Notes
+                </label>
+                <textarea
+                  id="specialRequirements"
+                  rows={3}
+                  style={{ width: '100%', borderRadius: '4px', border: '1px solid #D0D0D0', padding: '8px 12px', fontSize: '13px', fontFamily: 'inherit', resize: 'vertical', minHeight: '80px' }}
+                  placeholder="Any special handling or requirements (optional)"
+                  {...register('specialRequirements')}
+                />
+              </div>
+            </div>
           </div>
-          <p className="text-xs text-gray-500">
-            {payRateType === 'PER_MILE' ? (
-              distanceMiles != null && payRate > 0
-                ? `≈ $${(payRate * distanceMiles).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} estimated total`
-                : 'per mile'
-            ) : 'flat rate'}
-          </p>
-          {errors.payRate && <p className="text-xs text-red-600">{errors.payRate.message}</p>}
+        </div>
+
+        {/* RIGHT COLUMN: Payment & Terms */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {/* Payment & Terms Panel */}
+          <div style={sectionPanelStyle}>
+            <h3 style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.2px', color: '#1A1A1A', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid #E8E3D8' }}>
+              5. PAYMENT & TERMS
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#1A1A1A', marginBottom: '4px' }}>Terms</label>
+                <select
+                  className={selectClass}
+                  {...register('paymentTerms')}
+                  style={{ height: '40px' }}
+                >
+                  <option value="">Not specified</option>
+                  <option value="IMMEDIATE">Immediate</option>
+                  <option value="NET_7">Net 7</option>
+                  <option value="NET_14">Net 14</option>
+                  <option value="NET_30">Net 30</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#1A1A1A', marginBottom: '4px' }}>Pay Rate</label>
+                <div role="group" aria-label="Pay rate type" style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
+                  {(['FLAT_RATE', 'PER_MILE'] as const).map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      role="radio"
+                      aria-checked={payRateType === type}
+                      onClick={() => setValue('payRateType', type, { shouldValidate: true })}
+                      style={{
+                        flex: 1,
+                        height: '32px',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                        border: '1px solid #D0D0D0',
+                        background: payRateType === type ? '#B08D57' : '#F8F9FB',
+                        color: payRateType === type ? '#FFFFFF' : '#636E72',
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      {type === 'FLAT_RATE' ? 'Flat' : 'Per Mile'}
+                    </button>
+                  ))}
+                </div>
+                <div style={{ position: 'relative' }}>
+                  <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '13px', color: '#636E72' }}>$</span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    style={{ width: '100%', height: '40px', borderRadius: '4px', border: errors.payRate ? '2px solid #E74C3C' : '1px solid #D0D0D0', padding: '8px 8px 8px 28px', fontSize: '13px' }}
+                    {...register('payRate', { valueAsNumber: true })}
+                  />
+                </div>
+                <p style={{ fontSize: '12px', color: '#636E72', marginTop: '4px' }}>
+                  {payRateType === 'PER_MILE' ? (
+                    distanceMiles != null && payRate > 0
+                      ? `≈ $${(payRate * distanceMiles).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                      : 'per mile'
+                  ) : 'flat rate'}
+                </p>
+                {errors.payRate && <p style={{ fontSize: '12px', color: '#E74C3C', marginTop: '4px' }}>{errors.payRate.message}</p>}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="paymentTerms" className="text-sm font-medium text-gray-700">
-          Payment Terms
-        </label>
-        <select
-          id="paymentTerms"
-          className={`${selectClass} max-w-xs`}
-          {...register('paymentTerms')}
-        >
-          <option value="">Not specified</option>
-          <option value="QUICK_PAY">Quick Pay</option>
-          <option value="NET_7">Net 7</option>
-          <option value="NET_15">Net 15</option>
-          <option value="NET_30">Net 30</option>
-        </select>
-        <p className="text-xs text-gray-500">
-          Quick Pay = same day or next day. Net 7/15/30 = days after delivery.
-        </p>
-      </div>
-
-      <div>
-        <label htmlFor="specialRequirements" className="block text-sm font-medium text-gray-700">
-          Special Requirements
-        </label>
-        <textarea
-          id="specialRequirements"
-          rows={3}
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-          placeholder="Any special handling or requirements (optional)"
-          {...register('specialRequirements')}
-        />
-      </div>
-
-      <div className="flex justify-end gap-3">
-        {onSaveDraft && (
-          <Button
+      {/* Action Buttons — Inside form container, right-aligned */}
+      <div style={formActionsStyle}>
+        {onCancel && (
+          <button
             type="button"
-            variant="secondary"
-            isLoading={isDraftSaving}
-            onClick={handleSubmit(onSaveDraft)}
+            onClick={() => {
+              if (isDirty) {
+                if (!window.confirm('Discard this load? Any changes will be lost.')) {
+                  return
+                }
+              }
+              onCancel()
+            }}
+            style={{
+              ...bronzeButtonStyle,
+              background: 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
+            }}
           >
-            Save as Draft
-          </Button>
+            Cancel
+          </button>
         )}
-        <Button
+        {onSaveDraft && (
+          <button
+            type="button"
+            onClick={handleSubmit(onSaveDraft)}
+            disabled={isDraftSaving}
+            style={{
+              ...bronzeButtonStyle,
+              opacity: isDraftSaving ? 0.6 : 1,
+              background: 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
+            }}
+          >
+            {isDraftSaving ? 'Saving...' : 'Save as Draft'}
+          </button>
+        )}
+        <button
           type="submit"
-          isLoading={isSubmitting}
-          disabled={isOverweight && !overweightAcknowledged}
-          title={isOverweight && !overweightAcknowledged ? 'Acknowledge the overweight warning above to continue' : undefined}
+          disabled={isSubmitting || (isOverweight && !overweightAcknowledged)}
+          style={{
+            ...bronzeButtonStyle,
+            opacity: isSubmitting || (isOverweight && !overweightAcknowledged) ? 0.6 : 1,
+            background: 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
+          }}
+          title={isOverweight && !overweightAcknowledged ? 'Acknowledge the overweight warning to continue' : undefined}
         >
-          {submitLabel}
-        </Button>
+          {isSubmitting ? 'Posting...' : submitLabel}
+        </button>
       </div>
     </form>
   )

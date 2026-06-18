@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { LogOut, User, Settings, Bell } from 'lucide-react'
 
@@ -17,10 +17,13 @@ import { LogOut, User, Settings, Bell } from 'lucide-react'
 
 export function ShipperPageHeader() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { user, logout, isAuthenticated } = useAuthStore()
   const [showDropdown, setShowDropdown] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
   const [unreadCount] = useState(0)
+
+  const isOnDashboard = location.pathname === '/dashboard/shipper'
 
   const now = new Date()
   const lastUpdated = now.toLocaleString('en-US', {
@@ -68,6 +71,11 @@ export function ShipperPageHeader() {
     setShowDropdown(false)
   }
 
+  const handleLogoClick = () => {
+    navigate('/dashboard/shipper')
+    setShowDropdown(false)
+  }
+
   const getInitials = (firstName?: string, lastName?: string) => {
     const first = firstName?.[0] || ''
     const last = lastName?.[0] || ''
@@ -85,15 +93,28 @@ export function ShipperPageHeader() {
         }}
       >
       {/* Left: Logo + Branding */}
-      <div
+      <button
+        onClick={handleLogoClick}
+        disabled={isOnDashboard}
+        data-testid="logo-button"
+        aria-label={isOnDashboard ? 'Already on dashboard' : 'Back to dashboard'}
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: 'var(--space-md)',
+          background: 'transparent',
+          border: 'none',
+          cursor: isOnDashboard ? 'default' : 'pointer',
+          padding: '8px 12px',
+          borderRadius: '4px',
+          transition: 'background-color 0.2s',
+          opacity: isOnDashboard ? 0.7 : 1,
         }}
+        onMouseEnter={(e) => !isOnDashboard && (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.05)')}
+        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
       >
         <img src="/logo.png" alt="FreightClub" style={{ height: '40px' }} />
-        <div>
+        <div style={{ textAlign: 'left' }}>
           <h1 className="panel-title" style={{ marginBottom: 0, fontSize: 'var(--font-size-lg)' }}>
             FreightClub
           </h1>
@@ -108,7 +129,7 @@ export function ShipperPageHeader() {
             Integrated Logistics
           </p>
         </div>
-      </div>
+      </button>
 
       {/* Center: Last Updated */}
       <div

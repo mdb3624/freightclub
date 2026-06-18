@@ -7,6 +7,8 @@ import com.freightclub.modules.shipper.application.ShipmentStatusService;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.DashboardSummaryResponse;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadListResponse;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadStatsResponse;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import com.freightclub.security.TenantContextHolder;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -28,6 +31,16 @@ class ShipperControllerTest {
   @MockBean private LoadQueryService loadQueryService;
   @MockBean private DashboardSummaryService dashboardSummaryService;
   @MockBean private ShipmentStatusService shipmentStatusService;
+
+  @BeforeEach
+  void setup() {
+    TenantContextHolder.setTenantId("test-tenant");
+  }
+
+  @AfterEach
+  void cleanup() {
+    TenantContextHolder.clear();
+  }
 
   @Test
   @WithMockUser(roles = "SHIPPER")

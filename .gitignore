@@ -23,7 +23,12 @@ Thumbs.db
 .env
 .env.local
 .env.prod
+.env.cloudrun
+.env.cloudrun.yaml
+.env.test
+.env-cors
 .cloudrun-env.yaml
+env.txt
 
 # ---- Logs ----
 *.log

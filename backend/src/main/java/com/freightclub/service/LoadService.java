@@ -82,6 +82,7 @@ public class LoadService {
 
     public LoadResponse createDraft(CreateLoadRequest request, String shipperId) {
         validateWeight(request.weightLbs(), request.overweightAcknowledged());
+        validateDateWindows(request.pickupFrom(), request.pickupTo(), request.deliveryFrom(), request.deliveryTo());
         Load load = new Load();
         load.setTenantId(TenantContextHolder.getTenantId());
         load.setShipperId(shipperId);
@@ -94,6 +95,7 @@ public class LoadService {
 
     public LoadResponse createLoad(CreateLoadRequest request, String shipperId) {
         validateWeight(request.weightLbs(), request.overweightAcknowledged());
+        validateDateWindows(request.pickupFrom(), request.pickupTo(), request.deliveryFrom(), request.deliveryTo());
         Load load = new Load();
         load.setTenantId(TenantContextHolder.getTenantId());
         load.setShipperId(shipperId);
@@ -453,6 +455,19 @@ public class LoadService {
                 && !Boolean.TRUE.equals(overweightAcknowledged)) {
             throw new IllegalArgumentException(
                     "Weight exceeds the 80,000 lb federal limit. Confirm the load has a valid overweight permit.");
+        }
+    }
+
+    private void validateDateWindows(java.time.LocalDateTime pickupFrom, java.time.LocalDateTime pickupTo,
+                                     java.time.LocalDateTime deliveryFrom, java.time.LocalDateTime deliveryTo) {
+        if (pickupFrom != null && pickupTo != null && pickupTo.isBefore(pickupFrom)) {
+            throw new IllegalArgumentException("Latest Pickup cannot be before Earliest Pickup");
+        }
+        if (pickupTo != null && deliveryFrom != null && deliveryFrom.isBefore(pickupTo)) {
+            throw new IllegalArgumentException("Earliest Delivery cannot be before Latest Pickup");
+        }
+        if (deliveryFrom != null && deliveryTo != null && deliveryTo.isBefore(deliveryFrom)) {
+            throw new IllegalArgumentException("Latest Delivery cannot be before Earliest Delivery");
         }
     }
 

@@ -7,17 +7,33 @@ export type LoadStatus =
   | 'SETTLED'
   | 'CANCELLED'
 
-export type EquipmentType = 'DRY_VAN' | 'FLATBED' | 'REEFER' | 'STEP_DECK'
+export type EquipmentType =
+  | 'DRY_VAN' | 'FLATBED' | 'REEFER' | 'STEP_DECK'
+  | 'REFRIGERATED' | 'TANKER' | 'SPECIALIZED'
 
 export type PayRateType = 'PER_MILE' | 'FLAT_RATE'
 
-export type PaymentTerms = 'QUICK_PAY' | 'NET_7' | 'NET_15' | 'NET_30'
+export type PaymentTerms =
+  | 'QUICK_PAY' | 'NET_7' | 'NET_15' | 'NET_30'
+  | 'IMMEDIATE' | 'NET_14'
+
+export const EQUIPMENT_TYPE_LABELS: Record<EquipmentType, string> = {
+  DRY_VAN: 'Dry Van',
+  FLATBED: 'Flatbed',
+  REEFER: 'Refrigerated (Reefer)',
+  STEP_DECK: 'Step Deck',
+  REFRIGERATED: 'Refrigerated',
+  TANKER: 'Tanker',
+  SPECIALIZED: 'Specialized',
+}
 
 export const PAYMENT_TERMS_LABELS: Record<PaymentTerms, string> = {
   QUICK_PAY: 'Quick Pay',
   NET_7: 'Net 7',
   NET_15: 'Net 15',
   NET_30: 'Net 30',
+  IMMEDIATE: 'Immediate (Same/Next Day)',
+  NET_14: 'Net 14',
 }
 
 export interface LoadContactInfo {

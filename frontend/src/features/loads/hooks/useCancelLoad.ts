@@ -1,21 +1,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
 import { loadsApi } from '../api'
-import { loadQueryInvalidations } from '../utils/queryInvalidation'
-import { useToastStore } from '@/store/toastStore'
 
 export function useCancelLoad() {
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
-  const toast = useToastStore((s) => s.show)
 
   return useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
-      loadsApi.cancel(id, reason),
+    mutationFn: (data: { loadId: string; reason?: string }) =>
+      loadsApi.cancel(data.loadId, data.reason || 'Cancelled by shipper'),
     onSuccess: () => {
-      loadQueryInvalidations.onCancel(queryClient)
-      toast('Load cancelled.', 'info')
-      navigate('/dashboard/shipper')
+      queryClient.invalidateQueries({ queryKey: ['shipmentStatus'] })
+      queryClient.invalidateQueries({ queryKey: ['shipper-loads'] })
     },
   })
 }

@@ -76,7 +76,7 @@ export function LoadDetailPage() {
             loadId={load.id}
             onConfirm={(reason) => {
               setShowCancelModal(false)
-              cancelLoad({ id: load.id, reason })
+              cancelLoad({ loadId: load.id, reason })
             }}
             onCancel={() => setShowCancelModal(false)}
             isLoading={isCancelling}

@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,9 +64,9 @@ public class ShipmentStatusService {
             String destination = (String) row[3];
             String carrierName = (String) row[4];
             BigDecimal rating = (BigDecimal) row[5];
-            LocalDateTime pickupFrom = (LocalDateTime) row[6];
-            LocalDateTime deliveryTo = (LocalDateTime) row[7];
-            LocalDateTime pickedUpAt = (LocalDateTime) row[8];
+            LocalDateTime pickupFrom = toLocalDateTime(row[6]);
+            LocalDateTime deliveryTo = toLocalDateTime(row[7]);
+            LocalDateTime pickedUpAt = toLocalDateTime(row[8]);
 
             BigDecimal progress = calculateProgress(status, pickupFrom, deliveryTo, pickedUpAt);
 
@@ -82,6 +84,19 @@ public class ShipmentStatusService {
         }
 
         return shipments;
+    }
+
+    private LocalDateTime toLocalDateTime(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof LocalDateTime) {
+            return (LocalDateTime) value;
+        }
+        if (value instanceof java.time.Instant) {
+            return LocalDateTime.ofInstant((java.time.Instant) value, java.time.ZoneId.systemDefault());
+        }
+        return (LocalDateTime) value;
     }
 
     private BigDecimal calculateProgress(String status, LocalDateTime pickupFrom, LocalDateTime deliveryTo, LocalDateTime pickedUpAt) {

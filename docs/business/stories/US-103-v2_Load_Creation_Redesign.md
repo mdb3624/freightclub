@@ -113,24 +113,18 @@ And weight (required):
 ```gherkin
 Given cargo details are entered
 When the shipper specifies equipment requirements
-Then they select:
-  • Equipment Type (required, one of: Dry Van, Flatbed, Reefer, Step Deck)
+Then they must select:
+  • Equipment Type (required)
 
 When they specify payment
 Then they must provide:
-  • Pay Rate (required, > $0.01)
-  • Pay Rate Type (required, one of):
-    - Flat Rate (e.g., "$1,500 for the entire load")
-    - Per Mile (e.g., "$2.50 per mile")
+  • Pay Rate (required, > $0.00)
+  • Pay Rate Type (required)
   
-  And system shows estimated total for per-mile loads:
-    - If per-mile: display "≈ $X,XXX estimated total" (rate × distance)
-    - If flat rate: display "flat rate"
+  And system calculates and displays estimated total when applicable
 
 And optionally:
-  • Payment Terms (one of: Quick Pay, Net 7, Net 15, Net 30)
-    - Quick Pay = same day or next day
-    - Net 7/15/30 = days after delivery
+  • Payment Terms (shipper selects one of: IMMEDIATE, NET_7, NET_14, NET_30)
 ```
 
 ### AC-6: Special Instructions
@@ -180,19 +174,25 @@ And the load remains visible in the panel
   And the shipper can track progress through IN_TRANSIT → DELIVERED
 ```
 
-### AC-9: Facility Address Book Integration
+### AC-9: Facility Address Book Integration (Multi-Tenant Isolation Required)
 
 ```gherkin
 Given the shipper is entering a pickup or delivery location
 When they click the address field
 Then they see an option to "Select from Address Book"
-  And a searchable list of saved facilities appears (Name, Street, City, State, ZIP)
+  And a searchable list of saved facilities appears (only facilities saved by THIS shipper — tenant_id filtered)
+  And facilities are listed with: Name, Street, City, State, ZIP
   And they can select a saved facility to auto-populate all address fields
 
 When they enter a new address not in the book
 Then they see an option: "Save this address to Address Book?"
-  And if they confirm, the facility is saved for future use
-  And the saved facility appears in the dropdown next time
+  And if they confirm, the facility is saved for future use (associated with shipper's tenant_id)
+  And the saved facility appears in the dropdown next time (only visible to this shipper)
+  
+And the system ensures:
+  • Address Book queries strictly filter by tenant_id (TenantContextHolder pattern)
+  • No facility data leaks between tenants
+  • Row-Level Security (RLS) enforced at database level
 ```
 
 ### AC-10: Form Validation & Error Handling
@@ -215,6 +215,26 @@ And validation prevents:
   • Weight > 150,000 lbs
   • Pay rate = $0
   • Overweight (>80k) without acknowledgment
+```
+
+### AC-11: Load Cancellation Confirmation (SH-CRIT-2)
+
+```gherkin
+Given a load has been claimed by a carrier (status = CLAIMED)
+When the shipper attempts to cancel the load
+Then a confirmation dialog appears showing:
+  • Load ID and carrier name
+  • Warning: "Cancelling a claimed load may impact your shipper reputation"
+  • "Cancel Load" and "Keep Load" buttons
+  
+When the shipper confirms cancellation
+Then the load status changes to CANCELLED
+  And the shipper sees confirmation: "Load cancelled"
+  And the carrier is notified (if notification system available)
+
+When the shipper clicks "Keep Load"
+Then the dialog closes
+  And the load remains in CLAIMED status
 ```
 
 ---
@@ -244,36 +264,15 @@ And validation prevents:
 | Dimensions Inputs | Physical constraints | Feet + inches inputs for L/W/H |
 | Weight Input | Cargo mass | Number input with "lbs" label |
 | Overweight Warning | Regulatory alert | Amber/warning color callout + checkbox |
-| Equipment Dropdown | Truck type | Select with 4 options (Van, Flatbed, Reefer, Step Deck) |
-| Pay Rate Toggle | Rate type selection | Radio buttons: "Flat Rate" / "Per Mile" |
+| Equipment Dropdown | Truck type | Select equipment type |
+| Pay Rate Type | Rate type selection | Allow shipper to choose payment calculation method |
 | Pay Rate Input | Cost value | Currency input with $ prefix |
 | Estimated Total | Auto-calc | Shows only for per-mile rates |
-| Payment Terms Dropdown | Settlement timing | Select: Quick Pay, Net 7/15/30 |
+| Payment Terms Dropdown | Settlement timing | Select payment terms option |
 | Special Instructions | Free-form notes | Textarea (500 char max) |
 | Error Messages | Validation feedback | Red text, per-field or banner |
 | Submit Button | Create & publish | Primary color, loading state |
 | Save Draft Button | Optional save | Secondary button (if AC-9 required) |
-
----
-
-## Data Dependencies
-
-**Backend Endpoints Required:**
-- `POST /api/v1/loads/draft` — Save draft load
-- `POST /api/v1/loads` — Create & publish load
-- `GET /api/v1/loads/{id}` — Retrieve for editing
-- Distance calculation service (Google Maps / MapBox / similar)
-
-**Frontend Integration:**
-- Quick Actions button (US-824) routes to this form
-- Shipment Status Panel (US-822) queries for new loads
-- useCreateLoad hook + useCreateDraft hook
-
-**Database:**
-- `loads` table with all fields from form
-- `deleted_at` for soft delete
-- `tenant_id` for multi-tenancy
-- Status enum: DRAFT, POSTED, CLAIMED, IN_TRANSIT, DELIVERED, CANCELLED
 
 ---
 

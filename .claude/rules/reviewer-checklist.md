@@ -43,7 +43,48 @@ This checklist defines the mandatory "Hard Gates" for any code merge. Failure to
 
 ---
 
-## 6. Spring Security Filter Safety (Security Chain Gate)
+## 6. Design System & UI Conformance (Shipper Persona Gate)
+
+**Applies to:** Any PR touching shipper-facing pages, components, or layouts
+
+* [ ] **ShipperPageLayout Conformance (MANDATORY)**: Is this a shipper page? If yes:
+  - ✅ MUST be wrapped in `<ShipperPageLayout>` component
+  - ✅ MUST NOT implement custom header/navigation structure
+  - ✅ MUST NOT override layout styling without documented exception
+  - ❌ Automatic rejection if ShipperPageLayout is missing — no exceptions permitted
+  - **Reference:** Shipper & Administrator Style Guide §7
+  
+* [ ] **Shipper Style Guide Compliance**: Does the PR follow Shipper & Administrator Style Guide (§6 Atomic Components)?
+  - ✅ All padding/margin are multiples of 8px (space tokens: xs=4, sm=8, md=16, lg=24, xl=32)
+  - ✅ All form inputs are exactly 40px height
+  - ✅ All input borders are 4px radius (not 6px, 8px, or other)
+  - ✅ Focus state borders are 2px solid `#B08D57` (Brand Bronze)
+  - ✅ Container borders are exactly 1px solid `#D0D0D0` (not `#E8E3D8` or other)
+  - ✅ CTA buttons use metallic bronze gradient (per US-824 pattern)
+  - ✅ Status colors use semantic palette: `#27AE60` (success), `#E74C3C` (error), `#F39C12` (warning), `#3498DB` (info)
+  - ✅ Text colors respect hierarchy: `#1A1A1A` (primary), `#636E72` (secondary), `#4A5568` (muted)
+  
+* [ ] **Responsive Design**: If the PR includes responsive changes:
+  - ✅ Desktop (≥1024px): Full-width optimized layouts
+  - ✅ Tablet (768–1023px): Graceful column stacking
+  - ✅ Mobile (≤767px): Acceptable fallback (not primary for shipper persona)
+  - ✅ No layout shifts between breakpoints (test at 1024, 768, 375 pixel widths)
+
+* [ ] **Typography Conformance**: All text follows established hierarchy:
+  - ✅ Headings: Sora font, bold, uppercase, wide letter-spacing
+  - ✅ Body text: 14px minimum (Inter/Roboto)
+  - ✅ Helper/error text: 12px, italic, correct color
+  - ✅ No custom font sizes (e.g., 13px, 15px, 17px) without exception
+
+* [ ] **Accessibility (WCAG AA)**: All color combinations meet WCAG AA contrast ratio (≥4.5:1):
+  - ✅ Text on white (`#FFFFFF`) backgrounds: Test with WAVE or Contrast Ratio checker
+  - ✅ Status badges: Verify color + icon/text provide redundant indication (not color-only)
+  - ✅ Focus indicators: All interactive elements have 2px outline (keyboard navigation)
+  - ✅ ARIA labels: Forms have `aria-label`, errors have `aria-describedby`, required fields have `aria-required="true"`
+
+---
+
+## 7. Spring Security Filter Safety (Security Chain Gate)
 * [ ] **No double registration**: Any filter that is both `@Component` AND added via `addFilterBefore`/`addFilterAfter` in `SecurityConfig` MUST have a `FilterRegistrationBean` with `setEnabled(false)` to prevent it running outside the security chain. Without this, `SecurityContextHolderFilter` clears the auth set by the pre-chain run, causing 401 on all protected endpoints.
 * [ ] **Cache names registered**: Every `@Cacheable("name")` annotation references a cache name declared in `CacheConfig`. Missing names cause 500 errors at runtime.
 * [ ] **JJWT audience validation**: Do not use `requireAudience(String)` on the JJWT parser builder (0.12.x bug — compares String against Set). Validate audience manually after `parseSignedClaims`.

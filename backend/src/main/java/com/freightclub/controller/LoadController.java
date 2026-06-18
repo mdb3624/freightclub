@@ -33,7 +33,7 @@ public class LoadController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @CacheEvict(cacheNames = "loads", allEntries = true)
+    @CacheEvict(cacheNames = {"loads", "shipment-status"}, allEntries = true)
     public LoadResponse create(@Valid @RequestBody CreateLoadRequest request,
                                @AuthenticationPrincipal String userId) {
         return loadService.createLoad(request, userId);
@@ -41,7 +41,7 @@ public class LoadController {
 
     @PostMapping("/draft")
     @ResponseStatus(HttpStatus.CREATED)
-    @CacheEvict(cacheNames = "loads", allEntries = true)
+    @CacheEvict(cacheNames = {"loads", "shipment-status"}, allEntries = true)
     public LoadResponse createDraft(@Valid @RequestBody CreateLoadRequest request,
                                     @AuthenticationPrincipal String userId) {
         return loadService.createDraft(request, userId);
@@ -49,7 +49,7 @@ public class LoadController {
 
     @PostMapping("/{id}/publish")
     @PreAuthorize("@loadService.isOwner(#id)")
-    @CacheEvict(cacheNames = "loads", key = "#id + ':' + T(com.freightclub.security.TenantContextHolder).getTenantId()")
+    @CacheEvict(cacheNames = {"loads", "shipment-status"}, allEntries = true)
     public LoadResponse publish(@PathVariable String id,
                                 @AuthenticationPrincipal String userId) {
         return loadService.publishLoad(id, userId);
@@ -73,7 +73,7 @@ public class LoadController {
 
     @PutMapping("/{id}")
     @PreAuthorize("@loadService.isOwner(#id)")
-    @CacheEvict(cacheNames = "loads", key = "#id + ':' + T(com.freightclub.security.TenantContextHolder).getTenantId()")
+    @CacheEvict(cacheNames = {"loads", "shipment-status"}, allEntries = true)
     public LoadResponse update(@PathVariable String id,
                                @Valid @RequestBody UpdateLoadRequest request,
                                @AuthenticationPrincipal String userId) {
@@ -82,7 +82,7 @@ public class LoadController {
 
     @PatchMapping("/{id}/cancel")
     @PreAuthorize("@loadService.isOwner(#id)")
-    @CacheEvict(cacheNames = "loads", key = "#id + ':' + T(com.freightclub.security.TenantContextHolder).getTenantId()")
+    @CacheEvict(cacheNames = {"loads", "shipment-status"}, allEntries = true)
     public LoadResponse cancel(@PathVariable String id,
                                @Valid @RequestBody CancelLoadRequest request,
                                @AuthenticationPrincipal String userId) {
@@ -107,14 +107,14 @@ public class LoadController {
     }
 
     @PatchMapping("/{id}/pickup")
-    @CacheEvict(cacheNames = "loads", allEntries = true)
+    @CacheEvict(cacheNames = {"loads", "shipment-status"}, allEntries = true)
     public LoadResponse markPickedUp(@PathVariable String id,
                                      @AuthenticationPrincipal String userId) {
         return loadService.markPickedUp(id, userId);
     }
 
     @PatchMapping("/{id}/deliver")
-    @CacheEvict(cacheNames = "loads", allEntries = true)
+    @CacheEvict(cacheNames = {"loads", "shipment-status"}, allEntries = true)
     public LoadResponse markDelivered(@PathVariable String id,
                                       @AuthenticationPrincipal String userId) {
         return loadService.markDelivered(id, userId);
@@ -122,7 +122,7 @@ public class LoadController {
 
     @PatchMapping("/{id}/settle")
     @PreAuthorize("hasRole('SHIPPER')")
-    @CacheEvict(cacheNames = "loads", allEntries = true)
+    @CacheEvict(cacheNames = {"loads", "shipment-status"}, allEntries = true)
     public LoadResponse settleLoad(@PathVariable String id,
                                    @AuthenticationPrincipal String userId) {
         return loadService.settleLoad(id, userId);
@@ -130,7 +130,7 @@ public class LoadController {
 
     @PatchMapping("/{id}/dispute")
     @PreAuthorize("hasRole('SHIPPER')")
-    @CacheEvict(cacheNames = "loads", allEntries = true)
+    @CacheEvict(cacheNames = {"loads", "shipment-status"}, allEntries = true)
     public LoadResponse disputeLoad(@PathVariable String id,
                                     @AuthenticationPrincipal String userId,
                                     @Valid @RequestBody DisputeRequest request) {

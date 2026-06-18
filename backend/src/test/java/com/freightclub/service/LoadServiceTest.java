@@ -809,4 +809,169 @@ class LoadServiceTest {
                     .isInstanceOf(LoadEditForbiddenException.class);
         }
     }
+
+    // AC-3: Date Window Validation
+    @Nested
+    @DisplayName("AC-3: Date Window Validation (US-103-v2)")
+    class DateWindowValidation {
+
+        private LocalDateTime baseTime;
+        private LocalDateTime oneDayLater;
+        private LocalDateTime twoDaysLater;
+
+        @BeforeEach
+        void setUpDates() {
+            baseTime = LocalDateTime.now().plusHours(1);
+            oneDayLater = baseTime.plusDays(1);
+            twoDaysLater = baseTime.plusDays(2);
+        }
+
+        @Test
+        @DisplayName("rejects pickup when Latest Pickup < Earliest Pickup")
+        void rejectPickupWindowInvalid() {
+            CreateLoadRequest req = new CreateLoadRequest(
+                    "New York",                // originCity
+                    "NY",                      // originState
+                    "10001",                   // originZip
+                    "123 Main St",             // originAddress1
+                    null,                      // originAddress2
+                    "Los Angeles",             // destinationCity
+                    "CA",                      // destinationState
+                    "90001",                   // destinationZip
+                    "456 Oak Ave",             // destinationAddress1
+                    null,                      // destinationAddress2
+                    BigDecimal.valueOf(2000),  // distanceMiles
+                    oneDayLater,               // pickupFrom
+                    baseTime,                  // pickupTo (INVALID: before pickupFrom)
+                    twoDaysLater,              // deliveryFrom
+                    twoDaysLater.plusHours(2), // deliveryTo
+                    "Fragile Electronics",     // commodity
+                    BigDecimal.valueOf(500),   // weightLbs
+                    BigDecimal.valueOf(2),    // lengthFt
+                    BigDecimal.valueOf(1),    // widthFt
+                    BigDecimal.valueOf(3),    // heightFt
+                    EquipmentType.DRY_VAN,
+                    BigDecimal.valueOf(2.50),
+                    com.freightclub.domain.PayRateType.PER_MILE,
+                    com.freightclub.domain.PaymentTerms.NET_7,
+                    null, null
+            );
+
+            assertThatThrownBy(() -> loadService.createDraft(req, SHIPPER_ID))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Latest Pickup cannot be before Earliest Pickup");
+        }
+
+        @Test
+        @DisplayName("rejects delivery when Earliest Delivery < Latest Pickup")
+        void rejectDeliveryBeforePickup() {
+            CreateLoadRequest req = new CreateLoadRequest(
+                    "New York",                // originCity
+                    "NY",                      // originState
+                    "10001",                   // originZip
+                    "123 Main St",             // originAddress1
+                    null,                      // originAddress2
+                    "Los Angeles",             // destinationCity
+                    "CA",                      // destinationState
+                    "90001",                   // destinationZip
+                    "456 Oak Ave",             // destinationAddress1
+                    null,                      // destinationAddress2
+                    BigDecimal.valueOf(2000),  // distanceMiles
+                    baseTime,                  // pickupFrom
+                    oneDayLater,               // pickupTo
+                    baseTime,                  // deliveryFrom (INVALID: before pickupTo)
+                    baseTime.plusHours(2),     // deliveryTo
+                    "Fragile Electronics",     // commodity
+                    BigDecimal.valueOf(500),   // weightLbs
+                    BigDecimal.valueOf(2),    // lengthFt
+                    BigDecimal.valueOf(1),    // widthFt
+                    BigDecimal.valueOf(3),    // heightFt
+                    EquipmentType.DRY_VAN,
+                    BigDecimal.valueOf(2.50),
+                    com.freightclub.domain.PayRateType.PER_MILE,
+                    com.freightclub.domain.PaymentTerms.NET_7,
+                    null, null
+            );
+
+            assertThatThrownBy(() -> loadService.createDraft(req, SHIPPER_ID))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Earliest Delivery cannot be before Latest Pickup");
+        }
+
+        @Test
+        @DisplayName("rejects delivery when Latest Delivery < Earliest Delivery")
+        void rejectDeliveryWindowInvalid() {
+            CreateLoadRequest req = new CreateLoadRequest(
+                    "New York",                // originCity
+                    "NY",                      // originState
+                    "10001",                   // originZip
+                    "123 Main St",             // originAddress1
+                    null,                      // originAddress2
+                    "Los Angeles",             // destinationCity
+                    "CA",                      // destinationState
+                    "90001",                   // destinationZip
+                    "456 Oak Ave",             // destinationAddress1
+                    null,                      // destinationAddress2
+                    BigDecimal.valueOf(2000),  // distanceMiles
+                    baseTime,                  // pickupFrom
+                    oneDayLater,               // pickupTo
+                    twoDaysLater,              // deliveryFrom
+                    baseTime,                  // deliveryTo (INVALID: before deliveryFrom)
+                    "Fragile Electronics",     // commodity
+                    BigDecimal.valueOf(500),   // weightLbs
+                    BigDecimal.valueOf(2),    // lengthFt
+                    BigDecimal.valueOf(1),    // widthFt
+                    BigDecimal.valueOf(3),    // heightFt
+                    EquipmentType.DRY_VAN,
+                    BigDecimal.valueOf(2.50),
+                    com.freightclub.domain.PayRateType.PER_MILE,
+                    com.freightclub.domain.PaymentTerms.NET_7,
+                    null, null
+            );
+
+            assertThatThrownBy(() -> loadService.createDraft(req, SHIPPER_ID))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Latest Delivery cannot be before Earliest Delivery");
+        }
+
+        @Test
+        @DisplayName("accepts valid date windows")
+        void acceptValidDateWindows() {
+            CreateLoadRequest req = new CreateLoadRequest(
+                    "New York",                // originCity
+                    "NY",                      // originState
+                    "10001",                   // originZip
+                    "123 Main St",             // originAddress1
+                    null,                      // originAddress2
+                    "Los Angeles",             // destinationCity
+                    "CA",                      // destinationState
+                    "90001",                   // destinationZip
+                    "456 Oak Ave",             // destinationAddress1
+                    null,                      // destinationAddress2
+                    BigDecimal.valueOf(2000),  // distanceMiles
+                    baseTime,                  // pickupFrom
+                    oneDayLater,               // pickupTo (valid: after pickupFrom)
+                    oneDayLater.plusHours(1), // deliveryFrom (valid: after pickupTo)
+                    twoDaysLater,              // deliveryTo (valid: after deliveryFrom)
+                    "Fragile Electronics",     // commodity
+                    BigDecimal.valueOf(500),   // weightLbs
+                    BigDecimal.valueOf(2),    // lengthFt
+                    BigDecimal.valueOf(1),    // widthFt
+                    BigDecimal.valueOf(3),    // heightFt
+                    EquipmentType.DRY_VAN,
+                    BigDecimal.valueOf(2.50),
+                    com.freightclub.domain.PayRateType.PER_MILE,
+                    com.freightclub.domain.PaymentTerms.NET_7,
+                    null, null
+            );
+
+            com.freightclub.dto.LoadResponse draft = loadService.createDraft(req, SHIPPER_ID);
+
+            assertThat(draft).isNotNull();
+            assertThat(draft.pickupFrom()).isEqualTo(baseTime);
+            assertThat(draft.pickupTo()).isEqualTo(oneDayLater);
+            assertThat(draft.deliveryFrom()).isEqualTo(oneDayLater.plusHours(1));
+            assertThat(draft.deliveryTo()).isEqualTo(twoDaysLater);
+        }
+    }
 }

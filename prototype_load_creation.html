@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Creation Prototype - US-103-v2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #EFEBE0;
+            color: #1A1A1A;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: #FFFFFF;
+            border-bottom: 1px solid #D0D0D0;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .header-left {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        /* Main Layout */
+        .container {
+            display: flex;
+            gap: 32px;
+            padding: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            grid-column: 1 / -1;
+            margin-bottom: 24px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            color: #636E72;
+        }
+
+        /* Left Column */
+        .left-column {
+            flex: 0 0 40%;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Right Column */
+        .right-column {
+            flex: 1;
+        }
+
+        /* Panel Styling */
+        .panel {
+            background: #FFFFFF;
+            border: 1px solid #D0D0D0;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .panel h2 {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #1A1A1A;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #E8E3D8;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #1A1A1A;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            height: 40px;
+            border: 1px solid #D0D0D0;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #B08D57;
+            box-shadow: 0 0 0 2px rgba(176, 141, 87, 0.1);
+        }
+
+        .form-group textarea {
+            width: 100%;
+            min-height: 100px;
+            border: 1px solid #D0D0D0;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        /* Address Section */
+        .address-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .address-row-2 {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1.2fr;
+            gap: 12px;
+        }
+
+        /* Schedule Panel - Split Date/Time */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .schedule-row-2 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .schedule-grid-label {
+            font-size: 11px;
+            color: #636E72;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        /* Distance Display */
+        .distance-display {
+            background: #F8F9FB;
+            border: 1px solid #D0D0D0;
+            border-radius: 4px;
+            padding: 12px 16px;
+            margin-top: 16px;
+        }
+
+        .distance-display p {
+            font-size: 14px;
+            color: #1A1A1A;
+            margin-bottom: 4px;
+        }
+
+        .distance-value {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .distance-note {
+            font-size: 12px;
+            color: #636E72;
+        }
+
+        /* Cargo Details Grid */
+        .cargo-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 16px;
+        }
+
+        .cargo-grid-left {
+            display: grid;
+            gap: 16px;
+        }
+
+        .cargo-grid-right {
+            display: grid;
+            gap: 16px;
+        }
+
+        /* Dimensions */
+        .dimensions-group {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #E8E3D8;
+        }
+
+        .dimensions-label {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: #636E72;
+        }
+
+        .dimension-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .dimension-input-pair {
+            display: grid;
+            grid-template-columns: 1fr 0.8fr;
+            gap: 6px;
+        }
+
+        .dimension-input-pair input {
+            height: 40px;
+        }
+
+        .dimension-suffix {
+            font-size: 12px;
+            color: #636E72;
+            align-self: center;
+            padding-left: 4px;
+        }
+
+        /* Equipment & Payment */
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .pay-rate-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .rate-type-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .rate-type-buttons button {
+            flex: 1;
+            height: 32px;
+            border: 1px solid #D0D0D0;
+            border-radius: 4px;
+            background: #F8F9FB;
+            color: #636E72;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .rate-type-buttons button.active {
+            background: #B08D57;
+            color: #FFFFFF;
+            border-color: #B08D57;
+        }
+
+        .rate-type-buttons button:hover:not(.active) {
+            background: #FFFFFF;
+            border-color: #B08D57;
+            color: #B08D57;
+        }
+
+        /* Helper Text */
+        .helper-text {
+            font-size: 12px;
+            color: #636E72;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #E8E3D8;
+            justify-content: space-between;
+        }
+
+        .btn {
+            height: 44px;
+            padding: 10px 24px;
+            border-radius: 4px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%);
+            color: #FFFFFF;
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35);
+            border: 1px solid #7A5F3A;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(180deg, #B8954E 0%, #A67D47 45%, #7C5E36 100%);
+        }
+
+        .btn-secondary {
+            background: #F8F9FB;
+            color: #1A1A1A;
+            border: 1px solid #D0D0D0;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: #FFFFFF;
+            border-color: #B08D57;
+        }
+
+        .btn-tertiary {
+            background: transparent;
+            color: #636E72;
+            flex: 0;
+            padding: 10px 16px;
+            border: none;
+        }
+
+        .btn-tertiary:hover {
+            color: #1A1A1A;
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .left-column {
+                flex: 1;
+            }
+
+            .right-column {
+                flex: 1;
+            }
+
+            .schedule-grid,
+            .schedule-row-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .address-row-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .schedule-grid,
+            .schedule-row-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">🚚 FreightClub</div>
+        <div class="header-right">
+            <div>🔔</div>
+            <div style="width: 32px; height: 32px; background: #B08D57; border-radius: 50%;"></div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Page Header -->
+        <div style="grid-column: 1 / -1; margin-bottom: 24px; width: 100%;">
+            <h1 style="font-size: 28px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;">Create New Load</h1>
+            <p style="font-size: 14px; color: #636E72;">Fill in the details below to post a load to the board</p>
+        </div>
+
+        <!-- LEFT COLUMN: Origin + Destination -->
+        <div class="left-column">
+            <!-- Origin Panel -->
+            <div class="panel">
+                <h2>Origin</h2>
+                <div class="address-grid">
+                    <div class="form-group">
+                        <label>Street Address *</label>
+                        <input type="text" placeholder="e.g. 123 Main St">
+                    </div>
+                    <div class="form-group">
+                        <label>Suite / Unit (optional)</label>
+                        <input type="text" placeholder="Suite, unit, building">
+                    </div>
+                </div>
+                <div class="address-row-2">
+                    <div class="form-group">
+                        <label>City *</label>
+                        <input type="text" placeholder="e.g. Chicago">
+                    </div>
+                    <div class="form-group">
+                        <label>State *</label>
+                        <select>
+                            <option value="">Select</option>
+                            <option value="IL">IL — Illinois</option>
+                            <option value="CA">CA — California</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ZIP Code *</label>
+                        <input type="text" placeholder="60601">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Destination Panel -->
+            <div class="panel">
+                <h2>Destination</h2>
+                <div class="address-grid">
+                    <div class="form-group">
+                        <label>Street Address *</label>
+                        <input type="text" placeholder="e.g. 456 Industrial Blvd">
+                    </div>
+                    <div class="form-group">
+                        <label>Suite / Unit (optional)</label>
+                        <input type="text" placeholder="Suite, unit, building">
+                    </div>
+                </div>
+                <div class="address-row-2">
+                    <div class="form-group">
+                        <label>City *</label>
+                        <input type="text" placeholder="e.g. Detroit">
+                    </div>
+                    <div class="form-group">
+                        <label>State *</label>
+                        <select>
+                            <option value="">Select</option>
+                            <option value="MI">MI — Michigan</option>
+                            <option value="CA">CA — California</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ZIP Code *</label>
+                        <input type="text" placeholder="48201">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Schedule Panel (Split Date/Time) -->
+        <div class="right-column">
+            <div class="panel">
+                <h2>Schedule & Distance</h2>
+
+                <!-- Pickup Window -->
+                <div style="margin-bottom: 24px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #636E72; text-transform: uppercase; margin-bottom: 12px;">Pickup Window</div>
+                    <div class="schedule-grid">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="margin-bottom: 4px;">Earliest Date</label>
+                            <input type="date" value="2026-06-18">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="margin-bottom: 4px;">Earliest Time</label>
+                            <input type="time" value="08:00">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="margin-bottom: 4px;">Latest Date</label>
+                            <input type="date" value="2026-06-18">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="margin-bottom: 4px;">Latest Time</label>
+                            <input type="time" value="14:00">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delivery Window -->
+                <div style="margin-bottom: 16px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #636E72; text-transform: uppercase; margin-bottom: 12px;">Delivery Window</div>
+                    <div class="schedule-grid">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="margin-bottom: 4px;">Earliest Date</label>
+                            <input type="date" value="2026-06-18">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="margin-bottom: 4px;">Earliest Time</label>
+                            <input type="time" value="16:00">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="margin-bottom: 4px;">Latest Date</label>
+                            <input type="date" value="2026-06-19">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="margin-bottom: 4px;">Latest Time</label>
+                            <input type="time" value="18:00">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Distance Display -->
+                <div class="distance-display">
+                    <p><span class="distance-value">📍 Distance: 847 miles</span></p>
+                    <p class="distance-note">✓ Estimated road distance</p>
+                </div>
+            </div>
+
+            <!-- Cargo Details Panel -->
+            <div class="panel" style="margin-top: 24px;">
+                <h2>Cargo Details</h2>
+
+                <div class="form-group">
+                    <label>Commodity *</label>
+                    <input type="text" placeholder="e.g. Steel coils, Electronics">
+                </div>
+
+                <div class="form-group">
+                    <label>Weight (lbs) *</label>
+                    <input type="number" placeholder="0.00" min="0.01" max="150000" step="0.01">
+                    <div class="helper-text">Legal max: 80,000 lbs</div>
+                </div>
+
+                <div class="dimensions-group">
+                    <div class="dimensions-label">Dimensions (Optional)</div>
+                    <div class="dimension-row">
+                        <div class="dimension-input-pair">
+                            <input type="number" placeholder="0" min="0">
+                            <span class="dimension-suffix">ft</span>
+                        </div>
+                        <div class="dimension-input-pair">
+                            <input type="number" placeholder="0" min="0" max="11">
+                            <span class="dimension-suffix">in</span>
+                        </div>
+                    </div>
+                    <div style="font-size: 11px; color: #636E72; margin-top: 8px;">Length</div>
+                </div>
+            </div>
+
+            <!-- Equipment & Payment Panel -->
+            <div class="panel" style="margin-top: 24px;">
+                <h2>Equipment & Payment</h2>
+
+                <div class="form-group">
+                    <label>Equipment Type *</label>
+                    <select>
+                        <option value="DRY_VAN">Dry Van</option>
+                        <option value="FLATBED">Flatbed</option>
+                        <option value="REFRIGERATED">Refrigerated</option>
+                        <option value="TANKER">Tanker</option>
+                        <option value="SPECIALIZED">Specialized</option>
+                        <option value="STEP_DECK">Step Deck</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Pay Rate *</label>
+                    <div class="pay-rate-row">
+                        <div>
+                            <input type="number" placeholder="0.00" min="0.01" max="99999.99" step="0.01" style="margin-bottom: 8px;">
+                            <div class="rate-type-buttons">
+                                <button class="active">Flat Rate</button>
+                                <button>Per Mile</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="helper-text">$2,118 estimated total (847 mi × $2.50/mi)</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Terms (optional)</label>
+                    <select>
+                        <option value="">Not specified</option>
+                        <option value="IMMEDIATE">Immediate (Same/Next Day)</option>
+                        <option value="NET_7">Net 7</option>
+                        <option value="NET_14">Net 14</option>
+                        <option value="NET_30">Net 30</option>
+                    </select>
+                    <div class="helper-text">Immediate = same day or next day. Net 7/14/30 = days after delivery.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Button Group (Sticky Footer) -->
+    <div style="background: #FFFFFF; border-top: 1px solid #E8E3D8; padding: 24px 32px; position: sticky; bottom: 0; display: flex; justify-content: space-between; gap: 12px; box-shadow: 0 -2px 4px rgba(0,0,0,0.05);">
+        <button class="btn btn-tertiary">Cancel</button>
+        <div style="flex: 1;"></div>
+        <button class="btn btn-secondary">Save as Draft</button>
+        <button class="btn btn-primary">Create & Post Load</button>
+    </div>
+
+</body>
+</html>

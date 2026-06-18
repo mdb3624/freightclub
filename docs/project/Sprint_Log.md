@@ -1,6 +1,6 @@
 # Sprint Log: Resilience Logistics
 
-**Last Updated:** 2026-05-27  
+**Last Updated:** 2026-06-18  
 **Maintained By:** Librarian
 
 | Sprint | Goal | Status | Key Deliverable |
@@ -53,6 +53,16 @@
 | US-821 | Shipper Header Navigation | ✅ COMPLETED | 2026-06-10 | 100% | ✅ REVIEWER_PASS + LIBRARIAN (2026-06-13) |
 | US-823 | Dashboard Layout Skeleton (Grid + Placeholders) | ✅ COMPLETED | 2026-06-13 | 100% | ✅ REVIEWER_PASS (8 gates) + LIBRARIAN (2026-06-13) |
 | US-822 | Shipment Status Panel (Active Shipments List) | ✅ COMPLETED | 2026-06-16 | 91.4% | ✅ REVIEWER_PASS (6/6 gates) + LIBRARIAN (2026-06-16) |
+| US-824 | Quick Actions Panel (Post Load, Get Quote, Track, Preferences) | ✅ COMPLETED | 2026-06-14 | 100% | ✅ MERGED TO MAIN |
+| US-825 | Carrier Search Panel (Origin/Destination Search + Results) | ✅ COMPLETED | 2026-06-14 | 100% | ✅ MERGED TO MAIN |
+
+## Phase 11+ Progress: Load Creation Redesign & Enhancements
+
+| Story ID | Title | Status | Handoff Date | BA Sign-Off | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-103-v2 | Load Creation Redesign (Full Workflow + Dashboard Integration) | ✅ COMPLETED | 2026-06-18 | 85%+ coverage | ✅ CODER PASS (all AC verified) + ✅ REVIEWER PASS (7/7 gates) + ✅ LIBRARIAN (2026-06-18) |
+| US-103-v3 | Load Duplication Feature ("Copy to New") | ⏳ BACKLOG | — | — | Phase 11+ enhancement; dependency: US-103-v2 |
+| US-103-v4 | Load Templates Feature (Save & Reuse) | ⏳ BACKLOG | — | — | Phase 11+ enhancement; dependency: US-103-v2 |
 
 ## Infrastructure Progress: Performance & Optimization
 

@@ -54,8 +54,8 @@ export function ShipperPageLayout({
           {/* SLOT_A: Full-width row (header/summary content) */}
           {slotA && <div className="slot-a">{slotA}</div>}
 
-          {/* SLOT_B: Main content (typically 8 columns on grid) */}
-          {slotB && <div className="slot-b">{slotB}</div>}
+          {/* SLOT_B: Main content (full width when no sidebar) */}
+          {slotB && <div className={`slot-b ${!slotC ? '!w-full' : ''}`}>{slotB}</div>}
 
           {/* SLOT_C: Right sidebar (typically 4 columns on grid) */}
           {slotC && <div className="slot-c">{slotC}</div>}

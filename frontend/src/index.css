@@ -242,6 +242,7 @@
 
 .slot-a { grid-column: 1 / -1; }      /* Full width */
 .slot-b { grid-column: 1 / span 8; }  /* 8 columns */
+.slot-b:last-child { grid-column: 1 / -1; }  /* Full width when no sidebar */
 .slot-c { grid-column: 9 / -1; }      /* 4 columns */
 
 @media (max-width: 1024px) {

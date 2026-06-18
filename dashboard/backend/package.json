@@ -1,0 +1,24 @@
+{
+  "name": "freightclub-dashboard-backend",
+  "version": "1.0.0",
+  "description": "Agile Dashboard backend for FreightClub project management",
+  "main": "src/server.ts",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "vitest",
+    "validate": "tsc --noEmit"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "chokidar": "^3.5.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.6",
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.0",
+    "vitest": "^1.1.1"
+  }
+}

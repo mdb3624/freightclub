@@ -1,7 +1,7 @@
 import { parseAndValidate } from './parser';
 import { resolve } from 'path';
 
-const filePath = resolve(__dirname, '../../Story_Map.md');
+const filePath = resolve(process.cwd(), 'docs/project/Story_Map.md');
 
 const { stories, errors } = parseAndValidate(filePath);
 

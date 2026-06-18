@@ -1,24 +1,31 @@
 {
-  "name": "freightclub-dashboard-backend",
+  "name": "dashboard-backend",
   "version": "1.0.0",
-  "description": "Agile Dashboard backend for FreightClub project management",
-  "main": "src/server.ts",
+  "description": "Story Map parser and validator for FreightClub dashboard",
+  "type": "module",
+  "main": "src/parser.ts",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "test": "jest",
+    "validate": "npx tsx src/validate.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
-    "test": "vitest",
-    "validate": "tsc --noEmit"
+    "dev": "tsx --watch src/validate.ts"
   },
+  "keywords": [
+    "story-map",
+    "parser",
+    "validator"
+  ],
+  "author": "",
+  "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
-    "chokidar": "^3.5.3"
+    "csv-parse": "^5.5.5"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/node": "^20.10.6",
-    "typescript": "^5.3.3",
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.11.5",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
     "tsx": "^4.7.0",
-    "vitest": "^1.1.1"
+    "typescript": "^5.3.3"
   }
 }

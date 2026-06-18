@@ -1,239 +1,227 @@
+import { readFileSync } from 'fs';
+import { parse } from 'csv-parse/sync';
+
+// Valid story statuses
+const VALID_STATUSES = [
+  'READY_FOR_DESIGN',
+  'READY_FOR_IMPLEMENTATION',
+  'IN_PROGRESS',
+  'COMPLETED',
+  'PAUSED',
+  'BLOCKED',
+  'BACKLOG',
+];
+
+// Valid phases
+const VALID_PHASES = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', 'B', 'C'];
+
 /**
- * Markdown parser for extracting story data from Story_Map.md
+ * Cleans markdown-formatted values by removing bold markers and emoji
+ * @param value Raw value potentially containing markdown/emoji
+ * @returns Cleaned string suitable for validation
  */
+function cleanMarkdownValue(value: string): string {
+  if (!value) return '';
 
-import fs from 'fs';
-import path from 'path';
-import { Dashboard, Story, StoryStatus, PhaseNumber, ValidationResult, ValidationError } from './types';
+  // Remove bold markdown (**text** -> text)
+  let cleaned = value.replace(/\*\*(.+?)\*\*/g, '$1');
 
-const VALID_STATUSES: StoryStatus[] = ['COMPLETED', 'IN_PROGRESS', 'READY_FOR_DESIGN', 'BACKLOG', 'MIGRATION_PENDING'];
-const VALID_PHASES: PhaseNumber[] = [1, 2, 3, 4, 5, 6, 7, 10, 11, 'cross'];
+  // Remove specific emoji and special markers
+  cleaned = cleaned
+    .replace(/✅/g, '')
+    .replace(/❌/g, '')
+    .replace(/⚠️/g, '')
+    .replace(/🔗/g, '')
+    .replace(/📊/g, '')
+    .replace(/🚀/g, '')
+    .replace(/🔄/g, '') // Add rotating arrows emoji
+    .replace(/\[DEBT:AUTO\]/g, '') // Also remove debt markers
+    .trim();
 
-/**
- * Parse a markdown file and extract story data
- */
-export function parseMarkdown(filepath: string): Dashboard {
-  if (!fs.existsSync(filepath)) {
-    throw new Error(`File not found: ${filepath}`);
-  }
+  // Remove any remaining emoji (Unicode ranges for emoji)
+  // This catches most emoji characters
+  cleaned = cleaned.replace(/[\u{1F300}-\u{1F9FF}]/gu, '');
 
-  const content = fs.readFileSync(filepath, 'utf-8');
-  const lines = content.split('\n');
+  // Remove leading/trailing dashes and spaces
+  cleaned = cleaned.replace(/^[\s\-]+|[\s\-]+$/g, '').trim();
 
-  const stories = parseTableRows(lines);
+  return cleaned;
+}
 
-  const activeStories = stories.filter(
-    s => s.status === 'IN_PROGRESS' || s.status === 'READY_FOR_DESIGN'
-  );
-
-  const currentSprint: Dashboard['currentSprint'] = {
-    number: 1,
-    stories: stories.filter(s => [1, 2, 3].includes(s.phase as number) && s.status !== 'BACKLOG'),
-    completedCount: stories.filter(s => s.status === 'COMPLETED').length,
-    totalCount: stories.length,
-  };
-
-  const backlog = stories.filter(s => s.status === 'BACKLOG' || s.phase === 'cross' || ![1, 2, 3].includes(s.phase as number));
-
-  return {
-    lastUpdated: new Date().toISOString(),
-    activeStories,
-    currentSprint,
-    backlog,
-  };
+interface StoryRow {
+  id: string;
+  title: string;
+  status: string;
+  phase: string;
+  raw: string[];
 }
 
 /**
- * Parse table rows from markdown content
+ * Parses a single story row from the CSV
+ * @param row Raw CSV row
+ * @param headers Column headers
+ * @returns Parsed story object with cleaned values
  */
-function parseTableRows(lines: string[]): Story[] {
-  const stories: Story[] = [];
-  let headerFound = false;
+function parseStoryRow(row: string[], headers: string[]): StoryRow | null {
+  const idIdx = headers.indexOf('Story');
+  const titleIdx = headers.indexOf('Title');
+  const statusIdx = headers.indexOf('Status');
+  const phaseIdx = headers.indexOf('Phase');
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-
-    // Skip the markdown separator line (contains ---)
-    if (line.includes('---')) {
-      if (line.includes('|')) {
-        headerFound = true;
-      }
-      continue;
-    }
-
-    // Process table rows (must start with | and have cells)
-    if (headerFound && line.startsWith('|') && !line.includes('---')) {
-      const cells = parseTableRow(line);
-      if (cells.length >= 5) {
-        const story = createStoryFromRow(cells);
-        if (story) {
-          stories.push(story);
-        }
-      }
-    }
-
-    // Stop when we exit the table (empty line after data rows)
-    if (headerFound && !line.startsWith('|') && line.length > 0) {
-      headerFound = false;
-    }
-  }
-
-  return stories;
-}
-
-/**
- * Parse a single table row
- */
-function parseTableRow(line: string): string[] {
-  return line
-    .split('|')
-    .map(cell => cell.trim())
-    .filter(cell => cell.length > 0);
-}
-
-/**
- * Create a Story object from a table row
- */
-function createStoryFromRow(cells: string[]): Story | null {
-  if (cells.length < 5) {
+  if (idIdx === -1 || titleIdx === -1 || statusIdx === -1 || phaseIdx === -1) {
     return null;
   }
 
-  const id = cells[0];
-  const title = cells[1];
-  const status = cells[2];
-  const phase = cells[3];
-  const dependsOn = cells[4];
+  const rawId = row[idIdx] || '';
+  const rawTitle = row[titleIdx] || '';
+  const rawStatus = row[statusIdx] || '';
+  const rawPhase = row[phaseIdx] || '';
 
-  // Validate status
-  if (!VALID_STATUSES.includes(status as StoryStatus)) {
-    console.warn(`Invalid status "${status}" for story ${id}`);
-    return null;
-  }
-
-  // Parse and validate phase
-  let parsedPhase: PhaseNumber;
-  if (phase === 'cross') {
-    parsedPhase = 'cross';
-  } else {
-    const phaseNum = parseInt(phase, 10);
-    if (!VALID_PHASES.includes(phaseNum as PhaseNumber)) {
-      console.warn(`Invalid phase "${phase}" for story ${id}`);
-      return null;
-    }
-    parsedPhase = phaseNum as PhaseNumber;
-  }
-
-  // Parse dependencies
-  const dependencies = dependsOn
-    .split(',')
-    .map(dep => dep.trim())
-    .filter(dep => dep.length > 0);
+  // Clean markdown from extracted values
+  const id = cleanMarkdownValue(rawId);
+  const title = cleanMarkdownValue(rawTitle);
+  const status = cleanMarkdownValue(rawStatus);
+  const phase = cleanMarkdownValue(rawPhase);
 
   return {
     id,
     title,
-    status: status as StoryStatus,
-    phase: parsedPhase,
-    dependencies,
-    roles: [],
-    coverage: 0,
+    status,
+    phase,
+    raw: row,
   };
 }
 
 /**
- * Validate a markdown file for correctness
+ * Validates a single story
+ * @param story Parsed story object
+ * @returns Error message if invalid, null if valid
  */
-export function validate(filepath: string): ValidationResult {
-  const errors: ValidationError[] = [];
+function validateStory(story: StoryRow): string | null {
+  if (!story.id) {
+    return `Row missing Story ID`;
+  }
 
+  if (!story.title) {
+    return `${story.id}: Missing title`;
+  }
+
+  if (!VALID_STATUSES.includes(story.status)) {
+    return `${story.id}: Invalid status "${story.status}". Must be one of: ${VALID_STATUSES.join(', ')}`;
+  }
+
+  if (!VALID_PHASES.includes(story.phase)) {
+    return `${story.id}: Invalid phase "${story.phase}". Must be one of: ${VALID_PHASES.join(', ')}`;
+  }
+
+  return null;
+}
+
+/**
+ * Parses and validates a markdown file (CSV format) containing story entries
+ * @param filePath Path to the markdown file
+ * @returns Array of parsed stories and validation errors
+ */
+export function parseAndValidate(
+  filePath: string
+): { stories: StoryRow[]; errors: string[] } {
   try {
-    if (!fs.existsSync(filepath)) {
-      return {
-        valid: false,
-        errors: [{ line: 0, message: `File not found: ${filepath}` }],
-      };
-    }
+    const content = readFileSync(filePath, 'utf-8');
 
-    const content = fs.readFileSync(filepath, 'utf-8');
+    // Extract markdown table rows
     const lines = content.split('\n');
-    const stories = parseTableRows(lines);
+    const tableRows: string[] = [];
+    let inTable = false;
+    let headers: string[] = [];
 
-    const seenIds = new Set<string>();
-    let headerFound = false;
-    let lineNumber = 0;
+    for (const line of lines) {
+      const trimmed = line.trim();
 
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-
-      // Track header line
-      if (line.includes('---') && line.includes('|')) {
-        headerFound = true;
-        continue;
-      }
-
-      // Skip separator lines
-      if (line.includes('---')) {
-        continue;
-      }
-
-      // Only process lines that are table rows (start with |)
-      if (!headerFound || !line.startsWith('|')) {
-        continue;
-      }
-
-      lineNumber = i + 1;
-      const cells = parseTableRow(line);
-      if (cells.length < 5) {
-        continue;
-      }
-
-      const id = cells[0];
-      const status = cells[2];
-      const phase = cells[3];
-
-      // Check for duplicate IDs
-      if (seenIds.has(id)) {
-        errors.push({
-          line: lineNumber,
-          message: `Duplicate story ID: ${id}`,
-        });
-      }
-      seenIds.add(id);
-
-      // Validate status
-      if (!VALID_STATUSES.includes(status as StoryStatus)) {
-        errors.push({
-          line: lineNumber,
-          message: `Invalid status "${status}" for story ${id}. Valid: ${VALID_STATUSES.join(', ')}`,
-        });
-      }
-
-      // Validate phase
-      if (phase !== 'cross') {
-        const phaseNum = parseInt(phase, 10);
-        if (isNaN(phaseNum) || !VALID_PHASES.includes(phaseNum as PhaseNumber)) {
-          errors.push({
-            line: lineNumber,
-            message: `Invalid phase "${phase}" for story ${id}. Valid: ${VALID_PHASES.join(', ')}`,
-          });
+      // Check if line is a markdown table row (starts and ends with |)
+      if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+        if (inTable === false) {
+          inTable = true;
         }
+
+        // Skip separator rows (contain only dashes and pipes)
+        if (trimmed.match(/^\|[\s\-|]+\|$/)) {
+          continue;
+        }
+
+        tableRows.push(trimmed);
+      } else if (inTable) {
+        // End of table
+        break;
       }
     }
 
-    return {
-      valid: errors.length === 0,
-      errors,
-    };
+    if (tableRows.length === 0) {
+      return { stories: [], errors: ['No table found in markdown file'] };
+    }
+
+    // Parse header row
+    const headerRow = tableRows[0];
+    headers = headerRow
+      .split('|')
+      .map((h) => h.trim())
+      .filter((h) => h.length > 0);
+
+    if (headers.length === 0) {
+      return { stories: [], errors: ['Invalid table format: no headers'] };
+    }
+
+    const stories: StoryRow[] = [];
+    const errors: string[] = [];
+
+    // Parse data rows (skip header, which is first row)
+    for (let i = 1; i < tableRows.length; i++) {
+      const row = tableRows[i]
+        .split('|')
+        .map((v) => v.trim())
+        .filter((v) => v.length > 0);
+
+      // Skip empty rows
+      if (row.length === 0) {
+        continue;
+      }
+
+      const story = parseStoryRow(row, headers);
+      if (!story) {
+        errors.push(`Row ${i + 1}: Could not parse (missing required columns)`);
+        continue;
+      }
+
+      const validationError = validateStory(story);
+      if (validationError) {
+        errors.push(`Row ${i + 1}: ${validationError}`);
+      } else {
+        stories.push(story);
+      }
+    }
+
+    return { stories, errors };
   } catch (error) {
     return {
-      valid: false,
-      errors: [
-        {
-          line: 0,
-          message: `Validation error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        },
-      ],
+      stories: [],
+      errors: [`Failed to read file: ${error instanceof Error ? error.message : String(error)}`],
     };
   }
+}
+
+/**
+ * Validates a parsed story object
+ * @param story Story object to validate
+ * @returns Error message if invalid, null if valid
+ */
+export function validate(story: StoryRow): string | null {
+  // Apply cleanMarkdownValue to all fields for safety
+  const cleanStory: StoryRow = {
+    ...story,
+    id: cleanMarkdownValue(story.id),
+    title: cleanMarkdownValue(story.title),
+    status: cleanMarkdownValue(story.status),
+    phase: cleanMarkdownValue(story.phase),
+  };
+
+  return validateStory(cleanStory);
 }

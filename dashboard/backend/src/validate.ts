@@ -1,27 +1,24 @@
-/**
- * CLI entry point for Story_Map.md validation
- * Used by git pre-commit hook to validate Story_Map.md before commits
- */
+import { parseAndValidate } from './parser';
+import { resolve } from 'path';
 
-import path from 'path';
-import { validate } from './parser';
+const filePath = resolve(__dirname, '../../Story_Map.md');
 
-const filePath = path.join(process.cwd(), 'docs/project/Story_Map.md');
+const { stories, errors } = parseAndValidate(filePath);
 
-const result = validate(filePath);
-
-if (!result.valid) {
-  console.error('❌ Story_Map.md validation failed');
-  result.errors.forEach(error => {
-    if (error.line > 0) {
-      console.error(`  Line ${error.line}: ${error.message}`);
-    } else {
-      console.error(`  ${error.message}`);
-    }
+console.log(`\n✅ Valid stories: ${stories.length}`);
+if (stories.length > 0) {
+  stories.forEach((s) => {
+    console.log(`  - ${s.id}: ${s.title} [${s.status}] (Phase ${s.phase})`);
   });
-  console.error('❌ Commit rejected. Fix errors and try again.');
+}
+
+if (errors.length > 0) {
+  console.log(`\n❌ Validation errors: ${errors.length}`);
+  errors.forEach((e) => {
+    console.log(`  - ${e}`);
+  });
   process.exit(1);
 } else {
-  console.log('✅ Story_Map.md validation passed');
+  console.log('\n✅ All stories validated successfully!');
   process.exit(0);
 }

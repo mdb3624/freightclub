@@ -36,7 +36,7 @@ export function LoadsListPage() {
         <>
           <LoadsTable
             loads={data.content}
-            onCancel={(id, reason) => cancelLoad({ id, reason })}
+            onCancel={(id, reason) => cancelLoad({ loadId: id, reason })}
             isCancelling={isCancelling}
             onPublish={publishLoad}
             isPublishing={isPublishing}

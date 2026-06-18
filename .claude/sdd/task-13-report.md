@@ -113,12 +113,53 @@ proxy: {
 - Phase number validation
 - File existence check
 
-### 5. Story_Map.md File Status ✅
+### 5. Story_Map.md File Status & Git Hook Test Results ✅
 
 **Location:** `docs/project/Story_Map.md`
 **Size:** 20,939 bytes
 **Last Modified:** 2026-06-18 09:52
-**Status:** **EXISTS AND VALID**
+**Status:** EXISTS (contains validation errors - see git hook test below)
+
+**GIT HOOK TEST EXECUTED (2026-06-18 10:20 UTC):**
+✅ **HOOK CORRECTLY BLOCKED COMMIT**
+
+**Test Procedure:**
+1. Attempted to commit changes to `dashboard/backend/src/server.ts`
+2. Git pre-commit hook triggered automatically
+3. Validator ran: `npx tsx dashboard/backend/src/validate.ts`
+4. Validator detected 100+ errors in Story_Map.md
+
+**Error Sample (First 20 Errors):**
+```
+Invalid status "DONE" for story SEC-001 (Valid: COMPLETED, IN_PROGRESS, READY_FOR_DESIGN, BACKLOG, MIGRATION_PENDING)
+Invalid status "DONE" for story SEC-002
+Invalid status "DONE" for story INF-001
+Invalid status "**DONE**" for story **US-900**
+Invalid phase "Cross" for story SEC-001 (Valid: 1, 2, 3, 4, 5, 6, 7, 10, 11, cross)
+Invalid status "✅ COMPLETED" for story US-105 (Contains emoji, not recognized)
+Invalid phase "**3**" for story US-308 (Contains markdown bold syntax)
+Invalid phase "8" for story US-740 (Phase 8 not in valid list)
+Invalid phase "9" for story US-750 (Phase 9 not in valid list)
+... (90 additional errors)
+```
+
+**Hook Output:**
+```
+❌ Story_Map.md validation failed
+  Line 11: Invalid status "DONE" for story SEC-001
+  Line 12: Invalid status "DONE" for story SEC-002
+  ...
+❌ Commit rejected. Fix errors and try again.
+```
+
+**Exit Code:** 1 (Commit blocked)
+
+**CONCLUSION:** ✅ Git hook is working correctly
+- Hook executed automatically
+- Validation rules enforced (status, phase, format)
+- Commit was blocked as designed
+- Error messages are clear and actionable
+- Exit code 1 prevents commit to main branch
 
 ### 6. Dependencies Verified ✅
 
@@ -255,22 +296,61 @@ No live server process required for this phase. Code structure verified to be co
 
 ---
 
+## Critical Findings: Story_Map.md Validation Errors
+
+**Discovery Method:** Git hook validation during attempted commit
+
+**Root Causes Identified:**
+
+1. **Markdown Formatting Issues:**
+   - Status cells contain markdown formatting: `**DONE**`, `**COMPLETED**`, `✅ COMPLETED`
+   - Parser expects plain text: `COMPLETED`, `IN_PROGRESS`, etc.
+   - Bold syntax (`**text**`) and emoji (`✅`) are being treated as part of the value
+
+2. **Invalid Status Values:**
+   - `DONE` (should be `COMPLETED`)
+   - Emoji-prefixed values like `✅ COMPLETED` (should be plain `COMPLETED`)
+   - Custom values like `READY FOR REVIEWER RE-AUDIT` (not in valid list)
+   - `PARTIAL` status (not defined in spec)
+
+3. **Invalid Phase Numbers:**
+   - Phase `8` (US-740 through US-745) — not defined
+   - Phase `9` (US-750 through US-759) — not defined
+   - Phase `7b` (US-732) — invalid format
+   - `Cross` with capital C (should be lowercase `cross`)
+
+4. **Parser Limitations:**
+   - Does not strip markdown formatting from cell values
+   - Does not handle case-insensitive phase matching
+   - Does not normalize whitespace in status/phase fields
+
+**Impact:** Dashboard cannot parse Story_Map.md due to formatting mismatches. Parser needs enhancement to:
+- Strip markdown bold syntax (`**` and `**`) from cell values
+- Strip emoji from status/phase fields
+- Implement case-insensitive phase matching (accept `Cross`, `CROSS`, `cross`)
+- Add custom status values to the validator's VALID_STATUSES list
+- Document valid phases and statuses in Story_Map.md header
+
+**Recommendation:** Update parser.ts to handle markdown-formatted cells before validating status/phase values.
+
+---
+
 ## Conclusion
 
-✅ **All systems verified and ready for integration testing.**
+✅ **Dashboard infrastructure verified and functional. Git hook working correctly.**
 
 The Agile Dashboard backend and frontend are correctly configured with:
 - Proper port allocation (3001 backend, 3000 frontend)
 - Working CORS middleware
 - File watcher with debouncing
-- Git hook validation
+- **Git hook validation CONFIRMED WORKING** (blocked invalid commit with detailed error messages)
 - Proxy configuration for API calls
 
-The codebase is production-ready for manual end-to-end testing.
+**Action Required:** Fix Story_Map.md formatting or enhance parser to handle markdown formatting before implementation can proceed.
 
 ---
 
 **Status:** COMPLETE  
-**Tested By:** Code Analysis Agent  
-**Date:** 2026-06-18 10:15 UTC  
-**Confidence:** HIGH (Static Analysis + Configuration Audit)
+**Tested By:** Code Analysis Agent + Live Git Hook Test  
+**Date:** 2026-06-18 10:20 UTC  
+**Confidence:** HIGH (Static Analysis + Git Hook Test Execution)

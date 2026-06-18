@@ -38,6 +38,10 @@ export function LoadCreatePage() {
     defaultValues.originAddress2 = profile.defaultPickupAddress2 ?? ''
   }
 
+  const handleCancel = () => {
+    navigate('/dashboard/shipper')
+  }
+
   const handleCreateAnother = () => {
     setSubmitted(false)
     setSubmittedLoadId(null)
@@ -45,61 +49,60 @@ export function LoadCreatePage() {
 
   return (
     <ShipperPageLayout slotB={
-      <div className="flex flex-col min-h-screen">
-        {/* Header Section */}
-        <div className="bg-white border-b border-gray-200 px-8 py-6">
+      <div className="w-full space-y-6 px-6 py-6">
+        {/* Page Header */}
+        <div>
           <h1 className="text-2xl font-bold uppercase tracking-wider text-gray-900">Create New Load</h1>
           <p className="mt-2 text-sm text-gray-600">Fill in the details below to post a load to the board</p>
         </div>
 
-        {/* Form Section */}
-        <div className="flex-1 px-8 py-6">
-          {!submitted ? (
-            profileLoading ? (
-              <div className="flex items-center justify-center py-12 text-sm text-gray-400">
-                Loading...
-              </div>
-            ) : (
-              <LoadForm
-                onSubmit={createLoad}
-                onSaveDraft={saveDraft}
-                defaultValues={defaultValues}
-                isSubmitting={isPending}
-                isDraftSaving={isDraftSaving}
-                error={error ?? draftError}
-                submitLabel="Create & Post Load"
-              />
-            )
-          ) : submittedLoadId ? (
-            <div className="space-y-6">
-              <div className="rounded-lg border-l-4 border-l-green-500 bg-green-50 p-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">✓</span>
-                  <div>
-                    <p className="font-semibold text-green-900">Load Posted Successfully</p>
-                    <p className="text-sm text-green-700">Load {submittedLoadId} has been posted to the board</p>
-                  </div>
+        {/* Form Container */}
+        {!submitted ? (
+          profileLoading ? (
+            <div className="flex items-center justify-center py-12 text-sm text-gray-400">
+              Loading...
+            </div>
+          ) : (
+            <LoadForm
+              onSubmit={createLoad}
+              onSaveDraft={saveDraft}
+              onCancel={handleCancel}
+              defaultValues={defaultValues}
+              isSubmitting={isPending}
+              isDraftSaving={isDraftSaving}
+              error={error ?? draftError}
+              submitLabel="Create & Post Load"
+            />
+          )
+        ) : submittedLoadId ? (
+          <div className="space-y-6">
+            <div className="bg-white border border-gray-300 rounded-lg shadow-sm p-6 border-l-4 border-l-green-500">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">✓</span>
+                <div>
+                  <p className="font-semibold text-green-900">Load Posted Successfully</p>
+                  <p className="text-sm text-green-700">Load {submittedLoadId} has been posted to the board</p>
                 </div>
               </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={handleCreateAnother}
-                  className="flex-1 rounded-md py-2.5 px-4 font-medium text-white transition-all"
-                  style={bronzeButtonStyle}
-                >
-                  Create Another Load
-                </button>
-                <button
-                  onClick={() => navigate('/dashboard/shipper')}
-                  className="flex-1 rounded-md bg-gray-100 px-4 py-2.5 font-medium text-gray-700 border border-gray-300 hover:bg-gray-200 transition-colors"
-                >
-                  Back to Dashboard
-                </button>
-              </div>
             </div>
-          ) : null}
-        </div>
+
+            <div className="bg-white border border-gray-300 rounded-lg shadow-sm p-6 flex gap-3">
+              <button
+                onClick={handleCreateAnother}
+                className="flex-1 rounded-md py-2.5 px-4 font-medium text-white transition-all"
+                style={bronzeButtonStyle}
+              >
+                Create Another Load
+              </button>
+              <button
+                onClick={() => navigate('/dashboard/shipper')}
+                className="flex-1 rounded-md bg-gray-100 px-4 py-2.5 font-medium text-gray-700 border border-gray-300 hover:bg-gray-200 transition-colors"
+              >
+                Back to Dashboard
+              </button>
+            </div>
+          </div>
+        ) : null}
       </div>
     } />
   )

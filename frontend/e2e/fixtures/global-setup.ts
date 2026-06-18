@@ -50,7 +50,7 @@ async function globalSetup(config: FullConfig) {
         password: testPassword,
         firstName: 'E2E',
         lastName: 'Test',
-        role: 'TRUCKER',
+        role: 'SHIPPER',
         companyName: `E2ETest-${uniqueId}`,
       },
     });

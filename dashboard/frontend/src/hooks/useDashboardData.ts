@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
+import type { Story, CurrentSprint, Dashboard } from '../../backend/src/types';
 
 interface DashboardData {
-  activeStories: any[];
-  currentSprint: any;
-  backlog: Record<string, any[]>;
+  activeStories: Story[];
+  currentSprint: CurrentSprint;
+  backlog: Record<string, Story[]>;
   lastUpdated: string;
 }
 

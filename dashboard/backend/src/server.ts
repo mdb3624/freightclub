@@ -11,7 +11,7 @@ import { parseMarkdown } from './parser';
 import { Dashboard } from './types';
 
 const app: Express = express();
-const PORT = 3000;
+const PORT = 3001;
 
 // Dashboard cache
 let dashboardCache: Dashboard | null = null;
@@ -20,6 +20,10 @@ let dashboardCache: Dashboard | null = null;
 app.use((req: Request, res: Response, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
   next();
 });
 

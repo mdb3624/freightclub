@@ -75,31 +75,30 @@ export function LoadCreatePage() {
             />
           )
         ) : submittedLoadId ? (
-          <div className="space-y-6">
-            <div className="bg-white border border-gray-300 rounded-lg shadow-sm p-6 border-l-4 border-l-green-500">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">✓</span>
-                <div>
-                  <p className="font-semibold text-green-900">Load Posted Successfully</p>
-                  <p className="text-sm text-green-700">Load {submittedLoadId} has been posted to the board</p>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 border-l-4 border-l-green-500">
+              <div className="flex items-start gap-4">
+                <span className="text-3xl text-green-600 flex-shrink-0">✓</span>
+                <div className="flex-1">
+                  <h2 className="font-bold text-lg text-green-900">Load Posted!</h2>
+                  <p className="text-sm text-gray-600 mt-1">Load ID: <span className="font-mono font-semibold">{submittedLoadId}</span></p>
                 </div>
               </div>
-            </div>
-
-            <div className="bg-white border border-gray-300 rounded-lg shadow-sm p-6 flex gap-3">
-              <button
-                onClick={handleCreateAnother}
-                className="flex-1 rounded-md py-2.5 px-4 font-medium text-white transition-all"
-                style={bronzeButtonStyle}
-              >
-                Create Another Load
-              </button>
-              <button
-                onClick={() => navigate('/dashboard/shipper')}
-                className="flex-1 rounded-md bg-gray-100 px-4 py-2.5 font-medium text-gray-700 border border-gray-300 hover:bg-gray-200 transition-colors"
-              >
-                Back to Dashboard
-              </button>
+              <div className="mt-6 flex gap-3">
+                <button
+                  onClick={handleCreateAnother}
+                  className="flex-1 rounded-md py-2 px-4 font-medium text-white text-sm transition-all"
+                  style={bronzeButtonStyle}
+                >
+                  Create Another
+                </button>
+                <button
+                  onClick={() => navigate('/dashboard/shipper')}
+                  className="flex-1 rounded-md bg-gray-100 px-4 py-2 font-medium text-gray-700 border border-gray-300 hover:bg-gray-200 transition-colors text-sm"
+                >
+                  Dashboard
+                </button>
+              </div>
             </div>
           </div>
         ) : null}

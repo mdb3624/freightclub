@@ -7,6 +7,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
+import { useCancelLoad } from '@/features/loads/hooks/useCancelLoad';
 import styles from './ShipmentStatusPanel.module.css';
 
 interface Shipment {
@@ -54,7 +55,8 @@ export const ShipmentStatusPanel: React.FC<ShipmentStatusPanelProps> = ({
   isLoading = false,
   onTrackShipments,
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('')
+  const { mutate: cancelLoad } = useCancelLoad()
 
   const filteredShipments = useMemo(() => {
     if (!searchQuery.trim()) return shipments;
@@ -133,6 +135,7 @@ export const ShipmentStatusPanel: React.FC<ShipmentStatusPanelProps> = ({
             <div className={styles.colCarrier}>Carrier</div>
             <div className={styles.colRating}>Rating</div>
             <div className={styles.colDestination}>Destination</div>
+            <div className="px-3 py-2 text-right text-xs font-semibold">Action</div>
           </div>
 
           {/* Shipment Rows */}
@@ -174,6 +177,19 @@ export const ShipmentStatusPanel: React.FC<ShipmentStatusPanelProps> = ({
 
               <div className={styles.colDestination}>
                 <span className={styles.destination}>{shipment.destination}</span>
+              </div>
+              <div className="px-3 py-2 flex justify-end">
+                <button
+                  onClick={() => {
+                    if (confirm(`Cancel load ${shipment.loadId}?`)) {
+                      cancelLoad({ loadId: shipment.loadId })
+                    }
+                  }}
+                  className="text-xs text-red-600 hover:text-red-800 font-medium hover:underline"
+                  data-testid={`shipment-cancel-${shipment.loadId}`}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           ))}

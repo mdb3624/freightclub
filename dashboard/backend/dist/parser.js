@@ -12,6 +12,49 @@ const fs_1 = __importDefault(require("fs"));
 const VALID_STATUSES = ['COMPLETED', 'IN_PROGRESS', 'READY_FOR_DESIGN', 'BACKLOG', 'MIGRATION_PENDING'];
 const VALID_PHASES = [1, 2, 3, 4, 5, 6, 7, 10, 11, 'cross'];
 /**
+ * Normalize status from Obsidian markdown format
+ * Strips emojis, bold markers, and maps common variations
+ */
+function normalizeStatus(raw) {
+    // Remove markdown formatting and emojis
+    let normalized = raw
+        .replace(/\*\*/g, '') // Remove bold markers **text**
+        .replace(/[✅❌⚠️📊📅📋🔄⏳]/g, '') // Remove emojis
+        .replace(/^[→|]\s*/g, '') // Remove arrow prefixes
+        .split(/[|→]/)[0] // Take first part if split by delimiter
+        .trim();
+    // Remove leading/trailing dashes or special chars
+    normalized = normalized.replace(/^[-\s]+|[-\s]+$/g, '').trim();
+    // Map common variations to standard statuses
+    const statusMap = {
+        'DONE': 'COMPLETED',
+        'IN PROGRESS': 'IN_PROGRESS',
+        'READY FOR DESIGN': 'READY_FOR_DESIGN',
+        'IN_PROGRESS': 'IN_PROGRESS',
+        'READY_FOR_DESIGN': 'READY_FOR_DESIGN',
+    };
+    const upperNorm = normalized.toUpperCase();
+    return statusMap[upperNorm] || (VALID_STATUSES.includes(upperNorm) ? upperNorm : '');
+}
+/**
+ * Normalize phase from Obsidian markdown format
+ * Handles numeric phases and 'cross' phase, case-insensitive
+ */
+function normalizePhase(raw) {
+    let normalized = raw
+        .replace(/\*\*/g, '') // Strip bold markers
+        .trim()
+        .toLowerCase();
+    // Handle "Cross" → "cross"
+    if (normalized === 'cross')
+        return 'cross';
+    // Try to parse as number
+    const num = parseInt(normalized, 10);
+    if (!isNaN(num))
+        return num.toString();
+    return raw;
+}
+/**
  * Parse a markdown file and extract story data
  */
 function parseMarkdown(filepath) {
@@ -21,7 +64,9 @@ function parseMarkdown(filepath) {
     const content = fs_1.default.readFileSync(filepath, 'utf-8');
     const lines = content.split('\n');
     const stories = parseTableRows(lines);
+    console.log(`✅ Parsed ${stories.length} valid stories from Story_Map.md`);
     const activeStories = stories.filter(s => s.status === 'IN_PROGRESS' || s.status === 'READY_FOR_DESIGN');
+    console.log(`  - Active stories: ${activeStories.length}`);
     const currentSprint = {
         number: 1,
         stories: stories.filter(s => [1, 2, 3].includes(s.phase) && s.status !== 'BACKLOG'),
@@ -84,25 +129,32 @@ function createStoryFromRow(cells) {
     if (cells.length < 5) {
         return null;
     }
-    const id = cells[0];
-    const title = cells[1];
-    const status = cells[2];
-    const phase = cells[3];
+    const id = cells[0].trim();
+    const title = cells[1].trim();
+    const rawStatus = cells[2];
+    const rawPhase = cells[3];
     const dependsOn = cells[4];
-    // Validate status
-    if (!VALID_STATUSES.includes(status)) {
-        console.warn(`Invalid status "${status}" for story ${id}`);
+    // Skip empty rows
+    if (!id || !title) {
         return null;
     }
-    // Parse and validate phase
+    // Normalize and validate status
+    const normalizedStatus = normalizeStatus(rawStatus);
+    if (!normalizedStatus || !VALID_STATUSES.includes(normalizedStatus)) {
+        console.warn(`Invalid status "${rawStatus}" → "${normalizedStatus}" for story ${id}`);
+        return null;
+    }
+    const status = normalizedStatus;
+    // Normalize and validate phase
+    const normalizedPhase = normalizePhase(rawPhase);
     let parsedPhase;
-    if (phase === 'cross') {
+    if (normalizedPhase === 'cross') {
         parsedPhase = 'cross';
     }
     else {
-        const phaseNum = parseInt(phase, 10);
+        const phaseNum = parseInt(normalizedPhase, 10);
         if (!VALID_PHASES.includes(phaseNum)) {
-            console.warn(`Invalid phase "${phase}" for story ${id}`);
+            console.warn(`Invalid phase "${rawPhase}" → "${normalizedPhase}" for story ${id}`);
             return null;
         }
         parsedPhase = phaseNum;
@@ -115,7 +167,7 @@ function createStoryFromRow(cells) {
     return {
         id,
         title,
-        status: status,
+        status,
         phase: parsedPhase,
         dependencies,
         roles: [],

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "jira": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-jira"],
+      "env": {
+        "JIRA_API_TOKEN": "${JIRA_API_TOKEN}",
+        "JIRA_EMAIL": "${JIRA_EMAIL}",
+        "JIRA_DOMAIN": "${JIRA_DOMAIN}"
+      }
+    }
+  }
+}

@@ -9,7 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
 const parser_1 = require("./parser");
-const filePath = path_1.default.join(process.cwd(), 'docs/project/Story_Map.md');
+const filePath = path_1.default.join(process.cwd(), '/c/projects/freightclub/docs/project/Story_Map.md');
 const result = (0, parser_1.validate)(filePath);
 if (!result.valid) {
     console.error('❌ Story_Map.md validation failed');

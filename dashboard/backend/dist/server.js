@@ -27,13 +27,27 @@ app.use((req, res, next) => {
  */
 function loadDashboard() {
     try {
-        const storyMapPath = path_1.default.join(process.cwd(), 'docs/project/Story_Map.md');
+        // Resolve path from project root (2 levels up from dashboard/backend)
+        const projectRoot = path_1.default.join(__dirname, '../../..');
+        const storyMapPath = path_1.default.join(projectRoot, 'docs/project/Story_Map.md');
         dashboardCache = (0, parser_1.parseMarkdown)(storyMapPath);
         const timestamp = new Date().toISOString();
         console.log(`✅ Dashboard loaded at ${timestamp}`);
     }
     catch (error) {
         console.error('❌ Failed to load dashboard:', error instanceof Error ? error.message : 'Unknown error');
+        // Provide fallback data
+        dashboardCache = {
+            lastUpdated: new Date().toISOString(),
+            activeStories: [],
+            currentSprint: {
+                number: 1,
+                stories: [],
+                completedCount: 0,
+                totalCount: 0,
+            },
+            backlog: [],
+        };
     }
 }
 /**
@@ -61,7 +75,8 @@ app.get('/api/dashboard', (req, res) => {
  * Initialize file watcher for Story_Map.md
  */
 function initializeFileWatcher() {
-    const storyMapPath = path_1.default.join(process.cwd(), 'docs/project/Story_Map.md');
+    const projectRoot = path_1.default.join(__dirname, '../../..');
+    const storyMapPath = path_1.default.join(projectRoot, 'docs/project/Story_Map.md');
     const watcher = chokidar_1.default.watch(storyMapPath, {
         persistent: true,
         awaitWriteFinish: {

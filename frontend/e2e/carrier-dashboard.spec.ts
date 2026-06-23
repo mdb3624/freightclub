@@ -209,6 +209,12 @@ test.describe('US-730-0: Carrier Dashboard MVP', () => {
     const box = await claimBtn.boundingBox();
     expect(box?.height).toBeGreaterThanOrEqual(48);
 
+    // Capture dashboard screenshot for visual evidence
+    await page.screenshot({
+      path: 'test-results/evidence/US-730-0_dashboard_golden_path.png',
+      fullPage: false,
+    });
+
     // 4. Click Claim button
     await claimBtn.click();
 

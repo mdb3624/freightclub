@@ -24,7 +24,7 @@ export default defineConfig({
     trace: 'retain-on-failure',
     // Video: record only on failure to save disk space
     video: 'retain-on-failure',
-    // Screenshot: on failure for quick visual inspection
+    // Screenshot: capture on both success and failure for evidence documentation
     screenshot: 'only-on-failure',
     storageState: 'auth.json', // Loaded from globalSetup
   },

@@ -1,22 +1,15 @@
-<testsuites id="" name="" tests="9" failures="0" skipped="0" errors="0" time="25.150047">
-<testsuite name="carrier-dashboard.spec.ts" timestamp="2026-06-24T18:20:02.566Z" hostname="chromium" tests="9" failures="0" skipped="0" time="14.113" errors="0">
-<testcase name="US-730-0: Carrier Dashboard MVP › AC-1: Dashboard displays complete structure (hero + tabs + metrics)" classname="carrier-dashboard.spec.ts" time="1.623">
-</testcase>
-<testcase name="US-730-0: Carrier Dashboard MVP › AC-2: Mobile-first design with 48px touch targets" classname="carrier-dashboard.spec.ts" time="1.331">
-</testcase>
-<testcase name="US-730-0: Carrier Dashboard MVP › AC-2: Tap-only interactions (no swipe gestures)" classname="carrier-dashboard.spec.ts" time="1.804">
-</testcase>
-<testcase name="US-730-0: Carrier Dashboard MVP › AC-3: Responsive design (iPhone 375px primary)" classname="carrier-dashboard.spec.ts" time="2.807">
-</testcase>
-<testcase name="US-730-0: Carrier Dashboard MVP › AC-4: Component hierarchy and structure" classname="carrier-dashboard.spec.ts" time="1.211">
-</testcase>
-<testcase name="US-730-0: Carrier Dashboard MVP › AC-5: WCAG AAA contrast verification (dark theme)" classname="carrier-dashboard.spec.ts" time="1.063">
-</testcase>
-<testcase name="US-730-0: Carrier Dashboard MVP › AC-2: Performance - LCP &lt;2s on 4G LTE" classname="carrier-dashboard.spec.ts" time="1.2">
-</testcase>
-<testcase name="US-730-0: Carrier Dashboard MVP › AC-1 &amp; AC-2: Golden path - owner-operator claims load from dashboard" classname="carrier-dashboard.spec.ts" time="1.467">
-</testcase>
-<testcase name="US-730-0: Carrier Dashboard MVP › AC-4: Tab switching - No navigation, content swaps in place" classname="carrier-dashboard.spec.ts" time="1.607">
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="6.002517">
+<testsuite name="verify-header.spec.ts" timestamp="2026-06-24T18:49:05.751Z" hostname="chromium" tests="1" failures="0" skipped="0" time="1.498" errors="0">
+<testcase name="Verify header redesign matches spec" classname="verify-header.spec.ts" time="1.498">
+<system-out>
+<![CDATA[✅ Logo: 🚛FC
+✅ HOS: HOS: 3h ✓
+✅ Bell and Avatar visible
+✅ Screenshot saved: US-730-0_header_redesign.png
+✅ Header height: 56px
+✅ No vertical scroll: viewport=667px, content=667px
+]]>
+</system-out>
 </testcase>
 </testsuite>
 </testsuites>

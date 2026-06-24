@@ -62,7 +62,7 @@ export class TestDataSeeder {
 
   constructor(
     apiContext: APIRequestContext,
-    backendUrl: string = process.env.TEST_BACKEND_URL || 'http://backend-test:9091'
+    backendUrl: string = process.env.TEST_BACKEND_URL || 'http://localhost:9091'
   ) {
     this.apiContext = apiContext;
     this.backendUrl = backendUrl;

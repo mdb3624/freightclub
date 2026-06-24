@@ -25,7 +25,7 @@ export const LoginPage: React.FC = () => {
       // On success, redirect to dashboard
       const destination = response.user.role === 'SHIPPER'
         ? '/dashboard/shipper'
-        : '/dashboard/trucker'
+        : '/dashboard/carrier'
       window.location.href = destination
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Login failed'

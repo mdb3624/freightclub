@@ -11,9 +11,81 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('US-730-0: Carrier Dashboard MVP', () => {
+  test.beforeAll(async ({ browser }) => {
+    // Create TRUCKER user for carrier-specific tests
+    // (global auth is SHIPPER, so we need TRUCKER role for this spec)
+    const backendUrl = process.env.TEST_BACKEND_URL || 'http://localhost:9091';
+    const response = await fetch(`${backendUrl}/api/test/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: `carrier-test-${Date.now()}@freightclub.local`,
+        password: 'E2ETestPassword123!',
+        firstName: 'Carrier',
+        lastName: 'Test',
+        role: 'TRUCKER',
+        companyName: `CarrierTest-${Date.now()}`,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create TRUCKER user: ${response.statusText}`);
+    }
+
+    const body = await response.json();
+    const refreshToken = response.headers.get('set-cookie')?.split(';')[0].split('=')[1];
+
+    // Store TRUCKER auth context for tests
+    test.expect(refreshToken).toBeTruthy();
+  });
+
   test.beforeEach(async ({ page }) => {
     // Set iPhone SE viewport (375px width)
     await page.setViewportSize({ width: 375, height: 667 });
+
+    // Navigate to home FIRST to establish context
+    await page.goto('http://localhost:9090/');
+
+    // Create fresh TRUCKER context for each test
+    const backendUrl = process.env.TEST_BACKEND_URL || 'http://localhost:9091';
+    const uniqueId = Date.now();
+    const registerResp = await fetch(`${backendUrl}/api/test/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: `carrier-${uniqueId}@freightclub.local`,
+        password: 'E2ETestPassword123!',
+        firstName: 'Carrier',
+        lastName: 'Test',
+        role: 'TRUCKER',
+        companyName: `CarrierTest-${uniqueId}`,
+      }),
+    });
+
+    if (!registerResp.ok) {
+      throw new Error(`Failed to create TRUCKER user: ${registerResp.statusText}`);
+    }
+
+    const registerBody = await registerResp.json();
+    const setCookie = registerResp.headers.get('set-cookie');
+    const refreshToken = setCookie?.split(';')[0].split('=')[1];
+
+    // Add TRUCKER auth cookie
+    if (refreshToken) {
+      await page.context().addCookies([{
+        name: 'refreshToken',
+        value: refreshToken,
+        url: 'http://localhost:9090',
+        httpOnly: true,
+        sameSite: 'Lax',
+      }]);
+    }
+
+    // NOW set localStorage (page context is established)
+    await page.evaluate((data) => {
+      localStorage.setItem('freightclub_access_token', data.accessToken);
+      localStorage.setItem('freightclub_user', JSON.stringify(data.user));
+    }, registerBody);
   });
 
   test('AC-1: Dashboard displays complete structure (hero + tabs + metrics)', async ({ page }) => {

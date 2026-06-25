@@ -4,11 +4,11 @@ import { useAuthStore } from '@/store/authStore';
 
 /**
  * AC-1: Carrier Dashboard Header (56px fixed, mobile-first)
- * Spec: [🚛 FC] [HOS: 3h left 🟢] [🔔] [👤 JD]
+ * Spec: [logo wordmark] [HOS: 3h ✓] [🔔] [👤 JD]
  *
  * Layout (375px mobile):
- * - Logo (FC brand): 40px left with FreightClub logo
- * - HOS chip: center, auto-sized
+ * - Logo: MDB Integrated Logistics wordmark, 40px height (readable, matches Shipper header sizing)
+ * - HOS chip: compact pill, center
  * - Bell + Avatar: 48px each, right side
  * - Avatar: Functional dropdown (Profile, Settings, Logout)
  */
@@ -52,14 +52,13 @@ export const CarrierHeader: React.FC = () => {
         position: 'relative'
       }}
     >
-      {/* Logo: FreightClub Branding */}
+      {/* Logo: MDB Integrated Logistics wordmark — readable at mobile width */}
       <button
         data-testid="carrier-logo"
         onClick={() => navigate('/dashboard/carrier')}
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 6,
           flexShrink: 0,
           minWidth: 'fit-content',
           background: 'transparent',
@@ -71,41 +70,34 @@ export const CarrierHeader: React.FC = () => {
       >
         <img
           src="/logo.png"
-          alt="FC"
+          alt="MDB Integrated Logistics"
           style={{
-            height: 32,
-            width: 32,
+            height: 40,
+            width: 'auto',
             objectFit: 'contain'
           }}
         />
-        <span
-          style={{
-            fontSize: 12,
-            fontWeight: 700,
-            color: '#B08D57',
-            letterSpacing: 1,
-            textTransform: 'uppercase'
-          }}
-        >
-          FC
-        </span>
       </button>
 
       {/* HOS Chip (Hours of Service indicator, center) */}
       <div
         data-testid="hos-chip"
         style={{
-          padding: '4px 10px',
-          backgroundColor: '#27AE60',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
+          padding: '4px 8px',
+          backgroundColor: 'rgba(39, 174, 96, 0.15)',
+          border: '1px solid #27AE60',
           borderRadius: 12,
           fontSize: 11,
           fontWeight: 600,
-          color: '#FFFFFF',
+          color: '#27AE60',
           whiteSpace: 'nowrap',
           minWidth: 'fit-content'
         }}
       >
-        HOS: 3h ✓
+        3h ✓
       </div>
 
       {/* Right Section: Bell + Avatar (48px each, mobile-friendly) */}

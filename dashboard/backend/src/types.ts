@@ -3,9 +3,9 @@
  * These types represent the structure of data parsed from Story_Map.md
  */
 
-export type StoryStatus = 'COMPLETED' | 'IN_PROGRESS' | 'READY_FOR_DESIGN' | 'BACKLOG' | 'MIGRATION_PENDING';
+export type StoryStatus = 'COMPLETED' | 'IN_PROGRESS' | 'READY_FOR_DESIGN' | 'BACKLOG' | 'MIGRATION_PENDING' | 'PARTIAL' | 'READY_FOR_REVIEWER_RE_AUDIT';
 
-export type PhaseNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 10 | 11 | 'cross';
+export type PhaseNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 'cross';
 
 export interface Story {
   id: string;

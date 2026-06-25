@@ -6,8 +6,17 @@ import fs from 'fs';
 import path from 'path';
 import { Dashboard, Story, StoryStatus, PhaseNumber, ValidationResult, ValidationError } from './types';
 
-const VALID_STATUSES: StoryStatus[] = ['COMPLETED', 'IN_PROGRESS', 'READY_FOR_DESIGN', 'BACKLOG', 'MIGRATION_PENDING'];
-const VALID_PHASES: PhaseNumber[] = [1, 2, 3, 4, 5, 6, 7, 10, 11, 'cross'];
+const VALID_STATUSES: StoryStatus[] = ['COMPLETED', 'IN_PROGRESS', 'READY_FOR_DESIGN', 'BACKLOG', 'MIGRATION_PENDING', 'PARTIAL', 'READY_FOR_REVIEWER_RE_AUDIT'];
+const VALID_PHASES: PhaseNumber[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 'cross'];
+
+/**
+ * Find the column index of a header by name (case-insensitive, strips bold markers)
+ */
+function findColumnIndex(headerCells: string[], name: string): number {
+  return headerCells.findIndex(
+    cell => cell.replace(/\*\*/g, '').trim().toUpperCase() === name.toUpperCase()
+  );
+}
 
 /**
  * Normalize status from Obsidian markdown format
@@ -32,6 +41,9 @@ function normalizeStatus(raw: string): string {
     'READY FOR DESIGN': 'READY_FOR_DESIGN',
     'IN_PROGRESS': 'IN_PROGRESS',
     'READY_FOR_DESIGN': 'READY_FOR_DESIGN',
+    'PARTIAL': 'PARTIAL',
+    'READY FOR REVIEWER RE-AUDIT': 'READY_FOR_REVIEWER_RE_AUDIT',
+    'READY_FOR_REVIEWER_RE_AUDIT': 'READY_FOR_REVIEWER_RE_AUDIT',
   };
 
   const upperNorm = normalized.toUpperCase();
@@ -100,6 +112,8 @@ export function parseMarkdown(filepath: string): Dashboard {
 function parseTableRows(lines: string[]): Story[] {
   const stories: Story[] = [];
   let headerFound = false;
+  let pendingHeaderCells: string[] | null = null;
+  let phaseColumnIndex = 3;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -108,15 +122,21 @@ function parseTableRows(lines: string[]): Story[] {
     if (line.includes('---')) {
       if (line.includes('|')) {
         headerFound = true;
+        phaseColumnIndex = pendingHeaderCells ? findColumnIndex(pendingHeaderCells, 'Phase') : -1;
       }
       continue;
+    }
+
+    // A non-separator row encountered while not in a table is a header label row
+    if (!headerFound && line.startsWith('|')) {
+      pendingHeaderCells = parseTableRow(line);
     }
 
     // Process table rows (must start with | and have cells)
     if (headerFound && line.startsWith('|') && !line.includes('---')) {
       const cells = parseTableRow(line);
       if (cells.length >= 5) {
-        const story = createStoryFromRow(cells);
+        const story = createStoryFromRow(cells, phaseColumnIndex);
         if (story) {
           stories.push(story);
         }
@@ -126,6 +146,7 @@ function parseTableRows(lines: string[]): Story[] {
     // Stop when we exit the table (empty line after data rows)
     if (headerFound && !line.startsWith('|') && line.length > 0) {
       headerFound = false;
+      pendingHeaderCells = null;
     }
   }
 
@@ -145,19 +166,30 @@ function parseTableRow(line: string): string[] {
 /**
  * Create a Story object from a table row
  */
-function createStoryFromRow(cells: string[]): Story | null {
+function createStoryFromRow(cells: string[], phaseColumnIndex: number = 3): Story | null {
   if (cells.length < 5) {
     return null;
   }
 
+  // Tables without a Phase column (e.g. Backlog: ID | Title | Status | Depends On | Rationale)
+  // shift "Depends On" into the slot the default schema expects Phase to occupy.
+  const hasPhaseColumn = phaseColumnIndex >= 0;
+  const dependsOnIndex = hasPhaseColumn ? phaseColumnIndex + 1 : phaseColumnIndex;
+
   const id = cells[0].trim();
   const title = cells[1].trim();
   const rawStatus = cells[2];
-  const rawPhase = cells[3];
-  const dependsOn = cells[4];
+  const rawPhase = hasPhaseColumn ? cells[phaseColumnIndex] : null;
+  const dependsOn = cells[dependsOnIndex] ?? '';
 
   // Skip empty rows
   if (!id || !title) {
+    return null;
+  }
+
+  // Skip repeated sub-table header rows (e.g. "| Story ID | Title | Status | Phase | Depends On |")
+  const normalizedId = id.replace(/\*\*/g, '').trim().toUpperCase();
+  if (normalizedId === 'ID' || normalizedId === 'STORY ID') {
     return null;
   }
 
@@ -169,19 +201,23 @@ function createStoryFromRow(cells: string[]): Story | null {
   }
   const status = normalizedStatus as StoryStatus;
 
-  // Normalize and validate phase
-  const normalizedPhase = normalizePhase(rawPhase);
+  // Normalize and validate phase (tables without a Phase column default to 'cross' — deferred/backlog items)
   let parsedPhase: PhaseNumber;
 
-  if (normalizedPhase === 'cross') {
+  if (rawPhase === null) {
     parsedPhase = 'cross';
   } else {
-    const phaseNum = parseInt(normalizedPhase, 10);
-    if (!VALID_PHASES.includes(phaseNum as PhaseNumber)) {
-      console.warn(`Invalid phase "${rawPhase}" → "${normalizedPhase}" for story ${id}`);
-      return null;
+    const normalizedPhase = normalizePhase(rawPhase);
+    if (normalizedPhase === 'cross') {
+      parsedPhase = 'cross';
+    } else {
+      const phaseNum = parseInt(normalizedPhase, 10);
+      if (!VALID_PHASES.includes(phaseNum as PhaseNumber)) {
+        console.warn(`Invalid phase "${rawPhase}" → "${normalizedPhase}" for story ${id}`);
+        return null;
+      }
+      parsedPhase = phaseNum as PhaseNumber;
     }
-    parsedPhase = phaseNum as PhaseNumber;
   }
 
   // Parse dependencies
@@ -222,6 +258,8 @@ export function validate(filepath: string): ValidationResult {
     const seenIds = new Set<string>();
     let headerFound = false;
     let lineNumber = 0;
+    let pendingHeaderCells: string[] | null = null;
+    let phaseColumnIndex = 3;
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
@@ -229,12 +267,25 @@ export function validate(filepath: string): ValidationResult {
       // Track header line
       if (line.includes('---') && line.includes('|')) {
         headerFound = true;
+        phaseColumnIndex = pendingHeaderCells ? findColumnIndex(pendingHeaderCells, 'Phase') : -1;
         continue;
       }
 
       // Skip separator lines
       if (line.includes('---')) {
         continue;
+      }
+
+      // A non-separator row encountered while not in a table is a header label row
+      if (!headerFound && line.startsWith('|')) {
+        pendingHeaderCells = parseTableRow(line);
+        continue;
+      }
+
+      // Reset state once we exit a table (blank/text line after data rows)
+      if (headerFound && !line.startsWith('|') && line.length > 0) {
+        headerFound = false;
+        pendingHeaderCells = null;
       }
 
       // Only process lines that are table rows (start with |)
@@ -248,9 +299,16 @@ export function validate(filepath: string): ValidationResult {
         continue;
       }
 
+      const hasPhaseColumn = phaseColumnIndex >= 0;
       const id = cells[0];
-      const status = cells[2];
-      const phase = cells[3];
+      const rawStatus = cells[2];
+      const rawPhase = hasPhaseColumn ? cells[phaseColumnIndex] : null;
+
+      // Skip repeated sub-table header rows (e.g. "| Story ID | Title | Status | Phase | Depends On |")
+      const normalizedId = id.replace(/\*\*/g, '').trim().toUpperCase();
+      if (normalizedId === 'ID' || normalizedId === 'STORY ID') {
+        continue;
+      }
 
       // Check for duplicate IDs
       if (seenIds.has(id)) {
@@ -261,21 +319,24 @@ export function validate(filepath: string): ValidationResult {
       }
       seenIds.add(id);
 
-      // Validate status
-      if (!VALID_STATUSES.includes(status as StoryStatus)) {
+      // Validate status (normalized for Obsidian formatting: bold, emojis)
+      const status = normalizeStatus(rawStatus);
+      if (!status || !VALID_STATUSES.includes(status as StoryStatus)) {
         errors.push({
           line: lineNumber,
-          message: `Invalid status "${status}" for story ${id}. Valid: ${VALID_STATUSES.join(', ')}`,
+          message: `Invalid status "${rawStatus}" for story ${id}. Valid: ${VALID_STATUSES.join(', ')}`,
         });
       }
 
-      // Validate phase
+      // Validate phase (normalized for Obsidian formatting: bold); tables without a
+      // Phase column (e.g. Backlog) have nothing to validate here.
+      const phase = rawPhase === null ? 'cross' : normalizePhase(rawPhase);
       if (phase !== 'cross') {
         const phaseNum = parseInt(phase, 10);
         if (isNaN(phaseNum) || !VALID_PHASES.includes(phaseNum as PhaseNumber)) {
           errors.push({
             line: lineNumber,
-            message: `Invalid phase "${phase}" for story ${id}. Valid: ${VALID_PHASES.join(', ')}`,
+            message: `Invalid phase "${rawPhase}" for story ${id}. Valid: ${VALID_PHASES.join(', ')}`,
           });
         }
       }

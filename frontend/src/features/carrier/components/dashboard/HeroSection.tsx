@@ -114,7 +114,13 @@ export const HeroSection: React.FC = () => {
                 color: '#B08D57',
                 cursor: 'pointer',
                 fontSize: 12,
-                textDecoration: 'underline'
+                textDecoration: 'underline',
+                minHeight: 48,
+                minWidth: 48,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                padding: 0
               }}
             >
               ⚙️ Setup

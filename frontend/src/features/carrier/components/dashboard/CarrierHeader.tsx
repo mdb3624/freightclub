@@ -61,6 +61,7 @@ export const CarrierHeader: React.FC = () => {
           alignItems: 'center',
           flexShrink: 0,
           minWidth: 'fit-content',
+          minHeight: 48,
           background: 'transparent',
           border: 'none',
           cursor: 'pointer',

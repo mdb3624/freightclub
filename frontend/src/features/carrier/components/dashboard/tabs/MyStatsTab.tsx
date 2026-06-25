@@ -106,7 +106,7 @@ export const MyStatsTab: React.FC<MyStatsTabProps> = ({ tokens }) => {
         <button
           data-testid="edit-cost-profile-secondary"
           style={{
-            height: 40,
+            height: 48,
             padding: '8px 16px',
             backgroundColor: 'transparent',
             border: `1px solid ${tokens.colors.accent.bronze}`,
@@ -130,9 +130,10 @@ export const MyStatsTab: React.FC<MyStatsTabProps> = ({ tokens }) => {
         }}
       >
         <button
+          data-testid="view-full-stats-btn"
           style={{
             flex: 1,
-            height: 40,
+            height: 48,
             padding: '8px 12px',
             backgroundColor: 'transparent',
             border: `1px solid ${tokens.colors.accent.bronze}`,
@@ -146,9 +147,10 @@ export const MyStatsTab: React.FC<MyStatsTabProps> = ({ tokens }) => {
           View Full Stats
         </button>
         <button
+          data-testid="ratings-btn"
           style={{
             flex: 1,
-            height: 40,
+            height: 48,
             padding: '8px 12px',
             backgroundColor: 'transparent',
             border: `1px solid ${tokens.colors.accent.bronze}`,

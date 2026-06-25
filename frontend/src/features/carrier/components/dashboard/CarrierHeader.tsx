@@ -1,17 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/store/authStore';
 
 /**
  * AC-1: Carrier Dashboard Header (56px fixed, mobile-first)
  * Spec: [🚛 FC] [HOS: 3h left 🟢] [🔔] [👤 JD]
  *
  * Layout (375px mobile):
- * - Logo (🚛 FC): 40px left
+ * - Logo (FC brand): 40px left with FreightClub logo
  * - HOS chip: center, auto-sized
  * - Bell + Avatar: 48px each, right side
- * - Total: Compact, no overflow
+ * - Avatar: Functional dropdown (Profile, Settings, Logout)
  */
 
 export const CarrierHeader: React.FC = () => {
+  const navigate = useNavigate();
+  const { user, logout } = useAuthStore();
+  const [showAvatarMenu, setShowAvatarMenu] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const handleProfile = () => {
+    navigate('/profile');
+    setShowAvatarMenu(false);
+  };
+
+  const getInitials = (firstName?: string, lastName?: string) => {
+    const first = firstName?.[0] || '';
+    const last = lastName?.[0] || '';
+    return (first + last).toUpperCase() || 'U';
+  };
+
   return (
     <header
       data-testid="carrier-header"
@@ -26,40 +48,48 @@ export const CarrierHeader: React.FC = () => {
         paddingLeft: 12,
         paddingRight: 12,
         gap: 8,
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        position: 'relative'
       }}
     >
-      {/* Logo: Truck Icon + "FC" Text (mobile-first, compact) */}
-      <div
+      {/* Logo: FreightClub Branding */}
+      <button
         data-testid="carrier-logo"
+        onClick={() => navigate('/dashboard/carrier')}
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 4,
+          gap: 6,
           flexShrink: 0,
-          minWidth: 'fit-content'
+          minWidth: 'fit-content',
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          padding: 0
         }}
+        aria-label="FreightClub Home"
       >
-        <div
+        <img
+          src="/logo.png"
+          alt="FC"
           style={{
-            fontSize: 16,
-            fontWeight: 'bold',
-            color: '#FFFFFF'
+            height: 32,
+            width: 32,
+            objectFit: 'contain'
           }}
-        >
-          🚛
-        </div>
-        <div
+        />
+        <span
           style={{
             fontSize: 12,
             fontWeight: 700,
             color: '#B08D57',
-            letterSpacing: 1
+            letterSpacing: 1,
+            textTransform: 'uppercase'
           }}
         >
           FC
-        </div>
-      </div>
+        </span>
+      </button>
 
       {/* HOS Chip (Hours of Service indicator, center) */}
       <div
@@ -107,7 +137,6 @@ export const CarrierHeader: React.FC = () => {
           aria-label="Notifications"
         >
           🔔
-          {/* Unread badge */}
           <div
             style={{
               position: 'absolute',
@@ -121,28 +150,111 @@ export const CarrierHeader: React.FC = () => {
           />
         </button>
 
-        {/* Avatar (48px circular, glove-friendly tap target) */}
-        <button
-          data-testid="carrier-avatar"
-          style={{
-            width: 48,
-            height: 48,
-            backgroundColor: '#B08D57',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 13,
-            fontWeight: 700,
-            color: '#121212',
-            cursor: 'pointer',
-            border: 'none',
-            padding: 0
-          }}
-          aria-label="Profile menu"
-        >
-          JD
-        </button>
+        {/* Avatar with Dropdown Menu */}
+        <div style={{ position: 'relative' }}>
+          <button
+            data-testid="carrier-avatar"
+            onClick={() => setShowAvatarMenu(!showAvatarMenu)}
+            style={{
+              width: 48,
+              height: 48,
+              backgroundColor: '#B08D57',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 13,
+              fontWeight: 700,
+              color: '#121212',
+              cursor: 'pointer',
+              border: 'none',
+              padding: 0
+            }}
+            aria-label="Profile menu"
+            aria-haspopup="true"
+            aria-expanded={showAvatarMenu}
+          >
+            {getInitials(user?.firstName, user?.lastName)}
+          </button>
+
+          {/* Avatar Dropdown Menu */}
+          {showAvatarMenu && (
+            <div
+              role="menu"
+              data-testid="avatar-dropdown"
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: '100%',
+                marginTop: 8,
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #E0E0E0',
+                borderRadius: 4,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                minWidth: '180px',
+                zIndex: 1000
+              }}
+            >
+              {/* User Info */}
+              <div
+                style={{
+                  padding: '12px 16px',
+                  borderBottom: '1px solid #E0E0E0'
+                }}
+              >
+                <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: '#000' }}>
+                  {user?.firstName} {user?.lastName}
+                </p>
+                <p style={{ margin: '4px 0 0 0', fontSize: 12, color: '#666' }}>
+                  {user?.email}
+                </p>
+              </div>
+
+              {/* Menu Items */}
+              <button
+                role="menuitem"
+                onClick={handleProfile}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '10px 16px',
+                  border: 'none',
+                  background: 'transparent',
+                  fontSize: 13,
+                  color: '#000',
+                  cursor: 'pointer',
+                  textAlign: 'left'
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#F5F5F5')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+              >
+                Profile
+              </button>
+
+              <div style={{ borderTop: '1px solid #E0E0E0' }}>
+                <button
+                  role="menuitem"
+                  onClick={handleLogout}
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '10px 16px',
+                    border: 'none',
+                    background: 'transparent',
+                    fontSize: 13,
+                    color: '#E74C3C',
+                    cursor: 'pointer',
+                    textAlign: 'left'
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#F5F5F5')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                >
+                  Sign out
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

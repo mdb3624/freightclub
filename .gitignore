@@ -29,6 +29,7 @@ Thumbs.db
 .env-cors
 .cloudrun-env.yaml
 env.txt
+jira.config
 
 # ---- Logs ----
 *.log

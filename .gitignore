@@ -5,6 +5,9 @@ backend/src/main/resources/application-dev.yml
 
 # ---- Frontend ----
 frontend/node_modules/
+
+# ---- Scripts ----
+scripts/jira-write-mcp/node_modules/
 frontend/dist/
 frontend/.env.local
 frontend/.env.*.local

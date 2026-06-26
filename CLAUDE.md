@@ -570,6 +570,15 @@ This rule applies to: BA, ARCH, HFD, CODER, REVIEWER, LIBRARIAN, and all automat
 - **Neon `neondb_owner` auth**: JDBC URL must include `channel_binding=require` for `neondb_owner` connections. Without it, authentication fails even with the correct password.
 - **Flyway vs runtime credentials**: Production uses `DB_USERNAME=neondb_owner` (required for `ALTER TABLE`). `spring.flyway.user/password/url` override properties allow Flyway to use admin credentials independently. All production secrets come from `.env.prod` → Secret Manager (verify Secret Manager versions match `.env.prod`).
 
+## 🎫 Jira Integration
+
+- **Domain (correct spelling):** `mdb-intergrated-logistics.atlassian.net` — note "Int**erg**rated" (extra "r"). This is the actual org name; do not "fix" it to "integrated" — that spelling 404s. Verify against the browser URL bar if any Jira API call 404s unexpectedly, before assuming an auth/permission issue.
+- **Two MCP servers:** `jira` (npm `jira-mcp`, read-only: `get_issue`, `jql_search`) and `jira-write` (custom server at `scripts/jira-write-mcp/`, exposes `jira_list_transitions`, `jira_transition_issue`, `jira_add_comment`, `jira_add_attachment`, `jira_create_issue`, `jira_update_fields`). Both are pre-allowed in `.claude/settings.json` — use them directly, do not re-derive curl/Node workarounds.
+- **`Bash(curl *)` is denied** by project policy (`.claude/settings.json`). For any ad-hoc HTTP call, use Node's built-in `fetch` via Bash, or extend `scripts/jira-write-mcp/index.js` if it's a recurring Jira need.
+- **Windows MCP config gotcha:** Always use an absolute path for `command` in `.mcp.json` (e.g. `C:\\Program Files\\Git\\bin\\bash.exe`), never a bare `bash`. `C:\Windows\System32\bash.exe` (WSL launcher) can shadow Git Bash depending on which process's PATH resolves it, causing instant `MCP error -32000: Connection closed` instead of a clear error.
+- **Story ID ↔ Jira key mapping:** `docs/project/Story_ID_to_Jira_Mapping.md`/`.csv`, `JIRA_WORKFLOW.md` (transition IDs: `11`=To Do, `21`=In Progress, `31`=Done for project FREIG).
+- See `memory/feedback_jira_full_access.md`, `memory/project_jira_domain_correction.md`, and `memory/gotcha_windows_bash_wsl_shadow.md` for full details.
+
 ## 🧪 Test Environment Setup
 
 **Local Testing with Maven:**

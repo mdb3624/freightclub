@@ -10,7 +10,15 @@
       "Bash(rm -rf test-results/evidence/*)",
       "mcp__browser-use__browser_scroll",
       "mcp__MCP_DOCKER__browser_navigate",
-      "mcp__MCP_DOCKER__browser_snapshot"
+      "mcp__MCP_DOCKER__browser_snapshot",
+      "mcp__jira__get_issue",
+      "mcp__jira__jql_search",
+      "mcp__jira-write__jira_list_transitions",
+      "mcp__jira-write__jira_transition_issue",
+      "mcp__jira-write__jira_add_comment",
+      "mcp__jira-write__jira_add_attachment",
+      "mcp__jira-write__jira_create_issue",
+      "mcp__jira-write__jira_update_fields"
     ],
     "deny": [
       "Read(.env)",
@@ -21,7 +29,8 @@
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "browser-use",
-    "jira"
+    "jira",
+    "jira-write"
   ],
   "hooks": {
     "PostToolUse": [

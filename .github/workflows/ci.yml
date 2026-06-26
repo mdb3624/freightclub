@@ -35,7 +35,7 @@ jobs:
         env:
           DB_USERNAME: freightclub_runtime
           DB_PASSWORD: freightclub
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/freightclub_test
+          DB_URL: jdbc:postgresql://localhost:5432/freightclub_test?currentSchema=freightclub
 
       - name: Upload JaCoCo report
         if: always()
@@ -122,9 +122,13 @@ jobs:
           sleep 10
           curl -f http://localhost:9091/actuator/health || exit 1
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/freightclub_test
-          SPRING_DATASOURCE_USERNAME: freightclub_runtime
-          SPRING_DATASOURCE_PASSWORD: freightclub
+          SPRING_PROFILES_ACTIVE: test
+          PORT: 9091
+          DB_URL: jdbc:postgresql://localhost:5432/freightclub_test?currentSchema=freightclub
+          DB_USERNAME: freightclub_runtime
+          DB_PASSWORD: freightclub
+          APP_JWT_SECRET: test-secret-32-chars-minimum-required-here
+          JWT_SECRET: test-secret-32-chars-minimum-required-here
 
       - name: Install frontend dependencies
         working-directory: frontend

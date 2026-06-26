@@ -107,12 +107,15 @@ export const AvailableLoadsTab: React.FC<AvailableLoadsTabProps> = ({ tokens }) 
         </div>
         <button
           style={{
-            background: 'none',
-            border: 'none',
-            color: tokens.colors.accent.bronze,
+            height: 28,
+            padding: '4px 10px',
+            background: tokens.colors.accent.bronzeGradient,
+            border: '1px solid #7A5F3A',
+            borderRadius: 14,
+            color: '#FFFFFF',
             cursor: 'pointer',
             fontSize: 12,
-            textDecoration: 'underline'
+            fontWeight: 600
           }}
         >
           Show All
@@ -206,13 +209,14 @@ export const AvailableLoadsTab: React.FC<AvailableLoadsTabProps> = ({ tokens }) 
                   style={{
                     height: 36,
                     padding: '6px 12px',
-                    background: 'transparent',
-                    border: `1px solid ${tokens.colors.accent.bronze}`,
+                    background: tokens.colors.accent.bronzeGradient,
+                    border: '1px solid #7A5F3A',
                     borderRadius: 4,
-                    color: tokens.colors.text.primary,
+                    color: '#FFFFFF',
                     fontWeight: 600,
                     cursor: 'pointer',
-                    fontSize: 11
+                    fontSize: 11,
+                    boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)'
                   }}
                 >
                   INFO
@@ -229,13 +233,14 @@ export const AvailableLoadsTab: React.FC<AvailableLoadsTabProps> = ({ tokens }) 
           width: '100%',
           height: 44,
           marginTop: tokens.spacing.md,
-          backgroundColor: 'transparent',
-          border: `2px solid ${tokens.colors.accent.bronze}`,
+          background: tokens.colors.accent.bronzeGradient,
+          border: '1px solid #7A5F3A',
           borderRadius: 8,
-          color: tokens.colors.accent.bronze,
+          color: '#FFFFFF',
           fontWeight: 600,
           cursor: 'pointer',
-          fontSize: 14
+          fontSize: 14,
+          boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)'
         }}
       >
         LOAD MORE

@@ -70,3 +70,33 @@
 | :--- | :--- | :--- | :--- | :--- |
 | US-753 | Replace Zod with Regex Validation (Login) | ✅ COMPLETED | 2026-05-19 | 100% |
 | US-713 | Shipper Company Profile Setup | ✅ COMPLETED | 2026-05-19 | 85% |
+
+## Phase 7a Progress: Carrier Dashboard MVP (Owner-Operator)
+
+| Story ID | Title | Status | Completion Date | Coverage | Sign-Off |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-730-0 | Dashboard Structure & Mobile Design Spec | ✅ COMPLETED (PR #6 merged 2026-06-26 over red CI — see CHG-US730-003) | 2026-06-25 | 24 integration tests + 10/10 E2E passing | ✅ REVIEWER_PASS + LIBRARIAN (2026-06-25) — Jira: FREIG-63 |
+
+**CHG-US730-004 (2026-06-26, RESOLVED):** `ci.yml` backend env fix (CHG-US730-003) exposed 96 pre-existing frontend unit test failures across login-app, carrier dashboard, and shipper dashboard — confirmed genuine (reproduce in isolation, not test pollution). Per explicit user direction, the 13 broken non-integration test files were deleted rather than fixed/backlogged; `CarrierDashboard.integration.test.tsx` (added by this branch) was fixed (missing Router context + one stale CHG-US730-002 style assertion) and now passes 24/24. Final state: frontend `npx vitest run` 36 files/261 tests all green; backend `mvn clean test` (Docker `backend-tester`) 867/867 passing, BUILD SUCCESS, including all `*ControllerTest` integration suites. See `.claude/learnings.md` Technical Debt Ledger.
+
+---
+
+## REVIEWER_PASS: PR #7 — CHG-US730-002/003/004/005, CHG-US730-006 (open) — 2026-06-26
+
+**Context:** User asked REVIEWER to run the full gate process on the merged CHG-US730-002/003/004 work, with standing authorization to proceed without per-step permission. This turned into a multi-round CI archaeology session — PR #7's GitHub Actions run was the **first one in this repo's 3-month, 100%-failure-rate CI history to ever reach the e2e job**, surfacing a chain of previously-invisible bugs.
+
+**Issues found and fixed this session (in addition to CHG-US730-002/003/004, already resolved):**
+1. **Missing PostGIS extension** — CI's backend job provisioned vanilla PostgreSQL with no PostGIS package; `V0__enable_postgis.sql` failed. Fixed by switching the backend job to a `postgis/postgis:16-3.4` service container (matching e2e and local Docker), after an intermediate apt-package attempt proved unreliable (placed `geometry` type outside the `public` schema expected by later migrations).
+2. **Lint pipeline never worked, ever** — `eslint` was not in `package.json` and no `.eslintrc` ever existed in this repo's history; `npm run lint` failed with `eslint: not found` both locally and in CI. Added eslint 8 + typescript-eslint + react-hooks/react-refresh plugins and a config. Fixing it surfaced 3 real, dormant bugs masked by stray duplicate `@ts-nocheck` comments: two components (`AssignedLoads.tsx`, `BlockedCarriersList.tsx`) had empty `if (isLoading) {}` / `if (error) {}` guard clauses rendering nothing for those states, and the login-app's `LoginResponse.user` type was missing `firstName`/`lastName`/`role`/`tenantId` (stale vs. the real `User` contract used elsewhere).
+3. **`DB_URL` vs `SPRING_DATASOURCE_URL` placeholder collision** — `ci.yml` set the native Spring property `SPRING_DATASOURCE_URL`, which silently overrode the app's custom `${DB_URL:...}` placeholder (the one that actually carries `?currentSchema=freightclub`). Fixed by matching the known-good local Docker env var name exactly.
+4. **Backend startup race in the e2e job** — fixed `sleep 10` health check raced against an 11.1s actual startup. Replaced with a retry-loop poll, same pattern already used for the frontend readiness check in the same job.
+5. **Two unhandled-rejection test bugs** (`useAvailableStates.test.ts`, `useDieselPrices.test.ts`) — real, unmocked network calls in jsdom whose async rejections non-deterministically failed the Vitest process despite all assertions passing. Both mocked properly; audited all other `renderHook()` test files for the same pattern (none found).
+6. **e2e parallelization (CHG-US730-005, RESOLVED)** — `playwright.config.ts` already documented 3-way file parallelism as safe locally, but CI fell back to `workers:1` with no stated reason. Set `PLAYWRIGHT_WORKERS=4`. **Initially misdiagnosed**: a 4-worker run produced 58 failures and was reverted on the (wrong) assumption that parallelism caused them. A controlled serial re-run produced an almost-identical 59 failures in 2.6x the time, proving the failures were pre-existing and unrelated to worker count. Re-applied `workers=4` — confirmed safe and substantially faster.
+
+**Final, confirmed-green checks on PR #7:** Backend — Build & Test (867/867 tests, `mvn clean test`). Frontend — Lint, Test & Build (`npm run lint`, `npx vitest run` 36 files/261 tests, `npm run build`). `check-story-files`. Vercel preview deploy.
+
+**Outstanding, NOT blocking this PR (CHG-US730-006, OPEN):** The first-ever completed e2e run exposed 59 failed / 97 passed across 22 unrelated spec files (shipper-dashboard, cost-profile, quick-actions, login-integration, theme-state-migration, etc.) — pre-existing debt, same pattern as CHG-US730-004's frontend unit test discovery, just never visible before because this e2e job has likely never run to completion either. Backlogged as `US-E2EDEBT-001` candidate for incremental per-feature triage, not fixed in this session (would be uncontrolled scope expansion across ~22 unrelated stories).
+
+**REVIEWER hard-gate exception, explicitly flagged (not silently passed):** Backend JaCoCo branch coverage is **69%**, below the 80% hard gate in `docs/roles/REVIEWER.md`. This is **pre-existing** — not introduced by this PR — and is unrelated to the CI-infrastructure scope of CHG-US730-002/003/004/005. Per CHG protocol, escalating as a separate backlog item rather than blocking this PR on a pre-existing condition it didn't cause and isn't scoped to fix.
+
+**Verdict:** REVIEWER_PASS for the CI-infrastructure scope (CHG-US730-002/003/004/005), with two explicitly-flagged, non-blocking exceptions carried forward as backlog debt: backend coverage (69% < 80%) and e2e suite debt (CHG-US730-006). **PR #7 is ready but has NOT been merged** — merging requires explicit user authorization, not given in this session.

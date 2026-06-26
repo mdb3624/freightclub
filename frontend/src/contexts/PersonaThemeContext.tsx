@@ -92,6 +92,7 @@ export function PersonaThemeProvider({ children }: { children: ReactNode }) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- intentional: hook colocated with its provider
 export function usePersonaTheme(): PersonaTokens {
   return useContext(PersonaThemeContext)
 }

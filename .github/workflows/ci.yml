@@ -11,6 +11,21 @@ jobs:
     name: Backend — Build & Test
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_USER: freightclub_runtime
+          POSTGRES_PASSWORD: freightclub
+          POSTGRES_DB: freightclub_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
       - uses: actions/checkout@v4
 
@@ -21,15 +36,13 @@ jobs:
           distribution: temurin
           cache: maven
 
-      - name: Start PostgreSQL and create test database
-        run: |
-          sudo systemctl start postgresql.service
-          sudo -u postgres psql -c "CREATE USER freightclub_runtime WITH PASSWORD 'freightclub' SUPERUSER;"
-          sudo -u postgres psql -c "CREATE DATABASE freightclub_test OWNER freightclub_runtime;"
-
       - name: Run tests
         working-directory: backend
         run: mvn test
+        env:
+          DB_USERNAME: freightclub_runtime
+          DB_PASSWORD: freightclub
+          DB_URL: jdbc:postgresql://localhost:5432/freightclub_test?currentSchema=freightclub
 
       - name: Upload JaCoCo report
         if: always()
@@ -75,7 +88,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:16
+        image: postgis/postgis:16-3.4
         env:
           POSTGRES_USER: freightclub_runtime
           POSTGRES_PASSWORD: freightclub
@@ -113,12 +126,23 @@ jobs:
         working-directory: backend
         run: |
           java -jar target/*.jar &
-          sleep 10
-          curl -f http://localhost:9091/actuator/health || exit 1
+          for i in {1..30}; do
+            if curl -sf http://localhost:9091/actuator/health > /dev/null; then
+              echo "Backend is ready"
+              exit 0
+            fi
+            echo "Waiting for backend... ($i/30)"
+            sleep 1
+          done
+          exit 1
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/freightclub_test
-          SPRING_DATASOURCE_USERNAME: freightclub_runtime
-          SPRING_DATASOURCE_PASSWORD: freightclub
+          SPRING_PROFILES_ACTIVE: test
+          PORT: 9091
+          DB_URL: jdbc:postgresql://localhost:5432/freightclub_test?currentSchema=freightclub
+          DB_USERNAME: freightclub_runtime
+          DB_PASSWORD: freightclub
+          APP_JWT_SECRET: test-secret-32-chars-minimum-required-here
+          JWT_SECRET: test-secret-32-chars-minimum-required-here
 
       - name: Install frontend dependencies
         working-directory: frontend
@@ -152,6 +176,7 @@ jobs:
         env:
           PLAYWRIGHT_TEST_BASE_URL: http://localhost:9090
           TEST_BACKEND_URL: http://localhost:9091
+          PLAYWRIGHT_WORKERS: "4"
 
       - name: Upload test results
         if: always()

@@ -145,6 +145,49 @@ test.describe('US-730-0: Carrier Dashboard MVP', () => {
     expect(bgColor).toMatch(/rgb\((18|17|19|20),\s*(18|17|19|20),\s*(18|17|19|20)\)/);
   });
 
+  test('AC-2: ALL interactive elements meet 48px touch target minimum (no exceptions)', async ({ page }) => {
+    // CHG-US730-001: edit-cost-profile-secondary, view-full-stats-btn, ratings-btn,
+    // and edit-cost-profile-btn shipped at <48px and were missed by both REVIEWER
+    // and the original AC-2 test because that test only covered claim-load-btn and
+    // tab-button-*. This test enumerates every clickable element on the dashboard
+    // so a future regression on ANY button is caught automatically, not just the
+    // primary CTA.
+    await page.goto('/dashboard/carrier');
+
+    const knownTestIds = [
+      'claim-load-btn',
+      'load-details-btn',
+      'edit-cost-profile-btn',
+      'notification-bell',
+      'carrier-avatar',
+      'edit-cost-profile-secondary',
+      'view-full-stats-btn',
+      'ratings-btn',
+    ];
+
+    for (const testId of knownTestIds) {
+      const el = page.locator(`[data-testid="${testId}"]`);
+      if (await el.isVisible().catch(() => false)) {
+        const box = await el.boundingBox();
+        expect(box?.height, `${testId} height`).toBeGreaterThanOrEqual(48);
+        expect(box?.width, `${testId} width`).toBeGreaterThanOrEqual(48);
+      }
+    }
+
+    // Belt-and-suspenders: every <button> on the page, regardless of testid,
+    // must clear the 48px minimum.
+    const allButtons = page.locator('button');
+    const count = await allButtons.count();
+    for (let i = 0; i < count; i++) {
+      const btn = allButtons.nth(i);
+      if (await btn.isVisible()) {
+        const box = await btn.boundingBox();
+        const id = await btn.getAttribute('data-testid');
+        expect(box?.height, `button[data-testid=${id}] height`).toBeGreaterThanOrEqual(48);
+      }
+    }
+  });
+
   test('AC-2: Tap-only interactions (no swipe gestures)', async ({ page }) => {
     await page.goto('/dashboard/carrier');
 

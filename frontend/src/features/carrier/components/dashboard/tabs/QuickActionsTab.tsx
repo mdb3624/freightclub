@@ -66,13 +66,14 @@ export const QuickActionsTab: React.FC<QuickActionsTabProps> = ({ tokens }) => {
                 style={{
                   height: 32,
                   padding: '6px 12px',
-                  backgroundColor: 'transparent',
-                  border: `1px solid ${tokens.colors.accent.bronze}`,
+                  background: tokens.colors.accent.bronzeGradient,
+                  border: '1px solid #7A5F3A',
                   borderRadius: 4,
-                  color: tokens.colors.accent.bronze,
+                  color: '#FFFFFF',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  fontSize: 11
+                  fontSize: 11,
+                  boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)'
                 }}
               >
                 {item.checked ? 'Manage' : 'Setup'}
@@ -108,14 +109,15 @@ export const QuickActionsTab: React.FC<QuickActionsTabProps> = ({ tokens }) => {
               style={{
                 height: 44,
                 padding: tokens.spacing.sm,
-                backgroundColor: 'transparent',
-                border: `1px solid ${tokens.colors.border.primary}`,
+                background: tokens.colors.accent.bronzeGradient,
+                border: '1px solid #7A5F3A',
                 borderRadius: 6,
-                color: tokens.colors.text.primary,
+                color: '#FFFFFF',
                 fontWeight: 600,
                 cursor: 'pointer',
                 fontSize: 12,
-                transition: 'all 200ms ease'
+                transition: 'all 200ms ease',
+                boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)'
               }}
             >
               {btn.label}
@@ -143,13 +145,14 @@ export const QuickActionsTab: React.FC<QuickActionsTabProps> = ({ tokens }) => {
             style={{
               flex: 1,
               height: 44,
-              backgroundColor: 'transparent',
-              border: `1px solid ${tokens.colors.border.primary}`,
+              background: tokens.colors.accent.bronzeGradient,
+              border: '1px solid #7A5F3A',
               borderRadius: 6,
-              color: tokens.colors.text.primary,
+              color: '#FFFFFF',
               fontWeight: 600,
               cursor: 'pointer',
-              fontSize: 12
+              fontSize: 12,
+              boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)'
             }}
           >
             ? Help
@@ -158,13 +161,14 @@ export const QuickActionsTab: React.FC<QuickActionsTabProps> = ({ tokens }) => {
             style={{
               flex: 1,
               height: 44,
-              backgroundColor: 'transparent',
-              border: `1px solid ${tokens.colors.border.primary}`,
+              background: tokens.colors.accent.bronzeGradient,
+              border: '1px solid #7A5F3A',
               borderRadius: 6,
-              color: tokens.colors.text.primary,
+              color: '#FFFFFF',
               fontWeight: 600,
               cursor: 'pointer',
-              fontSize: 12
+              fontSize: 12,
+              boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)'
             }}
           >
             📧 Report Issue

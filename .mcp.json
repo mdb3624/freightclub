@@ -18,13 +18,12 @@
       "type": "stdio"
     },
     "jira": {
-      "command": "npx",
-      "args": ["jira-mcp"],
-      "env": {
-        "JIRA_API_TOKEN": "${JIRA_API_TOKEN}",
-        "JIRA_DOMAIN": "${JIRA_DOMAIN}",
-        "JIRA_EMAIL": "${JIRA_EMAIL}"
-      }
+      "command": "C:\\Program Files\\Git\\bin\\bash.exe",
+      "args": ["c:/projects/freightclub/scripts/jira-mcp-wrapper.sh"]
+    },
+    "jira-write": {
+      "command": "C:\\Program Files\\Git\\bin\\bash.exe",
+      "args": ["c:/projects/freightclub/scripts/jira-write-mcp-wrapper.sh"]
     }
   }
 }

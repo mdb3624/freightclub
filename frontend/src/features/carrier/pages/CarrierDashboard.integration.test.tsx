@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import '@testing-library/jest-dom';
 import { CarrierDashboard } from './CarrierDashboard';
 
@@ -9,6 +10,14 @@ import { CarrierDashboard } from './CarrierDashboard';
  * Test CarrierDashboard with realistic data and user interactions
  * Verifies component composition, state management, and API integration patterns
  */
+
+function renderDashboard() {
+  return render(
+    <MemoryRouter>
+      <CarrierDashboard />
+    </MemoryRouter>
+  );
+}
 
 describe('CarrierDashboard Integration Tests', () => {
   beforeEach(() => {
@@ -27,7 +36,7 @@ describe('CarrierDashboard Integration Tests', () => {
 
   describe('Golden Path: Owner-Operator Views Dashboard', () => {
     test('renders complete dashboard with all sections visible', async () => {
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       // Header visible with HOS widget
       await waitFor(() => {
@@ -49,7 +58,7 @@ describe('CarrierDashboard Integration Tests', () => {
     });
 
     test('displays metric grid (2x2) with correct data', async () => {
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       await waitFor(() => {
         const metrics = screen.getAllByTestId(/metric-badge-/);
@@ -64,7 +73,7 @@ describe('CarrierDashboard Integration Tests', () => {
     });
 
     test('profitability badge shows correct status color (GREEN for ≥120% RPM)', async () => {
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       await waitFor(() => {
         const badge = screen.getByTestId('profitability-badge');
@@ -75,7 +84,7 @@ describe('CarrierDashboard Integration Tests', () => {
     });
 
     test('claim button has correct size (48px) and styling', async () => {
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       await waitFor(() => {
         const claimBtn = screen.getByTestId('claim-load-btn');
@@ -91,7 +100,7 @@ describe('CarrierDashboard Integration Tests', () => {
   describe('Tab Navigation (No-Scroll Pattern)', () => {
     test('switching tabs does not navigate away (content swaps in place)', async () => {
       const user = userEvent.setup();
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       // Initial: My Stats visible
       await waitFor(() => {
@@ -119,7 +128,7 @@ describe('CarrierDashboard Integration Tests', () => {
 
     test('all three tabs are functional (click-to-switch)', async () => {
       const user = userEvent.setup();
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       const tabs = [
         { button: 'tab-button-my-stats', content: 'tab-content-my-stats' },
@@ -140,7 +149,7 @@ describe('CarrierDashboard Integration Tests', () => {
 
     test('tab buttons have bronze underline when active', async () => {
       const user = userEvent.setup();
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       const myStatsTab = screen.getByTestId('tab-button-my-stats');
       await user.click(myStatsTab);
@@ -154,7 +163,7 @@ describe('CarrierDashboard Integration Tests', () => {
   describe('Available Loads Tab Integration', () => {
     test('renders load cards with profitability badges (different statuses)', async () => {
       const user = userEvent.setup();
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       // Switch to Available Loads tab
       await user.click(screen.getByTestId('tab-button-available-loads'));
@@ -167,7 +176,7 @@ describe('CarrierDashboard Integration Tests', () => {
 
     test('claim button on load card is clickable', async () => {
       const user = userEvent.setup();
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       // Switch to Available Loads
       await user.click(screen.getByTestId('tab-button-available-loads'));
@@ -181,7 +190,7 @@ describe('CarrierDashboard Integration Tests', () => {
 
     test('filter shows "profitable only" by default', async () => {
       const user = userEvent.setup();
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       await user.click(screen.getByTestId('tab-button-available-loads'));
 
@@ -194,7 +203,7 @@ describe('CarrierDashboard Integration Tests', () => {
   describe('Quick Actions Tab Integration', () => {
     test('renders setup checklist items', async () => {
       const user = userEvent.setup();
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       await user.click(screen.getByTestId('tab-button-quick-actions'));
 
@@ -207,7 +216,7 @@ describe('CarrierDashboard Integration Tests', () => {
 
     test('renders account action buttons', async () => {
       const user = userEvent.setup();
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       await user.click(screen.getByTestId('tab-button-quick-actions'));
 
@@ -221,7 +230,7 @@ describe('CarrierDashboard Integration Tests', () => {
 
   describe('Design Token Integration', () => {
     test('all text uses correct color tokens', async () => {
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       await waitFor(() => {
         const header = screen.getByTestId('carrier-header');
@@ -233,16 +242,17 @@ describe('CarrierDashboard Integration Tests', () => {
     });
 
     test('interactive elements use bronze accent (#B08D57)', async () => {
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       await waitFor(() => {
         const editBtn = screen.getByTestId('edit-cost-profile-btn');
-        expect(editBtn).toHaveStyle('color: #B08D57');
+        // CHG-US730-002: bronze accent now applies via gradient fill + border, not text color (white text on fill, matching CLAIM button)
+        expect(editBtn).toHaveStyle('border: 1px solid #7A5F3A');
       });
     });
 
     test('dark theme background is correct (#121212)', () => {
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       const dashboard = screen.getByTestId('carrier-dashboard');
       expect(dashboard).toHaveStyle('backgroundColor: #121212');
@@ -251,22 +261,21 @@ describe('CarrierDashboard Integration Tests', () => {
 
   describe('Accessibility Integration', () => {
     test('header logo is decorative (no unnecessary ARIA)', async () => {
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       const logo = screen.getByTestId('carrier-logo');
       expect(logo).not.toHaveAttribute('role');
     });
 
     test('notification bell has aria-label', async () => {
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       const bell = screen.getByTestId('notification-bell');
       expect(bell).toHaveAttribute('aria-label', 'Notifications');
     });
 
     test('buttons are keyboard accessible (can be focused)', async () => {
-      const user = userEvent.setup();
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       const claimBtn = screen.getByTestId('claim-load-btn');
       claimBtn.focus();
@@ -277,7 +286,7 @@ describe('CarrierDashboard Integration Tests', () => {
 
   describe('Mobile Responsiveness Integration', () => {
     test('dashboard fits within viewport (no vertical scroll required)', () => {
-      const { container } = render(<CarrierDashboard />);
+      const { container } = renderDashboard();
 
       const dashboard = container.querySelector('[data-testid="carrier-dashboard"]');
       expect(dashboard).toHaveStyle('height: 100vh');
@@ -285,7 +294,7 @@ describe('CarrierDashboard Integration Tests', () => {
     });
 
     test('all interactive elements are ≥48px (glove-friendly)', async () => {
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       await waitFor(() => {
         // Claim button
@@ -302,7 +311,7 @@ describe('CarrierDashboard Integration Tests', () => {
     });
 
     test('touch targets have proper spacing (gap: 8px minimum)', async () => {
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       await waitFor(() => {
         // Hero section buttons have 8px gap
@@ -316,7 +325,7 @@ describe('CarrierDashboard Integration Tests', () => {
   describe('Performance Integration', () => {
     test('initial render completes quickly (<1s)', async () => {
       const startTime = performance.now();
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       await waitFor(() => {
         expect(screen.getByTestId('hero-section')).toBeInTheDocument();
@@ -330,7 +339,7 @@ describe('CarrierDashboard Integration Tests', () => {
 
     test('tab switching is instant (no lag)', async () => {
       const user = userEvent.setup();
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       const startTime = performance.now();
       await user.click(screen.getByTestId('tab-button-available-loads'));
@@ -343,7 +352,7 @@ describe('CarrierDashboard Integration Tests', () => {
   describe('State Management Integration', () => {
     test('dashboard maintains state across tab switches', async () => {
       const user = userEvent.setup();
-      render(<CarrierDashboard />);
+      renderDashboard();
 
       // Verify hero section exists on My Stats tab
       const heroInitial = screen.getByTestId('hero-section');

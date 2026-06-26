@@ -29,6 +29,7 @@ This checklist defines the mandatory "Hard Gates" for any code merge. Failure to
 * [ ] **Frontend Unit Tests**: `npm run test` passes with 0 failures.
 * [ ] **Frontend E2E Tests**: `npm run test:e2e` passes with 0 failures. Any UI feature touched by the story must have a Playwright golden-path test before sign-off.
 * [ ] **E2E Test Evidence**: The session must show actual test output (`ok 1 ... (1.4s)`) from running the spec file — not just "tests written". Reviewer must see pass/fail lines before signing off.
+* [ ] **Touch Target Automation (OO/Carrier stories)**: "≥48px touch targets" is satisfied ONLY by an automated Playwright `boundingBox()` assertion against every new interactive element (or a blanket `page.locator('button')` sweep) — never by visual inspection alone. CHG-US730-001 (2026-06-25): 4 buttons shipped at 40px or undefined tap area and passed REVIEWER sign-off because the AC-2 test only covered 2 of the dashboard's ~8 buttons. New buttons without a corresponding boundingBox assertion are an automatic REJECT.
 * [ ] **Transactional Integrity**: Are Domain Events and Entity state changes wrapped in a single atomic transaction?
 * [ ] **Outbox Pattern**: Does the logic correctly use the `message_outbox` for asynchronous event propagation?
 * [ ] **Idempotency**: Is the system resilient to duplicate events or messages?

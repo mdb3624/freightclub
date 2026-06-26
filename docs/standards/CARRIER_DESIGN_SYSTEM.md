@@ -159,25 +159,28 @@ Box-shadow: inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,
 Focus: 2px solid #C9A46A outline (2px offset)
 ```
 
-**Secondary Button (Outlined)**
+**Secondary Button (Bronze Gradient Fill)**
 ```
 Height: 48px
 Padding: 12px 24px
 Font: 14px semibold white
-Background: transparent
-Border: 2px solid #B08D57
-Focus: 2px solid #B08D57 outline
+Background: linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)
+Border: 1px solid #7A5F3A
+Box-shadow: inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)
+Focus: 2px solid #C9A46A outline (2px offset)
+Note: Same fill as Primary CTA — all carrier buttons share one bronze-gradient tier (CHG-US730-002, 2026-06-25). The outlined/transparent variant is retired.
 ```
 
-**Pill Button (Compact)**
+**Pill Button (Compact, Bronze Gradient Fill)**
 ```
 Height: 36px
 Padding: 8px 16px
-Font: 12px regular
+Font: 12px semibold white
 Border-radius: 24px
-Background: transparent OR semi-transparent bronze
-Border: 1px solid #B08D57
+Background: linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)
+Border: 1px solid #7A5F3A
 Use: For secondary actions, grouped horizontally
+Note: Outlined/transparent pill variant is retired — fill matches CLAIM button (CHG-US730-002, 2026-06-25).
 ```
 
 ### Metric Badge (2×2 Grid)

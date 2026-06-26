@@ -965,6 +965,7 @@ class LoadServiceTest {
                     null, null
             );
 
+            when(loadRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
             com.freightclub.dto.LoadResponse draft = loadService.createDraft(req, SHIPPER_ID);
 
             assertThat(draft).isNotNull();

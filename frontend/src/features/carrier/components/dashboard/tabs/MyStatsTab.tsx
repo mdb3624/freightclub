@@ -106,15 +106,16 @@ export const MyStatsTab: React.FC<MyStatsTabProps> = ({ tokens }) => {
         <button
           data-testid="edit-cost-profile-secondary"
           style={{
-            height: 40,
+            height: 48,
             padding: '8px 16px',
-            backgroundColor: 'transparent',
-            border: `1px solid ${tokens.colors.accent.bronze}`,
+            background: tokens.colors.accent.bronzeGradient,
+            border: '1px solid #7A5F3A',
             borderRadius: 6,
-            color: tokens.colors.accent.bronze,
+            color: '#FFFFFF',
             fontWeight: 600,
             cursor: 'pointer',
-            fontSize: 12
+            fontSize: 12,
+            boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)'
           }}
         >
           ⚙️ Edit
@@ -130,33 +131,37 @@ export const MyStatsTab: React.FC<MyStatsTabProps> = ({ tokens }) => {
         }}
       >
         <button
+          data-testid="view-full-stats-btn"
           style={{
             flex: 1,
-            height: 40,
+            height: 48,
             padding: '8px 12px',
-            backgroundColor: 'transparent',
-            border: `1px solid ${tokens.colors.accent.bronze}`,
+            background: tokens.colors.accent.bronzeGradient,
+            border: '1px solid #7A5F3A',
             borderRadius: 20,
-            color: tokens.colors.text.primary,
+            color: '#FFFFFF',
             fontWeight: 600,
             cursor: 'pointer',
-            fontSize: 12
+            fontSize: 12,
+            boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)'
           }}
         >
           View Full Stats
         </button>
         <button
+          data-testid="ratings-btn"
           style={{
             flex: 1,
-            height: 40,
+            height: 48,
             padding: '8px 12px',
-            backgroundColor: 'transparent',
-            border: `1px solid ${tokens.colors.accent.bronze}`,
+            background: tokens.colors.accent.bronzeGradient,
+            border: '1px solid #7A5F3A',
             borderRadius: 20,
-            color: tokens.colors.text.primary,
+            color: '#FFFFFF',
             fontWeight: 600,
             cursor: 'pointer',
-            fontSize: 12
+            fontSize: 12,
+            boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)'
           }}
         >
           Ratings

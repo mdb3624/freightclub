@@ -1,20 +1,13 @@
-// @ts-nocheck
 import { useState } from 'react';
-// @ts-nocheck
 import { useAuthStore } from '@/store/authStore';
-// @ts-nocheck
+import { ErrorBanner } from '@/components/ui/ErrorBanner';
 import {
-// @ts-nocheck
   useAssignedLoads,
-// @ts-nocheck
   useAcceptAssignment,
-// @ts-nocheck
   useRevokeAssignment,
-// @ts-nocheck
+  type LoadAssignment,
 } from '../hooks/useLoadAssignment';
-// @ts-nocheck
 
-// @ts-nocheck
 export const AssignedLoads = () => {
   const user = useAuthStore((state) => state.user);
   const [page, setPage] = useState(0);
@@ -23,8 +16,7 @@ export const AssignedLoads = () => {
   const acceptMutation = useAcceptAssignment();
   const revokeMutation = useRevokeAssignment();
 
-  if (!user?.id) {
-  }
+  if (!user?.id) return <ErrorBanner message="You must be signed in to view assigned loads" />;
 
   const handleAccept = (loadId: string) => {
     acceptMutation.mutate({ loadId, carrierId: user.id });
@@ -36,11 +28,9 @@ export const AssignedLoads = () => {
     }
   };
 
-  if (isLoading) {
-  }
+  if (isLoading) return <p className="text-sm text-gray-400">Loading assigned loads…</p>;
 
-  if (error) {
-  }
+  if (error) return <ErrorBanner message="Failed to load assigned loads" />;
 
   return (
     <div className="space-y-6">
@@ -74,7 +64,7 @@ export const AssignedLoads = () => {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {assignments.content.map((assignment) => (
+              {assignments.content.map((assignment: LoadAssignment) => (
                 <tr key={assignment.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     {assignment.loadId}

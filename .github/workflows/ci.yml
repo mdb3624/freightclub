@@ -176,7 +176,6 @@ jobs:
         env:
           PLAYWRIGHT_TEST_BASE_URL: http://localhost:9090
           TEST_BACKEND_URL: http://localhost:9091
-          PLAYWRIGHT_WORKERS: "4"
 
       - name: Upload test results
         if: always()

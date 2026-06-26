@@ -60,7 +60,7 @@
 
 | Story ID | Title | Status | Handoff Date | BA Sign-Off | Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| US-103-v2 | Load Creation Redesign (Full Workflow + Dashboard Integration) | ✅ COMPLETED | 2026-06-18 | 85%+ coverage | ✅ CODER PASS (all AC verified) + ✅ REVIEWER PASS (7/7 gates) + ✅ LIBRARIAN (2026-06-18) |
+| US-103-v2 | Load Creation Redesign (Full Workflow + Dashboard Integration) | ✅ COMPLETED | 2026-06-18 | 85%+ coverage | ✅ CODER PASS + ✅ REVIEWER PASS (7/7 gates) + ✅ LIBRARIAN (2026-06-18) + ✅ PRODUCTION DEPLOYED (2026-06-20, URLs in Cloud Run) |
 | US-103-v3 | Load Duplication Feature ("Copy to New") | ⏳ BACKLOG | — | — | Phase 11+ enhancement; dependency: US-103-v2 |
 | US-103-v4 | Load Templates Feature (Save & Reuse) | ⏳ BACKLOG | — | — | Phase 11+ enhancement; dependency: US-103-v2 |
 

@@ -14,7 +14,7 @@ export function useLogin() {
       setAuth(response.accessToken, response.user)
       const destination = response.user.role === 'SHIPPER'
         ? '/dashboard/shipper'
-        : '/dashboard/trucker'
+        : '/dashboard/carrier'
       navigate(destination, { replace: true })
     },
   })

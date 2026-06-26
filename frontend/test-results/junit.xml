@@ -1,0 +1,15 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="6.002517">
+<testsuite name="verify-header.spec.ts" timestamp="2026-06-24T18:49:05.751Z" hostname="chromium" tests="1" failures="0" skipped="0" time="1.498" errors="0">
+<testcase name="Verify header redesign matches spec" classname="verify-header.spec.ts" time="1.498">
+<system-out>
+<![CDATA[✅ Logo: 🚛FC
+✅ HOS: HOS: 3h ✓
+✅ Bell and Avatar visible
+✅ Screenshot saved: US-730-0_header_redesign.png
+✅ Header height: 56px
+✅ No vertical scroll: viewport=667px, content=667px
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

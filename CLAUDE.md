@@ -239,6 +239,104 @@ When asked to implement a feature, write tests, or refactor code:
 - **Workflow:** You must follow the **Red-Green-Refactor** pattern. Always provide the test class first or alongside the implementation.
 - **Constraint:** Use standard Java patterns (No-Lombok). Ensure all repository queries account for `deleted_at IS NULL`.
 - **Traceability:** Every method created must reference the Acceptance Criterion (AC) it satisfies.
+
+### 🚛 CODER + Owner-Operator (OO) Stories (MANDATORY)
+
+**Whenever CODER is asked to implement ANY Owner-Operator story (US-730+):**
+
+You MUST follow these constraints in addition to CODER.md:
+1. **Reference:** `docs/standards/CARRIER_DESIGN_SYSTEM.md` (copy all tokens directly)
+2. **Follow:** Locked design spec (`docs/hfd/US-###_Design_Spec.md`)
+3. **No Design Changes:** Design is frozen. If infeasible, escalate to LIBRARIAN via CHG ticket (not back to HFD)
+
+**Non-Negotiable Implementation Constraints (OO-Specific):**
+- **Mobile-First:** Test on iPhone SE (375px minimum) before opening PR
+- **Colors:** Use only tokens from CARRIER_DESIGN_SYSTEM.md (no custom CSS variables)
+- **Touch Targets:** Measure all buttons (48px minimum enforced by browser tools)
+- **No Horizontal Scroll:** Vertical layout only; verify hero always visible
+- **No Swipe Gestures:** Tap-only interactions (no @swipe handlers)
+- **Performance:** LCP <2s on 4G LTE (verify with Lighthouse before PR)
+- **Device Verification:** Test on real iPhone in sunlight (not simulator)
+
+**You cannot open PR for OO story without:**
+- [ ] Tested on iPhone 375px in direct sunlight
+- [ ] All touch targets ≥48px (measured with browser tools)
+- [ ] Colors match CARRIER_DESIGN_SYSTEM.md exactly (no custom palettes)
+- [ ] No vertical scroll required (hero always visible)
+- [ ] Lighthouse: LCP <2s, FID <100ms, CLS <0.1
+- [ ] All AC from design spec satisfied
+- [ ] Zero deviations from locked design without CHG ticket
+
+**REVIEWER will reject if:**
+- Colors don't match palette
+- Touch targets <48px
+- Vertical scroll needed
+- No device verification evidence
+- Design deviations without CHG approval
+
+### 🚢 CODER + Shipper Stories (MANDATORY)
+
+**Whenever CODER is asked to implement ANY Shipper story (US-820+):**
+
+You MUST follow these constraints in addition to CODER.md:
+1. **Reference:** `docs/standards/SHIPPER_DESIGN_SYSTEM.md` (copy all tokens directly)
+2. **Reference:** `docs/standards/ui-standards.md` (shipper-specific rules)
+3. **Follow:** Locked design spec (`docs/hfd/US-###_Design_Spec.md`)
+4. **No Design Changes:** Design is frozen. If infeasible, escalate to LIBRARIAN via CHG ticket (not back to HFD)
+
+**Non-Negotiable Implementation Constraints (Shipper-Specific):**
+- **ShipperPageLayout:** All shipper pages wrapped in ShipperPageLayout (mandatory, no exceptions)
+- **Desktop-First:** Test on desktop (1280px+) as primary; mobile responsive optional
+- **Colors:** Use only tokens from SHIPPER_DESIGN_SYSTEM.md (no custom CSS variables)
+- **Spacing:** All padding/margin multiples of 8px (from style guide)
+- **Border Radius:** Exactly 4px (not 6px, 8px, or other)
+- **Touch Targets:** ≥44px (desktop standard, not 48px OO glove standard)
+- **Style Guide Compliance:** Follow Shipper & Administrator Style Guide §6-7
+
+**You cannot open PR for Shipper story without:**
+- [ ] ShipperPageLayout wrapper verified
+- [ ] Tested on desktop (1280px) browser
+- [ ] Colors match SHIPPER_DESIGN_SYSTEM.md exactly
+- [ ] Spacing verified (multiples of 8px)
+- [ ] Border radius exactly 4px
+- [ ] All AC from design spec satisfied
+- [ ] Style guide compliance checklist passed
+- [ ] Zero deviations from locked design without CHG ticket
+
+**REVIEWER will reject if:**
+- ShipperPageLayout missing
+- Colors don't match palette
+- Spacing incorrect (not multiples of 8px)
+- Border radius wrong (not exactly 4px)
+- Design deviations without CHG approval
+
+### 👨‍💼 CODER + Admin Stories (MANDATORY)
+
+**Whenever CODER is asked to implement ANY Admin story:**
+
+You MUST follow these constraints in addition to CODER.md:
+1. **Reference:** `docs/standards/ADMIN_DESIGN_SYSTEM.md` (copy all tokens directly)
+2. **Reference:** `docs/standards/ui-standards.md` (admin-specific rules)
+3. **Follow:** Locked design spec (`docs/hfd/US-###_Design_Spec.md`)
+4. **No Design Changes:** Design is frozen. If infeasible, escalate to LIBRARIAN via CHG ticket (not back to HFD)
+
+**Non-Negotiable Implementation Constraints (Admin-Specific):**
+- **Desktop-First:** Test on desktop (1280px+) as primary
+- **Colors:** Use only tokens from ADMIN_DESIGN_SYSTEM.md (no custom CSS variables)
+- **WCAG AA:** Compliance required (not AAA like OO)
+- **Component Library:** Use admin-specific components from system
+
+**You cannot open PR for Admin story without:**
+- [ ] Tested on desktop (1280px) browser
+- [ ] Colors match ADMIN_DESIGN_SYSTEM.md exactly
+- [ ] WCAG AA compliance verified (4.5:1 contrast minimum)
+- [ ] All AC from design spec satisfied
+- [ ] Zero deviations from locked design without CHG ticket
+
+**REVIEWER will reject if:**
+- Colors don't match palette
+- WCAG AA compliance missing
+- Design deviations without CHG approval
 ## 🎨 Human Factors Designer (HFD) Invocation Rule
 
 When asked to design user interfaces, dashboards, or interaction flows:
@@ -246,6 +344,78 @@ When asked to design user interfaces, dashboards, or interaction flows:
 - **Constraint:** Prioritize information salience and cognitive load reduction for shippers and owner-operators.
 - **Gate Check:** You are PROHIBITED from finalizing a UI design until the Business Analyst has provided the underlying Business Rules.
 - **Environmental Focus:** Designs must account for high-glare mobile use and high-density data management.
+
+### 🚛 HFD + Owner-Operator (OO) Stories (MANDATORY)
+
+**Whenever HFD is asked to design ANY Owner-Operator story (US-730+):**
+
+You MUST follow these files in this order:
+1. **Load:** `docs/roles/CARRIER_HFD_RULES.md` (workflow, verification protocol)
+2. **Reference:** `docs/standards/CARRIER_DESIGN_SYSTEM.md` (all tokens, components)
+3. **Template:** `docs/hfd/US-730-0_Carrier_Dashboard_Design_Spec.md` (structure example)
+
+**Non-Negotiable Constraints (OO-Specific):**
+- Mobile-first (iPhone 375px minimum)
+- No vertical scroll (hero always visible)
+- 48px touch targets minimum (glove-friendly)
+- Deep charcoal #121212 + bronze #B08D57 palette only
+- WCAG AAA contrast (7:1+) in direct sunlight
+- Tap-only interactions (no swipe, no long-press)
+- **Mandatory device verification** (real iPhone in sunlight BEFORE sign-off)
+
+**You cannot sign-off OO design without:**
+- [ ] Real device test completed (sunlight, gloves, one-handed)
+- [ ] LCP <2s verified on 4G LTE
+- [ ] All touch targets ≥48px measured
+- [ ] AC explicitly mapped to UI elements
+- [ ] Design locked (no changes allowed during CODER phase)
+
+### 🚢 HFD + Shipper Stories (MANDATORY)
+
+**Whenever HFD is asked to design ANY Shipper story (US-820+):**
+
+You MUST follow these files in this order:
+1. **Load:** `docs/roles/SHIPPER_HFD_RULES.md` (workflow, verification protocol)
+2. **Reference:** `docs/standards/SHIPPER_DESIGN_SYSTEM.md` (all tokens, components)
+3. **Template:** `docs/hfd/US-820_Design_Spec.md` or latest shipper spec (structure example)
+
+**Shipper Design Constraints** (from Shipper & Administrator Style Guide):
+- Reference: `docs/standards/ui-standards.md` (shipper-specific design rules)
+- ShipperPageLayout wrapper mandatory (no custom header structure)
+- Desktop-first (responsive down to mobile, not mobile-first)
+- Standard Tailwind colors + bronze accents
+- All AC mapped to UI elements
+- Design locked before CODER phase
+
+**You cannot sign-off Shipper design without:**
+- [ ] ShipperPageLayout compliance verified
+- [ ] Style guide compliance checked (padding/spacing/radius/colors)
+- [ ] All touch targets ≥44px (desktop standard)
+- [ ] AC explicitly mapped to UI elements
+- [ ] Design locked (no changes allowed during CODER phase)
+
+### 👨‍💼 HFD + Admin Stories (MANDATORY)
+
+**Whenever HFD is asked to design ANY Admin story:**
+
+You MUST follow these files in this order:
+1. **Load:** `docs/roles/ADMIN_HFD_RULES.md` (workflow, verification protocol)
+2. **Reference:** `docs/standards/ADMIN_DESIGN_SYSTEM.md` (all tokens, components)
+3. **Reference:** `docs/standards/ui-standards.md` (admin-specific design rules)
+
+**Admin Design Constraints:**
+- Desktop-first (responsive optional)
+- Standard component library (Tailwind-based)
+- Admin palette (not shipper, not OO)
+- WCAG AA compliance (not AAA)
+- All AC mapped to UI elements
+- Design locked before CODER phase
+
+**You cannot sign-off Admin design without:**
+- [ ] Desktop layout verified (1280px+ primary)
+- [ ] Style guide compliance checked
+- [ ] All AC explicitly mapped to UI elements
+- [ ] Design locked (no changes allowed during CODER phase)
 
 ## 📋 Business Analyst (BA) Invocation Rule
 When asked to elaborate on features or break down the backlog:
@@ -262,6 +432,53 @@ When asked to update documentation, manage the backlog, or finalize a story:
 - **Source of Truth:** You are the ONLY role authorized to update `docs/project/Sprint_Log.md` and `docs/project/Story_Map.md`.
 - **Traceability:** You must ensure every completed story is linked to a valid Flyway version and its corresponding Requirement ID.
 - **Constraint:** You cannot mark a story as `DONE` unless the Reviewer has provided a "PASS" in the chat history.
+
+---
+
+## 🚛 Carrier Design Standards (Owner-Operator Stories)
+
+**Effective 2026-06-23 — ALL OO stories (US-730+) follow locked design scaffolding**
+
+All Owner-Operator stories must reference and follow these standards:
+
+- **Reference Guide:** `CARRIER_DESIGN_REFERENCE.md` (quick navigation, bookmark this)
+- **Design System:** `docs/standards/CARRIER_DESIGN_SYSTEM.md` (tokens, components, copy-paste ready)
+- **HFD Rules:** `docs/roles/CARRIER_HFD_RULES.md` (workflow, mandatory verification protocol)
+- **Design Template:** `docs/hfd/US-730-0_Carrier_Dashboard_Design_Spec.md` (example structure)
+
+### Key Standards (Non-Negotiable)
+
+**Design & UX:**
+- ✅ **Mobile-First:** iPhone SE/12/13 (375px minimum); desktop optional
+- ✅ **No Vertical Scroll:** Hero always visible; tabs for secondary content
+- ✅ **Touch Targets:** All interactive elements ≥48×48px (glove-friendly)
+- ✅ **Tap-Only:** No swipe gestures, no long-press, no complex interactions
+- ✅ **Visual System:** Deep charcoal #121212 background + metallic bronze #B08D57 accents
+- ✅ **Typography:** Sora (bold uppercase headers) + Inter (14px body text)
+- ✅ **Contrast:** WCAG AAA minimum (7:1+) verified in direct sunlight
+
+**HFD Verification (Mandatory):**
+- ✅ **Device Testing:** Real iPhone in sunlight BEFORE sign-off (not simulator)
+- ✅ **Glove Testing:** Actual gloved hands or simulation (thick socks on fingers)
+- ✅ **One-Handed Operation:** Primary CTA reachable with thumb only
+- ✅ **Performance:** LCP <2s on 4G LTE, FID <100ms, CLS <0.1
+
+**Implementation:**
+- ✅ **Tokens:** Copy tokens from `docs/standards/CARRIER_DESIGN_SYSTEM.md` (no custom colors)
+- ✅ **Components:** Use existing library (buttons, badges, cards, modals from system)
+- ✅ **AC Mapping:** Design spec must explicitly link UI elements to acceptance criteria
+- ✅ **No Mid-Phase Changes:** Design locked before CODER starts (escalate to LIBRARIAN via CHG if needed)
+
+### Enforcement
+
+**REVIEWER rejects any PR that:**
+- Uses colors outside CARRIER_DESIGN_SYSTEM palette
+- Has touch targets <48px
+- Requires vertical scroll for hero/primary content
+- Uses swipe/complex gestures
+- Deviates from design spec without CHG ticket + LIBRARIAN approval
+
+**Violations trigger:** PR rejection + request to re-design per standards
 
 ---
 

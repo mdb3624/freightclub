@@ -6,7 +6,7 @@
 import path from 'path';
 import { validate } from './parser';
 
-const filePath = path.join(process.cwd(), 'docs/project/Story_Map.md');
+const filePath = path.join(process.cwd(), '/c/projects/freightclub/docs/project/Story_Map.md');
 
 const result = validate(filePath);
 

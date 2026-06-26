@@ -98,7 +98,22 @@
 
 ---
 
-## Phase 7: Carrier Management & Shipper MVP (11 stories)
+## Phase 7a: Carrier Dashboard MVP (US-730 Epic) — NEW
+
+| ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
+| :----- | :------------------------------------ | :---------- | :---- | :--------- | :--------- |
+| **US-730** | **EPIC: Carrier Dashboard MVP — Operations Platform (Mobile-First)** | **READY_FOR_DESIGN** | **7a** | **—** | **✅ MOBILE-FIRST MANDATORY (iPhone 375px) | ✅ RLS, ✅ No-Lombok, ✅ Dark theme + ≥48px buttons | ✅ Phase 7 MVP independent of Phase 9 payment processing | Jira: FREIG-62** |
+| US-730-0 | Dashboard Structure & Mobile Design Spec | READY_FOR_DESIGN | 7a | — | ✅ HFD locks design; CODER cannot rework | Jira: FREIG-63 |
+| US-730a | Cost Profile Setup API & UI | READY_FOR_DESIGN | 7a | US-730-0 | ✅ RPM calculation, mobile form, ≥70% coverage | Jira: FREIG-64 |
+| US-730b | Profitable Load Visibility & Filtering | READY_FOR_DESIGN | 7a | US-730a | ✅ GREEN/YELLOW/RED badges, RPM filtering | Jira: FREIG-65 |
+| US-730c | Performance Visibility Dashboard Metrics | READY_FOR_DESIGN | 7a | — | ✅ Acceptance %, On-Time %, Completion %, Payments Logged % | Jira: FREIG-66 |
+| US-730d | Unified Carrier Dashboard | READY_FOR_DESIGN | 7a | US-730-0, US-730a-c | ✅ Hero load + stats + loads list, <2s load on 4G | Jira: FREIG-67 |
+| US-730e | Equipment & Lane Management | READY_FOR_DESIGN | 7a | — | ✅ Equipment types, capacity, preferred lanes, availability | Jira: FREIG-68 |
+| **US-730f** | **Payment Acknowledgment (MVP)** | **READY_FOR_DESIGN** | **7a** | **US-730d** | **✅ Date logging only (NO money movement) | ✅ Foundation for Phase 9 settlement | Jira: FREIG-69** |
+
+---
+
+## Phase 7: Carrier Management & Shipper MVP (12 stories)
 
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |

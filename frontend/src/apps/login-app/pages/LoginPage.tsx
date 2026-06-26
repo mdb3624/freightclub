@@ -23,9 +23,15 @@ export const LoginPage: React.FC = () => {
       // Save auth token and user to store (like signup does)
       setAuth(response.accessToken, response.user)
       // On success, redirect to dashboard
+      console.log('🔐 [LoginPage] Login response:', {
+        role: response.user.role,
+        email: response.user.email,
+        user: response.user
+      });
       const destination = response.user.role === 'SHIPPER'
         ? '/dashboard/shipper'
-        : '/dashboard/trucker'
+        : '/dashboard/carrier'
+      console.log('📍 [LoginPage] Redirecting to:', destination);
       window.location.href = destination
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Login failed'

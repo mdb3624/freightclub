@@ -20,7 +20,8 @@
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
-    "browser-use"
+    "browser-use",
+    "jira"
   ],
   "hooks": {
     "PostToolUse": [

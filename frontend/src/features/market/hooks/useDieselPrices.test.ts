@@ -1,6 +1,12 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useDieselPrices } from './useDieselPrices'
+
+vi.mock('../api', () => ({
+  marketApi: {
+    getDieselPrices: vi.fn(() => new Promise(() => {})),
+  },
+}))
 
 describe('useDieselPrices', () => {
   it('should return hook with expected shape', () => {

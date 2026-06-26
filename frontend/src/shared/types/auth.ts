@@ -1,3 +1,5 @@
+import type { User } from '@/types'
+
 export interface LoginRequest {
   email: string
   password: string
@@ -6,11 +8,7 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   accessToken: string
-  user: {
-    id: string
-    email: string
-    name: string
-  }
+  user: User
 }
 
 export interface AuthError {

@@ -1,14 +1,8 @@
-// @ts-nocheck
 import React, { useState } from 'react'
-// @ts-nocheck
 import { LoginForm } from '../components/LoginForm'
-// @ts-nocheck
 import { authService } from '../services/authService'
-// @ts-nocheck
 import { useAuthStore } from '@/store/authStore'
-// @ts-nocheck
 
-// @ts-nocheck
 export const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string>('')

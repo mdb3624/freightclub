@@ -8,7 +8,7 @@ import type { ShipperProfileResponse, ShipperProfileRequest } from '@/types'
 const profileSchema = z.object({
   companyName: z.string().min(1, 'Company name required').max(120),
   billingEmail: z.string().email('Invalid email format'),
-  phoneNumber: z.string().regex(/^[\d\-\(\)]{10,}$/, 'Invalid US phone format'),
+  phoneNumber: z.string().regex(/^[\d\-()]{10,}$/, 'Invalid US phone format'),
   city: z.string().min(1, 'City required'),
   state: z.string().length(2, 'State code must be 2 characters'),
   zipCode: z.string().regex(/^\d{5}$/, 'ZIP must be 5 digits'),

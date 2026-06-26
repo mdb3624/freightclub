@@ -1,22 +1,15 @@
-// @ts-nocheck
 import { useState } from 'react';
-// @ts-nocheck
+import type React from 'react';
 import { useAuthStore } from '@/store/authStore';
-// @ts-nocheck
+import { ErrorBanner } from '@/components/ui/ErrorBanner';
 import {
-// @ts-nocheck
   useBlockedCarriers,
-// @ts-nocheck
   useBlockedCarrierCount,
-// @ts-nocheck
   useBlockCarrier,
-// @ts-nocheck
   useUnblockCarrier,
-// @ts-nocheck
+  type BlockedCarrier,
 } from '../hooks/useBlockedCarriers';
-// @ts-nocheck
 
-// @ts-nocheck
 export const BlockedCarriersList = () => {
   const user = useAuthStore((state) => state.user);
   const [newCarrierId, setNewCarrierId] = useState('');
@@ -28,8 +21,7 @@ export const BlockedCarriersList = () => {
   const blockMutation = useBlockCarrier();
   const unblockMutation = useUnblockCarrier();
 
-  if (!user?.id) {
-  }
+  if (!user?.id) return <ErrorBanner message="You must be signed in to view blocked carriers" />;
 
   const handleBlock = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,11 +48,9 @@ export const BlockedCarriersList = () => {
     }
   };
 
-  if (isLoading) {
-  }
+  if (isLoading) return <p className="text-sm text-gray-400">Loading blocked carriers…</p>;
 
-  if (error) {
-  }
+  if (error) return <ErrorBanner message="Failed to load blocked carriers" />;
 
   return (
     <div className="space-y-6">
@@ -132,7 +122,7 @@ export const BlockedCarriersList = () => {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {blockedCarriers.content.map((blocked) => (
+              {blockedCarriers.content.map((blocked: BlockedCarrier) => (
                 <tr key={blocked.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     {blocked.carrierId}

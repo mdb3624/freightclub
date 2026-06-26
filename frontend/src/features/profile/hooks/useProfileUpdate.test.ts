@@ -1,25 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { renderHook, waitFor } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 /**
  * US-757: Integration test for profile update flow with cost profile data
  * Simulates the API contract for saving/updating cost profile fields
  */
-
-// Mock a profile update hook (simulating form submission)
-function useProfileUpdate() {
-  const updateProfile = async (data: any) => {
-    // Simulate API call
-    const response = await fetch('/api/v1/profile', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-    if (!response.ok) throw new Error('Failed to update profile')
-    return response.json()
-  }
-  return { updateProfile }
-}
 
 describe('Profile Update Hook — US-757 Cost Profile Submission', () => {
   beforeEach(() => {

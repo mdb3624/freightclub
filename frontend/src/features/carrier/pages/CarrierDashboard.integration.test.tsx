@@ -275,7 +275,6 @@ describe('CarrierDashboard Integration Tests', () => {
     });
 
     test('buttons are keyboard accessible (can be focused)', async () => {
-      const user = userEvent.setup();
       renderDashboard();
 
       const claimBtn = screen.getByTestId('claim-load-btn');

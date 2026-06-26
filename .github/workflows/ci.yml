@@ -30,6 +30,10 @@ jobs:
       - name: Run tests
         working-directory: backend
         run: mvn test
+        env:
+          DB_USERNAME: freightclub_runtime
+          DB_PASSWORD: freightclub
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/freightclub_test
 
       - name: Upload JaCoCo report
         if: always()

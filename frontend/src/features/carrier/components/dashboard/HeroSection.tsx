@@ -109,18 +109,20 @@ export const HeroSection: React.FC = () => {
             <button
               data-testid="edit-cost-profile-btn"
               style={{
-                background: 'none',
-                border: 'none',
-                color: '#B08D57',
+                background: 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
+                border: '1px solid #7A5F3A',
+                color: '#FFFFFF',
                 cursor: 'pointer',
                 fontSize: 12,
-                textDecoration: 'underline',
+                fontWeight: 600,
                 minHeight: 48,
                 minWidth: 48,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'flex-end',
-                padding: 0
+                justifyContent: 'center',
+                padding: '0 12px',
+                borderRadius: 6,
+                boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)'
               }}
             >
               ⚙️ Setup
@@ -157,20 +159,21 @@ export const HeroSection: React.FC = () => {
           CLAIM
         </button>
 
-        {/* Details Button (Secondary) */}
+        {/* Details Button */}
         <button
           data-testid="load-details-btn"
           style={{
             flex: 1,
             height: 48,
             padding: '12px 24px',
-            background: 'transparent',
-            border: '2px solid #B08D57',
+            background: 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)',
+            border: '1px solid #7A5F3A',
             borderRadius: 8,
             color: '#FFFFFF',
             fontWeight: 600,
             cursor: 'pointer',
-            fontSize: 14
+            fontSize: 14,
+            boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)'
           }}
         >
           DETAILS

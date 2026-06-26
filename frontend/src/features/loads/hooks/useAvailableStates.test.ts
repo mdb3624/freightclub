@@ -1,6 +1,12 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useAvailableStates } from './useAvailableStates'
+
+vi.mock('../api', () => ({
+  loadsApi: {
+    getAvailableStates: vi.fn(() => new Promise(() => {})),
+  },
+}))
 
 describe('useAvailableStates', () => {
   it('should return hook with expected shape', () => {

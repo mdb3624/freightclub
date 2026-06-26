@@ -24,6 +24,7 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 * ❌ **Test Coverage:** Backend branch coverage < 80% (JaCoCo).
 * ❌ *(Phase 7+)* GET endpoint without `@Cacheable` or missing `TenantContextHolder.getTenantId()`.
 * ❌ *(Phase 10+)* **Platform Integrity Violation:** Same domain logic implemented in multiple services or classes (duplicate calculations, filters, or transformations). Single source of truth must be enforced.
+* ❌ **CI Status Not Verified:** Local `mvn test` / Docker pre-test runs are NOT a substitute for actual GitHub Actions status. REVIEWER must run `gh pr checks <PR#>` and confirm all required checks are green before issuing PASS. CHG-US730-003 (2026-06-26) found GH Actions CI had a 100% failure rate across its entire history (every run since the workflow was created on 2026-03-27) — every prior `REVIEWER_PASS` in `Sprint_Log.md` was issued on local-run evidence alone, while the actual CI gate silently failed for 3 months unnoticed.
 
 ## 📋 Review Checklist
 
@@ -81,6 +82,7 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 * [ ] **Frontend Unit:** `npm run test` passes with 0 failures.
 * [ ] **Frontend E2E:** `npm run test:e2e` (Playwright) passes with 0 failures and evidence artifacts.
 * [ ] **Multi-tenant isolation:** Verified Tenant A cannot see Tenant B's cached data.
+* [ ] **Actual CI Status (MANDATORY, NEW 2026-06-26):** Run `gh pr checks <PR#>` and confirm every required check shows `pass`/`success` — not just `pending`/absent. Local Docker/`mvn`/`npm` runs verify the code works in your environment; they do NOT verify GitHub Actions CI passes. Treat a PR with red or unchecked GH Actions status as **REJECTED** regardless of local evidence, per the same standard as any other hard gate.
 
 ## 🚦 Rejection Verdicts
 

@@ -70,3 +70,11 @@
 | :--- | :--- | :--- | :--- | :--- |
 | US-753 | Replace Zod with Regex Validation (Login) | ✅ COMPLETED | 2026-05-19 | 100% |
 | US-713 | Shipper Company Profile Setup | ✅ COMPLETED | 2026-05-19 | 85% |
+
+## Phase 7a Progress: Carrier Dashboard MVP (Owner-Operator)
+
+| Story ID | Title | Status | Completion Date | Coverage | Sign-Off |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-730-0 | Dashboard Structure & Mobile Design Spec | ✅ COMPLETED (PR #6 merged 2026-06-26 over red CI — see CHG-US730-003) | 2026-06-25 | 24 integration tests + 10/10 E2E passing | ✅ REVIEWER_PASS + LIBRARIAN (2026-06-25) — Jira: FREIG-63 |
+
+**CHG-US730-004 (2026-06-26, RESOLVED):** `ci.yml` backend env fix (CHG-US730-003) exposed 96 pre-existing frontend unit test failures across login-app, carrier dashboard, and shipper dashboard — confirmed genuine (reproduce in isolation, not test pollution). Per explicit user direction, the 13 broken non-integration test files were deleted rather than fixed/backlogged; `CarrierDashboard.integration.test.tsx` (added by this branch) was fixed (missing Router context + one stale CHG-US730-002 style assertion) and now passes 24/24. Final state: frontend `npx vitest run` 36 files/261 tests all green; backend `mvn clean test` (Docker `backend-tester`) 867/867 passing, BUILD SUCCESS, including all `*ControllerTest` integration suites. See `.claude/learnings.md` Technical Debt Ledger.

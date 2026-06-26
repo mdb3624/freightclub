@@ -126,8 +126,15 @@ jobs:
         working-directory: backend
         run: |
           java -jar target/*.jar &
-          sleep 10
-          curl -f http://localhost:9091/actuator/health || exit 1
+          for i in {1..30}; do
+            if curl -sf http://localhost:9091/actuator/health > /dev/null; then
+              echo "Backend is ready"
+              exit 0
+            fi
+            echo "Waiting for backend... ($i/30)"
+            sleep 1
+          done
+          exit 1
         env:
           SPRING_PROFILES_ACTIVE: test
           PORT: 9091

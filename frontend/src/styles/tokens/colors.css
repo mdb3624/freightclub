@@ -1,0 +1,180 @@
+/* ============================================================
+   FREIGHTCLUB — COLOR TOKENS
+   Two personas: Shipper ("Classic Cream & Metallic Bronze")
+                 Carrier ("Luxury Industrial" dark mode)
+   ============================================================ */
+
+:root {
+  /* ── Canvas & Surfaces — Shipper/Admin ─────────────────── */
+  --color-canvas:        #EFEBE0;   /* Warm cream, page background */
+  --color-surface-white: #FFFFFF;   /* Widget/panel background */
+  --color-surface-light: #F8F9FB;   /* Table headers, hover rows */
+
+  /* ── Text — Shipper/Admin ──────────────────────────────── */
+  --color-text-primary:   #1A1A1A;  /* Dark Charcoal — headings, data */
+  --color-text-secondary: #4A5568;  /* Steely Slate — subtext, labels */
+  --color-text-tertiary:  #636E72;  /* Muted — table headers, helper */
+
+  /* ── Brand Bronze ──────────────────────────────────────── */
+  --color-bronze:        #B08D57;   /* Primary CTA & accent */
+  --color-bronze-light:  #C9A46A;   /* Gradient top */
+  --color-bronze-dark:   #8C6D3F;   /* Gradient bottom */
+  --color-bronze-border: #7A5F3A;   /* Button border */
+  --color-bronze-muted:  #C9A876;   /* Carrier text-muted / icons */
+
+  /* ── Brand Blue ────────────────────────────────────────── */
+  --color-kinetic-blue:      #2563EB;  /* Primary buttons, links */
+  --color-kinetic-blue-dark: #1D4ED8;  /* Hover state */
+  --color-secondary-blue:    #00D4FF;  /* Accent highlights */
+  --color-accent-teal:       #00E5A8;  /* Profit/growth indicators */
+
+  /* ── Semantic — Status & Alerts ────────────────────────── */
+  --color-success:        #27AE60;
+  --color-success-subtle: #DCFCE7;
+  --color-success-text:   #15803D;
+
+  --color-warning:        #F39C12;
+  --color-warning-subtle: #FEF3C7;
+  --color-warning-text:   #B45309;
+
+  --color-critical:        #E74C3C;
+  --color-critical-subtle: #FEE2E2;
+  --color-critical-text:   #B91C1C;
+
+  --color-info:        #3498DB;
+  --color-info-subtle: #DBEAFE;
+  --color-info-text:   #1D4ED8;
+
+  /* ── RPM Profitability Bands ───────────────────────────── */
+  --color-rpm-high:    #22C55E;  /* ≥ min RPM × 1.2 — green */
+  --color-rpm-neutral: #F59E0B;  /* within 20% of min — yellow */
+  --color-rpm-low:     #EF4444;  /* below min — red */
+
+  /* ── Carrier / Owner-Operator "Luxury Industrial" ─────── */
+  --carrier-bg:          #121212;  /* Deep charcoal canvas */
+  --carrier-surface:     #1A1A1A;  /* Card / panel surface */
+  --carrier-surface-2:   #242424;  /* Elevated card */
+  --carrier-border:      #2A2A2A;  /* Subtle border */
+  --carrier-border-glow: #3A3A3A;  /* Highlighted border */
+  --carrier-text:        #F5F5F5;  /* Off-white primary text */
+  --carrier-text-muted:  #C9A876;  /* Metallic copper — secondary */
+  --carrier-accent:      #C9A876;  /* Same as muted — CTA accent */
+
+  /* ── Borders ───────────────────────────────────────────── */
+  --color-border-primary:   #D0D0D0;  /* Widget borders on cream */
+  --color-border-secondary: #E8E3D8;  /* Table row dividers */
+  --color-divider-light:    #D0CCC4;  /* Dashed dividers */
+}
+
+/* ============================================================
+   PERSONA TOKENS — data-attribute scoped
+   Apply data-persona="shipper" or data-persona="carrier"
+   to the root element (via PersonaThemeProvider).
+
+   Components reference var(--p-*) — zero conditional
+   className logic needed.
+
+     // PersonaThemeProvider.tsx
+     <div data-persona={persona}>{children}</div>
+
+     // AnyComponent.tsx
+     <div style={{ background: 'var(--p-surface)' }} />
+   ============================================================ */
+
+[data-persona="shipper"] {
+  /* Backgrounds */
+  --p-bg:            #EFEBE0;
+  --p-surface:       #FFFFFF;
+  --p-surface-light: #F8F9FB;
+
+  /* Text */
+  --p-text:          #1A1A1A;
+  --p-text-muted:    #4A5568;
+  --p-text-subtle:   #636E72;
+
+  /* Borders */
+  --p-border:        #D0D0D0;
+  --p-border-soft:   #E8E3D8;
+  --p-divider:       #D0CCC4;
+
+  /* Accent */
+  --p-accent:        #B08D57;
+  --p-accent-light:  #C9A46A;
+  --p-accent-dark:   #8C6D3F;
+
+  /* Header */
+  --p-header-bg:     #FFFFFF;
+  --p-header-border: #D8CEB8;
+  --p-header-height: 64px;
+
+  /* Elevation */
+  --p-shadow:        0 2px 4px rgba(0,0,0,0.05);
+  --p-shadow-hover:  0 4px 12px rgba(0,0,0,0.10);
+
+  /* Interaction */
+  --p-row-hover:     #F5F0E8;
+  --p-row-selected:  #FBF5E8;
+  --p-focus-ring:    rgba(176,141,87,0.12);
+
+  /* Avatar */
+  --p-avatar-bg:     #FFFFFF;
+  --p-avatar-text:   #1A1A1A;
+  --p-avatar-ring:   #B08D57;
+
+  /* Secondary button */
+  --p-btn-secondary-border: #C9A876;
+  --p-btn-secondary-text:   #7A5F3A;
+
+  /* Input */
+  --p-input-bg:          #FFFFFF;
+  --p-input-bg-disabled: #F8F9FB;
+}
+
+[data-persona="carrier"] {
+  /* Backgrounds */
+  --p-bg:            #121212;
+  --p-surface:       #1A1A1A;
+  --p-surface-light: #161616;
+
+  /* Text */
+  --p-text:          #F5F5F5;
+  --p-text-muted:    #C9A876;
+  --p-text-subtle:   #636E72;
+
+  /* Borders */
+  --p-border:        #2A2A2A;
+  --p-border-soft:   #3A3A3A;
+  --p-divider:       #2A2A2A;
+
+  /* Accent */
+  --p-accent:        #C9A876;
+  --p-accent-light:  #DDB98A;
+  --p-accent-dark:   #B08D57;
+
+  /* Header */
+  --p-header-bg:     #1A1A1A;
+  --p-header-border: #2A2A2A;
+  --p-header-height: 56px;
+
+  /* Elevation — no shadows on dark */
+  --p-shadow:        none;
+  --p-shadow-hover:  none;
+
+  /* Interaction */
+  --p-row-hover:     rgba(201,168,118,0.06);
+  --p-row-selected:  rgba(201,168,118,0.10);
+  --p-focus-ring:    rgba(201,168,118,0.15);
+
+  /* Avatar */
+  --p-avatar-bg:     #B08D57;
+  --p-avatar-text:   #121212;
+  --p-avatar-ring:   transparent;
+
+  /* Secondary button */
+  --p-btn-secondary-border: #3A3A3A;
+  --p-btn-secondary-text:   #C9A876;
+
+  /* Input */
+  --p-input-bg:          #1A1A1A;
+  --p-input-bg-disabled: #161616;
+}

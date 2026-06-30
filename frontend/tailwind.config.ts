@@ -30,17 +30,17 @@ export default {
         // Use these on badges, banners, and status indicators instead of
         // raw Tailwind colour names (green-*, amber-*, red-*).
         success: {
-          DEFAULT: '#22C55E',
+          DEFAULT: '#27AE60',
           subtle:  '#DCFCE7', // green-100 equivalent
           text:    '#15803D', // green-700 equivalent — legible on subtle bg
         },
         warning: {
-          DEFAULT: '#F59E0B',
+          DEFAULT: '#F39C12',
           subtle:  '#FEF3C7', // amber-100 equivalent
           text:    '#B45309', // amber-700 equivalent
         },
         error: {
-          DEFAULT: '#EF4444',
+          DEFAULT: '#E74C3C',
           subtle:  '#FEE2E2', // red-100 equivalent
           text:    '#B91C1C', // red-700 equivalent
         },

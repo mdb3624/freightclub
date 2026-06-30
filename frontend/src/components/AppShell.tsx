@@ -72,8 +72,8 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
         Skip to main content
       </a>
 
-      <header className={`sticky top-0 z-30 px-6 py-3 ${isCarrier ? 'border-b border-carrier-border bg-carrier-bg' : 'border-b border-shipper-accent bg-shipper-surface'}`}>
-        <div className={`mx-auto ${widthClass} flex items-center justify-between gap-4`}>
+      <header className={`sticky top-0 z-30 flex items-center px-6 ${isCarrier ? 'h-14 border-b border-carrier-border bg-carrier-bg' : 'h-16 border-b border-[#D8CEB8] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.05)]'}`}>
+        <div className={`mx-auto ${widthClass} flex w-full items-center justify-between gap-4`}>
 
           {/* Left: logo + carrier nav only */}
           <div className="flex items-center gap-6">
@@ -140,7 +140,7 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
               <>
                 {user && (
                   <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 border-carrier-accent bg-carrier-surface text-carrier-text shrink-0 hidden sm:flex"
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-[#B08D57] text-[#121212] shrink-0 hidden sm:flex"
                     title={`${user.firstName} ${user.lastName}`}
                   >
                     {user.firstName?.[0]}{user.lastName?.[0]}

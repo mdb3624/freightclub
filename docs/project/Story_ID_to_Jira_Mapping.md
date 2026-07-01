@@ -3,8 +3,8 @@
 **Purpose:** Quick reference to map local story IDs (US-101, US-730, etc.) to their Jira keys (FREIG-6, FREIG-62, etc.)
 
 **Generated:** Automated from FREIG board  
-**Total Stories:** 58  
-**Last Updated:** 2026-06-23
+**Total Stories:** 66  
+**Last Updated:** 2026-07-01
 
 ---
 
@@ -69,6 +69,14 @@
 | US-824 | [FREIG-58](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-58) | US-824: Quick Actions Panel | Done |
 | US-825 | [FREIG-59](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-59) | US-825: Carrier Search Panel | Done |
 | US-826 | [FREIG-60](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-60) | US-826: Messages & Alerts Panel | To Do |
+| US-840 | [FREIG-79](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-79) | US-840: Design Token Import (CSS + Tailwind sync) | Done |
+| US-841 | [FREIG-80](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-80) | US-841: UI Primitive Styling (Button, Input, StatusBadge, ProfitabilityBadge) | Done |
+| US-842 | [FREIG-81](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-81) | US-842: Layout Shell Reskin + Legacy-Dark Removal | Done |
+| US-843 | [FREIG-82](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-82) | US-843: Shipper Dashboard Reskin (KPI cards + load table) | In Progress |
+| US-844 | [FREIG-83](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-83) | US-844: Carrier Load Board UX (equipment filter, board lock, post-action nav) | To Do |
+| US-845 | [FREIG-84](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-84) | US-845: Load Creation Form Field Updates | To Do |
+| US-846 | [FREIG-85](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-85) | US-846: Shipper Action Zone Restructure | To Do |
+| US-847 | [FREIG-86](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-86) | US-847: Persona Token Migration (optional) | To Do |
 | US-900 | [FREIG-61](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-61) | US-900: E2E Testing Infrastructure & Standards | Done |
 
 
@@ -200,6 +208,14 @@ curl -u "email:token" \
 | US-824 | [FREIG-58](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-58) | US-824: Quick Actions Panel | Done |
 | US-825 | [FREIG-59](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-59) | US-825: Carrier Search Panel | Done |
 | US-826 | [FREIG-60](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-60) | US-826: Messages & Alerts Panel | To Do |
+| US-840 | [FREIG-79](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-79) | US-840: Design Token Import (CSS + Tailwind sync) | Done |
+| US-841 | [FREIG-80](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-80) | US-841: UI Primitive Styling (Button, Input, StatusBadge, ProfitabilityBadge) | Done |
+| US-842 | [FREIG-81](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-81) | US-842: Layout Shell Reskin + Legacy-Dark Removal | Done |
+| US-843 | [FREIG-82](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-82) | US-843: Shipper Dashboard Reskin (KPI cards + load table) | In Progress |
+| US-844 | [FREIG-83](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-83) | US-844: Carrier Load Board UX (equipment filter, board lock, post-action nav) | To Do |
+| US-845 | [FREIG-84](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-84) | US-845: Load Creation Form Field Updates | To Do |
+| US-846 | [FREIG-85](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-85) | US-846: Shipper Action Zone Restructure | To Do |
+| US-847 | [FREIG-86](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-86) | US-847: Persona Token Migration (optional) | To Do |
 | US-900 | [FREIG-61](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-61) | US-900: E2E Testing Infrastructure & Standards | Done |
 
 

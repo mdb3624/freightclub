@@ -16,16 +16,19 @@ describe('StatusBadge', () => {
 
   it('applies blue background style for OPEN status', () => {
     const { container } = render(<StatusBadge status="OPEN" />)
-    expect((container.firstChild as HTMLElement).style.background).toBe('#DBEAFE')
+    const bg = (container.firstChild as HTMLElement).style.background
+    expect(bg === '#DBEAFE' || bg === 'rgb(219, 234, 254)').toBe(true)
   })
 
   it('applies red background style for CANCELLED status', () => {
     const { container } = render(<StatusBadge status="CANCELLED" />)
-    expect((container.firstChild as HTMLElement).style.background).toBe('#FEE2E2')
+    const bg = (container.firstChild as HTMLElement).style.background
+    expect(bg === '#FEE2E2' || bg === 'rgb(254, 226, 226)').toBe(true)
   })
 
   it('applies green background style for DELIVERED status', () => {
     const { container } = render(<StatusBadge status="DELIVERED" />)
-    expect((container.firstChild as HTMLElement).style.background).toBe('#DCFCE7')
+    const bg = (container.firstChild as HTMLElement).style.background
+    expect(bg === '#DCFCE7' || bg === 'rgb(220, 252, 231)').toBe(true)
   })
 })

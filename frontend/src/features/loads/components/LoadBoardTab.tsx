@@ -18,19 +18,33 @@ interface Props {
   userEquipmentType: EquipmentType | undefined
 }
 
-const EQUIPMENT_BADGE_STYLE: React.CSSProperties = {
-  display: 'inline-flex',
+const EQUIPMENT_ROW_STYLE: React.CSSProperties = {
+  display: 'flex',
   alignItems: 'center',
-  background: 'rgba(176,141,87,0.08)',
-  border: '1px solid #C9A876',
-  borderRadius: '4px',
-  padding: '4px 10px',
-  marginBottom: '12px',
-  fontSize: '11px',
-  fontWeight: 600,
-  color: '#8C6D3F',
+  gap: 8,
+  marginBottom: 10,
+  padding: '8px 10px',
+  background: '#161616',
+  borderRadius: 8,
+  border: '1px solid #2A2A2A',
+}
+
+const EQUIPMENT_LABEL_STYLE: React.CSSProperties = {
+  fontSize: 11,
+  fontWeight: 700,
   textTransform: 'uppercase',
-  letterSpacing: '0.05em',
+  letterSpacing: '.07em',
+  color: '#636E72',
+}
+
+const EQUIPMENT_PILL_STYLE: React.CSSProperties = {
+  padding: '2px 10px',
+  borderRadius: 9999,
+  background: 'rgba(201,168,118,.1)',
+  border: '1px solid #C9A876',
+  color: '#C9A876',
+  fontSize: 12,
+  fontWeight: 700,
 }
 
 const COUNT_LABEL_STYLE: React.CSSProperties = {
@@ -52,10 +66,12 @@ export function LoadBoardTab({
 
   return (
     <section>
-      {/* AC-1: Read-only equipment badge */}
+      {/* AC-1: Read-only equipment badge — inline row matching carrier UI kit */}
       {equipmentLabel && (
-        <div style={EQUIPMENT_BADGE_STYLE} data-testid="equipment-badge">
-          YOUR EQUIPMENT · {equipmentLabel} · Loads matched to your rig
+        <div style={EQUIPMENT_ROW_STYLE} data-testid="equipment-badge">
+          <span style={EQUIPMENT_LABEL_STYLE}>YOUR EQUIPMENT</span>
+          <span style={EQUIPMENT_PILL_STYLE}>{equipmentLabel}</span>
+          <span style={{ fontSize: 11, color: '#636E72', marginLeft: 'auto' }}>Loads matched to your rig</span>
         </div>
       )}
 

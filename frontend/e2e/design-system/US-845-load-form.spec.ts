@@ -126,11 +126,9 @@ test.describe('US-845 AC-2: datetime-local fields', () => {
 test.describe('US-845 AC-3: pickup window', () => {
   test.use({ storageState: { cookies: [], origins: [] } })
 
-  const ts = Date.now()
-
   test('pickupTo auto-populates when pickupFrom is set', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 })
-    await loginAsShipper(page, `us845-pku-${ts}@freightclub.local`)
+    await loginAsShipper(page, `us845-pku-${Date.now()}@freightclub.local`)
     await navigateToCreateLoad(page)
 
     const pickupFrom = page.locator('[data-testid="pickup-from-input"]')
@@ -153,7 +151,7 @@ test.describe('US-845 AC-3: pickup window', () => {
 
   test('AC-3 adversarial: pickupTo before pickupFrom shows validation error', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 })
-    await loginAsShipper(page, `us845-pkuv-${ts}@freightclub.local`)
+    await loginAsShipper(page, `us845-pkuv-${Date.now()}@freightclub.local`)
     await navigateToCreateLoad(page)
 
     await expect(page.locator('[data-testid="pickup-from-input"]')).toBeVisible({ timeout: 10000 })
@@ -179,11 +177,9 @@ test.describe('US-845 AC-3: pickup window', () => {
 test.describe('US-845 AC-4: delivery window', () => {
   test.use({ storageState: { cookies: [], origins: [] } })
 
-  const ts = Date.now()
-
   test('deliveryTo auto-populates when deliveryFrom is set', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 })
-    await loginAsShipper(page, `us845-dlv-${ts}@freightclub.local`)
+    await loginAsShipper(page, `us845-dlv-${Date.now()}@freightclub.local`)
     await navigateToCreateLoad(page)
 
     const deliveryFrom = page.locator('[data-testid="delivery-from-input"]')
@@ -202,7 +198,7 @@ test.describe('US-845 AC-4: delivery window', () => {
 
   test('AC-4 adversarial: deliveryTo before deliveryFrom shows validation error', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 })
-    await loginAsShipper(page, `us845-dlvv-${ts}@freightclub.local`)
+    await loginAsShipper(page, `us845-dlvv-${Date.now()}@freightclub.local`)
     await navigateToCreateLoad(page)
 
     await expect(page.locator('[data-testid="delivery-from-input"]')).toBeVisible({ timeout: 10000 })
@@ -268,7 +264,7 @@ test.describe('adversarial', () => {
     await loginAsShipper(page, `us845-adv-dist-${Date.now()}@freightclub.local`)
     await navigateToCreateLoad(page)
 
-    const distField = page.locator('[data-testid="estimated-distance-display"]')
+    const distField = page.locator('[data-testid="distance-display"]')
     await expect(distField).toBeVisible({ timeout: 10000 })
 
     // Must be a display element or readonly input — not an editable input

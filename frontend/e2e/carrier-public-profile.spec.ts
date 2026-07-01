@@ -45,7 +45,11 @@ test.describe('Carrier Public Profile - US-710', () => {
   });
 
   test.afterAll(async () => {
-    if (carrierSetupSeeder) await carrierSetupSeeder.cleanup();
+    try {
+      if (carrierSetupSeeder) await carrierSetupSeeder.cleanup();
+    } catch (e) {
+      console.warn('[afterAll] Cleanup failed (non-fatal):', e);
+    }
   });
 
 

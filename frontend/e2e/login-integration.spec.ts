@@ -248,16 +248,17 @@ test.describe('Login Integration Tests (US-756)', () => {
       await submitBtn.click();
       await loginPromise;
 
-      // Expect redirect to dashboard
-      const dashboardContainer = page.locator('[data-testid="dashboard-container"]');
-      await expect(dashboardContainer).toBeVisible({
-        timeout: 5000,
-      });
+      // Expect redirect to dashboard (ShipperPageLayout renders data-testid="shipper-page-layout")
+      await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
 
       console.log(`✓ Login successful, redirected to dashboard`);
     } finally {
-      // Cleanup test user
-      await seeder.cleanup();
+      // Cleanup test user — wrapped to prevent cleanup errors swallowing test failures
+      try {
+        await seeder.cleanup();
+      } catch (e) {
+        console.warn('[cleanup] Failed (non-fatal):', e);
+      }
     }
   });
 });

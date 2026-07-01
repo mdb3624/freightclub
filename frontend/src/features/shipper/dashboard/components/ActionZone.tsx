@@ -24,7 +24,7 @@ const bronzePrimaryStyle: React.CSSProperties = {
   color: '#fff',
   width: '100%',
   padding: '10px 16px',
-  borderRadius: 6,
+  borderRadius: 4,
   fontSize: 14,
   fontWeight: 600,
   cursor: 'pointer',
@@ -169,10 +169,12 @@ const DefaultState: React.FC<DefaultStateProps> = ({
           data-testid={testId}
           onClick={() => navigate(path)}
           style={{
-            padding: '9px 10px', fontSize: 12, fontWeight: 600,
-            color: '#5C4A2A', background: '#fff',
-            border: '1px solid #C9A876', borderRadius: 8,
+            padding: '8px 10px', fontSize: 12, fontWeight: 600,
+            color: '#7A5F3A',
+            background: 'linear-gradient(180deg, #FAF6EE 0%, #F0E9D8 100%)',
+            border: '1px solid #C9A876', borderRadius: 4,
             cursor: 'pointer', textAlign: 'center',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,.9), inset 0 -1px 0 rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.15)',
           }}
         >
           {label}
@@ -271,9 +273,11 @@ const LoadSelectedState: React.FC<LoadSelectedStateProps> = ({
         data-testid="action-zone-find-carriers"
         onClick={() => navigate(`/carriers?loadId=${shipment.loadId}`)}
         style={{
-          width: '100%', textAlign: 'left', padding: '10px 14px', fontSize: 13,
-          fontWeight: 600, color: '#B08D57', background: '#fff',
-          border: '1px solid #C9A876', borderRadius: 8, cursor: 'pointer',
+          width: '100%', textAlign: 'center', padding: '9px 0', fontSize: 13,
+          fontWeight: 600, color: '#7A5F3A',
+          background: 'linear-gradient(180deg, #FAF6EE 0%, #F0E9D8 100%)',
+          border: '1px solid #C9A876', borderRadius: 4, cursor: 'pointer',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.9), inset 0 -1px 0 rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.15)',
           marginBottom: 0,
         }}
       >
@@ -312,7 +316,7 @@ const PreferredCarriersList: React.FC<{
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {carriers.slice(0, 5).map((c) => (
-        <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0', borderBottom: '1px solid #E8E3D8' }}>
           <div style={{
             width: 32, height: 32, borderRadius: '50%', background: '#C9A876',
             display: 'flex', alignItems: 'center', justifyContent: 'center',

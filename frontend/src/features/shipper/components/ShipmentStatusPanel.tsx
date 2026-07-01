@@ -94,7 +94,10 @@ export const ShipmentStatusPanel: React.FC<ShipmentStatusPanelProps> = ({
       {/* Header */}
       <div className={styles.header}>
         <div className={styles.headerContent}>
-          <h2 className={styles.title}>SHIPMENT STATUS</h2>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+            <h2 className={styles.title}>Shipment Status</h2>
+            <span style={{ fontSize: 12, color: '#9CA3AF' }}>{filteredShipments.length} loads</span>
+          </div>
           <div className={styles.headerActions}>
             <a href="#" className={styles.headerLink}>Manage/Save Drafts</a>
             <a href="#" className={styles.headerLinkBronze} onClick={onTrackShipments}>Track Shipments</a>

@@ -21,7 +21,7 @@ export const ShipperDashboardPage: React.FC = () => {
   const { data: shipments, isLoading: isShipmentLoading } = useShipmentStatus();
   const [selectedShipment, setSelectedShipment] = useState<Shipment | null>(null);
 
-  // SLOT_A: KPI Summary (full-width) — tiles are individually paneled; no outer wrapper
+  // SLOT_A: KPI Summary (full-width, no outer panel wrapper — tiles are self-contained)
   const slotAContent = (
     <div data-testid="kpi-summary-section">
       <KPISummaryPanel />
@@ -31,7 +31,6 @@ export const ShipperDashboardPage: React.FC = () => {
   // SLOT_B (Row 2): Shipment Status with row selection wired to Action Zone
   const slotBContent = (
     <section
-      className="panel"
       role="region"
       aria-label="Shipment Status"
       data-testid="shipment-status-section"
@@ -62,7 +61,6 @@ export const ShipperDashboardPage: React.FC = () => {
   // SLOT_B (Row 3): Messages & Alerts (8 columns)
   const slotBRow3Content = (
     <section
-      className="panel"
       role="region"
       aria-label="Messages and Alerts"
       data-testid="messages-alerts-section"

@@ -13,7 +13,6 @@ import { ShipperPageLayout } from '../components/ShipperPageLayout';
 import { KPISummaryPanel } from '../components/KPISummaryPanel';
 import { ShipmentStatusPanel } from '../components/ShipmentStatusPanel';
 import type { Shipment } from '../components/ShipmentStatusPanel';
-import { MessagesAlertsPanel } from '../dashboard/components/MessagesAlertsPanel';
 import { ActionZone } from '../dashboard/components/ActionZone';
 import { useShipmentStatus } from '../hooks/useShipmentStatus';
 
@@ -58,27 +57,11 @@ export const ShipperDashboardPage: React.FC = () => {
     </section>
   );
 
-  // SLOT_B (Row 3): Messages & Alerts (8 columns)
-  const slotBRow3Content = (
-    <section
-      role="region"
-      aria-label="Messages and Alerts"
-      data-testid="messages-alerts-section"
-    >
-      <MessagesAlertsPanel />
-    </section>
-  );
-
   return (
     <ShipperPageLayout
       data-testid="shipper-dashboard-page"
       slotA={slotAContent}
-      slotB={
-        <div className="flex flex-col gap-6" data-testid="slot-b-content">
-          {slotBContent}
-          {slotBRow3Content}
-        </div>
-      }
+      slotB={slotBContent}
       slotC={slotCContent}
     />
   );

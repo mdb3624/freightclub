@@ -10,7 +10,7 @@ import React, { useState, useMemo } from 'react';
 import { useCancelLoad } from '@/features/loads/hooks/useCancelLoad';
 import styles from './ShipmentStatusPanel.module.css';
 
-interface Shipment {
+export interface Shipment {
   loadId: string;
   status: string;
   progress: number;
@@ -18,12 +18,15 @@ interface Shipment {
   carrier: string | null;
   rating: number | null;
   destination: string;
+  origin?: string;
 }
 
 interface ShipmentStatusPanelProps {
   shipments: Shipment[];
   isLoading?: boolean;
   onTrackShipments?: () => void;
+  selectedLoadId?: string;
+  onSelect?: (shipment: Shipment | null) => void;
 }
 
 const statusConfig: Record<string, { label: string; badge: string; color: string }> = {
@@ -54,6 +57,8 @@ export const ShipmentStatusPanel: React.FC<ShipmentStatusPanelProps> = ({
   shipments,
   isLoading = false,
   onTrackShipments,
+  selectedLoadId,
+  onSelect,
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
   const { mutate: cancelLoad } = useCancelLoad()
@@ -139,11 +144,15 @@ export const ShipmentStatusPanel: React.FC<ShipmentStatusPanelProps> = ({
           </div>
 
           {/* Shipment Rows */}
-          {filteredShipments.map((shipment) => (
+          {filteredShipments.map((shipment) => {
+            const isSelected = shipment.loadId === selectedLoadId;
+            return (
             <div
               key={shipment.loadId}
               className={styles.row}
               data-testid={`shipment-row-${shipment.loadId}`}
+              onClick={() => onSelect?.(isSelected ? null : shipment)}
+              style={isSelected ? { background: '#FBF5E8', borderLeft: '3px solid #B08D57', cursor: 'pointer' } : onSelect ? { cursor: 'pointer' } : undefined}
             >
               <div className={styles.colLoadId}>
                 <span className={styles.loadId}>{shipment.loadId}</span>
@@ -178,9 +187,10 @@ export const ShipmentStatusPanel: React.FC<ShipmentStatusPanelProps> = ({
               <div className={styles.colDestination}>
                 <span className={styles.destination}>{shipment.destination}</span>
               </div>
-              <div className="px-3 py-2 flex justify-end">
+              <div className="px-3 py-2 flex justify-end items-center gap-2">
                 <button
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     if (confirm(`Cancel load ${shipment.loadId}?`)) {
                       cancelLoad({ loadId: shipment.loadId })
                     }
@@ -190,9 +200,15 @@ export const ShipmentStatusPanel: React.FC<ShipmentStatusPanelProps> = ({
                 >
                   Cancel
                 </button>
+                {onSelect && (
+                  <span style={{ fontSize: 14, color: '#B08D57', fontWeight: 700, minWidth: 14 }}>
+                    {isSelected ? '✕' : '›'}
+                  </span>
+                )}
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

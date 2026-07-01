@@ -59,10 +59,12 @@ export function TruckerDashboard() {
   const [page, setPage] = useState(0)
   const [historyPage, setHistoryPage] = useState(0)
 
+  const { data: profile } = useProfile()
+
   const filter: BoardFilter = {
     originState: searchParams.get('origin') ?? undefined,
     destinationState: searchParams.get('dest') ?? undefined,
-    equipmentType: (user?.equipmentType as EquipmentType) ?? undefined,
+    equipmentType: ((user?.equipmentType ?? profile?.equipmentType) as EquipmentType) ?? undefined,
     pickupDate: searchParams.get('pickupDate') ?? undefined,
     deliveryDate: searchParams.get('deliveryDate') ?? undefined,
     sortBy: toBoardSortBy(searchParams.get('sortBy')),
@@ -74,7 +76,7 @@ export function TruckerDashboard() {
       const current: BoardFilter = {
         originState: prev.get('origin') ?? undefined,
         destinationState: prev.get('dest') ?? undefined,
-        equipmentType: (user?.equipmentType as EquipmentType) ?? undefined,
+        equipmentType: ((user?.equipmentType ?? profile?.equipmentType) as EquipmentType) ?? undefined,
         pickupDate: prev.get('pickupDate') ?? undefined,
         deliveryDate: prev.get('deliveryDate') ?? undefined,
         sortBy: toBoardSortBy(prev.get('sortBy')),
@@ -91,11 +93,10 @@ export function TruckerDashboard() {
       return params
     }, { replace: true })
     setPage(0)
-  }, [setSearchParams, user?.equipmentType])
+  }, [setSearchParams, user?.equipmentType, profile?.equipmentType])
 
   const { data, isLoading, isError } = useLoadBoard(page, filter)
   const { data: activeLoad, isLoading: isLoadingActiveLoad } = useMyActiveLoad()
-  const { data: profile } = useProfile()
   const { data: availableStates } = useAvailableStates()
   const { data: history } = useMyLoadHistory(historyPage)
   const activeLoadRef = useRef<HTMLElement>(null)
@@ -281,19 +282,39 @@ export function TruckerDashboard() {
         </div>
 
         {tab === 'board' && (
-          <LoadBoardTab
-            filter={filter}
-            setFilter={setFilter}
-            setPage={setPage}
-            data={data}
-            isLoading={isLoading}
-            isError={isError}
-            hasActiveLoad={hasActiveLoad}
-            availableStates={availableStates}
-            onRefresh={handleRefresh}
-            onSort={handleSort}
-            userEquipmentType={user?.equipmentType as EquipmentType | undefined}
-          />
+          hasActiveLoad ? (
+            /* AC-2: Bronze lock banner — replaces board when OO has active load */
+            <div
+              data-testid="board-lock-banner"
+              style={{
+                background: 'rgba(176,141,87,0.08)',
+                border: '1px solid #C9A876',
+                borderRadius: '8px',
+                padding: '10px 14px',
+              }}
+            >
+              <p style={{ fontWeight: 600, color: '#8C6D3F', fontSize: '14px' }}>
+                🔒 Load board locked
+              </p>
+              <p style={{ color: '#636E72', fontSize: '13px', marginTop: '4px' }}>
+                Complete your current load to claim another.
+              </p>
+            </div>
+          ) : (
+            <LoadBoardTab
+              filter={filter}
+              setFilter={setFilter}
+              setPage={setPage}
+              data={data}
+              isLoading={isLoading}
+              isError={isError}
+              hasActiveLoad={hasActiveLoad}
+              availableStates={availableStates}
+              onRefresh={handleRefresh}
+              onSort={handleSort}
+              userEquipmentType={(user?.equipmentType ?? profile?.equipmentType) as EquipmentType | undefined}
+            />
+          )
         )}
 
         {tab === 'history' && (

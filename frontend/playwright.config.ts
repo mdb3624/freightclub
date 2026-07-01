@@ -41,6 +41,7 @@ export default defineConfig({
   timeout: 30_000, // Global test timeout
   expect: {
     timeout: 5000, // Assertion timeout (web-first assertions)
+    toHaveScreenshot: { animations: 'disabled', maxDiffPixelRatio: 0.02 },
   },
   webServer: undefined, // Use existing dev server instead of starting new instance
 });

@@ -195,6 +195,98 @@ test.describe('US-846 AC-5: load summary card in selected state', () => {
   })
 })
 
+// ── Adversarial tests ────────────────────────────────────────────────────────
+
+test.describe('adversarial', () => {
+  test.use({ storageState: { cookies: [], origins: [] } })
+
+  test('viewport 320px — action zone has no horizontal overflow', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 812 })
+    await loginAsShipper(page, `us846-adv-320-${Date.now()}@freightclub.local`)
+
+    const container = page.locator('[data-testid="action-zone-container"]')
+    await expect(container).toBeVisible({ timeout: 15000 })
+
+    // No horizontal scrollbar — scrollWidth must not exceed clientWidth
+    const overflow = await page.evaluate(() => {
+      const el = document.documentElement
+      return el.scrollWidth > el.clientWidth
+    })
+    expect(overflow).toBe(false)
+
+    // Create New Load CTA still visible (not clipped)
+    await expect(page.locator('[data-testid="action-zone-create-load"]')).toBeVisible()
+
+    await page.screenshot({ path: path.join(EVIDENCE, 'US-846-adversarial-320px.png') })
+  })
+
+  test('viewport 1920px — action zone does not stretch to unreadable width', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 1080 })
+    await loginAsShipper(page, `us846-adv-1920-${Date.now()}@freightclub.local`)
+
+    const container = page.locator('[data-testid="action-zone-container"]')
+    await expect(container).toBeVisible({ timeout: 15000 })
+
+    const box = await container.boundingBox()
+    // Action zone is in the 1/3 right column — should not exceed ~640px at 1920 viewport
+    expect(box!.width).toBeLessThan(700)
+
+    await page.screenshot({ path: path.join(EVIDENCE, 'US-846-adversarial-1920px.png') })
+  })
+
+  test('wrong persona injection — shipper page has no dark background leakage', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 })
+    await loginAsShipper(page, `us846-adv-persona-${Date.now()}@freightclub.local`)
+
+    // Inject carrier persona on root
+    await page.evaluate(() => {
+      document.documentElement.setAttribute('data-persona', 'carrier')
+    })
+
+    // Action zone container must not have dark background (carrier: #121212 = rgb(18,18,18))
+    const bg = await page.locator('[data-testid="action-zone-container"]').evaluate(
+      (el: HTMLElement) => window.getComputedStyle(el).backgroundColor
+    )
+    expect(bg).not.toBe('rgb(18, 18, 18)')
+    // Should remain cream
+    expect(bg).toBe('rgb(250, 246, 238)')
+
+    await page.screenshot({ path: path.join(EVIDENCE, 'US-846-adversarial-persona-inject.png') })
+  })
+
+  test('no preferred carriers — empty state renders, no crash', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 })
+    // New account → no preferred carriers
+    await loginAsShipper(page, `us846-adv-empty-${Date.now()}@freightclub.local`)
+
+    const container = page.locator('[data-testid="action-zone-container"]')
+    await expect(container).toBeVisible({ timeout: 15000 })
+    // Empty preferred carriers message (not a crash/blank)
+    await expect(container).toContainText('No preferred carriers yet')
+
+    await page.screenshot({ path: path.join(EVIDENCE, 'US-846-adversarial-no-carriers.png') })
+  })
+
+  test('hardcoded hex leakage — action zone has no old carrier dark background', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 })
+    await loginAsShipper(page, `us846-adv-hex-${Date.now()}@freightclub.local`)
+
+    await expect(page.locator('[data-testid="action-zone-container"]')).toBeVisible({ timeout: 15000 })
+
+    // rgb(11, 18, 32) = #0B1220 (old surface-dark), rgb(30, 32, 34) ≈ old dark surface
+    const leakedDarkBg = await page.evaluate(() => {
+      const allEls = Array.from(document.querySelectorAll('[data-testid^="action-zone"]'))
+      return allEls.some((el) => {
+        const bg = window.getComputedStyle(el).backgroundColor
+        return bg === 'rgb(11, 18, 32)' || bg === 'rgb(30, 32, 34)' || bg === 'rgb(18, 18, 18)'
+      })
+    })
+    expect(leakedDarkBg).toBe(false)
+
+    await page.screenshot({ path: path.join(EVIDENCE, 'US-846-adversarial-hex-check.png') })
+  })
+})
+
 // ── AC-6: Clear button returns to default ────────────────────────────────────
 
 test.describe('US-846 AC-6: clear button returns to default state', () => {

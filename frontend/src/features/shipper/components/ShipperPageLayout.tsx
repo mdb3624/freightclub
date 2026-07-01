@@ -42,7 +42,7 @@ export function ShipperPageLayout({
   'data-testid': testId = 'shipper-page-layout',
 }: ShipperPageLayoutProps) {
   return (
-    <div className={`fc-shell ${className}`} data-testid={testId}>
+    <div className={`fc-shell ${className}`} data-testid={testId} style={{ background: 'var(--color-canvas)' }}>
       <div className="zone-main">
         {/* MANDATORY: ShipperPageHeader (logo, branding, timestamp) */}
         <ShipperPageHeader />

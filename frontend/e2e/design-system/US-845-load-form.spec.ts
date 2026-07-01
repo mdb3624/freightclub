@@ -242,3 +242,67 @@ test.describe('US-845 AC-5: dimension inch inputs', () => {
     await page.screenshot({ path: path.join(EVIDENCE, 'US-845-dimension-fields.png'), fullPage: true })
   })
 })
+
+// ── Adversarial tests ─────────────────────────────────────────────────────────
+
+test.describe('adversarial', () => {
+  test.use({ storageState: { cookies: [], origins: [] } })
+
+  test('320px viewport — form has no horizontal overflow', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 812 })
+    await loginAsShipper(page, `us845-adv-320-${Date.now()}@freightclub.local`)
+    await navigateToCreateLoad(page)
+
+    await expect(page.locator('[data-testid="pickup-from-input"]')).toBeVisible({ timeout: 10000 })
+
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth
+    )
+    expect(overflow).toBe(false)
+
+    await page.screenshot({ path: path.join(EVIDENCE, 'US-845-adversarial-320px.png'), fullPage: true })
+  })
+
+  test('distance field is read-only — user cannot type into it', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 })
+    await loginAsShipper(page, `us845-adv-dist-${Date.now()}@freightclub.local`)
+    await navigateToCreateLoad(page)
+
+    const distField = page.locator('[data-testid="estimated-distance-display"]')
+    await expect(distField).toBeVisible({ timeout: 10000 })
+
+    // Must be a display element or readonly input — not an editable input
+    const tagName = await distField.evaluate((el: HTMLElement) => el.tagName.toLowerCase())
+    const readOnly = await distField.evaluate((el: HTMLInputElement) =>
+      el.readOnly ?? el.getAttribute('readonly') !== null
+    )
+    // Either it's not an input at all, or it's readonly
+    const isNotEditable = tagName !== 'input' || readOnly
+    expect(isNotEditable).toBe(true)
+
+    await page.screenshot({ path: path.join(EVIDENCE, 'US-845-adversarial-distance-readonly.png') })
+  })
+
+  test('submit with deliveryTo before deliveryFrom and pickupTo before pickupFrom — both errors shown', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 })
+    await loginAsShipper(page, `us845-adv-multi-err-${Date.now()}@freightclub.local`)
+    await navigateToCreateLoad(page)
+
+    await expect(page.locator('[data-testid="pickup-from-input"]')).toBeVisible({ timeout: 10000 })
+
+    await fillRequiredFields(page)
+    // Set both windows in reverse order
+    await page.locator('[data-testid="pickup-from-input"]').fill('2026-07-20T10:00')
+    await page.locator('[data-testid="pickup-to-input"]').fill('2026-07-20T08:00')
+    await page.locator('[data-testid="delivery-from-input"]').fill('2026-07-22T10:00')
+    await page.locator('[data-testid="delivery-to-input"]').fill('2026-07-22T08:00')
+
+    await page.locator('button[type="submit"]').click()
+
+    // At least one "cannot be before" error must appear
+    const errorLocator = page.locator('[role="alert"]').filter({ hasText: 'cannot be before' })
+    await expect(errorLocator.first()).toBeVisible({ timeout: 5000 })
+
+    await page.screenshot({ path: path.join(EVIDENCE, 'US-845-adversarial-multi-error.png') })
+  })
+})

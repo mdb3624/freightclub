@@ -6,6 +6,12 @@ export interface KPISummaryData {
   onTimePercentage: number | null;
   costPerMile: number | null;
   isEmpty: boolean;
+  // Optional breakdown fields — populated by backend when available
+  delayedCount?: number | null;
+  inTransitCount?: number | null;
+  claimedCount?: number | null;
+  costTrend?: number | null; // positive = rising $/mile delta vs prior period
+  deliveryCount?: number | null;
 }
 
 export const useKPISummary = () => {

@@ -5,6 +5,8 @@ backend/src/main/resources/application-dev.yml
 
 # ---- Frontend ----
 frontend/node_modules/
+frontend/test-results/
+frontend/auth.json
 
 # ---- Scripts ----
 scripts/jira-write-mcp/node_modules/

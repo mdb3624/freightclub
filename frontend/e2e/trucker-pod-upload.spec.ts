@@ -157,7 +157,7 @@ async function loginAsTrucker(page: Page) {
   await page.getByLabel('Email').fill('trucker@test.com')
   await page.getByLabel('Password').fill('password')
   await page.getByRole('button', { name: /sign in/i }).click()
-  await expect(page).toHaveURL(/dashboard\/trucker/, { timeout: 10000 })
+  await expect(page).toHaveURL(/dashboard\/carrier/, { timeout: 10000 })
 }
 
 test.describe('Trucker POD upload — golden path', () => {

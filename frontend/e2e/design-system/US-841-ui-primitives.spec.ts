@@ -135,13 +135,13 @@ test.describe('US-841 AC-4: input focus border', () => {
 
     const emailInput = page.locator('[data-testid="email-input"]')
     await expect(emailInput).toBeVisible({ timeout: 10000 })
-    await emailInput.focus()
+    await emailInput.click()
 
     const borderStyle = await emailInput.evaluate((el: HTMLElement) => {
       const cs = window.getComputedStyle(el)
       return {
-        borderColor: cs.borderColor,
-        borderWidth: cs.borderWidth,
+        borderColor: cs.borderTopColor,
+        borderWidth: cs.borderTopWidth,
       }
     })
 

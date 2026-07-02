@@ -49,7 +49,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
   return (
     <span style={{ ...badgeBase, background, color, border }}>
       <span aria-hidden="true">{iconMap[status]}</span>
-      {status.replace('_', ' ')}
+      <span>{status.replace('_', ' ')}</span>
     </span>
   )
 }

@@ -1,0 +1,32 @@
+<!-- @dsCard group="Colors" viewport="700x140" name="Bronze Palette" subtitle="Metallic bronze gradient — primary CTA across both personas" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--color-canvas); font-family: var(--font-body); padding: 16px; }
+  .swatches { display: flex; gap: 8px; }
+  .swatch { border-radius: 6px; overflow: hidden; flex: 1; border: 1px solid rgba(0,0,0,0.08); }
+  .color { height: 56px; }
+  .info { padding: 6px 8px; background: white; }
+  .name { font-size: 11px; font-weight: 600; color: #1A1A1A; }
+  .hex  { font-size: 10px; color: #636E72; font-family: monospace; }
+  .gradient-swatch { border-radius: 6px; flex: 2; overflow: hidden; border: 1px solid rgba(0,0,0,0.08); }
+</style>
+</head>
+<body>
+<div class="swatches">
+  <div class="gradient-swatch">
+    <div class="color" style="background:linear-gradient(90deg,#C9A46A,#B08D57,#8C6D3F)"></div>
+    <div class="info"><div class="name">Bronze Gradient (CTA)</div><div class="hex">light → mid → dark</div></div>
+  </div>
+  <div class="swatch"><div class="color" style="background:#C9A46A"></div><div class="info"><div class="name">Bronze Light</div><div class="hex">#C9A46A</div></div></div>
+  <div class="swatch"><div class="color" style="background:#B08D57"></div><div class="info"><div class="name">Bronze</div><div class="hex">#B08D57</div></div></div>
+  <div class="swatch"><div class="color" style="background:#8C6D3F"></div><div class="info"><div class="name">Bronze Dark</div><div class="hex">#8C6D3F</div></div></div>
+  <div class="swatch"><div class="color" style="background:#7A5F3A"></div><div class="info"><div class="name">Bronze Border</div><div class="hex">#7A5F3A</div></div></div>
+  <div class="swatch"><div class="color" style="background:#C9A876"></div><div class="info"><div class="name">Bronze Muted</div><div class="hex">#C9A876</div></div></div>
+</div>
+</body>
+</html>

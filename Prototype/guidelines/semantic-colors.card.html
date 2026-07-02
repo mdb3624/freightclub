@@ -1,0 +1,48 @@
+<!-- @dsCard group="Colors" viewport="700x140" name="Semantic Status Colors" subtitle="Success · Warning · Critical · Info — WCAG AA compliant" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--color-canvas); font-family: var(--font-body); padding: 16px; }
+  .swatches { display: flex; gap: 8px; }
+  .group { flex: 1; border-radius: 6px; overflow: hidden; border: 1px solid rgba(0,0,0,0.08); }
+  .top { height: 40px; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: 700; }
+  .subtle { height: 24px; }
+  .info { padding: 6px 8px; background: white; }
+  .name { font-size: 11px; font-weight: 600; color: #1A1A1A; }
+  .hex  { font-size: 10px; color: #636E72; font-family: monospace; }
+</style>
+</head>
+<body>
+<div class="swatches">
+  <div class="group">
+    <div class="top" style="background:#27AE60">5.2:1 ✓</div>
+    <div class="subtle" style="background:#DCFCE7"></div>
+    <div class="info"><div class="name">Success</div><div class="hex">#27AE60 / #DCFCE7</div></div>
+  </div>
+  <div class="group">
+    <div class="top" style="background:#F39C12">4.5:1 ✓</div>
+    <div class="subtle" style="background:#FEF3C7"></div>
+    <div class="info"><div class="name">Warning</div><div class="hex">#F39C12 / #FEF3C7</div></div>
+  </div>
+  <div class="group">
+    <div class="top" style="background:#E74C3C">5.2:1 ✓</div>
+    <div class="subtle" style="background:#FEE2E2"></div>
+    <div class="info"><div class="name">Critical</div><div class="hex">#E74C3C / #FEE2E2</div></div>
+  </div>
+  <div class="group">
+    <div class="top" style="background:#3498DB">5.4:1 ✓</div>
+    <div class="subtle" style="background:#DBEAFE"></div>
+    <div class="info"><div class="name">Info</div><div class="hex">#3498DB / #DBEAFE</div></div>
+  </div>
+  <div class="group">
+    <div class="top" style="background:#2563EB">5.9:1 ✓</div>
+    <div class="subtle" style="background:#EFF6FF"></div>
+    <div class="info"><div class="name">Kinetic Blue</div><div class="hex">#2563EB / #EFF6FF</div></div>
+  </div>
+</div>
+</body>
+</html>

@@ -207,6 +207,21 @@
 
 ---
 
+## v0.1.0 Design System Integration (US-840 Epic) — ✅ PARTIALLY COMPLETE
+
+| ID | Title | Status | Phase | Depends On | Notes |
+| :- | :---- | :----- | :---- | :--------- | :---- |
+| US-840 | Design Token Import (CSS variables, Tailwind extension) | ✅ COMPLETED | 11 | — | ✅ MERGED PR #10 (2026-06-30) |
+| US-841 | UI Primitive Styling (Button, Input, StatusBadge) | ✅ COMPLETED | 11 | US-840 | ✅ MERGED PR #11 (2026-06-30) |
+| US-842 | Layout Shell Reskin (AppShell header, legacy-dark removal) | ✅ COMPLETED | 11 | US-841 | ✅ MERGED PR #12 (2026-06-30) |
+| US-843 | Shipper Dashboard Reskin (KPI cards, load table) | ✅ COMPLETED | 11 | US-842 | ✅ MERGED PR #13 (2026-06-30) |
+| US-844 | Carrier Load Board UX (equipment filter, board lock, post-action nav) | READY_FOR_DESIGN | 11 | US-842 | Next P1 story — source of truth: CARRIER_DESIGN_SYSTEM.md (Prototype/ui_kits/carrier/ lost, untracked) |
+| US-845 | Load Creation Form Fields | READY_FOR_DESIGN | 11 | US-842 | P1 |
+| US-846 | Shipper Action Zone Restructure | ✅ COMPLETED | 11 | US-843 | ✅ MERGED PR #13 | ✅ REVIEWER_PASS (2026-07-02) | ✅ LIBRARIAN (2026-07-02) |
+| US-847 | Persona Token Migration | BACKLOG | 11 | US-846 | P2 — optional; deferred |
+
+---
+
 ## Backlog (Deferred)
 
 | ID     | Title                                  | Status      | Depends On | Rationale |

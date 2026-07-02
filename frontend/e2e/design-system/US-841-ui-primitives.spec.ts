@@ -137,6 +137,15 @@ test.describe('US-841 AC-4: input focus border', () => {
     await expect(emailInput).toBeVisible({ timeout: 10000 })
     await emailInput.click()
 
+    // Wait for the 150ms border transition to complete (Input.tsx uses transition: 'border 150ms ease')
+    await page.waitForFunction(
+      () => {
+        const el = document.querySelector('[data-testid="email-input"]') as HTMLElement
+        return window.getComputedStyle(el).borderTopColor === 'rgb(176, 141, 87)'
+      },
+      { timeout: 3000 }
+    )
+
     const borderStyle = await emailInput.evaluate((el: HTMLElement) => {
       const cs = window.getComputedStyle(el)
       return {

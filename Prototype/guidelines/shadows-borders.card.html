@@ -1,0 +1,50 @@
+<!-- @dsCard group="Spacing" viewport="700x160" name="Shadows & Borders" subtitle="Elevation system · radius tokens · focus states" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--color-canvas); font-family: var(--font-body); padding: 16px; }
+  .row { display: flex; gap: 12px; align-items: stretch; }
+  .card { flex: 1; background: white; padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+  .label { font-size: 11px; font-weight: 600; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; }
+  .demo { font-size: 11px; color: var(--color-text-secondary); font-family: monospace; }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="card" style="box-shadow:var(--shadow-subtle)">
+    <div class="label">Subtle</div>
+    <div class="demo">0 2px 4px rgba(0,0,0,.05)</div>
+    <div class="demo">Resting panels, cards</div>
+  </div>
+  <div class="card" style="box-shadow:var(--shadow-elevated)">
+    <div class="label">Elevated</div>
+    <div class="demo">0 4px 12px rgba(0,0,0,.10)</div>
+    <div class="demo">Hover, dropdowns</div>
+  </div>
+  <div class="card" style="border:var(--border-widget)">
+    <div class="label">Widget Border</div>
+    <div class="demo">1px solid #D0D0D0</div>
+    <div class="demo">All shipper panels</div>
+  </div>
+  <div class="card" style="border:var(--border-focus)">
+    <div class="label">Focus Ring</div>
+    <div class="demo">2px solid #B08D57</div>
+    <div class="demo">Input focus state</div>
+  </div>
+  <div class="card">
+    <div class="label">Radii</div>
+    <div style="display:flex;gap:6px;margin-top:4px">
+      <div style="width:24px;height:24px;background:var(--color-bronze);border-radius:4px"></div>
+      <div style="width:24px;height:24px;background:var(--color-bronze);border-radius:6px"></div>
+      <div style="width:24px;height:24px;background:var(--color-bronze);border-radius:8px"></div>
+      <div style="width:24px;height:24px;background:var(--color-bronze);border-radius:9999px"></div>
+    </div>
+    <div class="demo">4px · 6px · 8px · pill</div>
+  </div>
+</div>
+</body>
+</html>

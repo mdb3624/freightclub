@@ -6,11 +6,11 @@ import { useLoadBoard } from '@/features/loads/hooks/useLoadBoard'
 import { useMyActiveLoad } from '@/features/loads/hooks/useMyActiveLoad'
 import { useMyLoadHistory } from '@/features/loads/hooks/useMyLoadHistory'
 import { useProfile } from '@/features/profile/hooks/useProfile'
-import { useAvailableStates } from '@/features/loads/hooks/useAvailableStates'
+import { useLogout } from '@/features/auth/hooks/useLogout'
 import { LoadBoardTab } from '@/features/loads/components/LoadBoardTab'
 import { HosWidget } from '@/features/hos/components/HosWidget'
-import { AppShell } from '@/components/AppShell'
 import { useDieselPrices } from '@/features/market/hooks/useDieselPrices'
+import { computeRpm } from '@/features/loads/utils/profitability'
 import type { BoardFilter, BoardSortBy, BoardSortDir, EquipmentType } from '@/features/loads/types'
 
 const VALID_SORT_BY = new Set<BoardSortBy>(['pickupDate', 'distance', 'rpm'])
@@ -235,9 +235,64 @@ function LockedBoardBanner({ load }: { load: any }) {
 function MyStatsTab({ profile, history }: { profile: any; history: any }) {
   const onTime = profile?.onTimePercentage
   const totalLoads = history?.totalElements ?? 0
+  const historyItems: any[] = history?.content ?? []
+
+  const totalMiles = historyItems.reduce((sum: number, l: any) => sum + (l.distanceMiles ?? 0), 0)
+  const rpms = historyItems.map((l: any) => computeRpm(l)).filter((r: number | null): r is number => r != null)
+  const avgRpm = rpms.length > 0 ? rpms.reduce((s: number, r: number) => s + r, 0) / rpms.length : null
+  const totalEarnings = historyItems.reduce((sum: number, l: any) => {
+    if (l.payRateType === 'PER_MILE' && l.distanceMiles != null) return sum + l.payRate * l.distanceMiles
+    if (l.payRateType === 'FLAT_RATE') return sum + l.payRate
+    return sum
+  }, 0)
 
   return (
     <div style={{ padding: 12 }}>
+      {/* Earnings hero */}
+      <DarkCard style={{ padding: 20, marginBottom: 12, textAlign: 'center' }}>
+        <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: C.dim, marginBottom: 8 }}>
+          TOTAL EARNINGS
+        </div>
+        <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 40, fontWeight: 900, color: C.green, lineHeight: 1 }}>
+          ${totalEarnings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+        </div>
+        {historyItems.length > 0 && (
+          <div style={{ fontSize: 11, color: C.dim, marginTop: 6 }}>last {historyItems.length} loads</div>
+        )}
+      </DarkCard>
+
+      {/* Stats grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
+        <DarkCard style={{ padding: 14 }}>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 24, fontWeight: 900,
+            color: onTime != null ? (onTime >= 90 ? C.green : onTime >= 75 ? C.amber : '#EF4444') : C.dim,
+            marginBottom: 4 }}>
+            {onTime != null ? `${onTime.toFixed(0)}%` : '—'}
+          </div>
+          <SecLabel>ON-TIME RATE</SecLabel>
+        </DarkCard>
+        <DarkCard style={{ padding: 14 }}>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 24, fontWeight: 900,
+            color: avgRpm != null ? (avgRpm >= 2.0 ? C.green : avgRpm >= 1.3 ? C.amber : '#EF4444') : C.dim,
+            marginBottom: 4 }}>
+            {avgRpm != null ? `$${avgRpm.toFixed(2)}` : '—'}
+          </div>
+          <SecLabel>AVG RPM</SecLabel>
+        </DarkCard>
+        <DarkCard style={{ padding: 14 }}>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 24, fontWeight: 900, color: C.text, marginBottom: 4 }}>
+            {totalLoads}
+          </div>
+          <SecLabel>LOADS COMPLETED</SecLabel>
+        </DarkCard>
+        <DarkCard style={{ padding: 14 }}>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 24, fontWeight: 900, color: C.text, marginBottom: 4 }}>
+            {totalMiles > 0 ? totalMiles.toLocaleString(undefined, { maximumFractionDigits: 0 }) : '—'}
+          </div>
+          <SecLabel>MILES DRIVEN</SecLabel>
+        </DarkCard>
+      </div>
+
       {/* Rig card */}
       <DarkCard style={{ padding: 16, marginBottom: 12 }}>
         <SecLabel>MY RIG</SecLabel>
@@ -274,24 +329,6 @@ function MyStatsTab({ profile, history }: { profile: any; history: any }) {
         </Link>
       </DarkCard>
 
-      {/* Stats grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
-        <DarkCard style={{ padding: 14 }}>
-          <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 24, fontWeight: 900,
-            color: onTime != null ? (onTime >= 90 ? C.green : onTime >= 75 ? C.amber : '#EF4444') : C.dim,
-            marginBottom: 4 }}>
-            {onTime != null ? `${onTime.toFixed(0)}%` : '—'}
-          </div>
-          <SecLabel>ON-TIME RATE</SecLabel>
-        </DarkCard>
-        <DarkCard style={{ padding: 14 }}>
-          <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 24, fontWeight: 900, color: C.text, marginBottom: 4 }}>
-            {totalLoads}
-          </div>
-          <SecLabel>LOADS COMPLETED</SecLabel>
-        </DarkCard>
-      </div>
-
       {/* HOS */}
       <DarkCard style={{ padding: 16 }}>
         <HosWidget />
@@ -303,9 +340,11 @@ function MyStatsTab({ profile, history }: { profile: any; history: any }) {
 function SettingsTab({ onLogout }: { onLogout: () => void }) {
   const items = [
     { icon: '⚙', label: 'Cost Profile', sub: 'Set CPM, fuel & maintenance costs', to: '/profile' },
+    { icon: '💳', label: 'Payments', sub: 'Bank account & payout settings', to: null },
     { icon: '📋', label: 'Load History', sub: 'All completed loads', to: null },
     { icon: '🔔', label: 'Notifications', sub: 'Alerts & email preferences', to: null },
     { icon: '👤', label: 'Profile', sub: 'DOT number, CDL, insurance', to: '/profile' },
+    { icon: '❓', label: 'Support', sub: 'Help center & contact us', to: null },
   ]
   return (
     <div style={{ padding: 12 }}>
@@ -344,6 +383,7 @@ function SettingsTab({ onLogout }: { onLogout: () => void }) {
 /* ─── Main component ─────────────────────────────────────────────────── */
 export function TruckerDashboard() {
   const user = useAuthStore((s) => s.user)
+  const logout = useLogout()
   const { data: dieselData } = useDieselPrices()
   const location = useLocation()
   const navigate = useNavigate()
@@ -391,7 +431,6 @@ export function TruckerDashboard() {
 
   const { data, isLoading, isError } = useLoadBoard(page, filter)
   const { data: activeLoad, isLoading: isLoadingActiveLoad } = useMyActiveLoad()
-  const { data: availableStates } = useAvailableStates()
   const { data: history } = useMyLoadHistory(historyPage)
   const activeLoadRef = useRef<HTMLElement>(null)
 
@@ -440,23 +479,19 @@ export function TruckerDashboard() {
     { id: 'settings' as Tab, icon: '⚙', label: 'Settings' },
   ]
 
-  function handleLogout() {
-    navigate('/login')
-  }
-
   return (
-    <AppShell fullBleed>
-      <div
-        data-testid="trucker-dashboard"
-        style={{
-          background: C.bg,
-          minHeight: 'calc(100vh - 56px)',
-          display: 'flex',
-          flexDirection: 'column',
-          maxWidth: 480,
-          margin: '0 auto',
-        }}
-      >
+    <div
+      data-testid="trucker-dashboard"
+      data-persona="carrier"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: C.bg,
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
         {/* Active Load Hero */}
         {activeLoad && (
           <section ref={activeLoadRef as any}>
@@ -476,13 +511,10 @@ export function TruckerDashboard() {
               <div style={{ padding: '0 0 12px' }}>
                 <LoadBoardTab
                   filter={filter}
-                  setFilter={setFilter}
                   setPage={setPage}
                   data={data}
                   isLoading={isLoading}
                   isError={isError}
-                  hasActiveLoad={hasActiveLoad}
-                  availableStates={availableStates}
                   onRefresh={handleRefresh}
                   onSort={handleSort}
                   userEquipmentType={(user?.equipmentType ?? profile?.equipmentType) as EquipmentType | undefined}
@@ -496,7 +528,7 @@ export function TruckerDashboard() {
           )}
 
           {tab === 'settings' && (
-            <SettingsTab onLogout={handleLogout} />
+            <SettingsTab onLogout={logout} />
           )}
         </div>
 
@@ -517,7 +549,7 @@ export function TruckerDashboard() {
               aria-selected={tab === t.id}
               role="tab"
               style={{
-                flex: 1, height: 56, background: 'transparent', border: 'none',
+                flex: 1, height: 48, background: 'transparent', border: 'none',
                 color: tab === t.id ? C.text : C.dim,
                 fontSize: 11, fontWeight: 700, cursor: 'pointer',
                 fontFamily: 'var(--font-body, Inter)',
@@ -533,7 +565,6 @@ export function TruckerDashboard() {
             </button>
           ))}
         </nav>
-      </div>
-    </AppShell>
+    </div>
   )
 }

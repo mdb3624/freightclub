@@ -79,6 +79,23 @@
 
 **CHG-US730-004 (2026-06-26, RESOLVED):** `ci.yml` backend env fix (CHG-US730-003) exposed 96 pre-existing frontend unit test failures across login-app, carrier dashboard, and shipper dashboard — confirmed genuine (reproduce in isolation, not test pollution). Per explicit user direction, the 13 broken non-integration test files were deleted rather than fixed/backlogged; `CarrierDashboard.integration.test.tsx` (added by this branch) was fixed (missing Router context + one stale CHG-US730-002 style assertion) and now passes 24/24. Final state: frontend `npx vitest run` 36 files/261 tests all green; backend `mvn clean test` (Docker `backend-tester`) 867/867 passing, BUILD SUCCESS, including all `*ControllerTest` integration suites. See `.claude/learnings.md` Technical Debt Ledger.
 
+## v0.1.0 Design System Integration Progress (US-840 Epic)
+
+| Story ID | Title | Status | Merge Date | PR | Sign-Off |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| US-840 | Design Token Import (CSS variables, Tailwind extension) | ✅ COMPLETED | 2026-06-30 | #10 | ✅ MERGED TO MAIN |
+| US-841 | UI Primitive Styling (Button, Input, StatusBadge) | ✅ COMPLETED | 2026-06-30 | #11 | ✅ MERGED TO MAIN |
+| US-842 | Layout Shell Reskin (AppShell header, legacy-dark removal) | ✅ COMPLETED | 2026-06-30 | #12 | ✅ MERGED TO MAIN |
+| US-843 | Shipper Dashboard Reskin (KPI cards, load table) | ✅ COMPLETED | 2026-06-30 | #13 | ✅ MERGED TO MAIN |
+| US-844 | Carrier Load Board UX (equipment filter, board lock, post-action nav) | ✅ COMPLETED | 2026-07-02 | #16 | ✅ REVIEWER_PASS (2026-07-02) + LIBRARIAN (2026-07-02) |
+| US-845 | Load Creation Form Fields | TO DO | — | — | Depends on US-842 |
+| US-846 | Shipper Action Zone Restructure | ✅ COMPLETED | 2026-06-30 | #13 | ✅ REVIEWER_PASS (2026-07-02) + LIBRARIAN (2026-07-02) |
+| US-847 | Persona Token Migration | BACKLOG (P2) | — | — | Optional; deferred |
+
+**Post-merge CI fix:** PR #15 (`fix/e2e-post-redesign-ci`, merged 2026-07-02) corrected 4 categories of E2E failures introduced at merge: ESM `__dirname` shim in US-840 spec, US-843 AC-2 testid removed in US-846 (icon prop dropped from KPITile), US-843-kpi-tiles `toFixed(1)` assertion, US-841 focus border mid-transition timing. Also fixed 500 on test user cleanup: URL mismatch in `TestDataSeeder` + no-op `deleteTestUser` implementation → now performs real soft delete via `UserRepository`.
+
+**REVIEWER_PASS US-846 (2026-07-02):** All 6 AC satisfied. CI green (backend 867/867, frontend 261/261, E2E 102/102). Two low-severity debt items: (1) preferred carriers list shows `carrierId` string — AC specifies name/equipment/on-time rate; (2) secondary grid buttons ≈28–30px height, below 44px desktop standard, no `boundingBox()` assertion. Neither blocks hard gates.
+
 ---
 
 ## REVIEWER_PASS: PR #7 — CHG-US730-002/003/004/005, CHG-US730-006 (open) — 2026-06-26

@@ -343,18 +343,31 @@ export function LoadForm({ onSubmit, onSaveDraft, onCancel, defaultValues, isSub
               <AddressSection prefix="destination" label="" register={register} errors={errors} />
             </div>
 
-            {/* Distance Display */}
+            {/* Distance Display — read-only input box per AC-1 */}
             <div style={{ paddingTop: '12px', borderTop: '1px solid #E8E3D8' }}>
-              {distanceLoading ? (
-                <p style={{ fontSize: '13px', color: '#636E72' }}>Calculating distance...</p>
-              ) : distanceMiles != null ? (
-                <p style={{ fontSize: '13px', color: '#1A1A1A' }}>
-                  <span style={{ fontWeight: 'bold' }}>{distanceMiles.toLocaleString()} mi</span>
-                  <span style={{ color: '#636E72', marginLeft: '8px' }}>(estimated)</span>
-                </p>
-              ) : (
-                <p style={{ fontSize: '13px', color: '#999999' }}>Distance calculates when addresses filled</p>
-              )}
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#1A1A1A', marginBottom: '4px' }}>
+                Estimated Distance
+              </label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div
+                  data-testid="distance-display"
+                  style={{
+                    flex: 1,
+                    height: 40,
+                    background: '#F8F9FB',
+                    border: '1px solid #E8E3D8',
+                    borderRadius: 4,
+                    padding: '8px 12px',
+                    fontSize: 13,
+                    color: distanceMiles != null ? '#1A1A1A' : '#9CA3AF',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  {distanceLoading ? 'Calculating...' : distanceMiles != null ? `${distanceMiles.toLocaleString()} mi` : '—'}
+                </div>
+                <span style={{ fontSize: 12, color: '#9CA3AF', whiteSpace: 'nowrap' }}>calculated</span>
+              </div>
               {distanceError && <p style={{ fontSize: '12px', color: '#E74C3C', marginTop: '4px' }}>{distanceError}</p>}
             </div>
           </div>
@@ -371,12 +384,14 @@ export function LoadForm({ onSubmit, onSaveDraft, onCancel, defaultValues, isSub
                   <Input
                     label="Earliest Date"
                     type="datetime-local"
+                    testId="pickup-from-input"
                     error={errors.pickupFrom?.message}
                     {...register('pickupFrom')}
                   />
                   <Input
                     label="Latest Date"
                     type="datetime-local"
+                    testId="pickup-to-input"
                     error={errors.pickupTo?.message}
                     {...register('pickupTo')}
                   />
@@ -388,12 +403,14 @@ export function LoadForm({ onSubmit, onSaveDraft, onCancel, defaultValues, isSub
                   <Input
                     label="Earliest Date"
                     type="datetime-local"
+                    testId="delivery-from-input"
                     error={errors.deliveryFrom?.message}
                     {...register('deliveryFrom')}
                   />
                   <Input
                     label="Latest Date"
                     type="datetime-local"
+                    testId="delivery-to-input"
                     error={errors.deliveryTo?.message}
                     {...register('deliveryTo')}
                   />
@@ -475,6 +492,7 @@ export function LoadForm({ onSubmit, onSaveDraft, onCancel, defaultValues, isSub
                         <div style={{ display: 'flex', gap: '4px' }}>
                           <div style={{ position: 'relative', flex: 1 }}>
                             <input
+                              data-testid={`${label.toLowerCase()}-ft-input`}
                               type="number"
                               min="0"
                               step="1"
@@ -486,6 +504,7 @@ export function LoadForm({ onSubmit, onSaveDraft, onCancel, defaultValues, isSub
                           </div>
                           <div style={{ position: 'relative', flex: 1 }}>
                             <input
+                              data-testid={`${label.toLowerCase()}-in-input`}
                               type="number"
                               min="0"
                               max="11"

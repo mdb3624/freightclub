@@ -83,9 +83,12 @@ test.describe('US-844 equipment badge', () => {
 
     await loginAsCarrier(page, `us844-badge-${ts}@freightclub.local`)
 
-    // Must NOT have an equipment type select/filter
-    const equipmentSelect = page.locator('select[data-testid="equipment-type-filter"]')
-    await expect(equipmentSelect).not.toBeVisible()
+    // Must NOT have any <select> filter controls (board is profile-driven)
+    const selects = page.locator('[data-testid="trucker-dashboard"] select')
+    await expect(selects).toHaveCount(0)
+
+    // AppShell header must NOT be rendered — carrier uses full-viewport fixed shell
+    await expect(page.locator('[data-testid="app-shell"]')).not.toBeVisible()
 
     // Equipment badge must be visible
     const badge = page.locator('[data-testid="equipment-badge"]')

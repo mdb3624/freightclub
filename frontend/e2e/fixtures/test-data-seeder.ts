@@ -291,8 +291,7 @@ export class TestDataSeeder {
         endpoint = `/api/v1/carriers/${id}`;
         break;
       case 'users':
-        // Users typically can't be deleted via normal API; use test endpoint if available
-        endpoint = `/api/test/users/${id}`;
+        endpoint = `/api/test/auth/users/${id}`;
         break;
     }
 

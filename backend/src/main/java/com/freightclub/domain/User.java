@@ -216,6 +216,7 @@ public class User {
     public void setNotifyInApp(boolean notifyInApp) { this.notifyInApp = notifyInApp; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getDeletedAt() { return deletedAt; }
+    public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
     public BigDecimal getTruckPaymentLease() { return truckPaymentLease; }
     public void setTruckPaymentLease(BigDecimal truckPaymentLease) { this.truckPaymentLease = truckPaymentLease; }
     public BigDecimal getInsurance() { return insurance; }

@@ -14,18 +14,21 @@ describe('StatusBadge', () => {
     expect(screen.getByText(expectedText)).toBeInTheDocument()
   })
 
-  it('applies blue color class for OPEN status', () => {
+  it('applies blue background style for OPEN status', () => {
     const { container } = render(<StatusBadge status="OPEN" />)
-    expect(container.firstChild).toHaveClass('bg-blue-100')
+    const bg = (container.firstChild as HTMLElement).style.background
+    expect(bg === '#DBEAFE' || bg === 'rgb(219, 234, 254)').toBe(true)
   })
 
-  it('applies red color class for CANCELLED status', () => {
+  it('applies red background style for CANCELLED status', () => {
     const { container } = render(<StatusBadge status="CANCELLED" />)
-    expect(container.firstChild).toHaveClass('bg-red-100')
+    const bg = (container.firstChild as HTMLElement).style.background
+    expect(bg === '#FEE2E2' || bg === 'rgb(254, 226, 226)').toBe(true)
   })
 
-  it('applies green color class for DELIVERED status', () => {
+  it('applies green background style for DELIVERED status', () => {
     const { container } = render(<StatusBadge status="DELIVERED" />)
-    expect(container.firstChild).toHaveClass('bg-green-100')
+    const bg = (container.firstChild as HTMLElement).style.background
+    expect(bg === '#DCFCE7' || bg === 'rgb(220, 252, 231)').toBe(true)
   })
 })

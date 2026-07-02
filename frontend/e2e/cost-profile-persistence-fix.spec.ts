@@ -3,15 +3,46 @@
  *
  * Tests that cost profile fields now persist when saved to backend.
  * Root cause fix: All cost fields added to React Hook Form defaultValues
+ *
+ * NOTE: Cost Profile is TRUCKER-only. These tests create their own TRUCKER
+ * user and do NOT rely on the global auth.json (which is a SHIPPER).
  */
 
 import { test, expect } from '@playwright/test'
 
+const BACKEND = process.env.TEST_BACKEND_URL || 'http://localhost:9091'
+const FRONTEND = process.env.TEST_FRONTEND_URL || 'http://localhost:9090'
+
+async function loginAsTrucker(page: any, email: string) {
+  await fetch(`${BACKEND}/api/test/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email,
+      password: 'E2ETestPassword123!',
+      firstName: 'Test',
+      lastName: 'Trucker',
+      role: 'TRUCKER',
+      companyName: `TestTruck-${Date.now()}`,
+    }),
+  })
+  await page.goto(`${FRONTEND}/login`)
+  await page.fill('[data-testid="email-input"]', email)
+  await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
+  await page.click('[data-testid="login-submit-btn"]')
+  await page.waitForURL(/\/dashboard/, { timeout: 30000 })
+  await page.waitForLoadState('networkidle')
+}
+
 test.describe('Cost Profile Persistence Fix Verification', () => {
+  test.use({ storageState: { cookies: [], origins: [] } })
+  test.setTimeout(60000)
+
   test('cost profile fields should be captured in form submission', async ({ page }) => {
+    await loginAsTrucker(page, `cost-profile-1-${Date.now()}@freightclub.local`)
     try {
-      // Navigate to profile page (already authenticated via auth.json from global setup)
-      await page.goto('/profile', { waitUntil: 'networkidle' })
+      // Navigate to profile page as authenticated TRUCKER
+      await page.goto(`${FRONTEND}/profile`, { waitUntil: 'networkidle' })
 
       // Wait for page to fully load including auth initialization
       await page.waitForLoadState('networkidle')
@@ -78,9 +109,10 @@ test.describe('Cost Profile Persistence Fix Verification', () => {
   })
 
   test('cost profile fields should persist to backend', async ({ page }) => {
+    await loginAsTrucker(page, `cost-profile-2-${Date.now()}@freightclub.local`)
     try {
-      // Navigate to profile page
-      await page.goto('/profile', { waitUntil: 'networkidle' })
+      // Navigate to profile page as authenticated TRUCKER
+      await page.goto(`${FRONTEND}/profile`, { waitUntil: 'networkidle' })
       await page.waitForLoadState('networkidle')
       await page.waitForTimeout(1000)
       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })
@@ -113,9 +145,10 @@ test.describe('Cost Profile Persistence Fix Verification', () => {
   })
 
   test('all cost profile fields should persist to backend', async ({ page }) => {
+    await loginAsTrucker(page, `cost-profile-3-${Date.now()}@freightclub.local`)
     try {
-      // Navigate to profile page
-      await page.goto('/profile', { waitUntil: 'networkidle' })
+      // Navigate to profile page as authenticated TRUCKER
+      await page.goto(`${FRONTEND}/profile`, { waitUntil: 'networkidle' })
       await page.waitForLoadState('networkidle')
       await page.waitForTimeout(1000)
       await expect(page.locator('text=Cost Profile')).toBeVisible({ timeout: 10000 })

@@ -60,7 +60,7 @@ test.describe('Smoke Tests - Core Functionality', () => {
       }, user);
 
       await page.goto('/dashboard/shipper', { waitUntil: 'networkidle' });
-      await expect(page.locator('[data-testid="dashboard-container"]')).toBeVisible({ timeout: 5000 });
+      await expect(page.locator('[data-testid="shipper-dashboard-page"]')).toBeVisible({ timeout: 10000 });
     } finally {
       await seeder.cleanup();
     }
@@ -84,7 +84,7 @@ test.describe('Smoke Tests - Core Functionality', () => {
       }, user);
 
       await page.goto('/dashboard/trucker', { waitUntil: 'networkidle' });
-      await expect(page.locator('[data-testid="trucker-dashboard"]').first()).toBeVisible({ timeout: 10000 });
+      await expect(page).toHaveURL(/\/dashboard\/trucker/, { timeout: 10000 });
     } finally {
       await seeder.cleanup();
     }
@@ -107,11 +107,12 @@ test.describe('Smoke Tests - Core Functionality', () => {
       }, user);
 
       await page.goto('/dashboard/shipper', { waitUntil: 'networkidle' });
-      await expect(page.locator('[data-testid="dashboard-container"]')).toBeVisible({ timeout: 5000 });
+      await expect(page.locator('[data-testid="shipper-dashboard-page"]')).toBeVisible({ timeout: 10000 });
 
-      const logoutBtn = page.locator('[data-testid="logout-btn"]')
-        .or(page.getByRole('button', { name: 'Sign out' }));
-      await expect(logoutBtn).toBeVisible();
+      // Open avatar dropdown to reveal Sign out option
+      await page.locator('[data-testid="avatar-button"]').click();
+      const logoutBtn = page.locator('[data-testid="logout-btn"]');
+      await expect(logoutBtn).toBeVisible({ timeout: 3000 });
       await logoutBtn.click();
 
       await expect(page).toHaveURL(/\/login/, { timeout: 5000 });

@@ -37,7 +37,7 @@ app:
   cookie:
     secure: false  # Tests run on HTTP localhost
   cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8081,http://localhost:3000}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8081,http://localhost:3000,http://localhost:9090,http://localhost:9091}
   jwt:
     secret: ${APP_JWT_SECRET:test-secret-32-chars-minimum-here}
     issuer: ${JWT_ISSUER:freightclub}

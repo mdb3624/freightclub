@@ -69,14 +69,14 @@
 | US-824 | [FREIG-58](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-58) | US-824: Quick Actions Panel | Done |
 | US-825 | [FREIG-59](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-59) | US-825: Carrier Search Panel | Done |
 | US-826 | [FREIG-60](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-60) | US-826: Messages & Alerts Panel | To Do |
-| US-840 | [FREIG-79](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-79) | US-840: Design Token Import (CSS + Tailwind sync) | Done |
-| US-841 | [FREIG-80](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-80) | US-841: UI Primitive Styling (Button, Input, StatusBadge, ProfitabilityBadge) | Done |
-| US-842 | [FREIG-81](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-81) | US-842: Layout Shell Reskin + Legacy-Dark Removal | Done |
-| US-843 | [FREIG-82](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-82) | US-843: Shipper Dashboard Reskin (KPI cards + load table) | In Progress |
-| US-844 | [FREIG-83](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-83) | US-844: Carrier Load Board UX (equipment filter, board lock, post-action nav) | To Do |
-| US-845 | [FREIG-84](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-84) | US-845: Load Creation Form Field Updates | To Do |
-| US-846 | [FREIG-85](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-85) | US-846: Shipper Action Zone Restructure | To Do |
-| US-847 | [FREIG-86](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-86) | US-847: Persona Token Migration (optional) | To Do |
+| US-840 | [FREIG-87](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-87) | US-840: Design Token Import (CSS + Tailwind sync) | In Progress |
+| US-841 | [FREIG-88](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-88) | US-841: UI Primitive Styling (Button, Input, StatusBadge, ProfitabilityBadge) | Done |
+| US-842 | [FREIG-89](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-89) | US-842: Layout Shell Reskin + Legacy-Dark Removal | Done |
+| US-843 | [FREIG-90](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-90) | US-843: Shipper Dashboard Reskin (KPI cards + load table) | In Progress |
+| US-844 | [FREIG-91](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-91) | US-844: Carrier Load Board UX (equipment badge, board lock, post-action nav) | In Progress |
+| US-845 | [FREIG-92](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-92) | US-845: Load Creation Form Field Updates | In Progress |
+| US-846 | [FREIG-93](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-93) | US-846: Shipper Action Zone Restructure | In Progress |
+| US-847 | [FREIG-94](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-94) | US-847: Persona Token Migration (optional) | To Do |
 | US-900 | [FREIG-61](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-61) | US-900: E2E Testing Infrastructure & Standards | Done |
 
 
@@ -208,14 +208,14 @@ curl -u "email:token" \
 | US-824 | [FREIG-58](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-58) | US-824: Quick Actions Panel | Done |
 | US-825 | [FREIG-59](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-59) | US-825: Carrier Search Panel | Done |
 | US-826 | [FREIG-60](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-60) | US-826: Messages & Alerts Panel | To Do |
-| US-840 | [FREIG-79](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-79) | US-840: Design Token Import (CSS + Tailwind sync) | Done |
-| US-841 | [FREIG-80](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-80) | US-841: UI Primitive Styling (Button, Input, StatusBadge, ProfitabilityBadge) | Done |
-| US-842 | [FREIG-81](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-81) | US-842: Layout Shell Reskin + Legacy-Dark Removal | Done |
-| US-843 | [FREIG-82](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-82) | US-843: Shipper Dashboard Reskin (KPI cards + load table) | In Progress |
-| US-844 | [FREIG-83](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-83) | US-844: Carrier Load Board UX (equipment filter, board lock, post-action nav) | To Do |
-| US-845 | [FREIG-84](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-84) | US-845: Load Creation Form Field Updates | To Do |
-| US-846 | [FREIG-85](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-85) | US-846: Shipper Action Zone Restructure | To Do |
-| US-847 | [FREIG-86](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-86) | US-847: Persona Token Migration (optional) | To Do |
+| US-840 | [FREIG-87](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-87) | US-840: Design Token Import (CSS + Tailwind sync) | In Progress |
+| US-841 | [FREIG-88](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-88) | US-841: UI Primitive Styling (Button, Input, StatusBadge, ProfitabilityBadge) | Done |
+| US-842 | [FREIG-89](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-89) | US-842: Layout Shell Reskin + Legacy-Dark Removal | Done |
+| US-843 | [FREIG-90](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-90) | US-843: Shipper Dashboard Reskin (KPI cards + load table) | In Progress |
+| US-844 | [FREIG-91](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-91) | US-844: Carrier Load Board UX (equipment badge, board lock, post-action nav) | In Progress |
+| US-845 | [FREIG-92](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-92) | US-845: Load Creation Form Field Updates | In Progress |
+| US-846 | [FREIG-93](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-93) | US-846: Shipper Action Zone Restructure | In Progress |
+| US-847 | [FREIG-94](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-94) | US-847: Persona Token Migration (optional) | To Do |
 | US-900 | [FREIG-61](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-61) | US-900: E2E Testing Infrastructure & Standards | Done |
 
 

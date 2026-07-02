@@ -60,11 +60,11 @@ test.describe('US-841 AC-1: primary button styling', () => {
     )
     // Must use gradient (not solid color)
     expect(bgImage).toContain('gradient')
-    // Must include bronze stop #C9A46A or #B08D57
-    const inlineStyle = await primaryBtn.evaluate(
-      (el: HTMLElement) => (el as HTMLElement).style.background
-    )
-    const hasBronze = inlineStyle.includes('#C9A46A') || inlineStyle.includes('#B08D57') || inlineStyle.includes('C9A46A') || inlineStyle.includes('B08D57')
+    // Must include bronze stops — browsers normalize hex to rgb(), so check both forms:
+    // #C9A46A = rgb(201, 164, 106)  |  #B08D57 = rgb(176, 141, 87)
+    const hasBronze =
+      bgImage.includes('rgb(201, 164, 106)') || bgImage.includes('rgb(176, 141, 87)') ||
+      bgImage.includes('#C9A46A') || bgImage.includes('#B08D57')
     expect(hasBronze).toBe(true)
 
     await page.screenshot({ path: path.join(EVIDENCE, 'US-841-primary-button.png') })

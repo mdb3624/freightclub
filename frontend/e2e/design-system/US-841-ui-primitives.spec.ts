@@ -194,7 +194,7 @@ test.describe('adversarial', () => {
         password: 'E2ETestPassword123!',
         firstName: 'Carl',
         lastName: 'Carrier',
-        role: 'CARRIER',
+        role: 'TRUCKER',
         companyName: `TestCarrier-${Date.now()}`,
       }),
     })

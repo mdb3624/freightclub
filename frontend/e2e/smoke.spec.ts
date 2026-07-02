@@ -111,7 +111,7 @@ test.describe('Smoke Tests - Core Functionality', () => {
 
       // Open avatar dropdown to reveal Sign out option
       await page.locator('[data-testid="avatar-button"]').click();
-      const logoutBtn = page.getByRole('button', { name: 'Sign out' });
+      const logoutBtn = page.locator('[data-testid="logout-btn"]');
       await expect(logoutBtn).toBeVisible({ timeout: 3000 });
       await logoutBtn.click();
 

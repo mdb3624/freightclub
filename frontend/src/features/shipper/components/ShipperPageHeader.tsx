@@ -362,6 +362,7 @@ export function ShipperPageHeader() {
             <div style={{ borderTop: 'var(--border-divider)' }}>
               <button
                 role="menuitem"
+                data-testid="logout-btn"
                 onClick={handleLogout}
                 style={{
                   display: 'flex',

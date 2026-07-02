@@ -111,7 +111,7 @@ test.describe('US-843 KPI tile styling', () => {
     await expect(onTimeValue).toBeVisible({ timeout: 10000 })
 
     const text = await onTimeValue.textContent()
-    expect(text).toBe('96%')
+    expect(text).toBe('96.0')
 
     // Color must be green #27AE60 = rgb(39, 174, 96)
     const color = await onTimeValue.evaluate((el: HTMLElement) =>

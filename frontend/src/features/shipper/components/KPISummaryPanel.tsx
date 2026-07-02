@@ -32,7 +32,7 @@ export const KPISummaryPanel: React.FC = () => {
       >
         {onTimePct != null && (
           <div>
-            <div style={{ height: 6, background: '#E8E3D8', borderRadius: 9999, overflow: 'hidden', marginBottom: 6 }}>
+            <div data-testid="kpi-tile-ontime-progress-track" style={{ height: 6, background: '#E8E3D8', borderRadius: 9999, overflow: 'hidden', marginBottom: 6 }}>
               <div style={{ width: `${Math.min(onTimePct, 100)}%`, height: '100%', background: '#27AE60', borderRadius: 9999 }} />
             </div>
             <div style={{ fontSize: 12, color: '#636E72' }}>Last 30 days</div>

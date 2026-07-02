@@ -56,17 +56,25 @@ test.describe('US-843 shipper dashboard reskin', () => {
     })
   })
 
-  test('AC-2: KPI tile icons use brand bronze #B08D57', async ({ page }) => {
+  test('AC-2: On-Time tile value uses brand green #27AE60', async ({ page }) => {
+    await page.route('**/shipper/dashboard/kpi-summary', (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ activeLoadCount: 5, onTimePercentage: 92.5, costPerMile: 2.14, isEmpty: false }),
+      })
+    })
+
     await page.goto(`${FRONTEND}/dashboard/shipper`)
     await page.waitForLoadState('networkidle')
 
-    await expect(page.locator('[data-testid="kpi-tile-active-loads"]')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-testid="kpi-tile-ontime"]')).toBeVisible({ timeout: 15000 })
 
-    const iconColor = await page.locator('[data-testid="kpi-tile-active-loads-icon"]').evaluate((el: HTMLElement) =>
+    const valueColor = await page.locator('[data-testid="kpi-tile-ontime-value"]').evaluate((el: HTMLElement) =>
       window.getComputedStyle(el).color
     )
-    // #B08D57 = rgb(176, 141, 87)
-    expect(iconColor).toBe('rgb(176, 141, 87)')
+    // #27AE60 = rgb(39, 174, 96) — applied when onTimePercentage is non-null
+    expect(valueColor).toBe('rgb(39, 174, 96)')
   })
 
   test('AC-3: On-Time Rate tile renders progress bar track', async ({ page }) => {

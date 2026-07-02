@@ -1,11 +1,14 @@
 package com.freightclub.controller;
 
+import com.freightclub.domain.User;
 import com.freightclub.domain.UserRole;
 import com.freightclub.dto.AuthResponse;
 import com.freightclub.dto.RegisterRequest;
 import com.freightclub.dto.UserResponse;
+import com.freightclub.repository.UserRepository;
 import com.freightclub.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -30,9 +33,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestAuthController {
 
   private final AuthService authService;
+  private final UserRepository userRepository;
 
-  public TestAuthController(AuthService authService) {
+  public TestAuthController(AuthService authService, UserRepository userRepository) {
     this.authService = authService;
+    this.userRepository = userRepository;
   }
 
   public static class TestUserRequest {
@@ -95,14 +100,11 @@ public class TestAuthController {
 
   @DeleteMapping("/users/{userId}")
   public ResponseEntity<Void> deleteTestUser(@PathVariable String userId) {
-    try {
-      // Note: In production-like scenarios, implement soft-delete via deleted_at column
-      // For now, this is a no-op placeholder for E2E test cleanup
-      // Tests using this endpoint should handle cleanup via the auth service if needed
-      return ResponseEntity.noContent().build();
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
+    userRepository.findById(userId).ifPresent(user -> {
+      user.setDeletedAt(LocalDateTime.now());
+      userRepository.save(user);
+    });
+    return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/debug/cookies")

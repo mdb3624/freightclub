@@ -29,9 +29,9 @@ export const ShipperDashboardPage: React.FC = () => {
     handler();
   };
 
-  // SLOT_A: KPI Summary (full-width)
+  // SLOT_A: KPI Summary (full-width) — tiles are individually paneled; no outer wrapper
   const slotAContent = (
-    <div className="panel" data-testid="kpi-summary-section">
+    <div data-testid="kpi-summary-section">
       <KPISummaryPanel />
     </div>
   );

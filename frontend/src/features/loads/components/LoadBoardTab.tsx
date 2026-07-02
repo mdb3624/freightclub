@@ -18,17 +18,67 @@ interface Props {
   userEquipmentType: EquipmentType | undefined
 }
 
+const EQUIPMENT_ROW_STYLE: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+  marginBottom: 10,
+  padding: '8px 10px',
+  background: '#161616',
+  borderRadius: 8,
+  border: '1px solid #2A2A2A',
+}
+
+const EQUIPMENT_LABEL_STYLE: React.CSSProperties = {
+  fontSize: 11,
+  fontWeight: 700,
+  textTransform: 'uppercase',
+  letterSpacing: '.07em',
+  color: '#636E72',
+}
+
+const EQUIPMENT_PILL_STYLE: React.CSSProperties = {
+  padding: '2px 10px',
+  borderRadius: 9999,
+  background: 'rgba(201,168,118,.1)',
+  border: '1px solid #C9A876',
+  color: '#C9A876',
+  fontSize: 12,
+  fontWeight: 700,
+}
+
+const COUNT_LABEL_STYLE: React.CSSProperties = {
+  fontSize: '10px',
+  fontWeight: 600,
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  color: '#636E72',
+}
+
 export function LoadBoardTab({
   filter, setFilter, setPage, data, isLoading, isError,
-  hasActiveLoad, availableStates, onRefresh, onSort, userEquipmentType,
+  availableStates, onRefresh, onSort, userEquipmentType,
 }: Props) {
+  const loadCount = data?.totalElements ?? 0
+  const equipmentLabel = userEquipmentType
+    ? userEquipmentType.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())
+    : null
+
   return (
     <section>
+      {/* AC-1: Read-only equipment badge — inline row matching carrier UI kit */}
+      {equipmentLabel && (
+        <div style={EQUIPMENT_ROW_STYLE} data-testid="equipment-badge">
+          <span style={EQUIPMENT_LABEL_STYLE}>YOUR EQUIPMENT</span>
+          <span style={EQUIPMENT_PILL_STYLE}>{equipmentLabel}</span>
+          <span style={{ fontSize: 11, color: '#636E72', marginLeft: 'auto' }}>Loads matched to your rig</span>
+        </div>
+      )}
+
       <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-gray-600">
-          {hasActiveLoad
-            ? 'Complete your active load before claiming another.'
-            : 'Browse open loads and claim one to get started.'}
+        {/* AC-1: Load count label */}
+        <p style={COUNT_LABEL_STYLE} data-testid="load-count-label">
+          {loadCount} LOADS MATCHING YOUR RIG
         </p>
         <Button variant="secondary" onClick={onRefresh}>Refresh</Button>
       </div>
@@ -108,28 +158,16 @@ export function LoadBoardTab({
         <TableSkeleton rows={5} cols={6} />
       ) : (
         <>
-          <div className="relative">
-            <div className={hasActiveLoad ? 'opacity-40 pointer-events-none select-none' : ''}>
-              <LoadBoardTable
-                loads={data?.content ?? []}
-                sortBy={filter.sortBy}
-                sortDir={filter.sortDir}
-                onSort={onSort}
-              />
-            </div>
-            {hasActiveLoad && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="rounded-lg border border-amber-200 bg-white shadow-sm px-6 py-4 text-center max-w-sm">
-                  <p className="text-sm font-semibold text-amber-800">Active load in progress</p>
-                  <p className="text-xs text-amber-700 mt-1">
-                    Deliver your current load before claiming another.
-                  </p>
-                </div>
-              </div>
-            )}
+          <div>
+            <LoadBoardTable
+              loads={data?.content ?? []}
+              sortBy={filter.sortBy}
+              sortDir={filter.sortDir}
+              onSort={onSort}
+            />
           </div>
 
-          {data && data.totalPages > 1 && !hasActiveLoad && (
+          {data && data.totalPages > 1 && (
             <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
               <span>
                 Page {data.number + 1} of {data.totalPages} ({data.totalElements} loads)

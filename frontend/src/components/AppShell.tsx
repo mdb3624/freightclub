@@ -9,9 +9,11 @@ import { usePersonaTheme } from '@/contexts/PersonaThemeContext'
 interface AppShellProps {
   children: React.ReactNode
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '5xl' | '6xl' | 'full'
+  /** Skip max-width, padding, and surface wrapper — carrier dashboard uses this */
+  fullBleed?: boolean
 }
 
-export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
+export function AppShell({ children, maxWidth = '6xl', fullBleed = false }: AppShellProps) {
   const user = useAuthStore((s) => s.user)
   const logout = useLogout()
   const { pathname } = useLocation()
@@ -155,11 +157,17 @@ export function AppShell({ children, maxWidth = '6xl' }: AppShellProps) {
         </div>
       </header>
 
-      <main id="main-content" className={`mx-auto ${widthClass} px-6 py-8`}>
-        <div data-testid="app-shell-surface" className={`p-6 ${surfaceClassName}`}>
+      {fullBleed ? (
+        <main id="main-content">
           {children}
-        </div>
-      </main>
+        </main>
+      ) : (
+        <main id="main-content" className={`mx-auto ${widthClass} px-6 py-8`}>
+          <div data-testid="app-shell-surface" className={`p-6 ${surfaceClassName}`}>
+            {children}
+          </div>
+        </main>
+      )}
     </div>
   )
 }

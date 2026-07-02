@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { Link, useLocation, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useSearchParams, useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/authStore'
 import { useLoadBoard } from '@/features/loads/hooks/useLoadBoard'
@@ -8,10 +8,8 @@ import { useMyLoadHistory } from '@/features/loads/hooks/useMyLoadHistory'
 import { useProfile } from '@/features/profile/hooks/useProfile'
 import { useAvailableStates } from '@/features/loads/hooks/useAvailableStates'
 import { LoadBoardTab } from '@/features/loads/components/LoadBoardTab'
-import { LoadHistoryTab } from '@/features/loads/components/LoadHistoryTab'
 import { HosWidget } from '@/features/hos/components/HosWidget'
 import { AppShell } from '@/components/AppShell'
-import { Button } from '@/components/ui/Button'
 import { useDieselPrices } from '@/features/market/hooks/useDieselPrices'
 import type { BoardFilter, BoardSortBy, BoardSortDir, EquipmentType } from '@/features/loads/types'
 
@@ -27,42 +25,340 @@ function toBoardSortDir(v: string | null): BoardSortDir {
   return v as BoardSortDir
 }
 
-type Tab = 'board' | 'history'
+type Tab = 'board' | 'stats' | 'settings'
 
-const STATUS_LABELS: Record<string, string> = {
-  CLAIMED: 'Claimed — Ready for Pickup',
-  IN_TRANSIT: 'In Transit',
+/* ─── Styles ────────────────────────────────────────────────────────── */
+const C = {
+  bg:        '#121212',
+  surface:   '#1A1A1A',
+  deep:      '#161616',
+  border:    '#2A2A2A',
+  text:      '#F5F5F5',
+  muted:     '#808080',
+  dim:       '#636E72',
+  accent:    '#C9A876',
+  accentDim: 'rgba(201,168,118,.1)',
+  green:     '#27AE60',
+  amber:     '#F59E0B',
+  purple:    '#7C3AED',
 }
 
-const STATUS_NEXT_STEP: Record<string, string> = {
-  CLAIMED: 'Head to the pickup location and mark the load as picked up when you arrive.',
-  IN_TRANSIT: 'You\'re on the road — mark the load as delivered when you reach the destination.',
+const PHASE_COLORS: Record<string, string> = {
+  CLAIMED:    C.amber,
+  IN_TRANSIT: C.purple,
+}
+const PHASE_LABELS: Record<string, string> = {
+  CLAIMED:    'CLAIMED — AWAITING PICKUP',
+  IN_TRANSIT: 'IN TRANSIT',
+}
+const PHASE_NEXT: Record<string, string> = {
+  CLAIMED:    'Head to the pickup location and mark the load as picked up when you arrive.',
+  IN_TRANSIT: "You're on the road — mark as delivered when you reach the destination.",
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  CLAIMED: 'border-amber-200 bg-amber-50',
-  IN_TRANSIT: 'border-indigo-200 bg-indigo-50',
+/* ─── Sub-components ────────────────────────────────────────────────── */
+function SecLabel({ children, color }: { children: React.ReactNode; color?: string }) {
+  return (
+    <div style={{
+      fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
+      letterSpacing: '.1em', color: color ?? C.dim, marginBottom: 8,
+    }}>
+      {children}
+    </div>
+  )
 }
 
-const STATUS_TEXT_COLORS: Record<string, string> = {
-  CLAIMED: 'text-amber-700',
-  IN_TRANSIT: 'text-indigo-700',
+function DarkCard({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  return (
+    <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8, ...style }}>
+      {children}
+    </div>
+  )
 }
 
+function ActiveHero({ load, onView }: { load: any; onView: () => void }) {
+  const estimatedTotal =
+    load.payRateType === 'PER_MILE' && load.distanceMiles != null
+      ? load.payRate * load.distanceMiles
+      : null
+  const phaseColor = PHASE_COLORS[load.status] ?? C.accent
+  const phaseLabel = PHASE_LABELS[load.status] ?? load.status
+
+  return (
+    <div style={{ background: C.surface, padding: 12, borderBottom: `1px solid ${C.border}` }}>
+      <SecLabel color={C.accent}>YOUR ACTIVE LOAD</SecLabel>
+      <DarkCard style={{ padding: 14 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: phaseColor, marginBottom: 6 }}>
+          {phaseLabel}
+        </div>
+        <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 15, fontWeight: 700, color: C.text, marginBottom: 2 }}>
+          {load.originCity}, {load.originState}
+        </div>
+        <div style={{ fontSize: 13, color: C.accent, marginBottom: 8 }}>
+          → {load.destinationCity}, {load.destinationState}
+        </div>
+
+        {/* Progress bar */}
+        <div style={{ height: 6, background: C.border, borderRadius: 9999, overflow: 'hidden', marginBottom: 4 }}>
+          <div style={{
+            height: '100%',
+            width: load.status === 'CLAIMED' ? '15%' : '55%',
+            background: 'linear-gradient(90deg, #C9A46A, #B08D57)',
+            borderRadius: 9999,
+          }} />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: C.dim, marginBottom: 12 }}>
+          <span>{load.originCity}</span>
+          {load.distanceMiles != null && <span>{load.distanceMiles.toLocaleString()} mi</span>}
+          <span>{load.destinationCity}</span>
+        </div>
+
+        <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.5, marginBottom: 14,
+          padding: '10px 12px', background: C.deep, borderRadius: 6, border: `1px solid ${C.border}` }}>
+          {PHASE_NEXT[load.status] ?? 'View your load for details.'}
+        </div>
+
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            onClick={onView}
+            style={{
+              flex: 1, height: 48, borderRadius: 8, border: '1px solid #7A5F3A',
+              background: 'linear-gradient(180deg,#C9A46A 0%,#B08D57 45%,#8C6D3F 100%)',
+              color: '#fff', fontWeight: 700, fontSize: 13, cursor: 'pointer',
+              boxShadow: 'inset 0 1px 2px rgba(255,255,255,.28), 0 2px 5px rgba(0,0,0,.35)',
+            }}
+          >
+            View My Load
+          </button>
+          {load.shipperContact?.phone && (
+            <a
+              href={`tel:${load.shipperContact.phone}`}
+              style={{
+                flex: 1, height: 48, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: `1px solid ${C.border}`, background: 'transparent', color: C.accent,
+                fontSize: 13, fontWeight: 600, textDecoration: 'none', cursor: 'pointer',
+              }}
+            >
+              Contact Shipper
+            </a>
+          )}
+        </div>
+
+        {estimatedTotal != null && (
+          <div style={{ marginTop: 10, fontSize: 12, color: C.dim, textAlign: 'center' }}>
+            Est. total: <span style={{ color: C.green, fontWeight: 700 }}>
+              ${estimatedTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            </span>
+          </div>
+        )}
+      </DarkCard>
+    </div>
+  )
+}
+
+function DieselTicker({ dieselRegions }: { dieselRegions: Array<{ label: string; fmt: string; delta: string | null; up: boolean; period?: string }> }) {
+  if (dieselRegions.length === 0) return null
+  return (
+    <div style={{
+      background: C.deep, borderBottom: `1px solid ${C.border}`,
+      padding: '8px 12px', display: 'flex', gap: 16, overflowX: 'auto',
+    }}>
+      <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: C.dim, flexShrink: 0 }}>
+        DIESEL
+      </span>
+      {dieselRegions.map((r) => (
+        <span key={r.label} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, flexShrink: 0 }}>
+          <span style={{ color: C.dim }}>{r.label}</span>
+          <span style={{ fontWeight: 700, color: C.text }}>{r.fmt}</span>
+          {r.delta && (
+            <span style={{ fontSize: 10, color: r.up ? '#EF4444' : C.green }}>
+              {r.up ? '↑' : '↓'}{r.delta.replace(/^[+-]/, '')}
+            </span>
+          )}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+function LockedBoardBanner({ load }: { load: any }) {
+  return (
+    <div style={{ padding: 12 }}>
+      <div
+        data-testid="board-lock-banner"
+        style={{
+          background: 'rgba(176,141,87,.08)',
+          border: `1px solid ${C.accent}`,
+          borderRadius: 8, padding: '10px 14px',
+          display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12,
+        }}
+      >
+        <span style={{ fontSize: 18, flexShrink: 0 }}>🔒</span>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: C.accent }}>Load board locked</div>
+          <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>Complete your current load to claim another.</div>
+        </div>
+      </div>
+
+      {/* Active load card in board tab */}
+      <DarkCard style={{ padding: 16 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em',
+          color: PHASE_COLORS[load.status] ?? C.accent, marginBottom: 8 }}>
+          {PHASE_LABELS[load.status] ?? load.status}
+        </div>
+        <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 16, fontWeight: 700, color: C.text, marginBottom: 2 }}>
+          {load.originCity}, {load.originState}
+        </div>
+        <div style={{ fontSize: 14, color: C.accent, marginBottom: 10 }}>
+          → {load.destinationCity}, {load.destinationState}
+        </div>
+        <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.5, marginBottom: 14,
+          padding: '10px 12px', background: C.deep, borderRadius: 6, border: `1px solid ${C.border}` }}>
+          {PHASE_NEXT[load.status] ?? ''}
+        </div>
+        <Link
+          to={`/trucker/loads/${load.id}`}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            height: 52, borderRadius: 8, border: '1px solid #7A5F3A',
+            background: 'linear-gradient(180deg,#C9A46A 0%,#B08D57 45%,#8C6D3F 100%)',
+            color: '#fff', fontWeight: 700, fontSize: 14, textDecoration: 'none',
+          }}
+        >
+          {load.status === 'CLAIMED' ? 'Confirm Pickup →' : 'Confirm Delivery →'}
+        </Link>
+      </DarkCard>
+    </div>
+  )
+}
+
+function MyStatsTab({ profile, history }: { profile: any; history: any }) {
+  const onTime = profile?.onTimePercentage
+  const totalLoads = history?.totalElements ?? 0
+
+  return (
+    <div style={{ padding: 12 }}>
+      {/* Rig card */}
+      <DarkCard style={{ padding: 16, marginBottom: 12 }}>
+        <SecLabel>MY RIG</SecLabel>
+        {profile?.equipmentType ? (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: C.text }}>
+                {profile.equipmentType.replace(/_/g, ' ')}
+              </div>
+              <div style={{ fontSize: 12, color: C.dim, marginTop: 2 }}>Equipment type on file</div>
+            </div>
+            <span style={{
+              fontSize: 11, padding: '2px 8px', borderRadius: 9999, fontWeight: 700,
+              textTransform: 'uppercase', background: 'rgba(39,174,96,.12)', color: C.green, border: `1px solid ${C.green}`,
+            }}>
+              Active
+            </span>
+          </div>
+        ) : (
+          <div style={{ fontSize: 13, color: C.dim }}>
+            No equipment type set.{' '}
+            <Link to="/profile" style={{ color: C.accent }}>Update profile →</Link>
+          </div>
+        )}
+        <Link
+          to="/profile"
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 12,
+            height: 44, borderRadius: 8, border: `1px solid ${C.border}`,
+            background: 'transparent', color: C.accent, fontSize: 13, fontWeight: 600, textDecoration: 'none',
+          }}
+        >
+          Edit Equipment
+        </Link>
+      </DarkCard>
+
+      {/* Stats grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
+        <DarkCard style={{ padding: 14 }}>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 24, fontWeight: 900,
+            color: onTime != null ? (onTime >= 90 ? C.green : onTime >= 75 ? C.amber : '#EF4444') : C.dim,
+            marginBottom: 4 }}>
+            {onTime != null ? `${onTime.toFixed(0)}%` : '—'}
+          </div>
+          <SecLabel>ON-TIME RATE</SecLabel>
+        </DarkCard>
+        <DarkCard style={{ padding: 14 }}>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 24, fontWeight: 900, color: C.text, marginBottom: 4 }}>
+            {totalLoads}
+          </div>
+          <SecLabel>LOADS COMPLETED</SecLabel>
+        </DarkCard>
+      </div>
+
+      {/* HOS */}
+      <DarkCard style={{ padding: 16 }}>
+        <HosWidget />
+      </DarkCard>
+    </div>
+  )
+}
+
+function SettingsTab({ onLogout }: { onLogout: () => void }) {
+  const items = [
+    { icon: '⚙', label: 'Cost Profile', sub: 'Set CPM, fuel & maintenance costs', to: '/profile' },
+    { icon: '📋', label: 'Load History', sub: 'All completed loads', to: null },
+    { icon: '🔔', label: 'Notifications', sub: 'Alerts & email preferences', to: null },
+    { icon: '👤', label: 'Profile', sub: 'DOT number, CDL, insurance', to: '/profile' },
+  ]
+  return (
+    <div style={{ padding: 12 }}>
+      {items.map(({ icon, label, sub, to }) => (
+        <div
+          key={label}
+          onClick={() => { if (to) window.location.href = to }}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px',
+            marginBottom: 8, background: C.surface, border: `1px solid ${C.border}`,
+            borderRadius: 8, cursor: to ? 'pointer' : 'default',
+          }}
+        >
+          <span style={{ fontSize: 22, width: 36, textAlign: 'center', flexShrink: 0 }}>{icon}</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: C.text }}>{label}</div>
+            <div style={{ fontSize: 12, color: C.dim, marginTop: 2 }}>{sub}</div>
+          </div>
+          {to && <span style={{ color: C.accent, fontSize: 16 }}>›</span>}
+        </div>
+      ))}
+      <button
+        onClick={onLogout}
+        style={{
+          width: '100%', height: 48, borderRadius: 8, marginTop: 8,
+          border: `1px solid #3A3A3A`, background: 'transparent',
+          color: '#EF4444', fontSize: 14, fontWeight: 600, cursor: 'pointer',
+        }}
+      >
+        Sign out
+      </button>
+    </div>
+  )
+}
+
+/* ─── Main component ─────────────────────────────────────────────────── */
 export function TruckerDashboard() {
   const user = useAuthStore((s) => s.user)
   const { data: dieselData } = useDieselPrices()
   const location = useLocation()
+  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [searchParams, setSearchParams] = useSearchParams()
   const [tab, setTab] = useState<Tab>('board')
   const [page, setPage] = useState(0)
-  const [historyPage, setHistoryPage] = useState(0)
+  const [historyPage] = useState(0)
+
+  const { data: profile } = useProfile()
 
   const filter: BoardFilter = {
     originState: searchParams.get('origin') ?? undefined,
     destinationState: searchParams.get('dest') ?? undefined,
-    equipmentType: (user?.equipmentType as EquipmentType) ?? undefined,
+    equipmentType: ((user?.equipmentType ?? profile?.equipmentType) as EquipmentType) ?? undefined,
     pickupDate: searchParams.get('pickupDate') ?? undefined,
     deliveryDate: searchParams.get('deliveryDate') ?? undefined,
     sortBy: toBoardSortBy(searchParams.get('sortBy')),
@@ -74,7 +370,7 @@ export function TruckerDashboard() {
       const current: BoardFilter = {
         originState: prev.get('origin') ?? undefined,
         destinationState: prev.get('dest') ?? undefined,
-        equipmentType: (user?.equipmentType as EquipmentType) ?? undefined,
+        equipmentType: ((user?.equipmentType ?? profile?.equipmentType) as EquipmentType) ?? undefined,
         pickupDate: prev.get('pickupDate') ?? undefined,
         deliveryDate: prev.get('deliveryDate') ?? undefined,
         sortBy: toBoardSortBy(prev.get('sortBy')),
@@ -91,22 +387,15 @@ export function TruckerDashboard() {
       return params
     }, { replace: true })
     setPage(0)
-  }, [setSearchParams, user?.equipmentType])
+  }, [setSearchParams, user?.equipmentType, profile?.equipmentType])
 
   const { data, isLoading, isError } = useLoadBoard(page, filter)
   const { data: activeLoad, isLoading: isLoadingActiveLoad } = useMyActiveLoad()
-  const { data: profile } = useProfile()
   const { data: availableStates } = useAvailableStates()
   const { data: history } = useMyLoadHistory(historyPage)
   const activeLoadRef = useRef<HTMLElement>(null)
 
   const hasActiveLoad = !isLoadingActiveLoad && !!activeLoad
-  const hasCostProfile = !!(
-    profile?.monthlyFixedCosts != null ||
-    profile?.fuelCostPerGallon != null ||
-    profile?.milesPerGallon != null ||
-    profile?.maintenanceCostPerMile != null
-  )
 
   useEffect(() => {
     if (location.state?.scrollToActive && activeLoad && activeLoadRef.current) {
@@ -130,178 +419,120 @@ export function TruckerDashboard() {
     })
   }
 
-  const estimatedTotal =
-    activeLoad?.payRateType === 'PER_MILE' && activeLoad.distanceMiles != null
-      ? activeLoad.payRate * activeLoad.distanceMiles
-      : null
-
   const dieselRegions = useMemo(() => {
     if (!dieselData?.available) return []
     const fmt = (p: number) => `$${p.toFixed(2)}`
-    const delta = (d: number | null | undefined) => d != null ? `${d >= 0 ? '+' : ''}$${Math.abs(d).toFixed(2)}` : null
+    const delta = (d: number | null | undefined) => d != null ? `${d >= 0 ? '+' : ''}${Math.abs(d).toFixed(2)}` : null
     return [
       { label: 'East',       price: dieselData.eastPrice,    d: dieselData.eastDelta },
       { label: 'Midwest',    price: dieselData.midwestPrice, d: dieselData.midwestDelta },
-      { label: 'Gulf Coast', price: dieselData.southPrice,   d: dieselData.southDelta },
+      { label: 'Gulf',       price: dieselData.southPrice,   d: dieselData.southDelta },
       { label: 'Rocky Mtn',  price: dieselData.rockyPrice,   d: dieselData.rockyDelta },
       { label: 'West',       price: dieselData.westPrice,    d: dieselData.westDelta },
-    ].filter(r => r.price != null).map(r => ({ ...r, fmt: fmt(r.price!), delta: delta(r.d), up: (r.d ?? 0) > 0 }))
+    ].filter(r => r.price != null).map(r => ({
+      label: r.label, fmt: fmt(r.price!), delta: delta(r.d), up: (r.d ?? 0) > 0,
+    }))
   }, [dieselData])
 
+  const TABS = [
+    { id: 'board' as Tab,    icon: '⊞', label: 'Board' },
+    { id: 'stats' as Tab,    icon: '📊', label: 'My Stats' },
+    { id: 'settings' as Tab, icon: '⚙', label: 'Settings' },
+  ]
+
+  function handleLogout() {
+    navigate('/login')
+  }
+
   return (
-    <AppShell maxWidth="5xl">
-      {dieselRegions.length > 0 && (
-        <div className="mb-4 flex flex-wrap items-center gap-x-6 gap-y-1 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-xs">
-          <span className="font-semibold uppercase tracking-wide text-gray-500">Diesel Prices</span>
-          {dieselRegions.map(r => (
-            <span key={r.label} className="flex items-center gap-1">
-              <span className="text-gray-500">{r.label}</span>
-              <span className="font-semibold text-gray-900">{r.fmt}</span>
-              {r.delta && <span className={r.up ? 'text-red-500' : 'text-green-600'}>{r.delta}</span>}
-            </span>
-          ))}
-          {dieselData?.period && <span className="ml-auto text-gray-400">Week of {dieselData.period}</span>}
-        </div>
-      )}
-      <div className="space-y-8" data-testid="trucker-dashboard">
+    <AppShell fullBleed>
+      <div
+        data-testid="trucker-dashboard"
+        style={{
+          background: C.bg,
+          minHeight: 'calc(100vh - 56px)',
+          display: 'flex',
+          flexDirection: 'column',
+          maxWidth: 480,
+          margin: '0 auto',
+        }}
+      >
+        {/* Active Load Hero */}
         {activeLoad && (
-          <section ref={activeLoadRef}>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">Your Active Load</h2>
-            <div className={`rounded-xl border p-5 ${STATUS_COLORS[activeLoad.status] ?? 'border-primary-200 bg-primary-50'}`}>
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${STATUS_TEXT_COLORS[activeLoad.status] ?? 'text-primary-700'}`}>
-                    {STATUS_LABELS[activeLoad.status] ?? activeLoad.status}
-                  </p>
-                  <p className="text-gray-900 font-semibold text-lg truncate">
-                    {activeLoad.originCity}, {activeLoad.originState} → {activeLoad.destinationCity}, {activeLoad.destinationState}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-4 mt-1.5 text-sm text-gray-600">
-                    {activeLoad.distanceMiles != null && (
-                      <span>{activeLoad.distanceMiles.toLocaleString()} mi</span>
-                    )}
-                    <span>
-                      ${activeLoad.payRate.toLocaleString()}
-                      <span className="text-xs text-gray-400 ml-0.5">
-                        {activeLoad.payRateType === 'PER_MILE' ? '/mi' : ' flat'}
-                      </span>
-                    </span>
-                    {estimatedTotal != null && (
-                      <span className="font-medium text-gray-800">
-                        ≈ ${estimatedTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })} total
-                      </span>
-                    )}
-                    <span>Pickup {new Date(activeLoad.pickupFrom).toLocaleDateString()}</span>
-                    <span>Deliver by {new Date(activeLoad.deliveryTo).toLocaleDateString()}</span>
-                  </div>
-                </div>
-                <Link to={`/trucker/loads/${activeLoad.id}`}>
-                  <Button>View Load</Button>
-                </Link>
-              </div>
-              {activeLoad.shipperContact && (
-                <div className="mt-4 pt-4 border-t border-current border-opacity-20 flex flex-wrap gap-x-6 gap-y-1 text-sm">
-                  <span className="font-medium text-gray-700">
-                    {activeLoad.shipperContact.businessName ?? activeLoad.shipperContact.name}
-                  </span>
-                  {activeLoad.shipperContact.phone && (
-                    <a href={`tel:${activeLoad.shipperContact.phone}`} className="text-primary-600 hover:underline">
-                      {activeLoad.shipperContact.phone}
-                    </a>
-                  )}
-                  <a href={`mailto:${activeLoad.shipperContact.email}`} className="text-primary-600 hover:underline">
-                    {activeLoad.shipperContact.email}
-                  </a>
-                </div>
-              )}
-              {STATUS_NEXT_STEP[activeLoad.status] && (
-                <p className={`mt-3 text-sm ${STATUS_TEXT_COLORS[activeLoad.status]}`}>
-                  {STATUS_NEXT_STEP[activeLoad.status]}
-                </p>
-              )}
-            </div>
+          <section ref={activeLoadRef as any}>
+            <ActiveHero load={activeLoad} onView={() => navigate(`/trucker/loads/${activeLoad.id}`)} />
           </section>
         )}
 
-        <HosWidget />
+        {/* Diesel Ticker */}
+        <DieselTicker dieselRegions={dieselRegions} />
 
-        {!user?.equipmentType && (
-          <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            No equipment type set on your profile — you're seeing all open loads.{' '}
-            <Link to="/profile" className="font-medium underline hover:text-amber-900">Update your profile</Link>{' '}
-            to see only loads that match your truck.
-          </div>
-        )}
+        {/* Tab content — scrollable */}
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          {tab === 'board' && (
+            hasActiveLoad ? (
+              <LockedBoardBanner load={activeLoad} />
+            ) : (
+              <div style={{ padding: '0 0 12px' }}>
+                <LoadBoardTab
+                  filter={filter}
+                  setFilter={setFilter}
+                  setPage={setPage}
+                  data={data}
+                  isLoading={isLoading}
+                  isError={isError}
+                  hasActiveLoad={hasActiveLoad}
+                  availableStates={availableStates}
+                  onRefresh={handleRefresh}
+                  onSort={handleSort}
+                  userEquipmentType={(user?.equipmentType ?? profile?.equipmentType) as EquipmentType | undefined}
+                />
+              </div>
+            )
+          )}
 
-        {profile !== undefined && !hasCostProfile && (
-          <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-4">
-            <p className="text-sm font-semibold text-blue-900">
-              Set up your cost profile to see profitability ratings on loads.
-            </p>
-            <p className="text-xs text-blue-700 mt-1">
-              Without a cost profile, RPM badges and profitability breakdowns will be empty.
-            </p>
-            <Link to="/profile" className="mt-2 inline-block text-sm font-medium text-blue-700 underline hover:text-blue-900">
-              Set up cost profile →
-            </Link>
-          </div>
-        )}
+          {tab === 'stats' && (
+            <MyStatsTab profile={profile} history={history} />
+          )}
 
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex gap-6" aria-label="Dashboard tabs">
-            {([
-              { id: 'board', label: 'Load Board' },
-              { id: 'history', label: 'History' },
-            ] as { id: Tab; label: string }[]).map(({ id, label }) => (
-              <button
-                key={id}
-                onClick={() => setTab(id)}
-                className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
-                  tab === id
-                    ? 'border-primary-600 text-primary-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-                aria-selected={tab === id}
-                role="tab"
-              >
-                {label}
-                {id === 'history' && history && history.totalElements > 0 && (
-                  <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                    {history.totalElements}
-                  </span>
-                )}
-                {id === 'board' && data && data.totalElements > 0 && (
-                  <span className="ml-2 rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
-                    {data.totalElements}
-                  </span>
-                )}
-              </button>
-            ))}
-          </nav>
+          {tab === 'settings' && (
+            <SettingsTab onLogout={handleLogout} />
+          )}
         </div>
 
-        {tab === 'board' && (
-          <LoadBoardTab
-            filter={filter}
-            setFilter={setFilter}
-            setPage={setPage}
-            data={data}
-            isLoading={isLoading}
-            isError={isError}
-            hasActiveLoad={hasActiveLoad}
-            availableStates={availableStates}
-            onRefresh={handleRefresh}
-            onSort={handleSort}
-            userEquipmentType={user?.equipmentType as EquipmentType | undefined}
-          />
-        )}
-
-        {tab === 'history' && (
-          <LoadHistoryTab
-            history={history}
-            setHistoryPage={setHistoryPage}
-          />
-        )}
+        {/* Bottom tab bar — fixed style at bottom of the flex column */}
+        <nav
+          style={{
+            display: 'flex',
+            background: C.surface,
+            borderTop: `1px solid ${C.border}`,
+            flexShrink: 0,
+          }}
+          aria-label="Main navigation"
+        >
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              aria-selected={tab === t.id}
+              role="tab"
+              style={{
+                flex: 1, height: 56, background: 'transparent', border: 'none',
+                color: tab === t.id ? C.text : C.dim,
+                fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                fontFamily: 'var(--font-body, Inter)',
+                textTransform: 'uppercase', letterSpacing: '.05em',
+                borderTop: `2px solid ${tab === t.id ? C.accent : 'transparent'}`,
+                transition: 'all 150ms',
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                justifyContent: 'center', gap: 3,
+              }}
+            >
+              <span style={{ fontSize: 16 }}>{t.icon}</span>
+              <span>{t.label}</span>
+            </button>
+          ))}
+        </nav>
       </div>
     </AppShell>
   )

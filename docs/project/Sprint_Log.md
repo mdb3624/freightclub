@@ -87,7 +87,7 @@
 | US-841 | UI Primitive Styling (Button, Input, StatusBadge) | ✅ COMPLETED | 2026-06-30 | #11 | ✅ MERGED TO MAIN |
 | US-842 | Layout Shell Reskin (AppShell header, legacy-dark removal) | ✅ COMPLETED | 2026-06-30 | #12 | ✅ MERGED TO MAIN |
 | US-843 | Shipper Dashboard Reskin (KPI cards, load table) | ✅ COMPLETED | 2026-06-30 | #13 | ✅ MERGED TO MAIN |
-| US-844 | Carrier Load Board UX (equipment filter, board lock, post-action nav) | TO DO | — | — | Depends on US-842 |
+| US-844 | Carrier Load Board UX (equipment filter, board lock, post-action nav) | ✅ COMPLETED | 2026-07-02 | #16 | ✅ REVIEWER_PASS (2026-07-02) + LIBRARIAN (2026-07-02) |
 | US-845 | Load Creation Form Fields | TO DO | — | — | Depends on US-842 |
 | US-846 | Shipper Action Zone Restructure | ✅ COMPLETED | 2026-06-30 | #13 | ✅ REVIEWER_PASS (2026-07-02) + LIBRARIAN (2026-07-02) |
 | US-847 | Persona Token Migration | BACKLOG (P2) | — | — | Optional; deferred |

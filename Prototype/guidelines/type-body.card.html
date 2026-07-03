@@ -1,0 +1,41 @@
+<!-- @dsCard group="Type" viewport="700x200" name="Body Type — Inter" subtitle="UI text, data cells, inputs, labels — Inter typeface" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--color-canvas); font-family: var(--font-body); padding: 16px 20px; display: flex; flex-direction: column; gap: 6px; }
+  .row { display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid var(--color-border-secondary); padding-bottom: 5px; }
+  .specimen { color: var(--color-text-primary); }
+  .meta { font-size: 11px; color: var(--color-text-tertiary); font-family: monospace; white-space: nowrap; min-width: 140px; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <span class="meta">14px · 400 · Inter</span>
+    <span class="specimen" style="font-size:14px">Houston, TX → Dallas, TX · 265 mi · $310 flat · Pickup Jun 30</span>
+  </div>
+  <div class="row">
+    <span class="meta">14px · 600 · Inter</span>
+    <span class="specimen" style="font-size:14px;font-weight:600">Jake Morrison · owner@trucking.com · (512) 555-0182</span>
+  </div>
+  <div class="row">
+    <span class="meta">12px · 400 · Inter</span>
+    <span class="specimen" style="font-size:12px;color:var(--color-text-secondary)">No equipment type set — update your profile to filter loads.</span>
+  </div>
+  <div class="row">
+    <span class="meta">12px · italic · #636E72</span>
+    <span class="specimen" style="font-size:12px;font-style:italic;color:var(--color-text-tertiary)">Enter dollars per mile for your region</span>
+  </div>
+  <div class="row">
+    <span class="meta">11px · 600 · UPPERCASE</span>
+    <span class="specimen" style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-text-tertiary)">Route &nbsp; Distance &nbsp; Pickup Date &nbsp; Equipment &nbsp; Pay &nbsp; RPM</span>
+  </div>
+  <div class="row" style="border-bottom:none">
+    <span class="meta">monospace</span>
+    <span class="specimen" style="font-family:monospace;font-size:13px;color:var(--color-text-secondary)">$2.45/mi &nbsp; 265 mi &nbsp; FLATBED &nbsp; NET_30</span>
+  </div>
+</body>
+</html>

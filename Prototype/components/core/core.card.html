@@ -1,0 +1,89 @@
+<!-- @dsCard group="Components" viewport="700x520" name="Core Components" subtitle="Button · Badge · StatusBadge · Avatar · ProfitabilityBadge" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  body { margin: 0; background: var(--color-canvas); font-family: var(--font-body); }
+  @keyframes fc-spin { to { transform: rotate(360deg); } }
+  @keyframes fc-shimmer { 0%,100%{background-position:200% 0} 50%{background-position:0% 0} }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .section { padding: 12px 16px; border-bottom: 1px solid var(--color-border-secondary); }
+  .section:last-child { border-bottom: none; }
+  .label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-tertiary); margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { Button, Badge, StatusBadge, Avatar, Skeleton, ProfitabilityBadge, ErrorBanner, Input, Card } = window.FreightClubDesignSystem_ab1e6b;
+
+function Demo() {
+  return (
+    <div style={{ background: 'var(--color-canvas)' }}>
+      <div className="section">
+        <div className="label">Button — variants &amp; sizes</div>
+        <div className="row">
+          <Button size="sm">Small</Button>
+          <Button size="md">Medium</Button>
+          <Button size="lg">Large (48px)</Button>
+          <Button variant="secondary">Secondary</Button>
+          <Button variant="ghost">Ghost</Button>
+          <Button variant="danger">Danger</Button>
+          <Button isLoading>Loading</Button>
+          <Button disabled>Disabled</Button>
+        </div>
+      </div>
+      <div className="section">
+        <div className="label">StatusBadge — all load statuses</div>
+        <div className="row">
+          {['DRAFT','OPEN','CLAIMED','IN_TRANSIT','DELIVERED','SETTLED','CANCELLED'].map(s => <StatusBadge key={s} status={s} />)}
+        </div>
+      </div>
+      <div className="section">
+        <div className="label">Badge — semantic variants</div>
+        <div className="row">
+          <Badge variant="success" dot>Delivered</Badge>
+          <Badge variant="warning" dot>At Risk</Badge>
+          <Badge variant="error" dot>Overdue</Badge>
+          <Badge variant="info">In Transit</Badge>
+          <Badge variant="bronze">Quick Pay</Badge>
+          <Badge variant="rpm_high">$2.45/mi</Badge>
+          <Badge variant="rpm_neutral">$1.22/mi</Badge>
+          <Badge variant="rpm_low">$0.87/mi</Badge>
+        </div>
+      </div>
+      <div className="section">
+        <div className="label">Avatar · ProfitabilityBadge · Skeleton</div>
+        <div className="row" style={{ alignItems: 'flex-end' }}>
+          <Avatar firstName="Jake" lastName="Morrison" size="sm" />
+          <Avatar firstName="Jake" lastName="Morrison" size="md" />
+          <Avatar firstName="Jake" lastName="Morrison" size="lg" />
+          <Avatar firstName="Sarah" lastName="Chen" size="lg" persona="carrier" />
+          <div style={{ width: 1, height: 40, background: 'var(--color-border-secondary)', margin: '0 4px' }} />
+          <ProfitabilityBadge rpm={2.45} minRpm={1.80} />
+          <ProfitabilityBadge rpm={1.85} minRpm={1.80} />
+          <ProfitabilityBadge rpm={1.20} minRpm={1.80} />
+          <ProfitabilityBadge rpm={1.55} />
+          <div style={{ width: 1, height: 40, background: 'var(--color-border-secondary)', margin: '0 4px' }} />
+          <Skeleton variant="badge" />
+          <Skeleton variant="text" width={120} />
+          <Skeleton variant="avatar" />
+        </div>
+      </div>
+      <div className="section">
+        <div className="label">ErrorBanner</div>
+        <ErrorBanner message="Unable to load loads. Check your connection and try again." />
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script>
+</body>
+</html>

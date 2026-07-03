@@ -1,0 +1,35 @@
+<!-- @dsCard group="Brand" viewport="700x180" name="MDB Logo" subtitle="MDB Integrated Logistics — primary wordmark + favicon" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--color-canvas); font-family: var(--font-body); padding: 20px; display: flex; gap: 24px; align-items: center; }
+  .panel { background: white; border: 1px solid var(--color-border-primary); border-radius: 8px; padding: 16px 24px; display: flex; align-items: center; gap: 16px; flex: 1; }
+  .dark-panel { background: #121212; border: 1px solid #2A2A2A; border-radius: 8px; padding: 16px 24px; display: flex; align-items: center; gap: 16px; flex: 1; }
+  .label { font-size: 11px; color: var(--color-text-tertiary); margin-top: 4px; }
+</style>
+</head>
+<body>
+  <div class="panel">
+    <img src="../assets/logo.png" style="height:64px;width:auto" alt="MDB Integrated Logistics logo">
+    <div>
+      <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary)">web_logo.png</div>
+      <div class="label">Primary wordmark — light bg</div>
+    </div>
+  </div>
+  <div class="dark-panel">
+    <img src="../assets/logo-mobile.png" style="height:48px;width:auto" alt="MDB mobile logo">
+    <div>
+      <div style="font-size:12px;font-weight:600;color:#C9A876">web_logo_mobile.png</div>
+      <div style="font-size:11px;color:#636E72;margin-top:4px">Mobile / carrier header</div>
+    </div>
+  </div>
+  <div style="background:white;border:1px solid var(--color-border-primary);border-radius:8px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px">
+    <img src="../assets/favicon.png" style="height:48px;width:auto" alt="Favicon">
+    <div class="label" style="text-align:center">Favicon</div>
+  </div>
+</body>
+</html>

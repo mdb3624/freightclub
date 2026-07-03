@@ -92,8 +92,8 @@
 --font-size-base: 16px;
 --font-size-lg:   18px;
 --font-size-xl:   24px;
---font-size-kpi:  40px;
---font-size-hero: 56px;
+--font-size-kpi:  40px;   /* Stat card secondary numbers (e.g. cost/mile display) */
+--font-size-hero: 56px;  /* Primary KPI hero numbers (use this for dashboard KPIs) */
 
 /* Weights */
 --font-weight-regular:   400;
@@ -113,7 +113,7 @@
 - **Section headers:** Sora, ALL CAPS, `letter-spacing: 0.05em` or wider
 - **Table headers:** `12px`, `font-weight: 600`, ALL CAPS, `color: #636E72`
 - **Body minimum:** `14px` (desktop)
-- **KPI numbers:** Sora, `font-size: 56px`, `font-weight: 900`
+- **KPI hero numbers:** Sora, `var(--font-size-hero)` = `56px`, `font-weight: 900` — use `--font-size-hero`, not `--font-size-kpi`
 - **Data cells:** Inter, `14px`, `color: #1A1A1A`
 
 ---

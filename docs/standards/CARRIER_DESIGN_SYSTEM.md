@@ -142,7 +142,7 @@ function getRpmColor(rpm: number, minRpm: number): string {
 - **Tab labels:** Inter, `12px`, `font-weight: 600`, ALL CAPS, `color: #C9A876` (active: `#B08D57`)
 - **Body text:** Inter, `14px`, `color: #F5F5F5`
 - **Muted labels:** Inter, `10–12px`, `color: #C9A876`
-- **Earnings hero:** Sora, `40px+`, `font-weight: 900`, `color: #27AE60`
+- **Earnings hero:** Sora, `56px` (`var(--font-size-hero)`), `font-weight: 900`, `color: #27AE60`
 
 ---
 
@@ -172,9 +172,10 @@ function getRpmColor(rpm: number, minRpm: number): string {
 ## Border & Radius Tokens
 
 ```css
+--radius-input:  4px;      /* Form inputs (shared with shipper) */
 --radius-button: 8px;      /* Carrier buttons (larger than shipper's 4px) */
 --radius-widget: 8px;      /* Cards, panels */
---radius-pill:   9999px;   /* Badges, tags */
+--radius-pill:   9999px;   /* Badges, tags, pill buttons */
 --radius-full:   50%;      /* Avatars */
 
 --carrier-border-default: 1px solid #2A2A2A;
@@ -254,6 +255,8 @@ font-weight: 700;
 ```
 
 ### Secondary Button
+> **Note (2026-07-03):** CHG-US730-002 (2026-06-25) retired the transparent variant in favour of bronze-gradient fill. The prototype design system (the authoritative source per 2026-07-03 design system update) specifies transparent secondary. This reinstates the prototype spec. Existing carrier components using `variant="secondary"` should be audited against this updated standard.
+
 ```css
 height: 48px;
 padding: 12px 24px;
@@ -271,7 +274,7 @@ height: 36px;
 padding: 8px 16px;
 background: linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%);
 border: 1px solid #7A5F3A;
-border-radius: 24px;
+border-radius: 9999px;   /* pill — matches --radius-pill token */
 color: #FFFFFF;
 font-size: 12px;
 font-weight: 600;
@@ -343,7 +346,7 @@ Text secondary: "Complete your current load to claim another" (12px, #C9A876)
 
 ### Stat Grid (My Stats Tab)
 ```
-Earnings hero: Sora, 40px+, font-weight: 900, color: #27AE60
+Earnings hero: Sora, 56px (--font-size-hero), font-weight: 900, color: #27AE60
 
 4-stat grid (2×2):
   Cell size: min 80×80px

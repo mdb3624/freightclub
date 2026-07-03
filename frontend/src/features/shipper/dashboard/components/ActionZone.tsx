@@ -271,7 +271,13 @@ const LoadSelectedState: React.FC<LoadSelectedStateProps> = ({
       {/* Find Carriers CTA */}
       <button
         data-testid="action-zone-find-carriers"
-        onClick={() => navigate(`/carriers?loadId=${shipment.loadId}`)}
+        onClick={() => {
+          const p = new URLSearchParams();
+          if (shipment.origin) p.set('origin', shipment.origin);
+          if (shipment.destination) p.set('dest', shipment.destination);
+          if (shipment.equipment) p.set('equip', shipment.equipment);
+          navigate(`/carriers?${p.toString()}`);
+        }}
         style={{
           width: '100%', textAlign: 'center', padding: '9px 0', fontSize: 13,
           fontWeight: 600, color: '#7A5F3A',

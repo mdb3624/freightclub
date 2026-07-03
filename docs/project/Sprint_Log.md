@@ -96,8 +96,9 @@
 
 **REVIEWER_PASS US-846 (2026-07-02):** All 6 AC satisfied. CI green (backend 867/867, frontend 261/261, E2E 102/102). Two low-severity debt items: (1) preferred carriers list shows `carrierId` string — AC specifies name/equipment/on-time rate; (2) secondary grid buttons ≈28–30px height, below 44px desktop standard, no `boundingBox()` assertion. Neither blocks hard gates.
 
-**Design System Docs Refresh (2026-07-03):** `docs/standards/SHIPPER_DESIGN_SYSTEM.md` (created), `docs/standards/CARRIER_DESIGN_SYSTEM.md` (rewritten v2.0), `docs/standards/ui-standards.md` (created) — all rewritten from authoritative `Prototype/tokens/` source files. REVIEWER_PASS (2026-07-03). Four technical debt items logged: Tailwind config missing `carrier-surface-2`/`carrier-border-glow` tokens, `shipper-border` Tailwind token conflicts with `#D0D0D0` spec, CLAUDE.md `ui-standards.md` label stale, carrier `variant="secondary"` Button component needs audit per CHG-US730-002 reversal.
+**REVIEWER_PASS US-845 (2026-07-03):** All 5 AC satisfied. LoadForm restyled to SHIPPER_DESIGN_SYSTEM spec: 2-column layout (1fr + 320px sticky preview), section panels `1px solid #D0D0D0` / `8px` radius, live preview panel (completion meter, board preview card, tips), sticky footer (Cancel/Save as Draft/Publish). role="alert" added to all FieldError components. E2E: 10/10 passed including all adversarial cases (320px no-overflow, read-only distance, validation order errors).
 
+**Design System Docs Refresh (2026-07-03):** `docs/standards/SHIPPER_DESIGN_SYSTEM.md` (created), `docs/standards/CARRIER_DESIGN_SYSTEM.md` (rewritten v2.0), `docs/standards/ui-standards.md` (created) — all rewritten from authoritative `Prototype/tokens/` source files. REVIEWER_PASS (2026-07-03). Four technical debt items logged: Tailwind config missing `carrier-surface-2`/`carrier-border-glow` tokens, `shipper-border` Tailwind token conflicts with `#D0D0D0` spec, CLAUDE.md `ui-standards.md` label stale, carrier `variant="secondary"` Button component needs audit per CHG-US730-002 reversal.
 ---
 
 ## REVIEWER_PASS: PR #7 — CHG-US730-002/003/004/005, CHG-US730-006 (open) — 2026-06-26

@@ -2,17 +2,14 @@ import { LoadBoardTable } from './LoadBoardTable'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { TableSkeleton } from '@/components/ui/Skeleton'
-import type { AvailableStates, BoardFilter, BoardSortBy, EquipmentType, LoadSummary, Page } from '@/features/loads/types'
+import type { BoardFilter, BoardSortBy, EquipmentType, LoadSummary, Page } from '@/features/loads/types'
 
 interface Props {
   filter: BoardFilter
-  setFilter: (updater: (prev: BoardFilter) => BoardFilter) => void
   setPage: React.Dispatch<React.SetStateAction<number>>
   data: Page<LoadSummary> | undefined
   isLoading: boolean
   isError: boolean
-  hasActiveLoad: boolean
-  availableStates: AvailableStates | undefined
   onRefresh: () => void
   onSort: (col: BoardSortBy) => void
   userEquipmentType: EquipmentType | undefined
@@ -56,8 +53,8 @@ const COUNT_LABEL_STYLE: React.CSSProperties = {
 }
 
 export function LoadBoardTab({
-  filter, setFilter, setPage, data, isLoading, isError,
-  availableStates, onRefresh, onSort, userEquipmentType,
+  filter, setPage, data, isLoading, isError,
+  onRefresh, onSort, userEquipmentType,
 }: Props) {
   const loadCount = data?.totalElements ?? 0
   const equipmentLabel = userEquipmentType
@@ -66,7 +63,7 @@ export function LoadBoardTab({
 
   return (
     <section>
-      {/* AC-1: Read-only equipment badge — inline row matching carrier UI kit */}
+      {/* Read-only equipment badge — profile-driven, no filter controls */}
       {equipmentLabel && (
         <div style={EQUIPMENT_ROW_STYLE} data-testid="equipment-badge">
           <span style={EQUIPMENT_LABEL_STYLE}>YOUR EQUIPMENT</span>
@@ -76,80 +73,10 @@ export function LoadBoardTab({
       )}
 
       <div className="mb-4 flex items-center justify-between">
-        {/* AC-1: Load count label */}
         <p style={COUNT_LABEL_STYLE} data-testid="load-count-label">
           {loadCount} LOADS MATCHING YOUR RIG
         </p>
         <Button variant="secondary" onClick={onRefresh}>Refresh</Button>
-      </div>
-
-      <div className="mb-4 flex flex-wrap gap-3 items-end">
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Origin State</label>
-          <select
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-            value={filter.originState ?? ''}
-            onChange={(e) => {
-              setFilter((f) => ({ ...f, originState: e.target.value || undefined }))
-              setPage(0)
-            }}
-          >
-            <option value="">Any</option>
-            {(availableStates?.originStates ?? []).map((abbr) => (
-              <option key={abbr} value={abbr}>{abbr}</option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Dest. State</label>
-          <select
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-            value={filter.destinationState ?? ''}
-            onChange={(e) => {
-              setFilter((f) => ({ ...f, destinationState: e.target.value || undefined }))
-              setPage(0)
-            }}
-          >
-            <option value="">Any</option>
-            {(availableStates?.destinationStates ?? []).map((abbr) => (
-              <option key={abbr} value={abbr}>{abbr}</option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Pickup Date</label>
-          <input
-            type="date"
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-            value={filter.pickupDate ?? ''}
-            onChange={(e) => {
-              setFilter((f) => ({ ...f, pickupDate: e.target.value || undefined }))
-              setPage(0)
-            }}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Delivery Date</label>
-          <input
-            type="date"
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-            value={filter.deliveryDate ?? ''}
-            onChange={(e) => {
-              setFilter((f) => ({ ...f, deliveryDate: e.target.value || undefined }))
-              setPage(0)
-            }}
-          />
-        </div>
-        {(filter.originState || filter.destinationState || filter.pickupDate || filter.deliveryDate) && (
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setFilter(() => ({ equipmentType: userEquipmentType }))
-            }}
-          >
-            Clear Filters
-          </Button>
-        )}
       </div>
 
       {isError && <ErrorBanner message="Failed to load the board. Please try again." />}

@@ -83,14 +83,14 @@
 
 | Story ID | Title | Status | Merge Date | PR | Sign-Off |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| US-840 | Design Token Import (CSS variables, Tailwind extension) | ✅ COMPLETED | 2026-06-30 | #10 | ✅ MERGED TO MAIN |
-| US-841 | UI Primitive Styling (Button, Input, StatusBadge) | ✅ COMPLETED | 2026-06-30 | #11 | ✅ MERGED TO MAIN |
-| US-842 | Layout Shell Reskin (AppShell header, legacy-dark removal) | ✅ COMPLETED | 2026-06-30 | #12 | ✅ MERGED TO MAIN |
-| US-843 | Shipper Dashboard Reskin (KPI cards, load table) | ✅ COMPLETED | 2026-06-30 | #13 | ✅ MERGED TO MAIN |
-| US-844 | Carrier Load Board UX (equipment filter, board lock, post-action nav) | ✅ COMPLETED | 2026-07-02 | #16 | ✅ REVIEWER_PASS (2026-07-02) + LIBRARIAN (2026-07-02) |
-| US-845 | Load Creation Form Fields | TO DO | — | — | Depends on US-842 |
-| US-846 | Shipper Action Zone Restructure | ✅ COMPLETED | 2026-06-30 | #13 | ✅ REVIEWER_PASS (2026-07-02) + LIBRARIAN (2026-07-02) |
-| US-847 | Persona Token Migration | BACKLOG (P2) | — | — | Optional; deferred |
+| US-840 | Design Token Import (CSS variables, Tailwind extension) | ✅ COMPLETED | 2026-06-30 | #10 | ✅ MERGED TO MAIN — Jira: FREIG-95 |
+| US-841 | UI Primitive Styling (Button, Input, StatusBadge) | ✅ COMPLETED | 2026-06-30 | #11 | ✅ MERGED TO MAIN — Jira: FREIG-96 |
+| US-842 | Layout Shell Reskin (AppShell header, legacy-dark removal) | ✅ COMPLETED | 2026-06-30 | #12 | ✅ MERGED TO MAIN — Jira: FREIG-97 |
+| US-843 | Shipper Dashboard Reskin (KPI cards, load table) | ✅ COMPLETED | 2026-06-30 | #13 | ✅ MERGED TO MAIN — Jira: FREIG-98 |
+| US-844 | Carrier Load Board UX (equipment filter, board lock, post-action nav) | ✅ COMPLETED | 2026-07-02 | #16 | ✅ REVIEWER_PASS (2026-07-02) + LIBRARIAN (2026-07-02) — Jira: FREIG-99 |
+| US-845 | Load Creation Form Fields | ✅ COMPLETED | 2026-07-03 | — | ✅ REVIEWER_PASS (2026-07-03) + LIBRARIAN (2026-07-03) — Jira: FREIG-100 |
+| US-846 | Shipper Action Zone Restructure | ✅ COMPLETED | 2026-06-30 | #13 | ✅ REVIEWER_PASS (2026-07-02) + LIBRARIAN (2026-07-02) — Jira: FREIG-101 |
+| US-847 | Persona Token Migration | BACKLOG (P2) | — | — | Optional; deferred — Jira: FREIG-102 |
 
 **Post-merge CI fix:** PR #15 (`fix/e2e-post-redesign-ci`, merged 2026-07-02) corrected 4 categories of E2E failures introduced at merge: ESM `__dirname` shim in US-840 spec, US-843 AC-2 testid removed in US-846 (icon prop dropped from KPITile), US-843-kpi-tiles `toFixed(1)` assertion, US-841 focus border mid-transition timing. Also fixed 500 on test user cleanup: URL mismatch in `TestDataSeeder` + no-op `deleteTestUser` implementation → now performs real soft delete via `UserRepository`.
 

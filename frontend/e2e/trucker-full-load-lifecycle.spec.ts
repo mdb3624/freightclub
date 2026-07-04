@@ -157,6 +157,12 @@ test.describe('US-730 carrier full load lifecycle', () => {
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(baseLoad(currentStatus)) }))
     await page.route(`**/api/v1/board/${LOAD_ID}/events`, (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) }))
+    await page.route(`**/api/v1/board/${LOAD_ID}/payment`, (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'PENDING', paidAt: null, truckerPayoutCents: 60000 }),
+      }))
 
     await page.route(`**/api/v1/loads/${LOAD_ID}/claim`, (route) => {
       currentStatus = 'CLAIMED'
@@ -254,6 +260,7 @@ test.describe('US-730 carrier full load lifecycle', () => {
     // --- Rate shipper ---
     await page.goto(`/trucker/loads/${LOAD_ID}`)
     await expect(page.getByText(/rate this shipper/i)).toBeVisible({ timeout: 8000 })
+    await expect(page.getByTestId('payment-status-card')).toBeVisible({ timeout: 8000 })
     await page.getByRole('button', { name: '5 stars' }).click()
     await page.getByRole('button', { name: /submit rating/i }).click()
     await expect(page.getByText(/your rating for/i)).toBeVisible({ timeout: 8000 })

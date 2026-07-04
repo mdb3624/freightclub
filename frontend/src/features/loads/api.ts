@@ -28,6 +28,12 @@ function sanitize(data: LoadFormValues) {
   }
 }
 
+export interface PaymentStatus {
+  status: 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED'
+  paidAt: string | null
+  truckerPayoutCents: number
+}
+
 export const loadsApi = {
   create: (data: LoadFormValues) =>
     apiPost<Load>('/loads', sanitize(data)),
@@ -94,6 +100,15 @@ export const loadsApi = {
 
   getAvailableStates: () =>
     apiGet<AvailableStates>('/board/available-states'),
+
+  // Backend returns 200 + body when an invoice exists, or 204 with no body
+  // when it doesn't. apiGet's default validateStatus would treat a 204 as
+  // success too, but its `.data` would be an empty string rather than
+  // null/undefined — so we call apiClient directly and normalize.
+  getPaymentStatus: (id: string) =>
+    apiClient
+      .get<PaymentStatus>(`/board/${id}/payment`, { validateStatus: (s) => s === 200 || s === 204 })
+      .then((r) => (r.status === 204 ? null : r.data)),
 
   getCounts: () =>
     apiGet<Record<string, number>>('/loads/counts'),

@@ -102,14 +102,14 @@
 
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
 | :----- | :------------------------------------ | :---------- | :---- | :--------- | :--------- |
-| **US-730** | **EPIC: Carrier Dashboard MVP — Operations Platform (Mobile-First)** | **READY_FOR_DESIGN** | **7a** | **—** | **✅ MOBILE-FIRST MANDATORY (iPhone 375px) | ✅ RLS, ✅ No-Lombok, ✅ Dark theme + ≥48px buttons | ✅ Phase 7 MVP independent of Phase 9 payment processing | Jira: FREIG-62** |
-| US-730-0 | Dashboard Structure & Mobile Design Spec | READY_FOR_DESIGN | 7a | — | ✅ HFD locks design; CODER cannot rework | Jira: FREIG-63 |
-| US-730a | Cost Profile Setup API & UI | READY_FOR_DESIGN | 7a | US-730-0 | ✅ RPM calculation, mobile form, ≥70% coverage | Jira: FREIG-64 |
-| US-730b | Profitable Load Visibility & Filtering | READY_FOR_DESIGN | 7a | US-730a | ✅ GREEN/YELLOW/RED badges, RPM filtering | Jira: FREIG-65 |
-| US-730c | Performance Visibility Dashboard Metrics | READY_FOR_DESIGN | 7a | — | ✅ Acceptance %, On-Time %, Completion %, Payments Logged % | Jira: FREIG-66 |
-| US-730d | Unified Carrier Dashboard | READY_FOR_DESIGN | 7a | US-730-0, US-730a-c | ✅ Hero load + stats + loads list, <2s load on 4G | Jira: FREIG-67 |
-| US-730e | Equipment & Lane Management | READY_FOR_DESIGN | 7a | — | ✅ Equipment types, capacity, preferred lanes, availability | Jira: FREIG-68 |
-| **US-730f** | **Payment Acknowledgment (MVP)** | **READY_FOR_DESIGN** | **7a** | **US-730d** | **✅ Date logging only (NO money movement) | ✅ Foundation for Phase 9 settlement | Jira: FREIG-69** |
+| **US-730** | **EPIC: Carrier Dashboard MVP — Operations Platform (Mobile-First)** | **COMPLETED** | **7a** | **—** | **✅ Discovered 2026-07-04: pre-existing implementation at /dashboard/trucker via TruckerDashboard.tsx | ✅ Mobile-first, dark theme, ≥48px buttons all present | Jira: FREIG-62** |
+| US-730-0 | Dashboard Structure & Mobile Design Spec | COMPLETED | 7a | — | ✅ Matches locked spec via TruckerDashboard.tsx; CarrierDashboard.tsx mock retired (CHG-849) | Jira: FREIG-63 |
+| US-730a | Cost Profile Setup API & UI | COMPLETED | 7a | US-730-0 | ✅ Via ProfileHub CostProfileSection; RPM calculation verified live (CHG-849); persistence bug status confirmed | Jira: FREIG-64 |
+| US-730b | Profitable Load Visibility & Filtering | COMPLETED | 7a | US-730a | ✅ Via ProfitabilityCard + LoadBoardTab; Live on TruckerLoadDetailPage and load board | Jira: FREIG-65 |
+| US-730c | Performance Visibility Dashboard Metrics | COMPLETED | 7a | — | ✅ Via TruckerDashboard MyStatsTab; On-time %, avg RPM, loads completed, miles driven — all real | Jira: FREIG-66 |
+| US-730d | Unified Carrier Dashboard | COMPLETED | 7a | US-730-0, US-730a-c | ✅ Via TruckerDashboard.tsx; Hero load + stats + board, hook-driven | Jira: FREIG-67 |
+| US-730e | Equipment & Lane Management | COMPLETED | 7a | — | ✅ Via CarrierProfileHub EquipmentTab/LanesTab; Equipment types, lanes, availability tab all present | Jira: FREIG-68 |
+| **US-730f** | **Payment Acknowledgment (MVP)** | **IN_PROGRESS** | **7a** | **US-730d** | **✅ Backend invoice/Stripe system already exists (Phase 9 work is further along than documented) | Scope narrowed to read-only surfacing (CHG-849) | Jira: FREIG-69** |
 
 ---
 
@@ -153,14 +153,14 @@
 
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
-| US-730 | Per-Load Earnings Log (Miles, Fuel, Profit) | MIGRATION_PENDING | 7b | US-305, US-502 | ✅ NFR-504 (1h TTL), ✅ US-305 ready (POD UI complete) |
-| US-731 | Weekly/Monthly P&L Report            | MIGRATION_PENDING | 7b | US-730 | ✅ NFR-504 (6h TTL) |
-| US-732 | **IFTA Mileage Tracking by State**   | **MIGRATION_PENDING** | **7b** | **US-730** | **✅ US-305 ready (POD signature data available)** |
-| US-733 | Deadhead Mileage Estimation         | MIGRATION_PENDING | 7b | US-730 | ✅ NFR-504 (1h TTL) |
+| US-730g | Per-Load Earnings Log (Miles, Fuel, Profit) | MIGRATION_PENDING | 7b | US-305, US-502 | ✅ NFR-504 (1h TTL), ✅ US-305 ready (POD UI complete) | Renumbered from US-730 (2026-07-04, CHG-849) to resolve ID collision with the Phase 7a epic |
+| US-731 | Weekly/Monthly P&L Report            | MIGRATION_PENDING | 7b | US-730g | ✅ NFR-504 (6h TTL) |
+| US-732 | **IFTA Mileage Tracking by State**   | **MIGRATION_PENDING** | **7b** | **US-730g** | **✅ US-305 ready (POD signature data available)** |
+| US-733 | Deadhead Mileage Estimation         | MIGRATION_PENDING | 7b | US-730g | ✅ NFR-504 (1h TTL) |
 | US-734 | Deadhead Cost in Profitability      | MIGRATION_PENDING | 7b | US-733 | ✅ NFR-504 (1h TTL) |
-| US-735 | Fuel Surcharge Auto-Calculation     | MIGRATION_PENDING | 7b | US-730, US-203 | ✅ NFR-504 (30m TTL) |
-| US-736 | Annual Earnings & Tax Summary Export | MIGRATION_PENDING | 7b | US-730, US-732 | ✅ NFR-504 (1h TTL) |
-| US-737 | Extract trucker_cost_profiles (Data Migration) | MIGRATION_PENDING | 7b | US-730 | ✅ One-time migration |
+| US-735 | Fuel Surcharge Auto-Calculation     | MIGRATION_PENDING | 7b | US-730g, US-203 | ✅ NFR-504 (30m TTL) |
+| US-736 | Annual Earnings & Tax Summary Export | MIGRATION_PENDING | 7b | US-730g, US-732 | ✅ NFR-504 (1h TTL) |
+| US-737 | Extract trucker_cost_profiles (Data Migration) | MIGRATION_PENDING | 7b | US-730g | ✅ One-time migration |
 
 ---
 

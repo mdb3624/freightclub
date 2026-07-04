@@ -9,5 +9,8 @@ public record ShipmentStatusDTO(
     String equipment,
     String carrier,
     BigDecimal rating,
-    String destination
+    String destination,
+    String origin,
+    String originState,
+    String destinationState
 ) {}

@@ -18,7 +18,11 @@ export interface Shipment {
   carrier: string | null;
   rating: number | null;
   destination: string;
-  origin?: string;
+  origin?: string | null;
+  // 2-letter state codes for carrier-lane matching (see ActionZone "Find Carriers" deep link) —
+  // distinct from `origin`/`destination`, which are human-readable city names for display.
+  originState?: string | null;
+  destinationState?: string | null;
 }
 
 interface ShipmentStatusPanelProps {

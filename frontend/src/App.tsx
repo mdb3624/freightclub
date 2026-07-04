@@ -22,6 +22,7 @@ const RatingsPage = lazy(() => import('@/pages/RatingsPage').then(m => ({ defaul
 // const AnalyticsPage = lazy(() => import('@/features/analytics/pages/AnalyticsPage').then(m => ({ default: m.AnalyticsPage })))
 const PreferredCarriersList = lazy(() => import('@/features/shippers/components/PreferredCarriersList').then(m => ({ default: m.PreferredCarriersList })))
 const CarrierPublicProfilePage = lazy(() => import('@/features/carriers/components/CarrierPublicProfilePage').then(m => ({ default: m.CarrierPublicProfilePage })))
+const CarrierNetworkPage = lazy(() => import('@/features/shipper/pages/CarrierNetworkPage').then(m => ({ default: m.CarrierNetworkPage })))
 const QuoteRequestPlaceholder = lazy(() => import('@/pages/QuoteRequestPlaceholder').then(m => ({ default: m.QuoteRequestPlaceholder })))
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
@@ -209,6 +210,18 @@ export default function App() {
           <ProtectedRoute role="SHIPPER">
             <Suspense fallback={<PageLoader />}>
               <PreferredCarriersList />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* US-848: Carrier Network Page */}
+      <Route
+        path="/carriers"
+        element={
+          <ProtectedRoute role="SHIPPER">
+            <Suspense fallback={<PageLoader />}>
+              <CarrierNetworkPage />
             </Suspense>
           </ProtectedRoute>
         }

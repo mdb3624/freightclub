@@ -151,6 +151,7 @@ export function TruckerLoadDetailPage() {
                       onClick={handleClaim}
                       disabled={!!activeLoad}
                       title={activeLoad ? 'You already have an active load. Complete or wait for your current load to claim a new one.' : undefined}
+                      data-testid="claim-load-btn"
                     >
                       Claim This Load
                     </Button>

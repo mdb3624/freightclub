@@ -11,6 +11,7 @@ on:
 env:
   REGISTRY_REGION: us-central1
   REGISTRY: us-central1-docker.pkg.dev
+  ARTIFACT_REPO: freightclub-repo
   BACKEND_IMAGE: freightclub-backend
   FRONTEND_IMAGE: freightclub-frontend
 
@@ -47,7 +48,7 @@ jobs:
           fi
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
           echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
-          echo "registry=${{ env.REGISTRY }}/${{ secrets.GCP_PROJECT_ID }}" >> $GITHUB_OUTPUT
+          echo "registry=${{ env.REGISTRY }}/${{ secrets.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPO }}" >> $GITHUB_OUTPUT
 
       - name: Build and push backend image
         uses: docker/build-push-action@v5

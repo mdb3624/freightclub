@@ -34,7 +34,8 @@ public class ShipmentStatusService {
         String sql = """
             SELECT l.id, l.status, l.equipment_type, l.destination_city,
                    COALESCE(u.business_name, CONCAT(u.first_name, ' ', u.last_name)), null,
-                   l.pickup_from, l.delivery_to, l.picked_up_at
+                   l.pickup_from, l.delivery_to, l.picked_up_at,
+                   l.origin_city, l.origin_state, l.destination_state
             FROM freightclub.loads l
             LEFT JOIN freightclub.users u ON l.trucker_id = u.id
             WHERE l.tenant_id = :tid
@@ -67,6 +68,9 @@ public class ShipmentStatusService {
             LocalDateTime pickupFrom = toLocalDateTime(row[6]);
             LocalDateTime deliveryTo = toLocalDateTime(row[7]);
             LocalDateTime pickedUpAt = toLocalDateTime(row[8]);
+            String origin = (String) row[9];
+            String originState = (String) row[10];
+            String destinationState = (String) row[11];
 
             BigDecimal progress = calculateProgress(status, pickupFrom, deliveryTo, pickedUpAt);
 
@@ -77,7 +81,10 @@ public class ShipmentStatusService {
                 equipment,
                 carrierName,
                 rating,
-                destination
+                destination,
+                origin,
+                originState,
+                destinationState
             );
 
             shipments.add(dto);

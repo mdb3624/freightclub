@@ -175,7 +175,10 @@ class ShipperControllerTest {
         "FLATBED",
         "Carrier A",
         java.math.BigDecimal.valueOf(4.5),
-        "New York, NY"
+        "New York, NY",
+        "Chicago",
+        "IL",
+        "NY"
     );
     when(shipmentStatusService.getActiveShipments("test-tenant")).thenReturn(java.util.List.of(shipment));
 

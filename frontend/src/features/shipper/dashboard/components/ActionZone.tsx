@@ -273,8 +273,12 @@ const LoadSelectedState: React.FC<LoadSelectedStateProps> = ({
         data-testid="action-zone-find-carriers"
         onClick={() => {
           const p = new URLSearchParams();
-          if (shipment.origin) p.set('origin', shipment.origin);
-          if (shipment.destination) p.set('dest', shipment.destination);
+          // Coming from Shipment Status: filter by origin + equipment only (no destination) —
+          // this is a "which carriers could reposition for this pickup" search, not a strict
+          // exact-lane match, since requiring an exact destination lane on file was the cause
+          // of the "no carriers ever shown" bug. State codes, not city names, match the backend
+          // lane search (shipment.origin/destination remain city names for display only above).
+          if (shipment.originState) p.set('origin', shipment.originState);
           if (shipment.equipment) p.set('equip', shipment.equipment);
           navigate(`/carriers?${p.toString()}`);
         }}

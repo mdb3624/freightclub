@@ -109,12 +109,52 @@ class CarrierSearchServiceTest {
         verify(userRepository).searchTruckersByLane(any(), eq("Midwest"), eq("Northeast"), isNull(), any(PageRequest.class));
     }
 
-    // US-762 AC-3: blank origin/destination short-circuits without hitting the repository
+    // US-848: blank origin with a destination present is a destination-only match — passes
+    // origin=null through to the lane query rather than short-circuiting to empty (fixes the
+    // Action Zone "Find Carriers" bug where an always-blank origin guaranteed zero results).
     @Test
-    void searchCarriersByLane_returnsEmpty_whenOriginBlank() {
-        List<CarrierLaneSearchResult> results = service.searchCarriersByLane("tenant-1", "  ", "Northeast", null);
+    void searchCarriersByLane_originBlank_destinationOnlyMatch() {
+        String tenantId = "tenant-1";
+        User trucker = makeTrucker("id-1", "Mike", "Johnson", "mike@example.com", EquipmentType.FLATBED);
+        when(userRepository.searchTruckersByLane(eq(tenantId), isNull(), eq("Northeast"), isNull(), any(PageRequest.class)))
+                .thenReturn(List.of(trucker));
 
-        assertThat(results).isEmpty();
+        List<CarrierLaneSearchResult> results = service.searchCarriersByLane(tenantId, "  ", "Northeast", null);
+
+        assertThat(results).hasSize(1);
+        verify(userRepository).searchTruckersByLane(eq(tenantId), isNull(), eq("Northeast"), isNull(), any(PageRequest.class));
+        verify(userRepository, never()).findAllTruckers(any(), any(), any());
+    }
+
+    // US-848: destination blank with an origin present is an origin-only match — the Carrier
+    // Network Page deep link from Shipment Status only ever supplies origin + equipment.
+    @Test
+    void searchCarriersByLane_destinationBlank_originOnlyMatch() {
+        String tenantId = "tenant-1";
+        User trucker = makeTrucker("id-1", "Mike", "Johnson", "mike@example.com", EquipmentType.DRY_VAN);
+        when(userRepository.searchTruckersByLane(eq(tenantId), eq("IL"), isNull(), eq(EquipmentType.DRY_VAN), any(PageRequest.class)))
+                .thenReturn(List.of(trucker));
+
+        List<CarrierLaneSearchResult> results = service.searchCarriersByLane(tenantId, "IL", "", "DRY_VAN");
+
+        assertThat(results).hasSize(1);
+        verify(userRepository).searchTruckersByLane(eq(tenantId), eq("IL"), isNull(), eq(EquipmentType.DRY_VAN), any(PageRequest.class));
+        verify(userRepository, never()).findAllTruckers(any(), any(), any());
+    }
+
+    // US-848: both origin and destination blank browses every carrier in the tenant (still
+    // respecting an equipment filter if provided) instead of returning nothing.
+    @Test
+    void searchCarriersByLane_bothBlank_browsesAllTruckers() {
+        String tenantId = "tenant-1";
+        User trucker = makeTrucker("id-1", "Mike", "Johnson", "mike@example.com", EquipmentType.FLATBED);
+        when(userRepository.findAllTruckers(eq(tenantId), isNull(), any(PageRequest.class)))
+                .thenReturn(List.of(trucker));
+
+        List<CarrierLaneSearchResult> results = service.searchCarriersByLane(tenantId, "", "  ", null);
+
+        assertThat(results).hasSize(1);
+        verify(userRepository).findAllTruckers(eq(tenantId), isNull(), any(PageRequest.class));
         verify(userRepository, never()).searchTruckersByLane(any(), any(), any(), any(), any());
     }
 

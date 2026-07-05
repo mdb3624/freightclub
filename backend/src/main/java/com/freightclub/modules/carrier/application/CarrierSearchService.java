@@ -38,19 +38,30 @@ public class CarrierSearchService {
                 .toList();
     }
 
-    // US-762 AC-1/AC-3: lane-based carrier search for the dashboard "Find a Carrier" panel.
-    // origin/destination are required (Zod-validated client-side); equipmentType is optional.
+    // US-762 AC-1/AC-3: lane-based carrier search for the dashboard "Find a Carrier" panel
+    // (origin/destination required there, Zod-validated client-side — both are always
+    // supplied for that caller, so it always gets an exact-lane match, unaffected below).
+    //
+    // US-848: Carrier Network Page reuses this for three modes, chosen by which of
+    // origin/destination are present:
+    //   - both blank      -> browse all carriers in the tenant (equipment filter still applies)
+    //   - one of the two  -> match carriers with a lane on that single dimension only (e.g. a
+    //                        shipment's origin + equipment, when no exact destination lane exists)
+    //   - both present    -> exact lane match (original US-762 behavior)
     public List<CarrierLaneSearchResult> searchCarriersByLane(String tenantId, String origin, String destination, String equipmentType) {
-        if (isBlank(origin) || isBlank(destination)) {
-            return List.of();
-        }
         EquipmentType equipmentTypeEnum = parseEquipmentType(equipmentType);
         if (equipmentType != null && !equipmentType.isBlank() && equipmentTypeEnum == null) {
             return List.of();
         }
-        return userRepository
-                .searchTruckersByLane(tenantId, origin.strip(), destination.strip(), equipmentTypeEnum, PageRequest.of(0, MAX_RESULTS))
-                .stream()
+
+        String originArg = isBlank(origin) ? null : origin.strip();
+        String destinationArg = isBlank(destination) ? null : destination.strip();
+
+        List<com.freightclub.domain.User> truckers = (originArg == null && destinationArg == null)
+                ? userRepository.findAllTruckers(tenantId, equipmentTypeEnum, PageRequest.of(0, MAX_RESULTS))
+                : userRepository.searchTruckersByLane(tenantId, originArg, destinationArg, equipmentTypeEnum, PageRequest.of(0, MAX_RESULTS));
+
+        return truckers.stream()
                 .map(u -> new CarrierLaneSearchResult(
                         u.getId(),
                         u.getFirstName() + " " + u.getLastName(),

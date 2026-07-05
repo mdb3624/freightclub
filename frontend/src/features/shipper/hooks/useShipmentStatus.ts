@@ -11,6 +11,9 @@ export interface ShipmentStatusDTO {
   carrier: string | null;
   rating: number | null;
   destination: string;
+  origin: string | null;
+  originState: string | null;
+  destinationState: string | null;
 }
 
 export function useShipmentStatus() {

@@ -211,9 +211,10 @@ test.describe('US-730 carrier full load lifecycle', () => {
     await page.getByTestId('email-input').fill(mockAuthResponse.user.email)
     await page.getByTestId('password-input').fill('irrelevant')
     await page.getByTestId('login-submit-btn').click()
-    // Login redirects TRUCKER to /dashboard/carrier (CarrierDashboard) —
-    // we don't assert on it, we navigate straight to the load detail page.
-    await page.waitForURL(/dashboard\/carrier/, { timeout: 10000 })
+    // Login redirects TRUCKER to /dashboard/trucker (TruckerDashboard) —
+    // fixed in a83f1cac (CHG-849); previously redirected to the now-deleted
+    // orphaned mock at /dashboard/carrier.
+    await page.waitForURL(/dashboard\/trucker/, { timeout: 10000 })
 
     // --- Claim ---
     await page.goto(`/trucker/loads/${LOAD_ID}`)

@@ -45,7 +45,7 @@ describe('useLogin', () => {
   // /dashboard/carrier) — this was a live production bug discovered while
   // verifying the carrier workflow.
   it('navigates TRUCKER role to /dashboard/trucker', async () => {
-    ;(authApi.login as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (authApi.login as ReturnType<typeof vi.fn>).mockResolvedValue({
       accessToken: 'token-123',
       user: { id: 'u1', role: 'TRUCKER', firstName: 'T', lastName: 'Trucker', email: 't@test.com' },
     })
@@ -59,7 +59,7 @@ describe('useLogin', () => {
   })
 
   it('navigates SHIPPER role to /dashboard/shipper', async () => {
-    ;(authApi.login as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (authApi.login as ReturnType<typeof vi.fn>).mockResolvedValue({
       accessToken: 'token-456',
       user: { id: 'u2', role: 'SHIPPER', firstName: 'S', lastName: 'Shipper', email: 's@test.com' },
     })

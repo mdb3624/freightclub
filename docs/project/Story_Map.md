@@ -109,7 +109,7 @@
 | US-730c | Performance Visibility Dashboard Metrics | COMPLETED | 7a | — | ✅ Via TruckerDashboard MyStatsTab; On-time %, avg RPM, loads completed, miles driven — all real | Jira: FREIG-66 |
 | US-730d | Unified Carrier Dashboard | COMPLETED | 7a | US-730-0, US-730a-c | ✅ Via TruckerDashboard.tsx; Hero load + stats + board, hook-driven | Jira: FREIG-67 |
 | US-730e | Equipment & Lane Management | COMPLETED | 7a | — | ✅ Via CarrierProfileHub EquipmentTab/LanesTab; Equipment types, lanes, availability tab all present | Jira: FREIG-68 |
-| **US-730f** | **Payment Acknowledgment (MVP)** | **IN_PROGRESS** | **7a** | **US-730d** | **✅ Backend invoice/Stripe system already exists (Phase 9 work is further along than documented) | Scope narrowed to read-only surfacing (CHG-849) | Jira: FREIG-69** |
+| **US-730f** | **Payment Acknowledgment (MVP)** | **COMPLETED** | **7a** | **US-730d** | **✅ Read-only payment status endpoint + frontend display shipped (feature/US-730-carrier-workflow-verification, 2026-07-05) | ✅ Backend invoice/Stripe system already existed (Phase 9 work was further along than documented) | Scope narrowed to read-only surfacing (CHG-849) | Jira: FREIG-69** |
 
 ---
 

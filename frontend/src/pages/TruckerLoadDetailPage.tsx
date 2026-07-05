@@ -69,15 +69,15 @@ export function TruckerLoadDetailPage() {
   return (
     <AppShell maxWidth="md">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Load Detail</h1>
+        <h1 className="text-2xl font-semibold text-carrier-text">Load Detail</h1>
       </div>
 
         {isLoading && (
           <div className="space-y-4 animate-pulse">
-            <div className="h-7 bg-gray-200 rounded w-2/5" />
-            <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-3">
+            <div className="h-7 bg-carrier-border rounded w-2/5" />
+            <div className="rounded-xl border border-carrier-border bg-carrier-surface p-6 space-y-3">
               {[80, 65, 70, 55, 75, 60].map((w, i) => (
-                <div key={i} className="h-4 bg-gray-200 rounded" style={{ width: `${w}%` }} />
+                <div key={i} className="h-4 bg-carrier-border rounded" style={{ width: `${w}%` }} />
               ))}
             </div>
           </div>
@@ -105,7 +105,7 @@ export function TruckerLoadDetailPage() {
               </div>
             )}
 
-            <div className="rounded-xl border border-gray-200 bg-white p-6">
+            <div className="rounded-xl border border-carrier-border bg-carrier-surface p-6">
               <LoadDetail load={load} />
             </div>
 
@@ -151,7 +151,7 @@ export function TruckerLoadDetailPage() {
               </div>
             )}
 
-            <div className="rounded-xl border border-gray-200 bg-white p-6 mt-4">
+            <div className="rounded-xl border border-carrier-border bg-carrier-surface p-6 mt-4">
               <div className="flex items-center gap-3">
                 {load.status === 'OPEN' && (
                   <div className="flex flex-col gap-2">
@@ -165,7 +165,7 @@ export function TruckerLoadDetailPage() {
                       Claim This Load
                     </Button>
                     {activeLoad && (
-                      <p className="text-xs text-amber-700">
+                      <p className="text-xs text-amber-400">
                         You have an active load in progress. Complete it before claiming another.
                       </p>
                     )}
@@ -196,14 +196,14 @@ export function TruckerLoadDetailPage() {
                   role="dialog"
                   aria-modal="true"
                   aria-labelledby="confirm-dialog-title"
-                  className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-4"
+                  className="mt-4 rounded-lg border border-amber-500/40 bg-[rgba(245,158,11,.08)] p-4"
                 >
-                  <p id="confirm-dialog-title" className="text-sm font-semibold text-amber-900">
+                  <p id="confirm-dialog-title" className="text-sm font-semibold text-amber-400">
                     {pendingAction === 'pickup'
                       ? 'Confirm pickup — this cannot be undone'
                       : 'Confirm delivery — this cannot be undone'}
                   </p>
-                  <p className="mt-1 text-sm text-amber-800">
+                  <p className="mt-1 text-sm text-amber-300">
                     {pendingAction === 'pickup'
                       ? 'You are confirming you have physically picked up this load at the origin. The load will move to In Transit.'
                       : 'You are confirming this load has been delivered to the destination. The shipper will be notified.'}

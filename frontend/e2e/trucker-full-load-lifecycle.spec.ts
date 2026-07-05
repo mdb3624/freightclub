@@ -10,11 +10,12 @@
  *    minimal additive `data-testid` prop (in scope per task brief).
  *  - `email-input` / `password-input` / `login-submit-btn`: CONFIRMED to exist
  *    exactly as named (LoginForm.tsx via Input `testId` prop + Button `data-testid`).
- *  - Login redirect: useLogin.ts sends TRUCKER role to `/dashboard/carrier`
- *    (CarrierDashboard), NOT `/dashboard/trucker` — the draft's implicit
- *    assumption was wrong. This spec does not assert on the post-login
- *    redirect target; it navigates directly to the load detail route instead,
- *    matching the draft's own subsequent step.
+ *  - Login redirect: at the time this spec was first written, useLogin.ts sent
+ *    TRUCKER role to `/dashboard/carrier` (CarrierDashboard) — the draft's
+ *    implicit assumption of `/dashboard/trucker` was wrong at that point.
+ *    This was fixed in a83f1cac (CHG-849): the redirect now correctly targets
+ *    `/dashboard/trucker`, and this spec's login-flow assertion below reflects
+ *    that fix.
  *  - `handleClaim()` in TruckerLoadDetailPage.tsx explicitly navigates to
  *    `/dashboard/trucker` (the OLDER TruckerDashboard, not CarrierDashboard)
  *    after a successful claim/pickup/deliver — confirmed by reading the

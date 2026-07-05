@@ -22,9 +22,11 @@ import java.util.Map;
 public class LoadBoardController {
 
     private final LoadService loadService;
+    private final com.freightclub.modules.payment.application.PaymentService paymentService;
 
-    public LoadBoardController(LoadService loadService) {
+    public LoadBoardController(LoadService loadService, com.freightclub.modules.payment.application.PaymentService paymentService) {
         this.loadService = loadService;
+        this.paymentService = paymentService;
     }
 
     @GetMapping
@@ -93,5 +95,14 @@ public class LoadBoardController {
     public List<LoadEventResponse> getEvents(@PathVariable String id,
                                              @AuthenticationPrincipal String userId) {
         return loadService.getLoadEvents(id, userId);
+    }
+
+    @GetMapping("/{id}/payment")
+    @PreAuthorize("hasRole('TRUCKER')")
+    public ResponseEntity<com.freightclub.dto.PaymentStatusResponse> getPaymentStatus(@PathVariable String id,
+                                                                                        @AuthenticationPrincipal String userId) {
+        return paymentService.getPaymentStatus(id, userId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.noContent().build());
     }
 }

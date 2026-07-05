@@ -149,4 +149,50 @@ class PaymentServiceTest {
         assertThatCode(() -> svc.transferToTrucker(196_500L, "acct_test_123", "inv-123"))
                 .doesNotThrowAnyException();
     }
+
+    // -------------------------------------------------------------------------
+    // getPaymentStatus — authorization
+    // -------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("getPaymentStatus returns populated status for the invoice's owning trucker")
+    void shouldReturnPaymentStatusForOwningTrucker() {
+        java.time.OffsetDateTime paidAt = java.time.OffsetDateTime.now();
+        InvoiceEntity invoice = new InvoiceEntity();
+        invoice.setLoadId("load-1");
+        invoice.setTruckerUserId("trucker-1");
+        invoice.setStatus(InvoiceStatus.PAID);
+        invoice.setPaidAt(paidAt);
+        invoice.setTruckerPayoutCents(196_500L);
+
+        when(invoiceRepository.findByLoadId("load-1")).thenReturn(Optional.of(invoice));
+
+        PaymentService svc = service();
+        Optional<com.freightclub.dto.PaymentStatusResponse> result =
+                svc.getPaymentStatus("load-1", "trucker-1");
+
+        assertThat(result).isPresent();
+        assertThat(result.get().status()).isEqualTo("PAID");
+        assertThat(result.get().paidAt()).isEqualTo(paidAt);
+        assertThat(result.get().truckerPayoutCents()).isEqualTo(196_500L);
+    }
+
+    @Test
+    @DisplayName("getPaymentStatus returns empty when invoice belongs to a different trucker")
+    void shouldNotLeakPaymentStatusToNonOwningTrucker() {
+        InvoiceEntity invoice = new InvoiceEntity();
+        invoice.setLoadId("load-1");
+        invoice.setTruckerUserId("trucker-1");
+        invoice.setStatus(InvoiceStatus.PAID);
+        invoice.setPaidAt(java.time.OffsetDateTime.now());
+        invoice.setTruckerPayoutCents(196_500L);
+
+        when(invoiceRepository.findByLoadId("load-1")).thenReturn(Optional.of(invoice));
+
+        PaymentService svc = service();
+        Optional<com.freightclub.dto.PaymentStatusResponse> result =
+                svc.getPaymentStatus("load-1", "trucker-2");
+
+        assertThat(result).isEmpty();
+    }
 }

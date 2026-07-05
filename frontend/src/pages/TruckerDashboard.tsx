@@ -181,6 +181,63 @@ function DieselTicker({ dieselRegions }: { dieselRegions: Array<{ label: string;
   )
 }
 
+/* ─── Header (CARRIER_DESIGN_SYSTEM.md: fixed 56px, #1A1A1A, logo + HOS + bell + avatar) ── */
+function DashboardHeader({ userInitials, onProfile }: { userInitials: string; onProfile: () => void }) {
+  return (
+    <header
+      data-testid="carrier-header"
+      style={{
+        height: 56,
+        flexShrink: 0,
+        background: C.surface,
+        borderBottom: `1px solid ${C.border}`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 12px',
+        gap: 8,
+      }}
+    >
+      <img src="/logo-mobile.png" alt="FreightClub" style={{ height: 40, width: 40, objectFit: 'contain', flexShrink: 0 }} />
+
+      <div
+        data-testid="hos-chip"
+        style={{
+          display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px',
+          background: 'rgba(39,174,96,.15)', border: '1px solid #27AE60', borderRadius: 12,
+          fontSize: 11, fontWeight: 600, color: '#27AE60', flexShrink: 0,
+        }}
+      >
+        HOS
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+        <button
+          data-testid="notification-bell"
+          aria-label="Notifications"
+          style={{
+            width: 48, height: 48, background: 'transparent', border: 'none',
+            color: C.text, fontSize: 18, cursor: 'pointer',
+          }}
+        >
+          🔔
+        </button>
+        <button
+          data-testid="carrier-avatar"
+          onClick={onProfile}
+          aria-label="Profile"
+          style={{
+            width: 48, height: 48, borderRadius: '50%', background: '#B08D57',
+            color: '#121212', fontWeight: 700, fontSize: 13, border: 'none', cursor: 'pointer',
+          }}
+        >
+          {userInitials}
+        </button>
+      </div>
+    </header>
+  )
+}
+
 function LockedBoardBanner({ load }: { load: any }) {
   return (
     <div style={{ padding: 12 }}>
@@ -479,6 +536,8 @@ export function TruckerDashboard() {
     { id: 'settings' as Tab, icon: '⚙', label: 'Settings' },
   ]
 
+  const userInitials = ((user?.firstName?.[0] ?? '') + (user?.lastName?.[0] ?? '')).toUpperCase() || 'U'
+
   return (
     <div
       data-testid="trucker-dashboard"
@@ -492,6 +551,8 @@ export function TruckerDashboard() {
         overflow: 'hidden',
       }}
     >
+        <DashboardHeader userInitials={userInitials} onProfile={() => navigate('/profile')} />
+
         {/* Active Load Hero */}
         {activeLoad && (
           <section ref={activeLoadRef as any}>

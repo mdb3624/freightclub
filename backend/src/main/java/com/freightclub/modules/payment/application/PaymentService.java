@@ -174,6 +174,21 @@ public class PaymentService {
     }
 
     /**
+     * Returns the payment status for a load, scoped to the requesting trucker.
+     * Returns empty if no invoice exists yet, or if the invoice belongs to a
+     * different trucker (authorization check).
+     */
+    public java.util.Optional<com.freightclub.dto.PaymentStatusResponse> getPaymentStatus(String loadId, String truckerId) {
+        return invoiceRepository.findByLoadId(loadId)
+                .filter(invoice -> invoice.getTruckerUserId().equals(truckerId))
+                .map(invoice -> new com.freightclub.dto.PaymentStatusResponse(
+                        invoice.getStatus().name(),
+                        invoice.getPaidAt(),
+                        invoice.getTruckerPayoutCents()
+                ));
+    }
+
+    /**
      * Marks the invoice as FAILED.
      */
     public void markInvoiceFailed(String invoiceId, String stripePaymentIntentId) {

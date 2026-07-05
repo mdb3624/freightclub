@@ -22,9 +22,12 @@ export const LoginPage: React.FC = () => {
         email: response.user.email,
         user: response.user
       });
+      // US-730 CHG-849: same fix as src/features/auth/hooks/useLogin.ts —
+      // TRUCKER must land on the real dashboard (/dashboard/trucker), not
+      // the orphaned mock (/dashboard/carrier).
       const destination = response.user.role === 'SHIPPER'
         ? '/dashboard/shipper'
-        : '/dashboard/carrier'
+        : '/dashboard/trucker'
       console.log('📍 [LoginPage] Redirecting to:', destination);
       window.location.href = destination
     } catch (err) {

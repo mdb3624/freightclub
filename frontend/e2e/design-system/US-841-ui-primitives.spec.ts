@@ -212,10 +212,13 @@ test.describe('adversarial', () => {
     await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
     await page.click('[data-testid="login-submit-btn"]')
     await page.waitForURL(/\/dashboard/, { timeout: 30000 })
-    await page.waitForLoadState('networkidle')
-
-    // Carrier persona loaded without crash
-    await expect(page.locator('body')).toBeVisible()
+    // TruckerDashboard.tsx polls live data (diesel prices, load board), so
+    // 'networkidle' never resolves — wait for a concrete rendered element instead.
+    // Carrier persona loaded without crash (this dashboard uses position:fixed;
+    // inset:0, which takes it out of normal document flow and collapses <body>'s
+    // own box to zero height — checking body.toBeVisible() is unreliable for
+    // this layout; the dashboard's own root element is the correct check).
+    await expect(page.getByTestId('trucker-dashboard')).toBeVisible({ timeout: 15000 })
 
     await page.screenshot({ path: path.join(EVIDENCE, 'US-841-adversarial-carrier-persona.png') })
   })

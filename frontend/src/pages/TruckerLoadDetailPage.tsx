@@ -8,7 +8,9 @@ import { useClaimLoad } from '@/features/loads/hooks/useClaimLoad'
 import { useMarkPickedUp } from '@/features/loads/hooks/useMarkPickedUp'
 import { useMarkDelivered } from '@/features/loads/hooks/useMarkDelivered'
 import { useMyActiveLoad } from '@/features/loads/hooks/useMyActiveLoad'
+import { usePaymentStatus } from '@/features/loads/hooks/usePaymentStatus'
 import { LoadDetail } from '@/features/loads/components/LoadDetail'
+import { PaymentStatusCard } from '@/features/loads/components/PaymentStatusCard'
 import { ContactCard } from '@/features/loads/components/ContactCard'
 import { ProfitabilityCard } from '@/features/loads/components/ProfitabilityCard'
 import { useProfile } from '@/features/profile/hooks/useProfile'
@@ -31,6 +33,7 @@ export function TruckerLoadDetailPage() {
   const { mutate: markPickedUp, isPending: isPickingUp } = useMarkPickedUp()
   const { mutate: markDelivered, isPending: isDelivering } = useMarkDelivered()
   const { data: activeLoad } = useMyActiveLoad()
+  const { data: paymentStatus } = usePaymentStatus(id, load?.status === 'DELIVERED' || load?.status === 'SETTLED')
   const navigate = useNavigate()
   const toast = useToastStore()
   const [pendingAction, setPendingAction] = useState<PendingAction>(null)
@@ -142,6 +145,12 @@ export function TruckerLoadDetailPage() {
               />
             )}
 
+            {(load.status === 'DELIVERED' || load.status === 'SETTLED') && (
+              <div className="mt-4">
+                <PaymentStatusCard status={paymentStatus} />
+              </div>
+            )}
+
             <div className="rounded-xl border border-gray-200 bg-white p-6 mt-4">
               <div className="flex items-center gap-3">
                 {load.status === 'OPEN' && (
@@ -151,6 +160,7 @@ export function TruckerLoadDetailPage() {
                       onClick={handleClaim}
                       disabled={!!activeLoad}
                       title={activeLoad ? 'You already have an active load. Complete or wait for your current load to claim a new one.' : undefined}
+                      data-testid="claim-load-btn"
                     >
                       Claim This Load
                     </Button>

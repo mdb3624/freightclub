@@ -3,6 +3,7 @@ package com.freightclub.modules.carrier.presentation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -15,6 +16,7 @@ import com.freightclub.modules.carrier.application.CostProfileWizardInput;
 import com.freightclub.modules.carrier.domain.CarrierCostProfile;
 import com.freightclub.security.TenantContextHolder;
 import java.math.BigDecimal;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,9 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 // Feature: US-730a-v2 (Cost Profile Wizard Redesign)
 // AC: GET returns null body when no profile exists (triggers wizard on frontend)
@@ -38,6 +42,11 @@ class CarrierCostProfileControllerTest {
   @Autowired private ObjectMapper objectMapper;
   @MockBean private CarrierCostProfileService service;
 
+  private static RequestPostProcessor trucker(String id) {
+    return authentication(new UsernamePasswordAuthenticationToken(
+        id, null, List.of(new SimpleGrantedAuthority("ROLE_TRUCKER"))));
+  }
+
   @BeforeEach
   void setTenantContext() {
     TenantContextHolder.setTenantId("tenant-1");
@@ -49,18 +58,16 @@ class CarrierCostProfileControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "trucker-1", roles = "TRUCKER")
   void getCostProfile_noProfile_returnsNullBody() throws Exception {
     when(service.getCostProfile("trucker-1")).thenReturn(null);
 
-    mvc.perform(get("/api/v1/carrier/cost-profile"))
+    mvc.perform(get("/api/v1/carrier/cost-profile").with(trucker("trucker-1")))
         .andExpect(status().isOk())
         .andExpect(result -> org.junit.jupiter.api.Assertions.assertEquals(
             "", result.getResponse().getContentAsString().replace("null", "")));
   }
 
   @Test
-  @WithMockUser(username = "trucker-1", roles = "TRUCKER")
   void putCostProfile_upsertsAndReturnsDerivedValues() throws Exception {
     CarrierCostProfile saved =
         CarrierCostProfile.createNewWizard(
@@ -87,7 +94,7 @@ class CarrierCostProfileControllerTest {
         }
         """;
 
-    mvc.perform(put("/api/v1/carrier/cost-profile")
+    mvc.perform(put("/api/v1/carrier/cost-profile").with(trucker("trucker-1"))
             .contentType("application/json")
             .content(body))
         .andExpect(status().isOk())

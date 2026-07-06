@@ -101,9 +101,20 @@ ALTER TABLE freightclub.carrier_cost_profiles
 ALTER TABLE freightclub.carrier_cost_profiles
   ADD CONSTRAINT chk_diesel_region
   CHECK (diesel_region IS NULL OR diesel_region IN ('EAST','MIDWEST','SOUTH','ROCKY','WEST'));
+
+-- Correction found during implementation planning (2026-07-06): the original
+-- US-702 migration marked these 5 legacy columns NOT NULL. A first-time
+-- wizard user creates a row with ONLY the new columns populated, so these
+-- must be relaxed. Existing CHECK constraints on these columns already pass
+-- automatically for NULL values in Postgres — no constraint rewrite needed.
+ALTER TABLE freightclub.carrier_cost_profiles ALTER COLUMN monthly_fixed_costs DROP NOT NULL;
+ALTER TABLE freightclub.carrier_cost_profiles ALTER COLUMN fuel_cost_per_gallon DROP NOT NULL;
+ALTER TABLE freightclub.carrier_cost_profiles ALTER COLUMN maintenance_cost_per_mile DROP NOT NULL;
+ALTER TABLE freightclub.carrier_cost_profiles ALTER COLUMN monthly_miles_target DROP NOT NULL;
+ALTER TABLE freightclub.carrier_cost_profiles ALTER COLUMN target_margin_per_mile DROP NOT NULL;
 ```
 
-- **Additive only.** Existing columns (`monthly_fixed_costs`, `fuel_cost_per_gallon`, `monthly_miles_target`) remain nullable and untouched — no destructive drop in this migration. Removal is a follow-up migration once the old `ProfilePage.tsx` `CostProfileSection` is deleted (tracked as a note in CHG-US730-007, not blocking).
+- **Additive + nullability relaxation only — no destructive drop.** `monthly_fixed_costs`, `fuel_cost_per_gallon`, `maintenance_cost_per_mile`, `monthly_miles_target`, `target_margin_per_mile` change from `NOT NULL` to nullable (see correction above); `milesPerGallon` stays `NOT NULL` since both the legacy and wizard models populate it. Column removal is a follow-up migration once the old `ProfilePage.tsx` `CostProfileSection` is deleted (tracked as a note in CHG-US730-007, not blocking). `CarrierCostProfileEntity.monthlyMilesTarget` changes from `int` to `Integer` to hold `null` for wizard-only rows.
 - **RLS:** Already enabled on `carrier_cost_profiles` via `V20260522_2100__CreateRLSPolicies_5Tables.sql` — no new policy required.
 - **PK/FK:** `id VARCHAR(36)` PK unchanged. `trucker_id → users(id)`, already unique/PK — satisfies FK Validation gate.
 - **Soft delete:** `deleted_at` already present on this table — unaffected.

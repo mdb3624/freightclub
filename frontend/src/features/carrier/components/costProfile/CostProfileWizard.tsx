@@ -6,6 +6,7 @@ import type { CostProfileWizardFormData } from '../../schemas/costProfile.schema
 interface Props {
   initialData: Partial<CostProfileWizardFormData> | undefined
   onComplete: (data: CostProfileWizardFormData) => void
+  onDataChange?: (data: Partial<CostProfileWizardFormData>) => void
 }
 
 const REGIONS = ['EAST', 'MIDWEST', 'SOUTH', 'ROCKY', 'WEST'] as const
@@ -20,12 +21,16 @@ const chipStyle = (active: boolean): React.CSSProperties => ({
   color: active ? '#FFFFFF' : '#F5F5F5',
 })
 
-export function CostProfileWizard({ initialData, onComplete }: Props) {
+export function CostProfileWizard({ initialData, onComplete, onDataChange }: Props) {
   const [step, setStep] = useState(1)
   const [data, setData] = useState<Partial<CostProfileWizardFormData>>(initialData ?? {})
 
   const set = <K extends keyof CostProfileWizardFormData>(key: K, value: CostProfileWizardFormData[K]) =>
-    setData((d) => ({ ...d, [key]: value }))
+    setData((d) => {
+      const updated = { ...d, [key]: value }
+      onDataChange?.(updated)
+      return updated
+    })
 
   return (
     <div data-testid="cost-profile-wizard" style={{ background: '#0a0a0a', color: '#F5F5F5', padding: 16 }}>

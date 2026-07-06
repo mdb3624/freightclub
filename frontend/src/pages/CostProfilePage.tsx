@@ -10,6 +10,7 @@ export function CostProfilePage() {
   const { data: profile, isLoading } = useCostProfile()
   const { mutate: save, isPending } = useSaveCostProfile()
   const [view, setView] = useState<'summary' | 'wizard'>('wizard')
+  const [wizardData, setWizardData] = useState<Partial<CostProfileWizardFormData>>({})
 
   useEffect(() => {
     if (!isLoading) {
@@ -31,7 +32,7 @@ export function CostProfilePage() {
         <button
           data-testid="header-save-btn"
           disabled={isPending}
-          onClick={() => view === 'wizard' && save(undefined as unknown as CostProfileWizardFormData)}
+          onClick={() => view === 'wizard' && save(wizardData as CostProfileWizardFormData)}
           style={{ background: 'none', border: 'none', color: '#B08D57', fontWeight: 700 }}
         >
           {isPending ? 'Saving…' : 'Save'}
@@ -45,6 +46,7 @@ export function CostProfilePage() {
         <CostProfileWizard
           initialData={profile ?? undefined}
           onComplete={(formData) => save(formData, { onSuccess: () => setView('summary') })}
+          onDataChange={setWizardData}
         />
       )}
     </div>

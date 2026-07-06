@@ -110,6 +110,8 @@
 | US-730d | Unified Carrier Dashboard | COMPLETED | 7a | US-730-0, US-730a-c | ✅ Via TruckerDashboard.tsx; Hero load + stats + board, hook-driven | Jira: FREIG-67 |
 | US-730e | Equipment & Lane Management | COMPLETED | 7a | — | ✅ Via CarrierProfileHub EquipmentTab/LanesTab; Equipment types, lanes, availability tab all present | Jira: FREIG-68 |
 | **US-730f** | **Payment Acknowledgment (MVP)** | **COMPLETED** | **7a** | **US-730d** | **✅ Read-only payment status endpoint + frontend display shipped (feature/US-730-carrier-workflow-verification, 2026-07-05) | ✅ Backend invoice/Stripe system already existed (Phase 9 work was further along than documented) | Scope narrowed to read-only surfacing (CHG-849) | Jira: FREIG-69** |
+| US-730a-v2 | Cost Profile Wizard Redesign (dedicated `/carrier/cost-profile` screen, summary + 3-step wizard) | IN_PROGRESS | 7a | US-730a | CHG-US730-007 — supersedes US-730a's inline `ProfilePage` section; ARCH+HFD locked 2026-07-06: `docs/architecture/ARCH_US-730a-v2_Cost_Profile_Wizard_Design.md`, `docs/hfd/US-730a-v2_Cost_Profile_Wizard_Design_Spec.md` | Jira: FREIG-111 |
+| US-730h | Carrier Identity & Credentials Profile (dedicated `/carrier/profile` screen: identity, single equipment type, DOT/MC/CDL/insurance/med-card expiry tracking, ≤3 preferred lanes) | BACKLOG | 7a | US-730e | CHG-US730-008 — supersedes US-730e's Equipment/Lanes tabs; requires new credentials schema. Renamed from US-730g (2026-07-06) to resolve ID collision with existing Phase 7b US-730g (Per-Load Earnings Log) | Jira: FREIG-112 |
 
 ---
 

@@ -6,6 +6,7 @@ import type { LoadDocument } from '../types'
 import { useUploadBolPhoto, useUploadPodPhoto } from '../hooks/useDocuments'
 import { IssueReportModal } from './IssueReportModal'
 import { downloadBlob } from '../utils/fileDownload'
+import { usePersonaTheme } from '@/contexts/PersonaThemeContext'
 
 interface Props {
   loadId: string
@@ -65,11 +66,20 @@ export function DocumentSection({ loadId, loadStatus, role, documents }: Props) 
 
   const hasBolPhoto = documents.some((d) => d.documentType === 'BOL_PHOTO')
   const hasPodPhoto = documents.some((d) => d.documentType === 'POD_PHOTO')
+  const { persona, surfaceClassName, textClassName, mutedClassName } = usePersonaTheme()
+  const isCarrier = persona === 'carrier'
+
+  const containerClass = isCarrier ? `${surfaceClassName} p-6 mt-4` : 'rounded-xl border border-gray-200 bg-white p-6 mt-4'
+  const noticeClass = isCarrier
+    ? 'rounded-lg border border-carrier-accent/40 bg-carrier-accent/10 p-4'
+    : 'rounded-lg border border-blue-200 bg-blue-50 p-4'
+  const noticeTitleClass = isCarrier ? `text-sm font-medium ${textClassName} mb-1` : 'text-sm font-medium text-blue-900 mb-1'
+  const noticeBodyClass = isCarrier ? `text-xs ${mutedClassName} mb-3` : 'text-xs text-blue-700 mb-3'
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 mt-4">
+    <div className={containerClass}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">Documents</h3>
+        <h3 className={`text-sm font-semibold ${isCarrier ? textClassName : 'text-gray-900'} uppercase tracking-wide`}>Documents</h3>
         {role === 'SHIPPER' && (
           <Button variant="secondary" isLoading={isExporting} onClick={handleExport}>
             Export PDF
@@ -79,21 +89,21 @@ export function DocumentSection({ loadId, loadStatus, role, documents }: Props) 
 
       {/* Document list */}
       {documents.length > 0 ? (
-        <ul className="divide-y divide-gray-100 mb-4">
+        <ul className={`divide-y ${isCarrier ? 'divide-carrier-border' : 'divide-gray-100'} mb-4`}>
           {documents.map((doc) => (
             <li key={doc.id} className="flex items-start justify-between py-3 gap-3">
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${isCarrier ? 'bg-carrier-border text-carrier-text' : 'bg-gray-100 text-gray-700'}`}>
                     {DOCUMENT_LABELS[doc.documentType]}
                   </span>
-                  <span className="text-sm text-gray-800 truncate">{doc.originalFilename}</span>
-                  <span className="text-xs text-gray-400">{formatBytes(doc.fileSizeBytes)}</span>
+                  <span className={`text-sm ${isCarrier ? textClassName : 'text-gray-800'} truncate`}>{doc.originalFilename}</span>
+                  <span className={`text-xs ${mutedClassName}`}>{formatBytes(doc.fileSizeBytes)}</span>
                 </div>
                 {doc.note && (
-                  <p className="mt-1 text-xs text-gray-500 italic">{doc.note}</p>
+                  <p className={`mt-1 text-xs ${mutedClassName} italic`}>{doc.note}</p>
                 )}
-                <p className="mt-0.5 text-xs text-gray-400">
+                <p className={`mt-0.5 text-xs ${mutedClassName}`}>
                   {new Date(doc.createdAt).toLocaleString()}
                 </p>
               </div>
@@ -110,16 +120,16 @@ export function DocumentSection({ loadId, loadStatus, role, documents }: Props) 
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-gray-400 mb-4">No documents yet.</p>
+        <p className={`text-sm ${mutedClassName} mb-4`}>No documents yet.</p>
       )}
 
       {/* Trucker upload areas */}
       {role === 'TRUCKER' && (
-        <div className="space-y-3 border-t border-gray-100 pt-4">
+        <div className={`space-y-3 border-t ${isCarrier ? 'border-carrier-border' : 'border-gray-100'} pt-4`}>
           {loadStatus === 'CLAIMED' && (
-            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <p className="text-sm font-medium text-blue-900 mb-1">BOL Photo required</p>
-              <p className="text-xs text-blue-700 mb-3">
+            <div className={noticeClass}>
+              <p className={noticeTitleClass}>BOL Photo required</p>
+              <p className={noticeBodyClass}>
                 Upload a photo of the Bill of Lading before marking pickup.
                 {hasBolPhoto && ' ✓ Uploaded — you can proceed.'}
               </p>
@@ -142,9 +152,9 @@ export function DocumentSection({ loadId, loadStatus, role, documents }: Props) 
 
           {loadStatus === 'IN_TRANSIT' && (
             <>
-              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-                <p className="text-sm font-medium text-blue-900 mb-1">POD Photo required</p>
-                <p className="text-xs text-blue-700 mb-3">
+              <div className={noticeClass}>
+                <p className={noticeTitleClass}>POD Photo required</p>
+                <p className={noticeBodyClass}>
                   Upload a photo of the signed Proof of Delivery before marking delivered.
                   {hasPodPhoto && ' ✓ Uploaded — you can proceed.'}
                 </p>

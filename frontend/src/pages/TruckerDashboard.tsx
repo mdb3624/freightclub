@@ -11,6 +11,8 @@ import { LoadBoardTab } from '@/features/loads/components/LoadBoardTab'
 import { HosWidget } from '@/features/hos/components/HosWidget'
 import { useDieselPrices } from '@/features/market/hooks/useDieselPrices'
 import { computeRpm } from '@/features/loads/utils/profitability'
+import { useHosState } from '@/features/hos/hooks/useHosState'
+import { useUnreadCount } from '@/features/notifications/hooks/useNotifications'
 import type { BoardFilter, BoardSortBy, BoardSortDir, EquipmentType } from '@/features/loads/types'
 
 const VALID_SORT_BY = new Set<BoardSortBy>(['pickupDate', 'distance', 'rpm'])
@@ -83,19 +85,33 @@ function ActiveHero({ load, onView }: { load: any; onView: () => void }) {
       : null
   const phaseColor = PHASE_COLORS[load.status] ?? C.accent
   const phaseLabel = PHASE_LABELS[load.status] ?? load.status
+  const rpm = computeRpm(load)
+  const rpmColor = rpm == null ? C.dim : rpm >= 2.0 ? C.green : rpm >= 1.3 ? C.amber : '#EF4444'
 
   return (
     <div style={{ background: C.surface, padding: 12, borderBottom: `1px solid ${C.border}` }}>
       <SecLabel color={C.accent}>YOUR ACTIVE LOAD</SecLabel>
-      <DarkCard style={{ padding: 14 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: phaseColor, marginBottom: 6 }}>
-          {phaseLabel}
-        </div>
-        <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 15, fontWeight: 700, color: C.text, marginBottom: 2 }}>
-          {load.originCity}, {load.originState}
-        </div>
-        <div style={{ fontSize: 13, color: C.accent, marginBottom: 8 }}>
-          → {load.destinationCity}, {load.destinationState}
+      <DarkCard style={{ padding: 14, position: 'relative' }}>
+        {rpm != null && (
+          <div style={{
+            position: 'absolute', top: 10, right: 10, width: 52, height: 52, borderRadius: 8,
+            background: rpmColor, display: 'flex', flexDirection: 'column', alignItems: 'center',
+            justifyContent: 'center', color: '#fff', fontSize: 10, fontWeight: 700, gap: 1,
+          }}>
+            <span style={{ fontSize: 16 }}>{rpm >= 1.3 ? '✓' : '✕'}</span>
+            <span>${rpm.toFixed(2)}</span>
+          </div>
+        )}
+        <div style={{ paddingRight: rpm != null ? 60 : 0 }}>
+          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: phaseColor, marginBottom: 6 }}>
+            {phaseLabel}
+          </div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 15, fontWeight: 700, color: C.text, marginBottom: 2 }}>
+            {load.originCity}, {load.originState}
+          </div>
+          <div style={{ fontSize: 13, color: C.accent, marginBottom: 8 }}>
+            → {load.destinationCity}, {load.destinationState}
+          </div>
         </div>
 
         {/* Progress bar */}
@@ -183,6 +199,14 @@ function DieselTicker({ dieselRegions }: { dieselRegions: Array<{ label: string;
 
 /* ─── Header (CARRIER_DESIGN_SYSTEM.md: fixed 56px, #1A1A1A, logo + HOS + bell + avatar) ── */
 function DashboardHeader({ userInitials, onProfile }: { userInitials: string; onProfile: () => void }) {
+  const [hos] = useHosState()
+  const { data: unread } = useUnreadCount()
+  const hoursDriven = parseFloat(hos.hoursDrivenToday) || 0
+  const hosSet = hos.hoursDrivenToday !== '' && hos.hoursDrivenToday !== undefined
+  const remainingDrive = Math.max(0, 11 - hoursDriven)
+  const hosColor = !hosSet ? C.dim : remainingDrive <= 2 ? '#EF4444' : remainingDrive <= 4 ? C.amber : C.green
+  const unreadCount = unread?.count ?? 0
+
   return (
     <header
       data-testid="carrier-header"
@@ -198,29 +222,36 @@ function DashboardHeader({ userInitials, onProfile }: { userInitials: string; on
         gap: 8,
       }}
     >
-      <img src="/logo-mobile.png" alt="FreightClub" style={{ height: 40, width: 40, objectFit: 'contain', flexShrink: 0 }} />
+      <img src="/logo.png" alt="FreightClub" style={{ height: 40, width: 40, objectFit: 'contain', flexShrink: 0 }} />
 
       <div
         data-testid="hos-chip"
         style={{
-          display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px',
-          background: 'rgba(39,174,96,.15)', border: '1px solid #27AE60', borderRadius: 12,
-          fontSize: 11, fontWeight: 600, color: '#27AE60', flexShrink: 0,
+          display: 'flex', alignItems: 'center', gap: 6, padding: '4px 10px',
+          background: `${hosColor}26`, border: `1px solid ${hosColor}`, borderRadius: 12,
+          fontSize: 11, fontWeight: 700, color: hosColor, flexShrink: 0,
         }}
       >
-        HOS
+        <span style={{ width: 6, height: 6, borderRadius: '50%', background: hosColor, flexShrink: 0 }} />
+        {hosSet ? `${remainingDrive.toFixed(1)}h HOS available` : 'HOS not set'}
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
         <button
           data-testid="notification-bell"
-          aria-label="Notifications"
+          aria-label={unreadCount > 0 ? `${unreadCount} notifications` : 'Notifications'}
           style={{
             width: 48, height: 48, background: 'transparent', border: 'none',
-            color: C.text, fontSize: 18, cursor: 'pointer',
+            color: C.text, fontSize: 18, cursor: 'pointer', position: 'relative',
           }}
         >
           🔔
+          {unreadCount > 0 && (
+            <span aria-hidden="true" style={{
+              position: 'absolute', top: 10, right: 10, width: 8, height: 8,
+              background: '#E74C3C', borderRadius: '50%',
+            }} />
+          )}
         </button>
         <button
           data-testid="carrier-avatar"

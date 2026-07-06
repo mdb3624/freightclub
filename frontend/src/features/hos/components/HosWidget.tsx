@@ -13,9 +13,9 @@ const DAY_LABELS = [
 ]
 
 function getCycleTextColor(exhausted: boolean, remaining: number): string {
-  if (exhausted) return 'text-red-700'
-  if (remaining <= 14) return 'text-amber-700'
-  return 'text-green-700'
+  if (exhausted) return 'text-red-400'
+  if (remaining <= 14) return 'text-amber-400'
+  return 'text-green-400'
 }
 
 interface Thresholds {
@@ -37,14 +37,14 @@ function barColor(remaining: number, max: number, thresholds?: Thresholds): stri
 
 function textColor(remaining: number, max: number, thresholds?: Thresholds): string {
   if (thresholds) {
-    if (remaining <= thresholds.red) return 'text-red-700'
-    if (remaining <= thresholds.amber) return 'text-amber-700'
-    return 'text-green-700'
+    if (remaining <= thresholds.red) return 'text-red-400'
+    if (remaining <= thresholds.amber) return 'text-amber-400'
+    return 'text-green-400'
   }
   const pct = remaining / max
-  if (pct < 0.15) return 'text-red-700'
-  if (pct < 0.30) return 'text-amber-700'
-  return 'text-green-700'
+  if (pct < 0.15) return 'text-red-400'
+  if (pct < 0.30) return 'text-amber-400'
+  return 'text-green-400'
 }
 
 interface HosBarProps {
@@ -65,10 +65,10 @@ function HosBar({ label, remaining, max, rule, thresholds, notStarted }: HosBarP
     return (
       <div>
         <div className="flex justify-between text-xs mb-1">
-          <span className="text-gray-600">{label} <span className="text-gray-400">({rule})</span></span>
-          <span className="font-semibold text-gray-400">Not started</span>
+          <span className="text-carrier-text-muted">{label} <span className="text-carrier-text-muted/70">({rule})</span></span>
+          <span className="font-semibold text-carrier-text-muted/70">Not started</span>
         </div>
-        <div className="h-2 rounded-full bg-gray-100" />
+        <div className="h-2 rounded-full bg-carrier-border" />
       </div>
     )
   }
@@ -76,19 +76,19 @@ function HosBar({ label, remaining, max, rule, thresholds, notStarted }: HosBarP
   return (
     <div>
       <div className="flex justify-between text-xs mb-1">
-        <span className="text-gray-600">{label} <span className="text-gray-400">({rule})</span></span>
-        <span className={`font-semibold ${exhausted ? 'text-red-700' : tc}`}>
+        <span className="text-carrier-text-muted">{label} <span className="text-carrier-text-muted/70">({rule})</span></span>
+        <span className={`font-semibold ${exhausted ? 'text-red-400' : tc}`}>
           {exhausted ? 'Limit reached' : `${remaining.toFixed(1)} hr left`}
         </span>
       </div>
-      <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+      <div className="h-2 rounded-full bg-carrier-border overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all ${exhausted ? 'bg-gray-300' : barColor(remaining, max, thresholds)}`}
+          className={`h-full rounded-full transition-all ${exhausted ? 'bg-carrier-border' : barColor(remaining, max, thresholds)}`}
           style={{ width: `${pct}%` }}
         />
       </div>
       {!exhausted && remaining <= 0.5 && (
-        <p className={`mt-1 text-xs font-medium text-red-700`}>
+        <p className={`mt-1 text-xs font-medium text-red-400`}>
           30 minutes remaining — find a safe stop immediately.
         </p>
       )}
@@ -140,18 +140,18 @@ export function HosWidget() {
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5">
+    <div className="rounded-xl border border-carrier-border bg-carrier-surface p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+        <h3 className="text-sm font-semibold text-carrier-text uppercase tracking-wide">
           Hours of Service
         </h3>
-        <span className="text-xs text-gray-400">FMCSA 11/14-hr · 70-hr/8-day</span>
+        <span className="text-xs text-carrier-text-muted">FMCSA 11/14-hr · 70-hr/8-day</span>
       </div>
 
       {/* Per-shift inputs */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">
+          <label className="block text-xs font-medium text-carrier-text-muted mb-1">
             Hours Driven Today
           </label>
           <input
@@ -159,43 +159,43 @@ export function HosWidget() {
             min="0"
             max="11"
             step="0.5"
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full rounded-md border border-carrier-border bg-carrier-bg text-carrier-text px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-carrier-accent"
             value={hos.hoursDrivenToday}
             onChange={(e) => setHos((s) => ({ ...s, hoursDrivenToday: e.target.value }))}
             placeholder="e.g. 4.5"
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">
+          <label className="block text-xs font-medium text-carrier-text-muted mb-1">
             On-Duty Start Time (today)
           </label>
           <input
             type="time"
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full rounded-md border border-carrier-border bg-carrier-bg text-carrier-text px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-carrier-accent"
             value={hos.onDutyStartTime}
             onChange={(e) => setHos((s) => ({ ...s, onDutyStartTime: e.target.value }))}
             placeholder="Enter start time"
           />
           {!hos.onDutyStartTime && (
-            <p className="mt-0.5 text-xs text-gray-400">Enter start time to track the 14-hr window.</p>
+            <p className="mt-0.5 text-xs text-carrier-text-muted">Enter start time to track the 14-hr window.</p>
           )}
         </div>
       </div>
 
       {/* 70-hr / 8-day cycle log */}
-      <div className="mb-4 rounded-lg border border-gray-100 bg-gray-50 px-4 py-3">
+      <div className="mb-4 rounded-lg border border-carrier-border bg-carrier-bg px-4 py-3">
         <button
           type="button"
           className="flex w-full items-center justify-between text-left"
           onClick={() => setCycleExpanded((v) => !v)}
           aria-expanded={cycleExpanded}
         >
-          <span className="text-xs font-medium text-gray-700">
+          <span className="text-xs font-medium text-carrier-text">
             70-hr / 8-day on-duty log
           </span>
           <span className={`text-xs font-semibold ${getCycleTextColor(cycleExhausted, remaining70hr)}`}>
             {totalOnDuty.toFixed(1)} / 70 hrs used
-            <span className="ml-1 text-gray-400 font-normal">{cycleExpanded ? '▲' : '▼'}</span>
+            <span className="ml-1 text-carrier-text-muted font-normal">{cycleExpanded ? '▲' : '▼'}</span>
           </span>
         </button>
 
@@ -203,27 +203,27 @@ export function HosWidget() {
           <div className="mt-3 space-y-2">
             {DAY_LABELS.map((label, i) => (
               <div key={label} className="flex items-center gap-3">
-                <span className="w-24 text-xs text-gray-500 shrink-0">{label}</span>
+                <span className="w-24 text-xs text-carrier-text-muted shrink-0">{label}</span>
                 <input
                   type="number"
                   min="0"
                   max="24"
                   step="0.5"
-                  className="w-20 rounded-md border border-gray-300 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-20 rounded-md border border-carrier-border bg-carrier-surface text-carrier-text px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-carrier-accent"
                   value={hos.dailyHours[i] === 0 ? '' : hos.dailyHours[i]}
                   onChange={(e) => setDayHours(i, parseFloat(e.target.value))}
                   placeholder="0"
                 />
-                <span className="text-xs text-gray-400">hrs on-duty</span>
+                <span className="text-xs text-carrier-text-muted">hrs on-duty</span>
               </div>
             ))}
-            <div className="pt-2 flex items-center justify-between border-t border-gray-200 mt-2">
-              <span className="text-xs text-gray-600">
+            <div className="pt-2 flex items-center justify-between border-t border-carrier-border mt-2">
+              <span className="text-xs text-carrier-text-muted">
                 Total: <strong>{totalOnDuty.toFixed(1)} hrs</strong> of 70
               </span>
               <button
                 type="button"
-                className="text-xs text-gray-500 hover:text-red-600 underline"
+                className="text-xs text-carrier-text-muted hover:text-red-400 underline"
                 onClick={handle34hrRestart}
               >
                 34-hr restart (reset cycle)
@@ -254,11 +254,11 @@ export function HosWidget() {
 
       {/* 70-hr exhaustion warning */}
       {cycleExhausted && (
-        <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2">
-          <p className="text-sm font-semibold text-red-700">
+        <div className="mt-3 rounded-md border border-red-500/40 bg-[rgba(239,68,68,.08)] px-3 py-2">
+          <p className="text-sm font-semibold text-red-400">
             You have exhausted your 70-hour cycle.
           </p>
-          <p className="text-xs text-red-600 mt-0.5">
+          <p className="text-xs text-red-400/80 mt-0.5">
             You must take a 34-hour restart before driving. Use the reset button in the log above once your restart is complete.
           </p>
         </div>

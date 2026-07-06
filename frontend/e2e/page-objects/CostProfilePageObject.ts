@@ -41,16 +41,22 @@ export class CostProfilePageObject {
     await this.mpgInput.fill('6.5')
     await this.page.locator('[data-testid="region-chip-MIDWEST"]').click()
     await this.additionalCostInput.fill('0.08')
+    // US-730a-v2 (CHG-US730-001 precedent): sweep every step's buttons as it
+    // renders, not just the first step — a partial sweep is an automatic
+    // reviewer reject per reviewer-checklist.md's touch-target rule.
+    await this.assertAllButtonsAreGloveFriendly()
     await this.nextBtn.click()
 
     await this.truckPaymentInput.fill('1200')
     await this.insuranceInput.fill('600')
     await this.permitsInput.fill('150')
     await this.annualMilesInput.fill('120000')
+    await this.assertAllButtonsAreGloveFriendly()
     await this.nextBtn.click()
 
     await this.weeklyGoalInput.fill('2000')
     await this.page.locator('[data-testid="weeks-chip-48"]').click()
+    await this.assertAllButtonsAreGloveFriendly()
     await this.seeRpmBtn.click()
   }
 

@@ -52,6 +52,10 @@ test.describe('US-730a-v2: Cost Profile Wizard', () => {
     await expect(costProfilePage.minRpmValue).toHaveText('$1.07')
     await expect(costProfilePage.targetValue).toHaveText('$1.29')
 
+    // Sweep the summary view's buttons too (e.g. "Update Cost Profile") — every
+    // rendered view of this page must pass the touch-target gate, not just the wizard.
+    await costProfilePage.assertAllButtonsAreGloveFriendly()
+
     await page.screenshot({ path: 'test-results/evidence/US-730a-v2-cost-profile-summary.png', fullPage: true })
   })
 })

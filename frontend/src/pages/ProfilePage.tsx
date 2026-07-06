@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { PersonalInfoSection } from '@/features/carrier/components/profile/PersonalInfoSection'
 import { AddressSection } from '@/features/carrier/components/profile/AddressSection'
-import { CostProfileSection } from '@/features/carrier/components/profile/CostProfileSection'
 import { NotificationsSection } from '@/features/carrier/components/profile/NotificationsSection'
 import { ThemeModeToggle } from '@/features/theme-preferences/components/ThemeModeToggle'
 import { useThemePreferences } from '@/features/theme-preferences/hooks/useThemePreferences'
@@ -66,7 +65,7 @@ export function ProfilePage() {
   const { data: ratingSummary } = useMyRatingSummary()
   const [saved, setSaved] = useState(false)
 
-  const { register, handleSubmit, reset, control, formState: { errors } } = useForm<UpdateProfileValues>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<UpdateProfileValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       notifyEmail: true,
@@ -205,7 +204,6 @@ export function ProfilePage() {
         )}
 
         <PersonalInfoSection register={register} errors={errors} isTrucker={isTrucker} />
-        {isTrucker && <CostProfileSection register={register} control={control} />}
         <AddressSection register={register} isTrucker={isTrucker} />
         <NotificationsSection register={register} />
 

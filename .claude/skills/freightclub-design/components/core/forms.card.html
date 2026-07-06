@@ -1,0 +1,40 @@
+<!-- @dsCard group="Components" viewport="700x280" name="Form Controls" subtitle="Input · Select — §6.3 atomic specs" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  body { margin: 0; background: var(--color-canvas); font-family: var(--font-body); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { Input, Select } = window.FreightClubDesignSystem_ab1e6b;
+
+function Demo() {
+  return (
+    <div style={{ padding: 16, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+      <Input label="Origin State" placeholder="e.g. TX" />
+      <Input label="Pay Rate" helper="Dollars per mile" placeholder="1.85" type="number" />
+      <Input label="Email" error="Invalid email address" defaultValue="bad@" />
+      <Select label="Equipment Type" placeholder="Select type…" options={[
+        { value: 'DRY_VAN', label: 'Dry Van' },
+        { value: 'FLATBED', label: 'Flatbed' },
+        { value: 'REEFER', label: 'Refrigerated' },
+        { value: 'STEP_DECK', label: 'Step Deck' },
+      ]} />
+      <Select label="Sort By" options={['Pickup Date', 'Distance', 'RPM']} />
+      <Input label="Disabled" disabled defaultValue="Read only value" />
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!-- @dsCard group="Shipper" viewport="1280x720" name="Carrier Network" subtitle="Full carrier search, profiles, and preferred carrier management" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FreightClub — Carrier Network</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--color-canvas);font-family:var(--font-body);color:var(--color-text-primary);min-height:100vh}
+  .btn-primary{background:linear-gradient(180deg,#C9A46A 0%,#B08D57 45%,#8C6D3F 100%);box-shadow:inset 0 1px 2px rgba(255,255,255,.28),inset 0 -1px 2px rgba(0,0,0,.22),0 2px 5px rgba(0,0,0,.35);border:1px solid #7A5F3A;color:#fff;font-family:var(--font-body);font-weight:700;cursor:pointer;border-radius:4px;transition:all 150ms}
+  .btn-primary:hover{opacity:.92}
+  .btn-primary:active{transform:translateY(1px)}
+  .btn-secondary{background:linear-gradient(180deg,#FAF6EE 0%,#F0E9D8 100%);border:1px solid #C9A876;color:#7A5F3A;font-family:var(--font-body);font-weight:600;cursor:pointer;border-radius:4px;transition:all 150ms;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(0,0,0,.08),0 1px 3px rgba(0,0,0,.15)}
+  .btn-secondary:hover{background:linear-gradient(180deg,#F5EDD8 0%,#E8D9BB 100%);border-color:#B08D57;color:#5C4A2A}
+  .btn-secondary:active{transform:translateY(1px)}
+  .btn-ghost{background:none;border:none;cursor:pointer;font-family:var(--font-body);color:#7A5F3A;font-weight:600;font-size:13px;padding:4px 0;display:inline-flex;align-items:center;gap:6px}
+  .btn-ghost:hover{color:#B08D57}
+  .panel{background:#fff;border:1px solid #D0D0D0;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.05)}
+  input,select{height:36px;padding:6px 10px;border:1px solid #D0D0D0;border-radius:4px;font-size:13px;font-family:var(--font-body);background:#fff;outline:none;width:100%}
+  input:focus,select:focus{border:2px solid #B08D57;box-shadow:0 0 0 3px rgba(176,141,87,.1)}
+  label{display:block;font-size:11px;font-weight:600;color:#9C8060;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+  .filter-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#636E72;margin-bottom:8px;display:block}
+  .tag{display:inline-block;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600;background:#F5F0E8;border:1px solid #C9A876;color:#7A5F3A}
+  .carrier-card{background:#fff;border:1px solid #D0D0D0;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.05);padding:16px;cursor:pointer;transition:all 150ms;position:relative}
+  .carrier-card:hover{border-color:#B08D57;box-shadow:0 4px 12px rgba(176,141,87,.15);transform:translateY(-1px)}
+  .carrier-card.selected{border-color:#B08D57;border-width:2px;box-shadow:0 4px 12px rgba(176,141,87,.2)}
+  .preferred-badge{position:absolute;top:10px;right:10px;background:linear-gradient(135deg,#C9A46A,#8C6D3F);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:9999px}
+  .stat-box{text-align:center;padding:10px;background:#FAF6EE;border-radius:6px;border:1px solid #E8E3D8}
+  .stat-num{font-family:Sora,sans-serif;font-size:20px;font-weight:900;color:#1A1A1A;display:block}
+  .stat-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#9C8060;display:block;margin-top:2px}
+  .review-item{padding:12px 0;border-bottom:1px solid #F0EBE0}
+  .review-item:last-child{border-bottom:none}
+  /* Detail panel slide-in */
+  .detail-panel{position:fixed;right:0;top:64px;bottom:0;width:400px;background:#fff;border-left:1px solid #D0D0D0;box-shadow:-4px 0 20px rgba(0,0,0,.08);overflow-y:auto;z-index:20;transition:transform 300ms ease}
+  .detail-panel.closed{transform:translateX(100%)}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+/* ── Shared components ──────────────────────────────────────────── */
+function Avatar({ firstName='', lastName='', size='md' }) {
+  const initials = `${firstName[0]||''}${lastName[0]||''}`.toUpperCase()||'?';
+  const sz={sm:{w:32,h:32,f:11},md:{w:44,h:44,f:15},lg:{w:56,h:56,f:19}}[size]||{w:44,h:44,f:15};
+  return <div style={{width:sz.w,height:sz.h,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:sz.f,flexShrink:0,userSelect:'none',background:'#fff',color:'#1A1A1A',border:'2px solid #B08D57',boxShadow:'0 0 0 2px #B08D57,0 2px 6px rgba(176,141,87,.4)'}}>{initials}</div>;
+}
+
+function Stars({ n, rating, count }) {
+  return <span style={{display:'inline-flex',alignItems:'center',gap:4}}>
+    <span>{[1,2,3,4,5].map(i=><span key={i} style={{color:i<=n?'#F59E0B':'#E8E3D8',fontSize:13}} aria-hidden="true">★</span>)}</span>
+    {rating!=null && <span style={{fontSize:13,color:'#1A1A1A',fontWeight:600}}>{rating.toFixed(1)}</span>}
+    {count!=null && <span style={{fontSize:12,color:'#9CA3AF'}}>({count})</span>}
+  </span>;
+}
+
+/* ── Carrier data ───────────────────────────────────────────────── */
+const ALL_CARRIERS = [
+  { id:1, first:'James',  last:'Morrison', equip:['Dry Van','Flatbed'], rating:4.8, ratingCount:92,  onTime:'98%', loads:234, lanes:['TX→FL','AZ→CA'], preferred:true,  dot:'TX-4821', since:'2023', bio:'Owner-operator with 8 years experience. Specializes in long-haul dry van freight across the Southwest.' },
+  { id:2, first:'Maria',  last:'Reyes',    equip:['Box Truck'],         rating:4.9, ratingCount:47,  onTime:'100%',loads:89,  lanes:['IL→TX','TN→GA'], preferred:true,  dot:'IL-3307', since:'2024', bio:'Reliable box truck operator covering Midwest to Southeast corridor. Always on time.' },
+  { id:3, first:'Dohn',   last:'Boroe',    equip:['Flatbed'],           rating:3.2, ratingCount:18,  onTime:'91%', loads:12,  lanes:['CO→TX'],         preferred:true,  dot:'CO-9142', since:'2025', bio:'New operator building reputation on the Colorado to Texas corridor.' },
+  { id:4, first:'Carlos', last:'Vega',     equip:['Reefer','Dry Van'],  rating:4.6, ratingCount:134, onTime:'96%', loads:312, lanes:['CA→TX','OR→AZ'], preferred:false, dot:'CA-2218', since:'2021', bio:'Experienced reefer driver specializing in temperature-sensitive freight.' },
+  { id:5, first:'Linda',  last:'Chen',     equip:['Dry Van'],           rating:4.7, ratingCount:201, onTime:'97%', loads:445, lanes:['NY→FL','PA→TX'], preferred:false, dot:'NY-5509', since:'2020', bio:'Top-rated dry van operator with a perfect safety record. East Coast specialist.' },
+  { id:6, first:'Tony',   last:'Bravo',    equip:['Step Deck'],         rating:4.3, ratingCount:63,  onTime:'94%', loads:156, lanes:['TX→CA','AZ→OR'], preferred:false, dot:'TX-7731', since:'2022', bio:'Step deck specialist for oversized freight. Licensed for wide loads.' },
+];
+
+const REVIEWS = [
+  { author:'Acme Logistics', stars:5, text:'James picked up on time and delivered a day early. Highly recommend.', date:'Jun 2026' },
+  { author:'Delta Shipping',  stars:5, text:'Professional, communicative, and careful with cargo. Will use again.', date:'May 2026' },
+  { author:'Gulf Freight Co', stars:4, text:'Good overall. Minor delay due to weather, communicated proactively.', date:'Apr 2026' },
+];
+
+/* ── Header ─────────────────────────────────────────────────────── */
+function Header() {
+  return (
+    <header style={{background:'#fff',borderBottom:'1px solid #D8CEB8',padding:'0 24px',height:64,display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:30,boxShadow:'0 1px 3px rgba(0,0,0,.05)'}}>
+      <div style={{display:'flex',alignItems:'center',gap:16}}>
+        <img src="../../assets/logo.png" style={{height:40,width:'auto'}} alt="FreightClub" />
+        {/* Breadcrumb */}
+        <nav aria-label="Breadcrumb" style={{display:'flex',alignItems:'center',gap:8,fontSize:13}}>
+          <a href="index.html" style={{color:'#B08D57',fontWeight:600,textDecoration:'none'}}>Dashboard</a>
+          <span style={{color:'#D0D0D0'}}>›</span>
+          <span style={{color:'#1A1A1A',fontWeight:600}}>Carrier Network</span>
+        </nav>
+      </div>
+      <a href="index.html">
+        <button className="btn-secondary" style={{padding:'7px 16px',fontSize:13}}>← Back to Dashboard</button>
+      </a>
+    </header>
+  );
+}
+
+/* ── Filter Sidebar ─────────────────────────────────────────────── */
+function FilterSidebar({ filters, onChange, onSearch }) {
+  return (
+    <aside style={{width:240,flexShrink:0,display:'flex',flexDirection:'column',gap:0}}>
+      <div className="panel" style={{padding:20,display:'flex',flexDirection:'column',gap:16}}>
+        <div style={{fontFamily:'Sora,sans-serif',fontSize:16,fontWeight:700,color:'#1A1A1A'}}>Search Filters</div>
+
+        <div>
+          <label htmlFor="f-origin">Origin state</label>
+          <select id="f-origin" value={filters.origin} onChange={e=>onChange('origin',e.target.value)}>
+            <option value="">Any origin</option>
+            {['TX','CA','FL','IL','AZ','CO','OR','NY','TN','PA'].map(s=><option key={s}>{s}</option>)}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="f-dest">Destination state</label>
+          <select id="f-dest" value={filters.dest} onChange={e=>onChange('dest',e.target.value)}>
+            <option value="">Any destination</option>
+            {['TX','CA','FL','IL','AZ','CO','WA','NY','GA','TN'].map(s=><option key={s}>{s}</option>)}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="f-equip">Equipment type</label>
+          <select id="f-equip" value={filters.equip} onChange={e=>onChange('equip',e.target.value)}>
+            <option value="">Any equipment</option>
+            {['Dry Van','Flatbed','Reefer','Box Truck','Step Deck'].map(e=><option key={e}>{e}</option>)}
+          </select>
+        </div>
+
+        <div style={{borderTop:'1px solid #E8E3D8',paddingTop:16}}>
+          <span className="filter-label">Min. Rating</span>
+          <div style={{display:'flex',gap:6}}>
+            {[0,3,4,4.5].map(r=>(
+              <button key={r} onClick={()=>onChange('minRating',r)}
+                style={{flex:1,padding:'5px 0',fontSize:12,fontWeight:600,borderRadius:4,cursor:'pointer',border:`1px solid ${filters.minRating===r?'#B08D57':'#D0D0D0'}`,background:filters.minRating===r?'linear-gradient(180deg,#FAF6EE,#F0E9D8)':'#fff',color:filters.minRating===r?'#7A5F3A':'#636E72',transition:'all 120ms'}}>
+                {r===0?'Any':`${r}★`}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <span className="filter-label">Min. On-Time Rate</span>
+          <div style={{display:'flex',gap:6}}>
+            {[0,90,95,99].map(r=>(
+              <button key={r} onClick={()=>onChange('minOnTime',r)}
+                style={{flex:1,padding:'5px 0',fontSize:11,fontWeight:600,borderRadius:4,cursor:'pointer',border:`1px solid ${filters.minOnTime===r?'#B08D57':'#D0D0D0'}`,background:filters.minOnTime===r?'linear-gradient(180deg,#FAF6EE,#F0E9D8)':'#fff',color:filters.minOnTime===r?'#7A5F3A':'#636E72',transition:'all 120ms'}}>
+                {r===0?'Any':`${r}%+`}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{display:'flex',alignItems:'center',gap:8,paddingTop:4}}>
+          <input type="checkbox" id="f-preferred" checked={filters.preferredOnly} onChange={e=>onChange('preferredOnly',e.target.checked)} style={{width:16,height:16,accentColor:'#B08D57'}} />
+          <label htmlFor="f-preferred" style={{textTransform:'none',letterSpacing:0,fontSize:13,color:'#1A1A1A',fontWeight:500,margin:0,cursor:'pointer'}}>Preferred carriers only</label>
+        </div>
+
+        <button className="btn-primary" onClick={onSearch} style={{padding:'10px 0',fontSize:14,width:'100%'}}>Search Carriers</button>
+        <button className="btn-ghost" onClick={()=>{onChange('origin','');onChange('dest','');onChange('equip','');onChange('minRating',0);onChange('minOnTime',0);onChange('preferredOnly',false)}} style={{textAlign:'center',justifyContent:'center',fontSize:12,color:'#9CA3AF'}}>Clear filters</button>
+      </div>
+    </aside>
+  );
+}
+
+/* ── Carrier Card ───────────────────────────────────────────────── */
+function CarrierCard({ carrier, isSelected, onSelect, onTogglePreferred }) {
+  return (
+    <div className={`carrier-card${isSelected?' selected':''}`} onClick={()=>onSelect(carrier)} role="button" aria-pressed={isSelected} aria-label={`${carrier.first} ${carrier.last}, ${carrier.rating} stars`}>
+      {carrier.preferred && <span className="preferred-badge">★ Preferred</span>}
+      <div style={{display:'flex',gap:12,alignItems:'flex-start',marginBottom:12}}>
+        <Avatar firstName={carrier.first} lastName={carrier.last} size="md" />
+        <div style={{flex:1,minWidth:0}}>
+          <div style={{fontFamily:'Sora,sans-serif',fontSize:15,fontWeight:700,color:'#1A1A1A'}}>{carrier.first} {carrier.last}</div>
+          <Stars n={Math.round(carrier.rating)} rating={carrier.rating} count={carrier.ratingCount} />
+        </div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,marginBottom:12}}>
+        <div className="stat-box"><span className="stat-num" style={{color:'#27AE60'}}>{carrier.onTime}</span><span className="stat-lbl">On-Time</span></div>
+        <div className="stat-box"><span className="stat-num">{carrier.loads}</span><span className="stat-lbl">Loads</span></div>
+        <div className="stat-box"><span className="stat-num" style={{fontSize:14}}>{carrier.since}</span><span className="stat-lbl">Member</span></div>
+      </div>
+
+      <div style={{display:'flex',flexWrap:'wrap',gap:4,marginBottom:12}}>
+        {carrier.equip.map(e=><span key={e} className="tag">{e}</span>)}
+        {carrier.lanes.map(l=><span key={l} style={{display:'inline-block',padding:'2px 8px',borderRadius:9999,fontSize:11,fontWeight:500,background:'#F1F5F9',color:'#475569',border:'1px solid #CBD5E1'}}>{l}</span>)}
+      </div>
+
+      <div style={{display:'flex',gap:8}}>
+        <button className="btn-primary" style={{flex:1,padding:'8px 0',fontSize:13}} onClick={e=>{e.stopPropagation()}}>Get Quote</button>
+        <button className="btn-secondary" style={{flex:1,padding:'8px 0',fontSize:13}} onClick={e=>{e.stopPropagation();onTogglePreferred(carrier.id)}}>
+          {carrier.preferred ? '★ Preferred' : '☆ Add Preferred'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ── Detail Panel ───────────────────────────────────────────────── */
+function DetailPanel({ carrier, onClose, onTogglePreferred }) {
+  return (
+    <div className={`detail-panel${carrier?'':' closed'}`} role="complementary" aria-label={carrier?`${carrier.first} ${carrier.last} profile`:'Carrier details'}>
+      {carrier && (<>
+        <div style={{padding:20,borderBottom:'1px solid #E8E3D8',background:'#FAF6EE',position:'sticky',top:0,zIndex:1}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12}}>
+            <button className="btn-ghost" onClick={onClose} style={{fontSize:12,color:'#9CA3AF'}}>✕ Close</button>
+            <button className="btn-secondary" style={{padding:'5px 12px',fontSize:12}} onClick={()=>onTogglePreferred(carrier.id)}>
+              {carrier.preferred?'★ Preferred':'☆ Add to Preferred'}
+            </button>
+          </div>
+          <div style={{display:'flex',gap:14,alignItems:'center'}}>
+            <Avatar firstName={carrier.first} lastName={carrier.last} size="lg" />
+            <div>
+              <div style={{fontFamily:'Sora,sans-serif',fontSize:18,fontWeight:700,color:'#1A1A1A'}}>{carrier.first} {carrier.last}</div>
+              <Stars n={Math.round(carrier.rating)} rating={carrier.rating} count={carrier.ratingCount} />
+              <div style={{fontSize:12,color:'#636E72',marginTop:4}}>DOT #{carrier.dot} · Member since {carrier.since}</div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{padding:20,display:'flex',flexDirection:'column',gap:20}}>
+          <p style={{fontSize:13,color:'#4A5568',lineHeight:1.6}}>{carrier.bio}</p>
+
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+            <div className="stat-box"><span className="stat-num" style={{color:'#27AE60'}}>{carrier.onTime}</span><span className="stat-lbl">On-Time Rate</span></div>
+            <div className="stat-box"><span className="stat-num">{carrier.loads}</span><span className="stat-lbl">Loads Completed</span></div>
+            <div className="stat-box"><span className="stat-num">{carrier.rating.toFixed(1)}</span><span className="stat-lbl">Avg. Rating</span></div>
+            <div className="stat-box"><span className="stat-num">{carrier.ratingCount}</span><span className="stat-lbl">Total Reviews</span></div>
+          </div>
+
+          <div>
+            <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.07em',color:'#636E72',marginBottom:8}}>EQUIPMENT & LANES</div>
+            <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+              {carrier.equip.map(e=><span key={e} className="tag">{e}</span>)}
+              {carrier.lanes.map(l=><span key={l} style={{display:'inline-block',padding:'2px 8px',borderRadius:9999,fontSize:11,fontWeight:500,background:'#F1F5F9',color:'#475569',border:'1px solid #CBD5E1'}}>{l}</span>)}
+            </div>
+          </div>
+
+          <div>
+            <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.07em',color:'#636E72',marginBottom:8}}>RECENT REVIEWS</div>
+            {REVIEWS.map((r,i)=>(
+              <div key={i} className="review-item">
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:4}}>
+                  <span style={{fontSize:13,fontWeight:600,color:'#1A1A1A'}}>{r.author}</span>
+                  <span style={{fontSize:11,color:'#9CA3AF'}}>{r.date}</span>
+                </div>
+                <Stars n={r.stars} />
+                <p style={{fontSize:13,color:'#4A5568',marginTop:6,lineHeight:1.5}}>{r.text}</p>
+              </div>
+            ))}
+          </div>
+
+          <div style={{display:'flex',flexDirection:'column',gap:8,paddingTop:8,borderTop:'1px solid #E8E3D8'}}>
+            <button className="btn-primary" style={{padding:'11px 0',fontSize:14,width:'100%'}}>Assign to Load</button>
+            <button className="btn-secondary" style={{padding:'9px 0',fontSize:13,width:'100%'}}>Request Quote</button>
+          </div>
+        </div>
+      </>)}
+    </div>
+  );
+}
+
+/* ── App ────────────────────────────────────────────────────────── */
+function App() {
+  const [filters, setFilters] = useState({ origin:'', dest:'', equip:'', minRating:0, minOnTime:0, preferredOnly:false });
+  const [carriers, setCarriers] = useState(ALL_CARRIERS);
+  const [selected, setSelected] = useState(null);
+
+  // Read URL params to pre-populate filters (from dashboard load selection)
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    if (p.get('origin')) setFilters(f=>({...f, origin:p.get('origin')}));
+    if (p.get('dest'))   setFilters(f=>({...f, dest:p.get('dest')}));
+    if (p.get('equip'))  setFilters(f=>({...f, equip:p.get('equip')}));
+  }, []);
+
+  function handleChange(key, val) { setFilters(f=>({...f, [key]:val})); }
+
+  function handleSearch() {
+    setCarriers(ALL_CARRIERS.filter(c => {
+      if (filters.minRating && c.rating < filters.minRating) return false;
+      if (filters.minOnTime && parseInt(c.onTime) < filters.minOnTime) return false;
+      if (filters.preferredOnly && !c.preferred) return false;
+      if (filters.equip && !c.equip.some(e=>e===filters.equip)) return false;
+      return true;
+    }));
+  }
+
+  function togglePreferred(id) {
+    setCarriers(cs => cs.map(c => c.id===id ? {...c, preferred:!c.preferred} : c));
+    if (selected?.id===id) setSelected(s => ({...s, preferred:!s.preferred}));
+  }
+
+  const preferred = carriers.filter(c=>c.preferred);
+
+  return (
+    <>
+      <Header />
+      <div style={{maxWidth:1400,margin:'0 auto',padding:'24px',display:'flex',gap:24,alignItems:'flex-start',paddingRight:selected?424:24,transition:'padding-right 300ms ease'}}>
+        <FilterSidebar filters={filters} onChange={handleChange} onSearch={handleSearch} />
+
+        <main style={{flex:1,minWidth:0,display:'flex',flexDirection:'column',gap:20}}>
+
+          {/* Preferred carriers strip */}
+          {preferred.length > 0 && (
+            <div className="panel" style={{padding:16}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+                <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.07em',color:'#636E72'}}>YOUR PREFERRED CARRIERS</div>
+                <span style={{fontSize:12,color:'#9CA3AF'}}>{preferred.length} saved</span>
+              </div>
+              <div style={{display:'flex',gap:10,overflowX:'auto',paddingBottom:4}}>
+                {preferred.map(c=>(
+                  <div key={c.id} onClick={()=>setSelected(c)} style={{display:'flex',alignItems:'center',gap:8,padding:'8px 12px',background:'#FAF6EE',border:`1px solid ${selected?.id===c.id?'#B08D57':'#C9A876'}`,borderRadius:8,cursor:'pointer',flexShrink:0,transition:'all 150ms'}}
+                    onMouseEnter={e=>e.currentTarget.style.borderColor='#B08D57'}
+                    onMouseLeave={e=>e.currentTarget.style.borderColor=selected?.id===c.id?'#B08D57':'#C9A876'}>
+                    <Avatar firstName={c.first} lastName={c.last} size="sm" />
+                    <div>
+                      <div style={{fontSize:13,fontWeight:600,color:'#1A1A1A',whiteSpace:'nowrap'}}>{c.first} {c.last}</div>
+                      <div style={{fontSize:11,color:'#636E72'}}>{c.onTime} on-time</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Results grid */}
+          <div>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+              <div style={{display:'flex',alignItems:'baseline',gap:8}}>
+                <h2 style={{fontFamily:'Sora,sans-serif',fontSize:20,fontWeight:700}}>Available Carriers</h2>
+                <span style={{fontSize:13,color:'#9CA3AF'}}>{carriers.length} results</span>
+              </div>
+              <select style={{width:'auto',height:32,fontSize:12,paddingLeft:8}} aria-label="Sort carriers">
+                <option>Sort: Highest rated</option>
+                <option>Sort: Most loads</option>
+                <option>Sort: On-time rate</option>
+                <option>Sort: Newest</option>
+              </select>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:16}}>
+              {carriers.length===0 && (
+                <div style={{gridColumn:'1/-1',textAlign:'center',padding:48,color:'#9CA3AF',fontSize:14}}>
+                  No carriers match your filters. Try widening your search.
+                </div>
+              )}
+              {carriers.map(c=>(
+                <CarrierCard key={c.id} carrier={c} isSelected={selected?.id===c.id} onSelect={setSelected} onTogglePreferred={togglePreferred} />
+              ))}
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <DetailPanel carrier={selected} onClose={()=>setSelected(null)} onTogglePreferred={togglePreferred} />
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,510 @@
+<!-- @dsCard group="Shipper" viewport="1280x800" name="Create Load" subtitle="Load creation form with live board preview" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FreightClub — Create Load</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--color-canvas);font-family:var(--font-body);color:var(--color-text-primary);min-height:100vh}
+  .btn-primary{background:linear-gradient(180deg,#C9A46A 0%,#B08D57 45%,#8C6D3F 100%);box-shadow:inset 0 1px 2px rgba(255,255,255,.28),inset 0 -1px 2px rgba(0,0,0,.22),0 2px 5px rgba(0,0,0,.35);border:1px solid #7A5F3A;color:#fff;font-family:var(--font-body);font-weight:700;cursor:pointer;border-radius:4px;transition:all 150ms}
+  .btn-primary:hover{opacity:.92}
+  .btn-primary:active{transform:translateY(1px)}
+  .btn-secondary{background:linear-gradient(180deg,#FAF6EE 0%,#F0E9D8 100%);border:1px solid #C9A876;color:#7A5F3A;font-family:var(--font-body);font-weight:600;cursor:pointer;border-radius:4px;transition:all 150ms;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 1px 3px rgba(0,0,0,.12)}
+  .btn-secondary:hover{background:linear-gradient(180deg,#F5EDD8 0%,#E8D9BB 100%);border-color:#B08D57;color:#5C4A2A}
+  .btn-ghost{background:none;border:1px solid #E8E3D8;color:#9CA3AF;font-family:var(--font-body);font-weight:500;cursor:pointer;border-radius:4px;transition:all 150ms}
+  .btn-ghost:hover{border-color:#D0D0D0;color:#636E72}
+  .panel{background:#fff;border:1px solid #D0D0D0;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.05)}
+  /* Form controls */
+  input,select,textarea{padding:8px 12px;border:1px solid #D0D0D0;border-radius:4px;font-size:14px;font-family:var(--font-body);background:#fff;outline:none;color:#1A1A1A;transition:border 150ms,box-shadow 150ms}
+  input:focus,select:focus,textarea:focus{border:2px solid #B08D57;box-shadow:0 0 0 3px rgba(176,141,87,.1)}
+  input.error,select.error,textarea.error{border:2px solid #E74C3C;box-shadow:0 0 0 3px rgba(231,76,60,.08)}
+  input:disabled,select:disabled{background:#F8F9FB;color:#9CA3AF;cursor:not-allowed}
+  input[type=date]{height:40px}
+  select{height:40px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23636E72' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+  label.field-label{display:block;font-size:12px;font-weight:600;color:#636E72;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+  label.field-label .req{color:#E74C3C;margin-left:2px}
+  .field-error{font-size:12px;font-style:italic;color:#B91C1C;margin-top:4px}
+  .field-hint{font-size:12px;font-style:italic;color:#9CA3AF;margin-top:4px}
+  /* Section */
+  .form-section{display:flex;flex-direction:column;gap:16px}
+  .section-title{font-family:Sora,sans-serif;font-size:15px;font-weight:700;color:#1A1A1A;display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid #E8E3D8;margin-bottom:4px}
+  .section-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;background:linear-gradient(135deg,#FAF6EE,#F0E9D8);border:1px solid #C9A876;flex-shrink:0}
+  /* Toggle group */
+  .toggle-group{display:flex;border:1px solid #D0D0D0;border-radius:4px;overflow:hidden;height:40px}
+  .toggle-opt{flex:1;border:none;background:transparent;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:600;color:#636E72;transition:all 150ms}
+  .toggle-opt.active{background:linear-gradient(180deg,#C9A46A,#8C6D3F);color:#fff;box-shadow:inset 0 1px 2px rgba(0,0,0,.15)}
+  /* Progress bar */
+  .progress-bar{height:4px;background:#E8E3D8;border-radius:9999px;overflow:hidden;margin-bottom:20px}
+  .progress-fill{height:100%;background:linear-gradient(90deg,#C9A46A,#B08D57);border-radius:9999px;transition:width 400ms ease}
+  /* Preview card */
+  .preview-card{background:#fff;border:1px solid #D0D0D0;border-radius:8px;padding:16px;box-shadow:0 2px 4px rgba(0,0,0,.05)}
+  .preview-route{font-family:Sora,sans-serif;font-size:15px;font-weight:700;color:#1A1A1A;margin-bottom:4px}
+  .preview-sub{font-size:13px;color:#636E72;margin-bottom:10px}
+  .preview-stat{display:flex;flex-direction:column;gap:2px}
+  .preview-stat-val{font-size:14px;font-weight:700;color:#1A1A1A}
+  .preview-stat-lbl{font-size:11px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  /* Sticky footer */
+  .form-footer{position:sticky;bottom:0;background:#fff;border-top:1px solid #E8E3D8;padding:14px 24px;display:flex;gap:10px;align-items:center;justify-content:flex-end;box-shadow:0 -2px 8px rgba(0,0,0,.06);z-index:10}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useMemo } = React;
+
+const EQUIPMENT_TYPES = ['Dry Van','Flatbed','Reefer','Step Deck','Box Truck','Conestoga','Lowboy'];
+const PAYMENT_TERMS = [
+  { value:'QUICK_PAY', label:'Quick Pay (1–3 days)' },
+  { value:'NET_15',    label:'Net 15' },
+  { value:'NET_30',    label:'Net 30' },
+  { value:'NET_45',    label:'Net 45' },
+];
+const US_STATES = ['AL','AZ','AR','CA','CO','CT','DE','FL','GA','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
+
+/* ── Shared atoms ────────────────────────────────────────────────── */
+function Field({ label, required, error, hint, children }) {
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:0}}>
+      {label && <label className="field-label">{label}{required && <span className="req" aria-hidden="true">*</span>}</label>}
+      {children}
+      {error && <span className="field-error" role="alert">⚠ {error}</span>}
+      {hint && !error && <span className="field-hint">{hint}</span>}
+    </div>
+  );
+}
+
+function StatusBadge({ status }) {
+  const CFG = {
+    DRAFT: { bg:'#F1F5F9', color:'#475569', border:'#CBD5E1', label:'Draft' },
+    OPEN:  { bg:'#DBEAFE', color:'#1D4ED8', border:'#3498DB', label:'Open' },
+  };
+  const c = CFG[status] || CFG.DRAFT;
+  return <span style={{display:'inline-flex',alignItems:'center',padding:'2px 8px',borderRadius:9999,background:c.bg,border:`1px solid ${c.border}`,color:c.color,fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.05em'}}>{c.label}</span>;
+}
+
+/* ── Header ──────────────────────────────────────────────────────── */
+function Header() {
+  return (
+    <header style={{background:'#fff',borderBottom:'1px solid #D8CEB8',padding:'0 24px',height:64,display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:30,boxShadow:'0 1px 3px rgba(0,0,0,.05)'}}>
+      <div style={{display:'flex',alignItems:'center',gap:16}}>
+        <img src="../../assets/logo.png" style={{height:40,width:'auto'}} alt="FreightClub" />
+        <nav aria-label="Breadcrumb" style={{display:'flex',alignItems:'center',gap:8,fontSize:13}}>
+          <a href="index.html" style={{color:'#B08D57',fontWeight:600,textDecoration:'none'}}>Dashboard</a>
+          <span style={{color:'#D0D0D0'}}>›</span>
+          <span style={{color:'#1A1A1A',fontWeight:600}}>Create Load</span>
+        </nav>
+      </div>
+      <a href="index.html"><button className="btn-secondary" style={{padding:'7px 16px',fontSize:13}}>← Discard & Return</button></a>
+    </header>
+  );
+}
+
+/* ── Live Preview Card ───────────────────────────────────────────── */
+function LivePreview({ form, completeness }) {
+  const hasRoute = form.originCity && form.originState && form.destCity && form.destState;
+  const rpm = form.payType==='PER_MILE' && form.payRate ? parseFloat(form.payRate).toFixed(2) : null;
+  const estTotal = form.payType==='PER_MILE' && form.payRate && distanceMi
+    ? `≈ $${(parseFloat(form.payRate)*distanceMi).toLocaleString(undefined,{maximumFractionDigits:0})} est.`
+    : form.payType==='FLAT' && form.payRate
+    ? `$${parseFloat(form.payRate).toLocaleString()} flat`
+    : null;
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:16,position:'sticky',top:88}}>
+      {/* Completion meter */}
+      <div className="panel" style={{padding:16}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+          <div style={{fontSize:12,fontWeight:700,textTransform:'uppercase',letterSpacing:'.06em',color:'#636E72'}}>FORM COMPLETION</div>
+          <div style={{fontFamily:'Sora,sans-serif',fontSize:18,fontWeight:900,color:completeness>=80?'#27AE60':completeness>=50?'#F39C12':'#636E72'}}>{completeness}%</div>
+        </div>
+        <div className="progress-bar" style={{marginBottom:0}}>
+          <div className="progress-fill" style={{width:`${completeness}%`,background:completeness>=80?'#27AE60':completeness>=50?'linear-gradient(90deg,#C9A46A,#B08D57)':'linear-gradient(90deg,#D0D0D0,#9CA3AF)'}} />
+        </div>
+        {completeness < 100 && (
+          <div style={{fontSize:11,color:'#9CA3AF',marginTop:6}}>
+            {completeness < 40 ? 'Add route and schedule to continue' : completeness < 70 ? 'Add pay rate to publish' : 'Ready to publish'}
+          </div>
+        )}
+      </div>
+
+      {/* Board preview */}
+      <div>
+        <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.07em',color:'#636E72',marginBottom:8,display:'flex',alignItems:'center',gap:6}}>
+          <span>CARRIER BOARD PREVIEW</span>
+          <span style={{fontSize:10,background:'#E8E3D8',padding:'1px 6px',borderRadius:9999,color:'#9CA3AF',fontWeight:500,textTransform:'none',letterSpacing:0}}>Live</span>
+        </div>
+        <div className="preview-card" style={{opacity:hasRoute?1:0.5,transition:'opacity 300ms'}}>
+          {!hasRoute ? (
+            <div style={{textAlign:'center',padding:'20px 0',color:'#D0D0D0',fontSize:13}}>Add origin & destination<br/>to preview</div>
+          ) : (<>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
+              <div>
+                <div className="preview-route">{form.originCity || '—'}, {form.originState}</div>
+                <div style={{fontSize:13,color:'#9CA3AF',marginBottom:2}}>→ {form.destCity || '—'}, {form.destState}</div>
+              </div>
+              <StatusBadge status="OPEN" />
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,padding:'10px 0',borderTop:'1px solid #F0EBE0',borderBottom:'1px solid #F0EBE0',marginBottom:10}}>
+              <div className="preview-stat">
+                <span className="preview-stat-val">{distanceMi ? `${distanceMi.toLocaleString()} mi` : '—'}</span>
+                <span className="preview-stat-lbl">Distance</span>
+              </div>
+              <div className="preview-stat">
+                <span className="preview-stat-val">{form.weight ? `${parseInt(form.weight).toLocaleString()} lbs` : '—'}</span>
+                <span className="preview-stat-lbl">Weight</span>
+              </div>
+              <div className="preview-stat">
+                <span className="preview-stat-val">{form.equipment || '—'}</span>
+                <span className="preview-stat-lbl">Equipment</span>
+              </div>
+            </div>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <div>
+                <div style={{fontFamily:'Sora,sans-serif',fontSize:18,fontWeight:900,color:'#1A1A1A'}}>
+                  {form.payRate ? `$${parseFloat(form.payRate).toLocaleString()}${form.payType==='PER_MILE'?'/mi':' flat'}` : '—'}
+                </div>
+                {estTotal && <div style={{fontSize:12,color:'#9CA3AF'}}>{estTotal}</div>}
+              </div>
+              {rpm && (
+                <span style={{padding:'3px 10px',borderRadius:9999,fontSize:12,fontWeight:700,background:'rgba(34,197,94,.12)',border:'1px solid #22C55E',color:'#15803D'}}>${rpm}/mi</span>
+              )}
+            </div>
+            {form.pickupFrom && (
+              <div style={{marginTop:8,fontSize:12,color:'#636E72',borderTop:'1px solid #F0EBE0',paddingTop:8}}>
+                Pickup {new Date(form.pickupFrom).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}
+                {form.deliverFrom && ` · Deliver by ${new Date(form.deliverFrom).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}`}
+              </div>
+            )}
+          </>)}
+        </div>
+      </div>
+
+      {/* Tips */}
+      <div style={{background:'#FAF6EE',border:'1px solid #E8E3D8',borderRadius:8,padding:14}}>
+        <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.06em',color:'#9C8060',marginBottom:8}}>TIPS FOR FASTER CLAIMS</div>
+        {[
+          form.payType==='PER_MILE' && parseFloat(form.payRate||0) >= 1.5 ? null : '↑ Rates above $1.50/mi claim 2× faster',
+          form.paymentTerms==='QUICK_PAY' ? null : '⚡ Quick Pay attracts 40% more bids',
+          form.instructions ? null : '📋 Special instructions reduce disputes',
+        ].filter(Boolean).slice(0,2).map((tip,i)=>(
+          <div key={i} style={{fontSize:12,color:'#7A5F3A',marginBottom:4}}>{tip}</div>
+        ))}
+        {[form.payType==='PER_MILE' && parseFloat(form.payRate||0)>=1.5, form.paymentTerms==='QUICK_PAY', !!form.instructions].filter(Boolean).length===3 && (
+          <div style={{fontSize:12,color:'#27AE60',fontWeight:600}}>✓ Optimized for fast claims!</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Main Form ───────────────────────────────────────────────────── */
+function App() {
+  // Rough state-pair distance table (miles) — real app calls a mapping API
+  const STATE_DIST = {'TX-FL':1190,'TX-CA':1580,'TX-NY':1750,'TX-IL':920,'TX-AZ':740,'TX-CO':870,'TX-WA':2100,'CA-NY':2790,'CA-FL':2750,'CA-IL':2020,'CA-AZ':370,'CA-OR':600,'CA-WA':840,'FL-NY':1280,'FL-IL':1330,'FL-GA':340,'NY-IL':790,'NY-PA':95,'IL-MO':300,'IL-OH':350,'CO-AZ':600,'CO-CA':1200,'OR-WA':180};
+  function calcDist(o,d) {
+    if (!o||!d) return null;
+    if (o===d) return 50;
+    const k=`${o}-${d}`,r=`${d}-${o}`;
+    return STATE_DIST[k]||STATE_DIST[r]||null;
+  }
+
+  const [form, setForm] = useState({
+    originCity:'', originState:'TX', originZip:'',
+    destCity:'',   destState:'FL',   destZip:'',
+    pickupFrom:'', pickupTo:'',
+    deliverFrom:'', deliverTo:'',
+    equipment:'Dry Van', weight:'',
+    payType:'PER_MILE', payRate:'', paymentTerms:'NET_30',
+    instructions:'', refNumber:'',
+  });
+  const [errors, setErrors] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+
+  // Calculated distance — derived, not user-entered
+  const distanceMi = calcDist(form.originState, form.destState);
+
+  function set(key, val) {
+    setForm(f => {
+      const next = {...f, [key]:val};
+      // Auto-populate latest dates when earliest is set
+      if (key==='pickupFrom'  && !f.pickupTo)   next.pickupTo  = val;
+      if (key==='pickupFrom'  && f.pickupTo < val) next.pickupTo = val;
+      if (key==='deliverFrom' && !f.deliverTo)  next.deliverTo = val;
+      if (key==='deliverFrom' && f.deliverTo < val) next.deliverTo = val;
+      return next;
+    });
+    if(errors[key]) setErrors(e=>({...e,[key]:''}));
+  }
+
+  // Compute completeness score
+  const completeness = useMemo(() => {
+    const checks = [
+      !!form.originCity, !!form.originState,
+      !!form.destCity,   !!form.destState,
+      !!form.pickupFrom, !!form.deliverFrom,
+      !!form.equipment,  !!form.weight,
+      !!form.payRate,    !!form.paymentTerms,
+    ];
+    return Math.round(checks.filter(Boolean).length / checks.length * 100);
+  }, [form]);
+
+  function validate() {
+    const e = {};
+    if (!form.originCity)  e.originCity  = 'Origin city is required';
+    if (!form.originState) e.originState = 'Required';
+    if (!form.destCity)    e.destCity    = 'Destination city is required';
+    if (!form.destState)   e.destState   = 'Required';
+    if (!form.pickupFrom)  e.pickupFrom  = 'Pickup date & time required';
+    if (!form.deliverFrom) e.deliverFrom = 'Delivery date & time required';
+    if (form.pickupTo && form.pickupTo < form.pickupFrom) e.pickupTo = 'Must be on or after earliest pickup';
+    if (form.deliverTo && form.deliverTo < form.deliverFrom) e.deliverTo = 'Must be on or after earliest delivery';
+    if (form.deliverFrom && form.pickupFrom && form.deliverFrom < form.pickupFrom) e.deliverFrom = 'Delivery must be after pickup';
+    if (!form.weight)  e.weight  = 'Weight is required';
+    if (!form.payRate) e.payRate = 'Pay rate is required';
+    if (form.payRate && isNaN(parseFloat(form.payRate))) e.payRate = 'Must be a number';
+    return e;
+  }
+
+  function handlePublish() {
+    const e = validate();
+    if (Object.keys(e).length) { setErrors(e); return; }
+    setSubmitted(true);
+  }
+
+  if (submitted) return (
+    <>
+      <Header />
+      <div style={{maxWidth:560,margin:'80px auto',textAlign:'center',padding:'0 24px'}}>
+        <div style={{fontSize:56,marginBottom:16}}>✓</div>
+        <div style={{fontFamily:'Sora,sans-serif',fontSize:28,fontWeight:700,color:'#1A1A1A',marginBottom:8}}>Load Posted!</div>
+        <div style={{fontSize:15,color:'#636E72',marginBottom:32}}>Your load is now visible on the carrier board. You'll be notified when a carrier claims it.</div>
+        <div style={{display:'flex',gap:12,justifyContent:'center'}}>
+          <a href="index.html"><button className="btn-primary" style={{padding:'12px 28px',fontSize:15}}>Back to Dashboard</button></a>
+          <button className="btn-secondary" style={{padding:'12px 24px',fontSize:15}} onClick={()=>setSubmitted(false)}>Post Another Load</button>
+        </div>
+      </div>
+    </>
+  );
+
+  return (
+    <>
+      <Header />
+      <div style={{maxWidth:1300,margin:'0 auto',padding:'24px',display:'grid',gridTemplateColumns:'1fr 320px',gap:24,alignItems:'start',paddingBottom:80}}>
+
+        {/* ── LEFT: Form ── */}
+        <div style={{display:'flex',flexDirection:'column',gap:20}}>
+
+          {/* 1. Route */}
+          <div className="panel" style={{padding:24}}>
+            <div className="form-section">
+              <div className="section-title"><span className="section-icon">📍</span>Route</div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr auto 1fr',gap:16,alignItems:'start'}}>
+                {/* Origin */}
+                <div style={{display:'flex',flexDirection:'column',gap:10}}>
+                  <div style={{fontSize:12,fontWeight:700,color:'#B08D57',textTransform:'uppercase',letterSpacing:'.06em'}}>Origin</div>
+                  <Field label="City" required error={errors.originCity}>
+                    <input value={form.originCity} onChange={e=>set('originCity',e.target.value)} placeholder="e.g. Houston" style={{height:40,width:'100%'}} className={errors.originCity?'error':''} />
+                  </Field>
+                  <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:8}}>
+                    <Field label="State" required error={errors.originState}>
+                      <select value={form.originState} onChange={e=>set('originState',e.target.value)} className={errors.originState?'error':''}>
+                        {US_STATES.map(s=><option key={s}>{s}</option>)}
+                      </select>
+                    </Field>
+                    <Field label="ZIP">
+                      <input value={form.originZip} onChange={e=>set('originZip',e.target.value)} placeholder="77001" style={{height:40,width:'100%'}} maxLength={5} />
+                    </Field>
+                  </div>
+                </div>
+
+                {/* Arrow */}
+                <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:120,paddingTop:28}}>
+                  <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
+                    <div style={{width:40,height:2,background:'linear-gradient(90deg,#C9A46A,#B08D57)'}} />
+                    <span style={{color:'#B08D57',fontSize:20}}>→</span>
+                  </div>
+                </div>
+
+                {/* Destination */}
+                <div style={{display:'flex',flexDirection:'column',gap:10}}>
+                  <div style={{fontSize:12,fontWeight:700,color:'#B08D57',textTransform:'uppercase',letterSpacing:'.06em'}}>Destination</div>
+                  <Field label="City" required error={errors.destCity}>
+                    <input value={form.destCity} onChange={e=>set('destCity',e.target.value)} placeholder="e.g. Miami" style={{height:40,width:'100%'}} className={errors.destCity?'error':''} />
+                  </Field>
+                  <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:8}}>
+                    <Field label="State" required error={errors.destState}>
+                      <select value={form.destState} onChange={e=>set('destState',e.target.value)} className={errors.destState?'error':''}>
+                        {US_STATES.map(s=><option key={s}>{s}</option>)}
+                      </select>
+                    </Field>
+                    <Field label="ZIP">
+                      <input value={form.destZip} onChange={e=>set('destZip',e.target.value)} placeholder="33101" style={{height:40,width:'100%'}} maxLength={5} />
+                    </Field>
+                  </div>
+                </div>
+              </div>
+
+              {/* Calculated distance — read-only, derived from state pair */}
+              <div style={{display:'flex',alignItems:'center',gap:12}}>
+                <div>
+                  <div style={{fontSize:12,fontWeight:600,color:'#636E72',textTransform:'uppercase',letterSpacing:'.05em',marginBottom:5}}>EST. DISTANCE</div>
+                  <div style={{height:40,padding:'8px 12px',background:'#F8F9FB',border:'1px solid #E8E3D8',borderRadius:4,fontSize:14,color:distanceMi?'#1A1A1A':'#9CA3AF',display:'flex',alignItems:'center',minWidth:160,gap:8}}>
+                    {distanceMi ? <><span style={{fontWeight:700}}>{distanceMi.toLocaleString()} mi</span><span style={{fontSize:11,color:'#9CA3AF'}}>calculated</span></> : <span>Select states above</span>}
+                  </div>
+                </div>
+                {distanceMi && form.payType==='PER_MILE' && form.payRate && (
+                  <div style={{paddingTop:20}}>
+                    <span style={{padding:'4px 12px',borderRadius:9999,fontSize:13,fontWeight:700,background:'rgba(34,197,94,.1)',border:'1px solid #22C55E',color:'#15803D'}}>
+                      ≈ ${(parseFloat(form.payRate)*distanceMi).toLocaleString(undefined,{maximumFractionDigits:0})} est. total
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Schedule */}
+          <div className="panel" style={{padding:24}}>
+            <div className="form-section">
+              <div className="section-title"><span className="section-icon">📅</span>Schedule</div>
+
+              {/* Pickup window */}
+              <div>
+                <div style={{fontSize:12,fontWeight:700,color:'#B08D57',textTransform:'uppercase',letterSpacing:'.06em',marginBottom:10}}>Pickup Window</div>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+                  <Field label="Earliest pickup" required error={errors.pickupFrom}>
+                    <input type="datetime-local" value={form.pickupFrom} onChange={e=>set('pickupFrom',e.target.value)} className={errors.pickupFrom?'error':''} style={{width:'100%',height:40}} />
+                  </Field>
+                  <Field label="Latest pickup" hint="Auto-filled from earliest — adjust if flexible" error={errors.pickupTo}>
+                    <input type="datetime-local" value={form.pickupTo} onChange={e=>set('pickupTo',e.target.value)} min={form.pickupFrom} className={errors.pickupTo?'error':''} style={{width:'100%',height:40}} />
+                  </Field>
+                </div>
+              </div>
+
+              <div style={{borderTop:'1px solid #F0EBE0',margin:'4px 0'}} />
+
+              {/* Delivery window — mirrors pickup */}
+              <div>
+                <div style={{fontSize:12,fontWeight:700,color:'#B08D57',textTransform:'uppercase',letterSpacing:'.06em',marginBottom:10}}>Delivery Window</div>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+                  <Field label="Earliest delivery" required error={errors.deliverFrom}>
+                    <input type="datetime-local" value={form.deliverFrom} onChange={e=>set('deliverFrom',e.target.value)} min={form.pickupFrom} className={errors.deliverFrom?'error':''} style={{width:'100%',height:40}} />
+                  </Field>
+                  <Field label="Latest delivery" hint="Auto-filled from earliest — adjust if flexible" error={errors.deliverTo}>
+                    <input type="datetime-local" value={form.deliverTo} onChange={e=>set('deliverTo',e.target.value)} min={form.deliverFrom} className={errors.deliverTo?'error':''} style={{width:'100%',height:40}} />
+                  </Field>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Load Details */}
+          <div className="panel" style={{padding:24}}>
+            <div className="form-section">
+              <div className="section-title"><span className="section-icon">📦</span>Load Details</div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                <Field label="Equipment type" required>
+                  <select value={form.equipment} onChange={e=>set('equipment',e.target.value)}>
+                    {EQUIPMENT_TYPES.map(e=><option key={e}>{e}</option>)}
+                  </select>
+                </Field>
+                <Field label="Weight (lbs)" required error={errors.weight}>
+                  <input type="number" value={form.weight} onChange={e=>set('weight',e.target.value)} placeholder="e.g. 42,000" style={{height:40,width:'100%'}} className={errors.weight?'error':''} min={1} max={80000} />
+                </Field>
+              </div>
+              <div>
+                <label className="field-label">Dimensions <span style={{fontWeight:400,textTransform:'none',letterSpacing:0,color:'#9CA3AF',fontSize:11}}>(optional)</span></label>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
+                  {[['Length','dimL','dimLin'],['Width','dimW','dimWin'],['Height','dimH','dimHin']].map(([label,ftKey,inKey])=>(
+                    <div key={label}>
+                      <div style={{fontSize:11,color:'#9CA3AF',marginBottom:4}}>{label}</div>
+                      <div style={{display:'flex',gap:4,alignItems:'center'}}>
+                        <div style={{position:'relative',flex:1}}>
+                          <input type="number" value={form[ftKey]||''} onChange={e=>set(ftKey,e.target.value)} placeholder="0" min={0} style={{height:40,width:'100%',paddingRight:24}} />
+                          <span style={{position:'absolute',right:8,top:'50%',transform:'translateY(-50%)',fontSize:11,color:'#9CA3AF',pointerEvents:'none'}}>ft</span>
+                        </div>
+                        <div style={{position:'relative',flex:1}}>
+                          <input type="number" value={form[inKey]||''} onChange={e=>set(inKey,e.target.value)} placeholder="0" min={0} max={11} style={{height:40,width:'100%',paddingRight:24}} />
+                          <span style={{position:'absolute',right:8,top:'50%',transform:'translateY(-50%)',fontSize:11,color:'#9CA3AF',pointerEvents:'none'}}>in</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 4. Pay & Terms */}
+          <div className="panel" style={{padding:24}}>
+            <div className="form-section">
+              <div className="section-title"><span className="section-icon">💰</span>Pay & Terms</div>
+              <div>
+                <label className="field-label">Pay rate type <span className="req" aria-hidden="true">*</span></label>
+                <div className="toggle-group" style={{maxWidth:280}}>
+                  <button type="button" className={`toggle-opt${form.payType==='PER_MILE'?' active':''}`} onClick={()=>set('payType','PER_MILE')}>Per Mile ($/mi)</button>
+                  <button type="button" className={`toggle-opt${form.payType==='FLAT'?' active':''}`} onClick={()=>set('payType','FLAT')}>Flat Rate ($)</button>
+                </div>
+              </div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                <Field label={form.payType==='PER_MILE' ? 'Rate per mile ($)' : 'Flat rate ($)'} required error={errors.payRate} hint={form.payType==='PER_MILE' ? 'Rates ≥ $1.50/mi claim fastest' : 'Total payment to carrier'}>
+                  <div style={{position:'relative'}}>
+                    <span style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',color:'#636E72',fontSize:14,fontWeight:600}}>$</span>
+                    <input type="number" value={form.payRate} onChange={e=>set('payRate',e.target.value)} placeholder={form.payType==='PER_MILE'?'1.85':'2500'} step="0.01" min={0} style={{height:40,width:'100%',paddingLeft:24}} className={errors.payRate?'error':''} />
+                  </div>
+                </Field>
+                <Field label="Payment terms" hint="Quick Pay attracts more bids">
+                  <select value={form.paymentTerms} onChange={e=>set('paymentTerms',e.target.value)}>
+                    {PAYMENT_TERMS.map(t=><option key={t.value} value={t.value}>{t.label}</option>)}
+                  </select>
+                </Field>
+              </div>
+            </div>
+          </div>
+
+          {/* 5. Additional */}
+          <div className="panel" style={{padding:24}}>
+            <div className="form-section">
+              <div className="section-title"><span className="section-icon">📋</span>Additional Info</div>
+              <Field label="Special instructions" hint="Handling requirements, dock hours, contact preferences — reduces disputes">
+                <textarea value={form.instructions} onChange={e=>set('instructions',e.target.value)} placeholder="e.g. Liftgate required at destination. Dock hours 7am–4pm. Call 30 min before arrival." rows={3} style={{width:'100%',resize:'vertical',minHeight:88,lineHeight:1.6}} maxLength={500} />
+                <div style={{fontSize:11,color:'#D0D0D0',textAlign:'right',marginTop:2}}>{(form.instructions||'').length}/500</div>
+              </Field>
+              <Field label="Reference number" hint="Your internal PO or shipment reference">
+                <input value={form.refNumber} onChange={e=>set('refNumber',e.target.value)} placeholder="e.g. PO-2026-8821" style={{height:40,maxWidth:280}} />
+              </Field>
+            </div>
+          </div>
+        </div>
+
+        {/* ── RIGHT: Preview ── */}
+        <LivePreview form={form} completeness={completeness} />
+      </div>
+
+      {/* Sticky footer */}
+      <div className="form-footer">
+        {Object.keys(errors).length > 0 && (
+          <span style={{fontSize:13,color:'#B91C1C',flex:1}}>⚠ Please fix the highlighted fields before publishing.</span>
+        )}
+        <span style={{fontSize:12,color:'#9CA3AF',marginRight:8}}>* Required fields</span>
+        <button className="btn-ghost" style={{padding:'9px 18px',fontSize:13}} onClick={()=>window.location.href='index.html'}>Cancel</button>
+        <button className="btn-secondary" style={{padding:'9px 18px',fontSize:13}}>Save as Draft</button>
+        <button className="btn-primary" style={{padding:'9px 24px',fontSize:14}} onClick={handlePublish} disabled={completeness<40}>
+          Publish to Board →
+        </button>
+      </div>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

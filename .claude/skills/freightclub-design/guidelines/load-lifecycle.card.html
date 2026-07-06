@@ -1,0 +1,29 @@
+<!-- @dsCard group="Brand" viewport="700x140" name="Load Status Lifecycle" subtitle="DRAFT → OPEN → CLAIMED → IN_TRANSIT → DELIVERED → SETTLED" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--color-canvas); font-family: var(--font-body); padding: 20px; display: flex; align-items: center; gap: 0; }
+  .step { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+  .badge { padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+  .arrow { color: #C9A876; font-size: 16px; align-self: center; margin-bottom: 20px; }
+  .sub { font-size: 10px; color: var(--color-text-tertiary); text-align: center; }
+</style>
+</head>
+<body>
+  <div class="step"><div class="badge" style="background:#F1F5F9;color:#475569;border:1px solid #CBD5E1">✎ Draft</div><div class="sub">Saved privately</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="badge" style="background:#DBEAFE;color:#1D4ED8;border:1px solid #3498DB">● Open</div><div class="sub">On the board</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="badge" style="background:#FEF3C7;color:#B45309;border:1px solid #F39C12">⚑ Claimed</div><div class="sub">Trucker reserved</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="badge" style="background:#EDE9FE;color:#6D28D9;border:1px solid #7C3AED">▶ In Transit</div><div class="sub">On the road</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="badge" style="background:#DCFCE7;color:#15803D;border:1px solid #27AE60">✓ Delivered</div><div class="sub">POD uploaded</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="badge" style="background:#CCFBF1;color:#0F766E;border:1px solid #14B8A6">★ Settled</div><div class="sub">Payment cleared</div></div>
+</body>
+</html>

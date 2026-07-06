@@ -18,6 +18,12 @@ export function CostProfilePage() {
     }
   }, [isLoading, profile])
 
+  useEffect(() => {
+    if (view === 'wizard' && profile) {
+      setWizardData(profile)
+    }
+  }, [view, profile])
+
   if (isLoading) {
     return <div data-testid="cost-profile-page" style={{ background: '#0a0a0a', minHeight: '100vh' }} />
   }

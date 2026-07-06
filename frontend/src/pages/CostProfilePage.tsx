@@ -31,7 +31,7 @@ export function CostProfilePage() {
   return (
     <div data-testid="cost-profile-page" style={{ background: '#0a0a0a', minHeight: '100vh', color: '#F5F5F5' }}>
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottom: '1px solid #2A2A2A' }}>
-        <button data-testid="header-logo-btn" onClick={() => navigate('/dashboard/trucker')} style={{ background: 'none', border: 'none', color: '#B08D57', fontWeight: 700 }}>
+        <button data-testid="header-logo-btn" onClick={() => navigate('/dashboard/trucker')} style={{ background: 'none', border: 'none', color: '#B08D57', fontWeight: 700, minHeight: 56, padding: '0 12px' }}>
           FreightClub
         </button>
         <span>Cost Profile</span>
@@ -39,7 +39,7 @@ export function CostProfilePage() {
           data-testid="header-save-btn"
           disabled={isPending}
           onClick={() => view === 'wizard' && save(wizardData as CostProfileWizardFormData)}
-          style={{ background: 'none', border: 'none', color: '#B08D57', fontWeight: 700 }}
+          style={{ background: 'none', border: 'none', color: '#B08D57', fontWeight: 700, minHeight: 56, padding: '0 12px' }}
         >
           {isPending ? 'Saving…' : 'Save'}
         </button>

@@ -5,17 +5,21 @@ import static org.assertj.core.api.Assertions.*;
 import com.freightclub.domain.Tenant;
 import com.freightclub.domain.User;
 import com.freightclub.domain.UserRole;
+import com.freightclub.dto.DieselPriceResponse;
 import com.freightclub.modules.carrier.application.CarrierCostProfileService;
+import com.freightclub.modules.carrier.application.CostProfileWizardInput;
 import com.freightclub.modules.carrier.domain.CarrierCostProfile;
 import com.freightclub.modules.carrier.infrastructure.CarrierCostProfileRepository;
 import com.freightclub.repository.TenantRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
+import com.freightclub.service.EiaFuelPriceService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +39,8 @@ class CarrierCostProfileServiceTest {
   @Autowired private CacheManager cacheManager;
   @Autowired private TenantRepository tenantRepository;
   @Autowired private UserRepository userRepository;
+
+  @MockBean private EiaFuelPriceService eiaFuelPriceService;
 
   @BeforeEach
   void setup() {
@@ -224,5 +230,50 @@ class CarrierCostProfileServiceTest {
             new BigDecimal("0.60"));
 
     assertThat(updated.getMonthlyFixedCosts()).isEqualTo(new BigDecimal("3000"));
+  }
+
+  @Test
+  void testUpsertWizardProfile_createsNewProfile_andRpmUsesEiaPrice() {
+    org.mockito.Mockito.when(eiaFuelPriceService.getDieselPrices())
+        .thenReturn(new DieselPriceResponse(
+            null, null, // east, eastDelta
+            3.90, null, // midwest, midwestDelta
+            null, null, null, null, null, null, // south, southDelta, rocky, rockyDelta, west, westDelta
+            "2026-07-01", false, true));
+
+    var input = new CostProfileWizardInput(
+        "MIDWEST", new BigDecimal("6.5"), new BigDecimal("0.08"),
+        new BigDecimal("1200"), new BigDecimal("600"), new BigDecimal("150"),
+        120000, new BigDecimal("2000"), 48);
+
+    CarrierCostProfile profile = service.upsertWizardProfile(TRUCKER_ID, input);
+
+    assertThat(profile.hasWizardFields()).isTrue();
+    BigDecimal minRpm = service.calculateMinimumRPM(TRUCKER_ID);
+    // fuelCpm=3.90/6.5=0.6, varCpm=0.68, fixedCpm=0.195, marginCpm=0.8 -> minRpm=1.675
+    assertThat(minRpm).isEqualByComparingTo("1.6750");
+  }
+
+  @Test
+  void testUpsertWizardProfile_updatesExistingProfile() {
+    org.mockito.Mockito.when(eiaFuelPriceService.getDieselPrices())
+        .thenReturn(new DieselPriceResponse(
+            null, null, 3.90, null,
+            null, null, null, null, null, null,
+            "2026-07-01", false, true));
+
+    var firstInput = new CostProfileWizardInput(
+        "MIDWEST", new BigDecimal("6.5"), new BigDecimal("0.08"),
+        new BigDecimal("1200"), new BigDecimal("600"), new BigDecimal("150"),
+        120000, new BigDecimal("2000"), 48);
+    service.upsertWizardProfile(TRUCKER_ID, firstInput);
+
+    var secondInput = new CostProfileWizardInput(
+        "MIDWEST", new BigDecimal("7.0"), new BigDecimal("0.08"),
+        new BigDecimal("1200"), new BigDecimal("600"), new BigDecimal("150"),
+        120000, new BigDecimal("2000"), 48);
+    CarrierCostProfile updated = service.upsertWizardProfile(TRUCKER_ID, secondInput);
+
+    assertThat(updated.getMilesPerGallon()).isEqualByComparingTo("7.0");
   }
 }

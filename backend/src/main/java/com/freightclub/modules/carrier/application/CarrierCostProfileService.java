@@ -101,6 +101,9 @@ public class CarrierCostProfileService {
 
   // US-730a-v2: resolves the live diesel price for a profile's region.
   public BigDecimal resolveDieselPrice(CarrierCostProfile profile) {
+    if (profile.getDieselRegion() == null) {
+      return BigDecimal.ZERO;
+    }
     DieselPriceResponse prices = eiaFuelPriceService.getDieselPrices();
     Double price =
         switch (profile.getDieselRegion()) {

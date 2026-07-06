@@ -276,4 +276,25 @@ class CarrierCostProfileServiceTest {
 
     assertThat(updated.getMilesPerGallon()).isEqualByComparingTo("7.0");
   }
+
+  @Test
+  void testResolveDieselPrice_legacyProfileWithNullRegion_returnsZero_doesNotThrow() {
+    CarrierCostProfile profile =
+        service.createCostProfile(
+            TRUCKER_ID,
+            new BigDecimal("2500"),
+            new BigDecimal("3.50"),
+            new BigDecimal("6.5"),
+            new BigDecimal("0.15"),
+            10000,
+            new BigDecimal("0.50"));
+
+    // Legacy profile has null dieselRegion
+    assertThat(profile.getDieselRegion()).isNull();
+
+    // This should not throw NPE and should return ZERO
+    BigDecimal result = service.resolveDieselPrice(profile);
+
+    assertThat(result).isEqualByComparingTo(BigDecimal.ZERO);
+  }
 }

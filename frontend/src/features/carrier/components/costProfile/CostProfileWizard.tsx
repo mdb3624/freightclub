@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import type { CostProfileWizardFormData } from '../../schemas/costProfile.schemas'
+import { costProfileWizardSchema, type CostProfileWizardFormData } from '../../schemas/costProfile.schemas'
 
 interface Props {
   initialData: Partial<CostProfileWizardFormData> | undefined
@@ -24,6 +24,7 @@ const chipStyle = (active: boolean): React.CSSProperties => ({
 export function CostProfileWizard({ initialData, onComplete, onDataChange }: Props) {
   const [step, setStep] = useState(1)
   const [data, setData] = useState<Partial<CostProfileWizardFormData>>(initialData ?? {})
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   const set = <K extends keyof CostProfileWizardFormData>(key: K, value: CostProfileWizardFormData[K]) =>
     setData((d) => {
@@ -132,11 +133,24 @@ export function CostProfileWizard({ initialData, onComplete, onDataChange }: Pro
               persona="carrier"
               data-testid="wizard-see-rpm-btn"
               style={{ height: 64, flex: 1 }}
-              onClick={() => onComplete(data as CostProfileWizardFormData)}
+              onClick={() => {
+                const result = costProfileWizardSchema.safeParse(data)
+                if (result.success) {
+                  setValidationError(null)
+                  onComplete(result.data)
+                } else {
+                  setValidationError('Please complete all fields before continuing.')
+                }
+              }}
             >
               See My RPM →
             </Button>
           </div>
+          {validationError && (
+            <p data-testid="wizard-validation-error" style={{ color: '#E74C3C', fontSize: 14, marginTop: 8 }}>
+              {validationError}
+            </p>
+          )}
         </div>
       )}
     </div>

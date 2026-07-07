@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useCostProfile, useSaveCostProfile } from '@/features/carrier/hooks/useCostProfile'
 import { CostProfileSummary } from '@/features/carrier/components/costProfile/CostProfileSummary'
 import { CostProfileWizard } from '@/features/carrier/components/costProfile/CostProfileWizard'
-import type { CostProfileWizardFormData } from '@/features/carrier/schemas/costProfile.schemas'
+import { costProfileWizardSchema, type CostProfileWizardFormData } from '@/features/carrier/schemas/costProfile.schemas'
 
 export function CostProfilePage() {
   const navigate = useNavigate()
@@ -14,7 +14,7 @@ export function CostProfilePage() {
 
   useEffect(() => {
     if (!isLoading) {
-      setView(profile ? 'summary' : 'wizard')
+      setView(profile && profile.annualMiles != null ? 'summary' : 'wizard')
     }
   }, [isLoading, profile])
 
@@ -38,7 +38,11 @@ export function CostProfilePage() {
         <button
           data-testid="header-save-btn"
           disabled={isPending}
-          onClick={() => view === 'wizard' && save(wizardData as CostProfileWizardFormData)}
+          onClick={() => {
+            if (view === 'wizard' && costProfileWizardSchema.safeParse(wizardData).success) {
+              save(wizardData as CostProfileWizardFormData)
+            }
+          }}
           style={{ background: 'none', border: 'none', color: '#B08D57', fontWeight: 700, minHeight: 56, padding: '0 12px' }}
         >
           {isPending ? 'Saving…' : 'Save'}

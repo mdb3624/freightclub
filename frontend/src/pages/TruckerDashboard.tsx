@@ -222,7 +222,7 @@ function DashboardHeader({ userInitials, onProfile }: { userInitials: string; on
         gap: 8,
       }}
     >
-      <img src="/logo.png" alt="FreightClub" style={{ height: 40, width: 40, objectFit: 'contain', flexShrink: 0 }} />
+      <img src="/logo.png" alt="FreightClub" style={{ height: 36, objectFit: 'contain', flexShrink: 0 }} />
 
       <div
         data-testid="hos-chip"

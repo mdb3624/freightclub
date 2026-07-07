@@ -52,7 +52,7 @@ export function CostProfilePage() {
           onClick={() => navigate('/dashboard/trucker')}
           style={{ background: 'none', border: 'none', padding: 0, minHeight: 56, minWidth: 56, display: 'flex', alignItems: 'center', cursor: 'pointer' }}
         >
-          <img src="/logo.png" alt="FreightClub" style={{ height: 32, objectFit: 'contain' }} />
+          <img src="/logo.png" alt="FreightClub" style={{ height: 40, objectFit: 'contain' }} />
         </button>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
           <span style={{ fontSize: 11, fontWeight: 700, color: '#636E72', textTransform: 'uppercase', letterSpacing: '.07em' }}>

@@ -48,4 +48,53 @@ describe('CostProfileWizard', () => {
       weeksWorkedPerYear: 48,
     }))
   })
+
+  it('completes successfully when a "$0 if paid off"-style field is left untouched', () => {
+    // Regression test: fields like truck payment / insurance / permits /
+    // additional cost / weekly goal are all genuinely valid at $0 (their
+    // placeholder text says so), so a user who reasonably leaves one blank
+    // must not be blocked at the final validation step.
+    const onComplete = vi.fn()
+    render(<CostProfileWizard initialData={undefined} onComplete={onComplete} />)
+
+    fireEvent.change(screen.getByTestId('mpg-input'), { target: { value: '6.5' } })
+    fireEvent.click(screen.getByTestId('region-chip-EAST'))
+    // additional-cost-input intentionally left untouched (defaults to 0)
+    fireEvent.click(screen.getByTestId('wizard-next-btn'))
+
+    // truck-payment-input intentionally left untouched ("$0 if paid off")
+    fireEvent.change(screen.getByTestId('insurance-input'), { target: { value: '600' } })
+    // permits-input intentionally left untouched
+    fireEvent.change(screen.getByTestId('annual-miles-input'), { target: { value: '100000' } })
+    fireEvent.click(screen.getByTestId('wizard-next-btn'))
+
+    // weekly-goal-input intentionally left untouched
+    fireEvent.click(screen.getByTestId('weeks-chip-52'))
+    fireEvent.click(screen.getByTestId('wizard-see-rpm-btn'))
+
+    expect(screen.queryByTestId('wizard-validation-error')).not.toBeInTheDocument()
+    expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({
+      dieselRegion: 'EAST',
+      additionalCostPerMile: 0,
+      truckPaymentMonthly: 0,
+      permitsMonthly: 0,
+      weeklyIncomeGoal: 0,
+      weeksWorkedPerYear: 52,
+    }))
+  })
+
+  it('shows a specific, human-readable message naming the missing field', () => {
+    const onComplete = vi.fn()
+    render(<CostProfileWizard initialData={undefined} onComplete={onComplete} />)
+
+    // Skip straight to step 3 without ever setting a diesel region or MPG
+    fireEvent.click(screen.getByTestId('wizard-next-btn'))
+    fireEvent.click(screen.getByTestId('wizard-next-btn'))
+    fireEvent.click(screen.getByTestId('wizard-see-rpm-btn'))
+
+    expect(onComplete).not.toHaveBeenCalled()
+    const error = screen.getByTestId('wizard-validation-error')
+    expect(error).toHaveTextContent('Diesel region (Step 1)')
+    expect(error).toHaveTextContent('MPG (Step 1)')
+  })
 })

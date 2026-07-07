@@ -50,6 +50,28 @@ export function CostProfileSummary({ profile, onEdit }: Props) {
         <p>Margin: <span style={{ fontFamily: 'monospace' }}>${profile.marginCpm.toFixed(3)}/mi</span> → ${profile.weeklyIncomeGoal.toLocaleString()}/wk × {profile.weeksWorkedPerYear} wks</p>
       </div>
 
+      <div
+        data-testid="load-board-color-key"
+        style={{ marginTop: 16, background: '#161616', border: '1px solid #2A2A2A', borderRadius: 8, padding: '10px 14px' }}
+      >
+        <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#636E72', marginBottom: 8 }}>
+          Load Board Color Key
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {[
+            [`≥ ${fmt(profile.targetRpm)}/mi`, '#22C55E', 'Green — run it'],
+            [`≥ ${fmt(profile.minRpm)}/mi`, '#F59E0B', 'Yellow — marginal'],
+            [`< ${fmt(profile.minRpm)}/mi`, '#EF4444', 'Red — stay home'],
+          ].map(([range, color, label]) => (
+            <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ width: 10, height: 10, borderRadius: '50%', background: color, flexShrink: 0 }} />
+              <span style={{ fontSize: 13, color: '#F5F5F5', fontWeight: 600 }}>{label}</span>
+              <span style={{ marginLeft: 'auto', fontSize: 12, color: '#636E72' }}>{range}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <Button
         persona="carrier"
         data-testid="update-cost-profile-btn"

@@ -2,6 +2,18 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { CostProfileWizard } from '../CostProfileWizard'
 
+vi.mock('@/features/market/hooks/useDieselPrices', () => ({
+  useDieselPrices: () => ({
+    data: {
+      eastPrice: 3.82, eastDelta: null, midwestPrice: 3.71, midwestDelta: null,
+      southPrice: 3.61, southDelta: null, rockyPrice: 3.95, rockyDelta: null,
+      westPrice: 4.12, westDelta: null, period: '2026-07', stale: false, available: true,
+    },
+    isLoading: false,
+    error: null,
+  }),
+}))
+
 describe('CostProfileWizard', () => {
   it('walks through all 3 steps and calls onComplete with form data', () => {
     const onComplete = vi.fn()

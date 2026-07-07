@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { useDieselPrices } from '@/features/market/hooks/useDieselPrices'
 import { costProfileWizardSchema, type CostProfileWizardFormData } from '../../schemas/costProfile.schemas'
 
 interface Props {
@@ -10,21 +11,77 @@ interface Props {
 }
 
 const REGIONS = ['EAST', 'MIDWEST', 'SOUTH', 'ROCKY', 'WEST'] as const
+const REGION_PRICE_FIELD = {
+  EAST: 'eastPrice', MIDWEST: 'midwestPrice', SOUTH: 'southPrice', ROCKY: 'rockyPrice', WEST: 'westPrice',
+} as const
+const REGION_LABEL: Record<(typeof REGIONS)[number], string> = {
+  EAST: 'East', MIDWEST: 'Midwest', SOUTH: 'South', ROCKY: 'Rocky', WEST: 'West',
+}
 const WEEK_OPTIONS = [44, 46, 48, 50, 52]
 const inputStyle = { height: 52, fontSize: 16 }
 const chipStyle = (active: boolean): React.CSSProperties => ({
   height: 56,
-  padding: '0 16px',
+  padding: '8px 16px',
   borderRadius: 9999,
   border: active ? '1px solid #7A5F3A' : '1px solid #3A3A3A',
   background: active ? 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)' : 'transparent',
   color: active ? '#FFFFFF' : '#F5F5F5',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 2,
 })
+
+// Step dots — 3 fill-in steps of this wizard (a 4th "result" step lives in the
+// parent page's Summary view, not inside this component).
+function StepDots({ step }: { step: number }) {
+  return (
+    <div data-testid="wizard-step-dots" style={{ display: 'flex', gap: 6, alignItems: 'center', justifyContent: 'center', padding: '0 0 12px' }}>
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          style={{
+            width: i === step ? 20 : 7,
+            height: 7,
+            borderRadius: 9999,
+            background: i === step ? '#B08D57' : i < step ? '#5A4A2A' : '#2A2A2A',
+            transition: 'all 250ms',
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+// Diesel quick-reference strip — shown on the non-fuel steps as a reminder
+// of the region price selected in Step 1.
+function DieselQuickRef({ prices }: { prices: ReturnType<typeof useDieselPrices>['data'] }) {
+  if (!prices) return null
+  return (
+    <div data-testid="diesel-quick-ref" style={{ display: 'flex', gap: 10, overflowX: 'auto', marginBottom: 12 }}>
+      <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#636E72', flexShrink: 0, alignSelf: 'center' }}>
+        Diesel
+      </span>
+      {REGIONS.map((region) => {
+        const price = prices[REGION_PRICE_FIELD[region]]
+        return (
+          <span key={region} style={{ fontSize: 12, flexShrink: 0, color: '#636E72' }}>
+            {REGION_LABEL[region]}{' '}
+            <span style={{ color: '#F5F5F5', fontWeight: 700 }}>
+              {price != null ? `$${price.toFixed(2)}` : '—'}
+            </span>
+          </span>
+        )
+      })}
+    </div>
+  )
+}
 
 export function CostProfileWizard({ initialData, onComplete, onDataChange }: Props) {
   const [step, setStep] = useState(1)
   const [data, setData] = useState<Partial<CostProfileWizardFormData>>(initialData ?? {})
   const [validationError, setValidationError] = useState<string | null>(null)
+  const { data: dieselPrices } = useDieselPrices()
 
   const set = <K extends keyof CostProfileWizardFormData>(key: K, value: CostProfileWizardFormData[K]) =>
     setData((d) => {
@@ -35,6 +92,8 @@ export function CostProfileWizard({ initialData, onComplete, onDataChange }: Pro
 
   return (
     <div data-testid="cost-profile-wizard" style={{ background: '#0a0a0a', color: '#F5F5F5', padding: 16 }}>
+      <StepDots step={step} />
+      {step !== 1 && <DieselQuickRef prices={dieselPrices} />}
       {step === 1 && (
         <div data-testid="wizard-step-1">
           <h2>Fuel</h2>
@@ -46,18 +105,22 @@ export function CostProfileWizard({ initialData, onComplete, onDataChange }: Pro
             defaultValue={data.milesPerGallon}
             onChange={(e) => set('milesPerGallon', Number(e.target.value))}
           />
-          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-            {REGIONS.map((region) => (
-              <button
-                key={region}
-                type="button"
-                data-testid={`region-chip-${region}`}
-                style={chipStyle(data.dieselRegion === region)}
-                onClick={() => set('dieselRegion', region)}
-              >
-                {region}
-              </button>
-            ))}
+          <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+            {REGIONS.map((region) => {
+              const price = dieselPrices?.[REGION_PRICE_FIELD[region]]
+              return (
+                <button
+                  key={region}
+                  type="button"
+                  data-testid={`region-chip-${region}`}
+                  style={chipStyle(data.dieselRegion === region)}
+                  onClick={() => set('dieselRegion', region)}
+                >
+                  <span style={{ fontSize: 12 }}>{REGION_LABEL[region]}</span>
+                  <span style={{ fontWeight: 900 }}>{price != null ? `$${price.toFixed(2)}` : '—'}</span>
+                </button>
+              )
+            })}
           </div>
           <Input
             testId="additional-cost-input"

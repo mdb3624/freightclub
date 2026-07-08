@@ -4,6 +4,8 @@ import { useAuthStore } from '@/store/authStore'
 import { useProfile } from '@/features/profile/hooks/useProfile'
 import { useUpdateProfile } from '@/features/profile/hooks/useUpdateProfile'
 import { CompletenessBar } from '@/features/carrier/components/carrierProfile/CompletenessBar'
+import { ExpiryDateField } from '@/features/carrier/components/carrierProfile/ExpiryDateField'
+import { expiryStatus } from '@/features/carrier/schemas/carrierProfile.schemas'
 import type { UpdateProfileValues } from '@/features/profile/types'
 
 const inputStyle: React.CSSProperties = {
@@ -86,6 +88,12 @@ export function CarrierProfilePage() {
     !!form.equipmentType, !!form.licensePlate, !!form.dotNumber,
     !!form.cdlClass, !!form.cdlExpiry, !!form.insuranceExpiry, !!form.insuranceCarrier,
   ]
+
+  const credWarnings = [
+    { label: 'CDL', expiry: form.cdlExpiry },
+    { label: 'Insurance', expiry: form.insuranceExpiry },
+    { label: 'Med', expiry: form.medCardExpiry },
+  ].filter((c) => ['warn', 'critical', 'expired'].includes(expiryStatus(c.expiry)))
 
   const userInitials = ((user?.firstName?.[0] ?? '') + (user?.lastName?.[0] ?? '')).toUpperCase() || 'U'
 
@@ -171,7 +179,42 @@ export function CarrierProfilePage() {
         </Field>
       </div>
     ),
-    credentials: null,
+    credentials: (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '14px 14px 0' }}>
+        <Row2>
+          <Field label="DOT #">
+            <input data-testid="creds-dot-input" style={inputStyle} value={form.dotNumber ?? ''}
+              onChange={(e) => set('dotNumber', e.target.value)} placeholder="TX-0000" />
+          </Field>
+          <Field label="MC #">
+            <input data-testid="creds-mc-input" style={inputStyle} value={form.mcNumber ?? ''}
+              onChange={(e) => set('mcNumber', e.target.value)} placeholder="MC-000000" />
+          </Field>
+        </Row2>
+        <Row2>
+          <Field label="CDL class">
+            <select data-testid="creds-cdl-class-select" style={inputStyle}
+              value={form.cdlClass ?? ''} onChange={(e) => set('cdlClass', e.target.value as UpdateProfileValues['cdlClass'])}>
+              <option value="CLASS_A">Class A</option>
+              <option value="CLASS_B">Class B</option>
+              <option value="CLASS_C">Class C</option>
+            </select>
+          </Field>
+          <ExpiryDateField label="CDL expiry" testId="creds-cdl-expiry-input"
+            value={form.cdlExpiry ?? ''} onChange={(v) => set('cdlExpiry', v)} />
+        </Row2>
+        <Field label="Insurance carrier">
+          <input data-testid="creds-insurance-carrier-input" style={inputStyle} value={form.insuranceCarrier ?? ''}
+            onChange={(e) => set('insuranceCarrier', e.target.value)} placeholder="Progressive Commercial" />
+        </Field>
+        <Row2>
+          <ExpiryDateField label="Insurance expiry" testId="creds-insurance-expiry-input"
+            value={form.insuranceExpiry ?? ''} onChange={(v) => set('insuranceExpiry', v)} />
+          <ExpiryDateField label="Med card expiry" testId="creds-med-card-expiry-input"
+            value={form.medCardExpiry ?? ''} onChange={(v) => set('medCardExpiry', v)} />
+        </Row2>
+      </div>
+    ),
     lanes: null,
   }
 
@@ -201,6 +244,22 @@ export function CarrierProfilePage() {
       </header>
 
       <CompletenessBar checks={completenessChecks} />
+
+      {credWarnings.length > 0 && (
+        <div style={{
+          background: 'rgba(231,76,60,.1)', borderBottom: '1px solid #E74C3C', padding: '7px 14px',
+          display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0,
+        }}>
+          <span style={{ fontSize: 13 }}>⚠️</span>
+          <span style={{ fontSize: 12, color: '#E74C3C', fontWeight: 600 }}>
+            {credWarnings.map((w) => w.label).join(', ')} expire{credWarnings.length === 1 ? 's' : ''} soon
+          </span>
+          <button data-testid="cred-warning-review-btn" onClick={() => setTab('credentials')}
+            style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#E74C3C', fontSize: 11, fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>
+            Review
+          </button>
+        </div>
+      )}
 
       <div style={{ display: 'flex', background: '#1A1A1A', borderBottom: '1px solid #2A2A2A', flexShrink: 0 }}>
         {TABS.map((t) => (

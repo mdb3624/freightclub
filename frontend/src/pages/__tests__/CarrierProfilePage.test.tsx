@@ -62,4 +62,32 @@ describe('CarrierProfilePage', () => {
     fireEvent.click(screen.getByTestId('equip-confirm-cancel-btn'))
     expect(screen.getByTestId('equipment-type-select')).toHaveValue('DRY_VAN')
   })
+
+  it('renders the Creds tab with DOT/MC/CDL/insurance fields pre-filled', async () => {
+    render(<MemoryRouter><CarrierProfilePage /></MemoryRouter>)
+    await waitFor(() => expect(screen.getByTestId('identity-first-name-input')).toBeInTheDocument())
+    fireEvent.click(screen.getByTestId('tab-credentials'))
+    expect(screen.getByTestId('creds-dot-input')).toHaveValue('TX-4821')
+    expect(screen.getByTestId('creds-mc-input')).toHaveValue('MC-772341')
+    expect(screen.getByTestId('creds-cdl-class-select')).toHaveValue('CLASS_A')
+    expect(screen.getByTestId('creds-cdl-expiry-input')).toHaveValue('2027-08-15')
+    expect(screen.getByTestId('creds-insurance-carrier-input')).toHaveValue('Progressive Commercial')
+  })
+
+  it('shows a credential warning banner when a credential is expiring soon', async () => {
+    vi.doMock('@/features/profile/hooks/useProfile', () => ({
+      useProfile: () => ({
+        data: {
+          firstName: 'Jake', lastName: 'Morrison', phone: '', email: 'jake@example.com',
+          equipmentType: 'DRY_VAN', dotNumber: '', mcNumber: '',
+          cdlClass: 'CLASS_A', cdlExpiry: new Date(Date.now() + 10 * 86_400_000).toISOString().slice(0, 10),
+          insuranceCarrier: '', insuranceExpiry: '', medCardExpiry: '',
+        },
+        isLoading: false, error: null,
+      }),
+    }))
+    const { CarrierProfilePage: FreshPage } = await import('../CarrierProfilePage')
+    render(<MemoryRouter><FreshPage /></MemoryRouter>)
+    await waitFor(() => expect(screen.getByText(/expire.*soon/)).toBeInTheDocument())
+  })
 })

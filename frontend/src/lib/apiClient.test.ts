@@ -5,7 +5,7 @@
  * AC-3: concurrent 401s dedupe into a single refresh call
  * AC-4: non-401 errors and auth endpoints themselves are unaffected
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import type { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import apiClient from './apiClient'
 import { useAuthStore } from '@/store/authStore'
@@ -103,7 +103,7 @@ describe('apiClient refresh-on-401 interceptor', () => {
     const adapter: AxiosAdapter = async (config) => {
       if (config.url === '/loads' || config.url === '/board') {
         if (!(config.headers as any)._retried) {
-          ;(config.headers as any)._retried = true
+          (config.headers as any)._retried = true
           throw unauthorizedError(config)
         }
         return okResponse(config, { ok: true })

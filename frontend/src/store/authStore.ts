@@ -9,6 +9,7 @@ interface AuthState {
   user: User | null
   isAuthenticated: boolean
   setAuth: (accessToken: string, user: User) => void
+  setAccessToken: (accessToken: string) => void
   logout: () => void
   hydrate: () => void
 }
@@ -22,6 +23,13 @@ export const useAuthStore = create<AuthState>((set) => ({
     localStorage.setItem(ACCESS_TOKEN_KEY, accessToken)
     localStorage.setItem(USER_KEY, JSON.stringify(user))
     set({ accessToken, user, isAuthenticated: true })
+  },
+
+  // Updates the access token only (e.g. after a silent refresh) — leaves
+  // user/isAuthenticated untouched, unlike setAuth which is for full login.
+  setAccessToken: (accessToken) => {
+    localStorage.setItem(ACCESS_TOKEN_KEY, accessToken)
+    set({ accessToken })
   },
 
   logout: () => {

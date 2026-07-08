@@ -16,6 +16,7 @@ async function assertAllButtonsAreGloveFriendly(page: import('@playwright/test')
     const box = await button.boundingBox()
     expect(box, 'every visible button must report a bounding box').not.toBeNull()
     expect(box!.height, `button "${await button.textContent()}" must be >= 48px tall`).toBeGreaterThanOrEqual(48)
+    expect(box!.width, `button "${await button.textContent()}" must be >= 48px wide`).toBeGreaterThanOrEqual(48)
   }
 }
 
@@ -84,5 +85,33 @@ test.describe('US-730h Carrier Identity & Credentials Profile', () => {
     await assertAllButtonsAreGloveFriendly(page)
     await page.locator('[data-testid="equip-confirm-yes-btn"]').click()
     await expect(page.locator('[data-testid="equipment-type-select"]')).toHaveValue('FLATBED')
+  })
+
+  test('credential warning banner is glove-friendly when an expiry is near-term', async ({ page }) => {
+    const email = `us-730h-warn-${Date.now()}@freightclub.local`
+    await fetch(`${BACKEND}/api/test/auth/register`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: 'E2ETestPassword123!', firstName: 'Test', lastName: 'Trucker', role: 'TRUCKER', companyName: `TestTruck-${Date.now()}` }),
+    })
+    await page.goto(`${FRONTEND}/login`)
+    await page.fill('[data-testid="email-input"]', email)
+    await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
+    await page.click('[data-testid="login-submit-btn"]')
+    await page.waitForURL(/\/dashboard/, { timeout: 30000 })
+
+    const profile = new CarrierProfilePageObject(page)
+    await profile.goto()
+
+    // Seed a CDL expiry within the next 30 days so credWarnings is non-empty
+    // and the credential warning banner (incl. cred-warning-review-btn) renders.
+    const nearTermExpiry = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+    await profile.clickTab('credentials')
+    await profile.fillCredentials('TX-4821', 'MC-772341', 'CLASS_A', nearTermExpiry)
+
+    await expect(page.locator('[data-testid="cred-warning-review-btn"]')).toBeVisible()
+    await assertAllButtonsAreGloveFriendly(page)
+
+    await page.locator('[data-testid="cred-warning-review-btn"]').click()
+    await expect(page.locator('[data-testid="tab-credentials"]')).toBeVisible()
   })
 })

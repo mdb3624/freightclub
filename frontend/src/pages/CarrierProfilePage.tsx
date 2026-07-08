@@ -292,7 +292,7 @@ export function CarrierProfilePage() {
         </span>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <button data-testid="header-save-btn" disabled={isPending} onClick={handleSave}
-            style={{ background: 'none', border: 'none', color: justSaved ? '#27AE60' : '#C9A876', fontWeight: 700, fontSize: 13, minHeight: 56, padding: '0 8px' }}>
+            style={{ background: 'none', border: 'none', color: justSaved ? '#27AE60' : '#C9A876', fontWeight: 700, fontSize: 13, minHeight: 56, minWidth: 48, padding: '0 8px' }}>
             {isPending ? 'Saving…' : justSaved ? '✓ Saved' : 'Save'}
           </button>
           <div data-testid="header-avatar" style={{
@@ -317,7 +317,7 @@ export function CarrierProfilePage() {
             {credWarnings.map((w) => w.label).join(', ')} expire{credWarnings.length === 1 ? 's' : ''} soon
           </span>
           <button data-testid="cred-warning-review-btn" onClick={() => setTab('credentials')}
-            style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#E74C3C', fontSize: 11, fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>
+            style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#E74C3C', fontSize: 11, fontWeight: 700, cursor: 'pointer', textDecoration: 'underline', minHeight: 48, minWidth: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px' }}>
             Review
           </button>
         </div>

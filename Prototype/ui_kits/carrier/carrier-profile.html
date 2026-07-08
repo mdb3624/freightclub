@@ -1,0 +1,339 @@
+<!-- @dsCard group="Carrier" viewport="375x780" name="Carrier Profile" subtitle="No-scroll tabbed profile — each tab fits one screen, gloved-hand optimized" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FreightClub — Carrier Profile</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0a0a0a;font-family:var(--font-body);color:#F5F5F5;display:flex;justify-content:center;min-height:100vh}
+  .phone{width:375px;height:100vh;background:#121212;display:flex;flex-direction:column;overflow:hidden}
+  .sec-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#636E72}
+  .divider{height:1px;background:#2A2A2A}
+  .btn-b{background:linear-gradient(180deg,#C9A46A 0%,#B08D57 45%,#8C6D3F 100%);box-shadow:inset 0 1px 2px rgba(255,255,255,.28),inset 0 -1px 2px rgba(0,0,0,.22),0 2px 5px rgba(0,0,0,.35);border:1px solid #7A5F3A;color:#fff;font-family:var(--font-body);font-weight:700;cursor:pointer;border-radius:8px;font-size:15px;transition:all 150ms;height:64px;display:flex;align-items:center;justify-content:center;width:100%}
+  .btn-b:active{opacity:.85;transform:translateY(1px)}
+  .btn-g{background:transparent;border:1px solid #3A3A3A;color:#C9A876;font-family:var(--font-body);font-weight:600;cursor:pointer;border-radius:8px;font-size:14px;height:56px;display:flex;align-items:center;justify-content:center;width:100%}
+  /* Inputs — 52px for gloved use */
+  .di{height:52px;padding:0 14px;background:#161616;border:1px solid #2A2A2A;border-radius:8px;color:#F5F5F5;font-size:16px;font-family:var(--font-body);outline:none;transition:border 150ms;width:100%}
+  .di:focus{border-color:#C9A876;box-shadow:0 0 0 3px rgba(201,168,118,.1)}
+  .di.err{border-color:#E74C3C !important}
+  .di.warn{border-color:#F59E0B}
+  .ds{height:52px;padding:0 14px;background:#161616;border:1px solid #2A2A2A;border-radius:8px;color:#F5F5F5;font-size:16px;font-family:var(--font-body);outline:none;appearance:none;width:100%;cursor:pointer}
+  .ds:focus{border-color:#C9A876}
+  .tag-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(201,168,118,.1);border:1px solid #C9A876;border-radius:9999px;font-size:12px;color:#C9A876;font-weight:600}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+/* ── Helpers ──────────────────────────────────────────────────────── */
+function formatPhone(raw) {
+  const d = raw.replace(/\D/g,'').slice(0,10);
+  if (d.length < 4) return d;
+  if (d.length < 7) return `(${d.slice(0,3)}) ${d.slice(3)}`;
+  return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+}
+function isValidEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+function daysUntil(iso) { return iso ? Math.ceil((new Date(iso)-new Date())/86400000) : null; }
+function expiryStatus(iso) {
+  const d = daysUntil(iso);
+  if (d===null) return 'none';
+  if (d<0) return 'expired'; if (d<=30) return 'critical'; if (d<=90) return 'warn'; return 'ok';
+}
+function expiryColor(s) { return {expired:'#E74C3C',critical:'#E74C3C',warn:'#F59E0B',ok:'#27AE60',none:'#2A2A2A'}[s]; }
+function expiryLabel(iso) {
+  const d = daysUntil(iso);
+  if (d===null) return '';
+  if (d<0) return `Expired ${Math.abs(d)}d ago`;
+  if (d===0) return 'Today';
+  return `${d}d left`;
+}
+
+const INIT = {
+  firstName:'Jake', lastName:'Morrison',
+  phone:'(512) 555-0182', email:'jake.morrison@gmail.com',
+  equipType:'Dry Van', equipYear:'2019', equipMake:'Freightliner', equipModel:'Cascadia', plate:'TX-4821', vin:'',
+  dotNumber:'TX-4821', mcNumber:'MC-772341',
+  cdlClass:'Class A', cdlExpiry:'2027-08-15',
+  insuranceCarrier:'Progressive Commercial', insuranceExpiry:'2026-10-01', medCardExpiry:'2026-12-01',
+  lane1O:'TX', lane1D:'FL', lane2O:'TX', lane2D:'CA', lane3O:'', lane3D:'',
+};
+const EQUIP = ['Dry Van','Flatbed','Reefer','Box Truck','Step Deck','Tanker','Power Only'];
+const CDL   = ['Class A','Class B','Class C'];
+const STATES = ['AL','AZ','AR','CA','CO','CT','DE','FL','GA','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
+const TABS  = [{id:'identity',label:'Identity'},{id:'equipment',label:'Equipment'},{id:'credentials',label:'Creds'},{id:'lanes',label:'Lanes'}];
+
+/* ── Shared field wrapper ─────────────────────────────────────────── */
+function F({ label, children, hint }) {
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:5}}>
+      <span className="sec-lbl">{label}</span>
+      {children}
+      {hint && <div style={{fontSize:11,color:'#4A5568',fontStyle:'italic'}}>{hint}</div>}
+    </div>
+  );
+}
+function Row2({ children }) {
+  return <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>{children}</div>;
+}
+function Sel({ value, onChange, children }) {
+  return (
+    <div style={{position:'relative'}}>
+      <select className="ds" value={value} onChange={e=>onChange(e.target.value)}>{children}</select>
+      <span style={{position:'absolute',right:12,top:'50%',transform:'translateY(-50%)',color:'#C9A876',pointerEvents:'none',fontSize:11}}>▾</span>
+    </div>
+  );
+}
+
+/* ── Expiry date field ────────────────────────────────────────────── */
+function ExpiryF({ label, value, onChange }) {
+  const s = expiryStatus(value);
+  const color = expiryColor(s);
+  const lbl = expiryLabel(value);
+  return (
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:5}}>
+        <span className="sec-lbl">{label}</span>
+        {lbl && <span style={{fontSize:10,fontWeight:700,color,textTransform:'uppercase'}}>{lbl}</span>}
+      </div>
+      <input type="date" value={value} onChange={e=>onChange(e.target.value)}
+        className={`di${s==='warn'?' warn':s==='critical'||s==='expired'?' err':''}`} />
+    </div>
+  );
+}
+
+/* ── Equipment confirm sheet ─────────────────────────────────────── */
+function EquipConfirm({ pending, onConfirm, onCancel }) {
+  if (!pending) return null;
+  return (
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.75)',display:'flex',alignItems:'flex-end',zIndex:50}}>
+      <div style={{width:'100%',maxWidth:375,margin:'0 auto',background:'#1A1A1A',borderTop:'1px solid #C9A876',borderRadius:'12px 12px 0 0',padding:24}}>
+        <div style={{fontSize:16,fontWeight:700,marginBottom:8}}>Change equipment type?</div>
+        <div style={{fontSize:13,color:'#808080',marginBottom:20,lineHeight:1.6}}>
+          <span style={{color:'#C9A876',fontWeight:700}}>{pending.to}</span> loads will replace <span style={{color:'#C9A876',fontWeight:700}}>{pending.from}</span> on your board. Takes effect immediately.
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+          <button className="btn-b" onClick={onConfirm}>Yes, Switch</button>
+          <button className="btn-g" onClick={onCancel}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Completeness pill ───────────────────────────────────────────── */
+function ComplPill({ profile }) {
+  const checks = [!!profile.firstName,!!profile.lastName,!!profile.phone,!!profile.email,
+    !!profile.equipType,!!profile.plate,!!profile.dotNumber,!!profile.cdlClass,
+    !!profile.cdlExpiry,!!profile.insuranceExpiry,!!profile.insuranceCarrier];
+  const pct = Math.round(checks.filter(Boolean).length/checks.length*100);
+  const color = pct===100?'#27AE60':pct>=70?'#F59E0B':'#E74C3C';
+  return (
+    <div style={{display:'flex',alignItems:'center',gap:8,padding:'6px 12px',background:'#161616',borderBottom:'1px solid #2A2A2A',flexShrink:0}}>
+      <div style={{flex:1,height:4,background:'#2A2A2A',borderRadius:9999,overflow:'hidden'}}>
+        <div style={{height:'100%',width:`${pct}%`,background:color,borderRadius:9999,transition:'width 300ms'}} />
+      </div>
+      <span style={{fontSize:11,fontWeight:700,color,whiteSpace:'nowrap'}}>{pct}% complete</span>
+    </div>
+  );
+}
+
+/* ── App ─────────────────────────────────────────────────────────── */
+function App() {
+  const [p, setP]             = useState(INIT);
+  const [saved, setSaved]     = useState(false);
+  const [tab, setTab]         = useState('identity');
+  const [emailTouched, setET] = useState(false);
+  const [equipConfirm, setEC] = useState(null);
+
+  function set(k,v){ setP(prev=>({...prev,[k]:v})); setSaved(false); }
+
+  const emailError = emailTouched && p.email && !isValidEmail(p.email);
+
+  function handleEquipChange(v){ if(v!==p.equipType) setEC({from:p.equipType,to:v}); }
+  function confirmEquip(){ set('equipType',equipConfirm.to); setEC(null); }
+
+  function handleSave(){
+    setET(true);
+    if(p.email && !isValidEmail(p.email)) return;
+    setSaved(true); setTimeout(()=>setSaved(false),2500);
+  }
+
+  const credWarnings = [
+    {label:'CDL',expiry:p.cdlExpiry},{label:'Insurance',expiry:p.insuranceExpiry},{label:'Med',expiry:p.medCardExpiry}
+  ].filter(c=>['warn','critical','expired'].includes(expiryStatus(c.expiry)));
+
+  /* ── Tab content — each must fit ~560px height ── */
+  const TAB_CONTENT = {
+
+    identity: (
+      <div style={{display:'flex',flexDirection:'column',gap:14,padding:'16px 14px 0'}}>
+        <Row2>
+          <F label="First name"><input className="di" value={p.firstName} onChange={e=>set('firstName',e.target.value)} placeholder="First" /></F>
+          <F label="Last name"><input className="di" value={p.lastName} onChange={e=>set('lastName',e.target.value)} placeholder="Last" /></F>
+        </Row2>
+        <F label="Phone">
+          <input className="di" type="tel" value={p.phone} onChange={e=>set('phone',formatPhone(e.target.value))} placeholder="(555) 000-0000" inputMode="numeric" maxLength={14} />
+        </F>
+        <F label="Email">
+          <input className={`di${emailError?' err':''}`} type="email" value={p.email}
+            onChange={e=>set('email',e.target.value)} onBlur={()=>setET(true)} placeholder="you@email.com" />
+          {emailError && <div style={{fontSize:11,color:'#E74C3C',fontStyle:'italic'}}>Enter a valid email address</div>}
+        </F>
+        {/* Identity summary strip */}
+        <div style={{background:'#161616',border:'1px solid #2A2A2A',borderRadius:8,padding:'10px 14px',display:'flex',alignItems:'center',gap:12,marginTop:4}}>
+          <div style={{width:44,height:44,borderRadius:'50%',background:'linear-gradient(135deg,#C9A46A,#8C6D3F)',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:16,flexShrink:0,boxShadow:'0 0 0 2px #B08D57'}}>
+            {(p.firstName[0]||'?')}{(p.lastName[0]||'?')}
+          </div>
+          <div>
+            <div style={{fontWeight:700,fontSize:14}}>{p.firstName} {p.lastName}</div>
+            <div style={{fontSize:11,color:'#636E72',marginTop:2}}>{p.phone} · {p.email||'—'}</div>
+          </div>
+        </div>
+      </div>
+    ),
+
+    equipment: (
+      <div style={{display:'flex',flexDirection:'column',gap:14,padding:'16px 14px 0'}}>
+        <F label="Equipment type" hint="Filters every load on your board — one type only">
+          <Sel value={p.equipType} onChange={handleEquipChange}>
+            {EQUIP.map(e=><option key={e}>{e}</option>)}
+          </Sel>
+        </F>
+        <Row2>
+          <F label="Year"><input className="di" value={p.equipYear} onChange={e=>set('equipYear',e.target.value)} placeholder="2019" maxLength={4} inputMode="numeric" /></F>
+          <F label="Make"><input className="di" value={p.equipMake} onChange={e=>set('equipMake',e.target.value)} placeholder="Freightliner" /></F>
+        </Row2>
+        <Row2>
+          <F label="Model"><input className="di" value={p.equipModel} onChange={e=>set('equipModel',e.target.value)} placeholder="Cascadia" /></F>
+          <F label="Plate"><input className="di" value={p.plate} onChange={e=>set('plate',e.target.value)} placeholder="TX-0000" style={{textTransform:'uppercase'}} /></F>
+        </Row2>
+        <F label="VIN (optional)"><input className="di" value={p.vin} onChange={e=>set('vin',e.target.value)} placeholder="Leave blank if unknown" maxLength={17} /></F>
+      </div>
+    ),
+
+    credentials: (
+      <div style={{display:'flex',flexDirection:'column',gap:12,padding:'14px 14px 0'}}>
+        <Row2>
+          <F label="DOT #"><input className="di" value={p.dotNumber} onChange={e=>set('dotNumber',e.target.value)} placeholder="TX-0000" /></F>
+          <F label="MC #"><input className="di" value={p.mcNumber} onChange={e=>set('mcNumber',e.target.value)} placeholder="MC-000000" /></F>
+        </Row2>
+        <Row2>
+          <F label="CDL class">
+            <Sel value={p.cdlClass} onChange={v=>set('cdlClass',v)}>
+              {CDL.map(c=><option key={c}>{c}</option>)}
+            </Sel>
+          </F>
+          <ExpiryF label="CDL expiry" value={p.cdlExpiry} onChange={v=>set('cdlExpiry',v)} />
+        </Row2>
+        <F label="Insurance carrier">
+          <input className="di" value={p.insuranceCarrier} onChange={e=>set('insuranceCarrier',e.target.value)} placeholder="Progressive Commercial" />
+        </F>
+        <Row2>
+          <ExpiryF label="Insurance expiry" value={p.insuranceExpiry} onChange={v=>set('insuranceExpiry',v)} />
+          <ExpiryF label="Med card expiry" value={p.medCardExpiry} onChange={v=>set('medCardExpiry',v)} />
+        </Row2>
+      </div>
+    ),
+
+    lanes: (
+      <div style={{display:'flex',flexDirection:'column',gap:14,padding:'14px 14px 0'}}>
+        <div style={{fontSize:13,color:'#636E72',lineHeight:1.5}}>Up to 3 lanes — matching loads surface first on your board.</div>
+        {[['Lane 1','lane1O','lane1D'],['Lane 2','lane2O','lane2D'],['Lane 3','lane3O','lane3D']].map(([lbl,ok,dk])=>(
+          <div key={lbl}>
+            <div className="sec-lbl" style={{marginBottom:6}}>{lbl}</div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 24px 1fr',gap:6,alignItems:'center'}}>
+              <div style={{position:'relative'}}>
+                <select className="ds" value={p[ok]} onChange={e=>set(ok,e.target.value)}>
+                  <option value="">Origin</option>
+                  {STATES.map(s=><option key={s}>{s}</option>)}
+                </select>
+                <span style={{position:'absolute',right:8,top:'50%',transform:'translateY(-50%)',color:'#C9A876',pointerEvents:'none',fontSize:10}}>▾</span>
+              </div>
+              <span style={{color:'#C9A876',textAlign:'center',fontSize:14}}>→</span>
+              <div style={{position:'relative'}}>
+                <select className="ds" value={p[dk]} onChange={e=>set(dk,e.target.value)}>
+                  <option value="">Dest.</option>
+                  {STATES.map(s=><option key={s}>{s}</option>)}
+                </select>
+                <span style={{position:'absolute',right:8,top:'50%',transform:'translateY(-50%)',color:'#C9A876',pointerEvents:'none',fontSize:10}}>▾</span>
+              </div>
+            </div>
+            {p[ok]&&p[dk]&&(
+              <div style={{marginTop:6,display:'flex',alignItems:'center',gap:8}}>
+                <span className="tag-pill">{p[ok]} → {p[dk]}</span>
+                <button onClick={()=>{set(ok,'');set(dk,'');}} style={{background:'none',border:'none',color:'#636E72',cursor:'pointer',fontSize:14,lineHeight:1}} aria-label={`Remove ${lbl}`}>✕</button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    ),
+  };
+
+  return (
+    <div style={{display:'flex',justifyContent:'center',background:'#0a0a0a',minHeight:'100vh'}}>
+      <div className="phone">
+
+        {/* Header */}
+        <header style={{height:56,background:'#1A1A1A',borderBottom:'1px solid #2A2A2A',display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 12px',flexShrink:0}}>
+          <img src="../../assets/logo-mobile.png" style={{height:32,objectFit:'contain',cursor:'pointer'}} onClick={()=>window.location.href='index.html'} alt="back" role="button" />
+          <span style={{fontSize:11,fontWeight:700,color:'#636E72',textTransform:'uppercase',letterSpacing:'.07em'}}>My Profile</span>
+          <div style={{display:'flex',alignItems:'center',gap:8}}>
+            <button onClick={handleSave} style={{background:'none',border:'none',color:saved?'#27AE60':'#C9A876',fontSize:13,fontWeight:700,cursor:'pointer',transition:'color 200ms'}}>
+              {saved?'✓ Saved':'Save'}
+            </button>
+            <div style={{width:36,height:36,borderRadius:'50%',background:'linear-gradient(135deg,#C9A46A,#8C6D3F)',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:13,flexShrink:0,boxShadow:'0 0 0 2px #B08D57'}}>
+              {(p.firstName[0]||'?')}{(p.lastName[0]||'?')}
+            </div>
+          </div>
+        </header>
+
+        {/* Credential warning */}
+        {credWarnings.length>0&&(
+          <div style={{background:'rgba(231,76,60,.1)',borderBottom:'1px solid #E74C3C',padding:'7px 14px',display:'flex',gap:8,alignItems:'center',flexShrink:0}}>
+            <span style={{fontSize:13}}>⚠️</span>
+            <span style={{fontSize:12,color:'#E74C3C',fontWeight:600}}>{credWarnings.map(w=>w.label).join(', ')} expire{credWarnings.length===1?'s':''} soon</span>
+            <button onClick={()=>setTab('credentials')} style={{marginLeft:'auto',background:'none',border:'none',color:'#E74C3C',fontSize:11,fontWeight:700,cursor:'pointer',textDecoration:'underline'}}>Review</button>
+          </div>
+        )}
+
+        {/* Completeness bar */}
+        <ComplPill profile={p} />
+
+        {/* Tab bar */}
+        <div style={{display:'flex',background:'#1A1A1A',borderBottom:'1px solid #2A2A2A',flexShrink:0}}>
+          {TABS.map(t=>(
+            <button key={t.id} onClick={()=>setTab(t.id)}
+              style={{flex:1,height:48,background:'none',border:'none',borderBottom:`2px solid ${tab===t.id?'#B08D57':'transparent'}`,color:tab===t.id?'#F5F5F5':'#636E72',fontSize:12,fontWeight:700,cursor:'pointer',textTransform:'uppercase',letterSpacing:'.04em',transition:'all 150ms'}}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab content — fixed height, no overflow */}
+        <div style={{flex:1,overflow:'hidden',display:'flex',flexDirection:'column'}}>
+          {TAB_CONTENT[tab]}
+          {/* Save pinned to bottom */}
+          <div style={{padding:'12px 14px',marginTop:'auto',flexShrink:0}}>
+            <button className="btn-b" onClick={handleSave}>{saved?'✓ Profile Saved':'Save Profile'}</button>
+          </div>
+        </div>
+
+        <EquipConfirm pending={equipConfirm} onConfirm={confirmEquip} onCancel={()=>setEC(null)} />
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

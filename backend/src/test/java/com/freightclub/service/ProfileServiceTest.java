@@ -95,6 +95,8 @@ class ProfileServiceTest {
                     null, null, null, null, null,
                     true, false, true,
                     null, null, null,
+                    null, null, null, null, null,
+                    null, null, null, null, null,
                     null, null, null, null, null, null,
                     null, null, null, null, null);
 
@@ -116,6 +118,8 @@ class ProfileServiceTest {
                     null, null, null, null, null,
                     true, false, true,
                     null, null, null,
+                    null, null, null, null, null,
+                    null, null, null, null, null,
                     null, null, null, null, null, null,
                     null, null, null, null, null);
 

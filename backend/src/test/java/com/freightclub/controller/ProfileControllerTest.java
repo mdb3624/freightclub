@@ -1,6 +1,8 @@
 package com.freightclub.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freightclub.domain.CdlClass;
+import com.freightclub.dto.ProfileResponse;
 import com.freightclub.modules.carrier.application.*;
 import com.freightclub.modules.carrier.domain.*;
 import com.freightclub.service.ProfileService;
@@ -16,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -60,6 +63,34 @@ class ProfileControllerTest {
     private CarrierAvailabilityDTO sampleAvailability() {
         return new CarrierAvailabilityDTO("av-1", AvailableDays.MON_FRI,
                 LocalTime.of(6, 0), LocalTime.of(22, 0), "EST", false, OffsetDateTime.now());
+    }
+
+    // Profile
+
+    @Test
+    void getProfile_includesCarrierIdentityCredentialsFields() throws Exception {
+        when(profileService.getProfile("trucker-1")).thenReturn(
+            new ProfileResponse(
+                "trucker-1", "jake@example.com", "Jake", "Morrison", "TRUCKER", "tenant-1",
+                null, null, null, "(512) 555-0182",
+                null, null, null, null, null,
+                null, null, null, null, null,
+                true, true, true,
+                "MC-772341", "TX-4821", com.freightclub.domain.EquipmentType.DRY_VAN,
+                "2019", "Freightliner", "Cascadia", "TX-4821", null,
+                CdlClass.CLASS_A, LocalDate.of(2027, 8, 15),
+                "Progressive Commercial", LocalDate.of(2026, 10, 1), LocalDate.of(2026, 12, 1),
+                null, null, null, null, null, null,
+                null, null, null, null, null, null
+            )
+        );
+
+        mockMvc.perform(get("/api/v1/profile").with(trucker("trucker-1")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.equipmentYear").value("2019"))
+                .andExpect(jsonPath("$.cdlClass").value("CLASS_A"))
+                .andExpect(jsonPath("$.cdlExpiry").value("2027-08-15"))
+                .andExpect(jsonPath("$.insuranceCarrier").value("Progressive Commercial"));
     }
 
     // Equipment

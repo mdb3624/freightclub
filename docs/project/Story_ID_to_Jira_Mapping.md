@@ -57,7 +57,7 @@
 | US-730f | [FREIG-69](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-69) | US-730f: Payment Acknowledgment (MVP) | To Do |
 | US-730a-v2 | [FREIG-111](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-111) | US-730a-v2: Cost Profile Wizard Redesign | Done |
 | US-849 | [FREIG-113](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-113) | US-849: Access Token Refresh Interceptor | Done |
-| US-730h | [FREIG-112](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-112) | US-730h: Carrier Identity & Credentials Profile | To Do |
+| US-730h | [FREIG-112](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-112) | US-730h: Carrier Identity & Credentials Profile | Done |
 | US-751 | [FREIG-47](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-47) | US-751: Code-Split Auth Module from Dashboard Bundle | To Do |
 | US-752 | [FREIG-48](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-48) | US-752: Lazy-Load Font Subsets After Authentication | To Do |
 | US-753 | [FREIG-49](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-49) | US-753: Replace Zod Validation with Lightweight Regex for Lo | To Do |
@@ -199,7 +199,7 @@ curl -u "email:token" \
 | US-730f | [FREIG-69](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-69) | US-730f: Payment Acknowledgment (MVP) | To Do |
 | US-730a-v2 | [FREIG-111](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-111) | US-730a-v2: Cost Profile Wizard Redesign | Done |
 | US-849 | [FREIG-113](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-113) | US-849: Access Token Refresh Interceptor | Done |
-| US-730h | [FREIG-112](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-112) | US-730h: Carrier Identity & Credentials Profile | To Do |
+| US-730h | [FREIG-112](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-112) | US-730h: Carrier Identity & Credentials Profile | Done |
 | US-751 | [FREIG-47](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-47) | US-751: Code-Split Auth Module from Dashboard Bundle | To Do |
 | US-752 | [FREIG-48](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-48) | US-752: Lazy-Load Font Subsets After Authentication | To Do |
 | US-753 | [FREIG-49](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-49) | US-753: Replace Zod Validation with Lightweight Regex for Lo | To Do |

@@ -1,11 +1,13 @@
 package com.freightclub.dto;
 
+import com.freightclub.domain.CdlClass;
 import com.freightclub.domain.EquipmentType;
 import com.freightclub.domain.Tenant;
 import com.freightclub.domain.User;
 import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public record ProfileResponse(
         String id,
@@ -34,6 +36,16 @@ public record ProfileResponse(
         String mcNumber,
         String dotNumber,
         EquipmentType equipmentType,
+        String equipmentYear,
+        String equipmentMake,
+        String equipmentModel,
+        String licensePlate,
+        String vin,
+        CdlClass cdlClass,
+        LocalDate cdlExpiry,
+        String insuranceCarrier,
+        LocalDate insuranceExpiry,
+        LocalDate medCardExpiry,
         BigDecimal truckPaymentLease,
         BigDecimal insurance,
         BigDecimal iftaIrpPermits,
@@ -75,6 +87,16 @@ public record ProfileResponse(
                 user.getMcNumber(),
                 user.getDotNumber(),
                 user.getEquipmentType(),
+                user.getEquipmentYear(),
+                user.getEquipmentMake(),
+                user.getEquipmentModel(),
+                user.getLicensePlate(),
+                user.getVin(),
+                user.getCdlClass(),
+                user.getCdlExpiry(),
+                user.getInsuranceCarrier(),
+                user.getInsuranceExpiry(),
+                user.getMedCardExpiry(),
                 user.getTruckPaymentLease(),
                 user.getInsurance(),
                 user.getIftaIrpPermits(),

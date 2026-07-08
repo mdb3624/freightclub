@@ -1,4 +1,5 @@
 import type { EquipmentType } from '@/features/loads/types'
+import type { CdlClass } from '@/features/carrier/schemas/carrierProfile.schemas'
 
 export interface Profile {
   id: string
@@ -27,6 +28,16 @@ export interface Profile {
   mcNumber: string | null
   dotNumber: string | null
   equipmentType: EquipmentType | null
+  equipmentYear: string | null
+  equipmentMake: string | null
+  equipmentModel: string | null
+  licensePlate: string | null
+  vin: string | null
+  cdlClass: CdlClass | null
+  cdlExpiry: string | null
+  insuranceCarrier: string | null
+  insuranceExpiry: string | null
+  medCardExpiry: string | null
   truckPaymentLease: number | null
   insurance: number | null
   iftaIrpPermits: number | null
@@ -62,6 +73,16 @@ export interface UpdateProfileValues {
   mcNumber: string
   dotNumber: string
   equipmentType: EquipmentType | '' | undefined
+  equipmentYear: string
+  equipmentMake: string
+  equipmentModel: string
+  licensePlate: string
+  vin: string
+  cdlClass: CdlClass | '' | undefined
+  cdlExpiry: string
+  insuranceCarrier: string
+  insuranceExpiry: string
+  medCardExpiry: string
   truckPaymentLease: number | '' | null
   insurance: number | '' | null
   iftaIrpPermits: number | '' | null

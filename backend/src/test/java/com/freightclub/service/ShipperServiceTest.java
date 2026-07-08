@@ -86,6 +86,8 @@ class ShipperServiceTest {
                 null, null, null, null, null,
                 true, false, true,
                 null, null, null,
+                null, null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null, null, null,
                 null, null, null, null, null);
     }
@@ -180,6 +182,8 @@ class ShipperServiceTest {
                     null, null, null, null, null,
                     true, false, true,
                     null, null, null,
+                    null, null, null, null, null,
+                    null, null, null, null, null,
                     null, null, null, null, null, null,
                     null, null, null, null, null);
 
@@ -202,6 +206,8 @@ class ShipperServiceTest {
                     null, null, null, null, null,
                     true, false, true,
                     null, null, null,
+                    null, null, null, null, null,
+                    null, null, null, null, null,
                     null, null, null, null, null, null,
                     null, null, null, null, null);
 

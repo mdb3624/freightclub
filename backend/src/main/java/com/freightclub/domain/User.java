@@ -90,6 +90,37 @@ public class User {
     @Column(name = "equipment_type", columnDefinition = "VARCHAR(30)")
     private EquipmentType equipmentType;
 
+    @Column(name = "equipment_year", length = 4)
+    private String equipmentYear;
+
+    @Column(name = "equipment_make", length = 50)
+    private String equipmentMake;
+
+    @Column(name = "equipment_model", length = 50)
+    private String equipmentModel;
+
+    @Column(name = "license_plate", length = 20)
+    private String licensePlate;
+
+    @Column(name = "vin", length = 17)
+    private String vin;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cdl_class", columnDefinition = "VARCHAR(10)")
+    private CdlClass cdlClass;
+
+    @Column(name = "cdl_expiry")
+    private java.time.LocalDate cdlExpiry;
+
+    @Column(name = "insurance_carrier", length = 100)
+    private String insuranceCarrier;
+
+    @Column(name = "insurance_expiry")
+    private java.time.LocalDate insuranceExpiry;
+
+    @Column(name = "med_card_expiry")
+    private java.time.LocalDate medCardExpiry;
+
     @Column(name = "monthly_fixed_costs", precision = 10, scale = 2)
     private BigDecimal monthlyFixedCosts;
 
@@ -196,6 +227,26 @@ public class User {
     public void setDotNumber(String dotNumber) { this.dotNumber = dotNumber; }
     public EquipmentType getEquipmentType() { return equipmentType; }
     public void setEquipmentType(EquipmentType equipmentType) { this.equipmentType = equipmentType; }
+    public String getEquipmentYear() { return equipmentYear; }
+    public void setEquipmentYear(String equipmentYear) { this.equipmentYear = equipmentYear; }
+    public String getEquipmentMake() { return equipmentMake; }
+    public void setEquipmentMake(String equipmentMake) { this.equipmentMake = equipmentMake; }
+    public String getEquipmentModel() { return equipmentModel; }
+    public void setEquipmentModel(String equipmentModel) { this.equipmentModel = equipmentModel; }
+    public String getLicensePlate() { return licensePlate; }
+    public void setLicensePlate(String licensePlate) { this.licensePlate = licensePlate; }
+    public String getVin() { return vin; }
+    public void setVin(String vin) { this.vin = vin; }
+    public CdlClass getCdlClass() { return cdlClass; }
+    public void setCdlClass(CdlClass cdlClass) { this.cdlClass = cdlClass; }
+    public java.time.LocalDate getCdlExpiry() { return cdlExpiry; }
+    public void setCdlExpiry(java.time.LocalDate cdlExpiry) { this.cdlExpiry = cdlExpiry; }
+    public String getInsuranceCarrier() { return insuranceCarrier; }
+    public void setInsuranceCarrier(String insuranceCarrier) { this.insuranceCarrier = insuranceCarrier; }
+    public java.time.LocalDate getInsuranceExpiry() { return insuranceExpiry; }
+    public void setInsuranceExpiry(java.time.LocalDate insuranceExpiry) { this.insuranceExpiry = insuranceExpiry; }
+    public java.time.LocalDate getMedCardExpiry() { return medCardExpiry; }
+    public void setMedCardExpiry(java.time.LocalDate medCardExpiry) { this.medCardExpiry = medCardExpiry; }
     public BigDecimal getMonthlyFixedCosts() { return monthlyFixedCosts; }
     public void setMonthlyFixedCosts(BigDecimal monthlyFixedCosts) { this.monthlyFixedCosts = monthlyFixedCosts; }
     public BigDecimal getFuelCostPerGallon() { return fuelCostPerGallon; }

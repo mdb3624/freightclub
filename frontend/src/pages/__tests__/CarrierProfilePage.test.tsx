@@ -20,7 +20,18 @@ vi.mock('@/features/profile/hooks/useUpdateProfile', () => ({
   useUpdateProfile: () => ({ mutate: vi.fn(), isPending: false }),
 }))
 vi.mock('@/features/carrier/hooks/useCarrierProfile', () => ({
-  useLanes: () => ({ data: [], isLoading: false }),
+  useLanes: () => ({
+    data: [{ id: 'lane-1', originRegion: 'TX', destinationRegion: 'FL', frequencyPreference: 'ANY', status: 'ACTIVE', createdAt: '2026-01-01' }],
+    isLoading: false,
+  }),
+}))
+vi.mock('@/features/carrier/api', () => ({
+  carrierApi: {
+    lanes: {
+      add: vi.fn().mockResolvedValue({ id: 'lane-2', originRegion: 'CA', destinationRegion: 'NY', frequencyPreference: 'ANY', status: 'ACTIVE', createdAt: '2026-01-02' }),
+      update: vi.fn().mockResolvedValue({ id: 'lane-1', originRegion: 'TX', destinationRegion: 'FL', frequencyPreference: 'ANY', status: 'ACTIVE', createdAt: '2026-01-01' }),
+    },
+  },
 }))
 
 describe('CarrierProfilePage', () => {
@@ -89,5 +100,17 @@ describe('CarrierProfilePage', () => {
     const { CarrierProfilePage: FreshPage } = await import('../CarrierProfilePage')
     render(<MemoryRouter><FreshPage /></MemoryRouter>)
     await waitFor(() => expect(screen.getByText(/expire.*soon/)).toBeInTheDocument())
+  })
+
+  it('renders the Lanes tab with up to 3 rows, pre-filled from existing lanes', async () => {
+    render(<MemoryRouter><CarrierProfilePage /></MemoryRouter>)
+    await waitFor(() => expect(screen.getByTestId('identity-first-name-input')).toBeInTheDocument())
+    fireEvent.click(screen.getByTestId('tab-lanes'))
+    await waitFor(() => expect(screen.getByTestId('lane-1-origin-select')).toHaveValue('TX'))
+    expect(screen.getByTestId('lane-1-destination-select')).toHaveValue('FL')
+    expect(screen.getByTestId('lane-2-origin-select')).toHaveValue('')
+    expect(screen.getByTestId('lane-3-origin-select')).toHaveValue('')
+    // exactly 3 rows, never a 4th "add lane" row
+    expect(screen.queryByTestId('lane-4-origin-select')).not.toBeInTheDocument()
   })
 })

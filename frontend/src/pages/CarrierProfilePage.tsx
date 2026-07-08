@@ -5,7 +5,9 @@ import { useProfile } from '@/features/profile/hooks/useProfile'
 import { useUpdateProfile } from '@/features/profile/hooks/useUpdateProfile'
 import { CompletenessBar } from '@/features/carrier/components/carrierProfile/CompletenessBar'
 import { ExpiryDateField } from '@/features/carrier/components/carrierProfile/ExpiryDateField'
-import { expiryStatus } from '@/features/carrier/schemas/carrierProfile.schemas'
+import { expiryStatus, MAX_PREFERRED_LANES } from '@/features/carrier/schemas/carrierProfile.schemas'
+import { carrierApi } from '@/features/carrier/api'
+import { useLanes } from '@/features/carrier/hooks/useCarrierProfile'
 import type { UpdateProfileValues } from '@/features/profile/types'
 
 const inputStyle: React.CSSProperties = {
@@ -48,6 +50,9 @@ export function CarrierProfilePage() {
   const [justSaved, setJustSaved] = useState(false)
   const [initialized, setInitialized] = useState(false)
   const [pendingEquipmentChange, setPendingEquipmentChange] = useState<{ from: string; to: string } | null>(null)
+  const [lanes, setLanes] = useState<Array<{ id?: string; originRegion: string; destinationRegion: string }>>([])
+  const [lanesInitialized, setLanesInitialized] = useState(false)
+  const { data: existingLanes } = useLanes(user?.id ?? '')
 
   // Guarded with `initialized` (rather than depending on `profile` directly) so the
   // form is pre-filled exactly once when the profile first loads. Without this guard,
@@ -60,6 +65,20 @@ export function CarrierProfilePage() {
       setInitialized(true)
     }
   }, [profile, initialized])
+
+  // Guarded with `lanesInitialized` for the same reason as the profile-seeding
+  // effect above: a hook implementation that doesn't return a referentially-stable
+  // object (e.g. a fresh array/object literal per call, as in test doubles) would
+  // otherwise cause this effect to refire every render, triggering an infinite
+  // render loop (confirmed via an actual OOM crash before this guard was added).
+  useEffect(() => {
+    if (existingLanes && !lanesInitialized) {
+      const rows = existingLanes.slice(0, MAX_PREFERRED_LANES).map((l) => ({ id: l.id, originRegion: l.originRegion, destinationRegion: l.destinationRegion }))
+      while (rows.length < MAX_PREFERRED_LANES) rows.push({ originRegion: '', destinationRegion: '' })
+      setLanes(rows)
+      setLanesInitialized(true)
+    }
+  }, [existingLanes, lanesInitialized])
 
   const set = <K extends keyof UpdateProfileValues>(key: K, value: UpdateProfileValues[K]) =>
     setForm((f) => ({ ...f, [key]: value }))
@@ -81,6 +100,21 @@ export function CarrierProfilePage() {
   const confirmEquipmentChange = () => {
     if (pendingEquipmentChange) set('equipmentType', pendingEquipmentChange.to as UpdateProfileValues['equipmentType'])
     setPendingEquipmentChange(null)
+  }
+
+  const setLaneField = (index: number, field: 'originRegion' | 'destinationRegion', value: string) => {
+    setLanes((prev) => prev.map((lane, i) => (i === index ? { ...lane, [field]: value } : lane)))
+  }
+
+  const saveLane = (index: number) => {
+    const lane = lanes[index]
+    if (!lane.originRegion || !lane.destinationRegion) return
+    if (lane.id) {
+      carrierApi.lanes.update(lane.id, { originRegion: lane.originRegion, destinationRegion: lane.destinationRegion, frequencyPreference: 'ANY' })
+    } else {
+      carrierApi.lanes.add({ originRegion: lane.originRegion, destinationRegion: lane.destinationRegion, frequencyPreference: 'ANY' })
+        .then((created) => setLanes((prev) => prev.map((l, i) => (i === index ? { ...l, id: created.id } : l))))
+    }
   }
 
   const completenessChecks = [
@@ -215,7 +249,35 @@ export function CarrierProfilePage() {
         </Row2>
       </div>
     ),
-    lanes: null,
+    lanes: (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: '14px 14px 0' }}>
+        <div style={{ fontSize: 13, color: '#636E72', lineHeight: 1.5 }}>
+          Up to {MAX_PREFERRED_LANES} lanes — matching loads surface first on your board.
+        </div>
+        {lanes.map((lane, i) => (
+          <div key={i}>
+            <div style={labelStyle}>Lane {i + 1}</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 24px 1fr', gap: 6, alignItems: 'center', marginTop: 6 }}>
+              <select data-testid={`lane-${i + 1}-origin-select`} style={inputStyle}
+                value={lane.originRegion} onChange={(e) => { setLaneField(i, 'originRegion', e.target.value); }}
+                onBlur={() => saveLane(i)}>
+                <option value="">Origin</option>
+                <option value="TX">TX</option><option value="CA">CA</option><option value="FL">FL</option>
+                <option value="NY">NY</option><option value="IL">IL</option>
+              </select>
+              <span style={{ color: '#C9A876', textAlign: 'center', fontSize: 14 }}>→</span>
+              <select data-testid={`lane-${i + 1}-destination-select`} style={inputStyle}
+                value={lane.destinationRegion} onChange={(e) => { setLaneField(i, 'destinationRegion', e.target.value); }}
+                onBlur={() => saveLane(i)}>
+                <option value="">Dest.</option>
+                <option value="TX">TX</option><option value="CA">CA</option><option value="FL">FL</option>
+                <option value="NY">NY</option><option value="IL">IL</option>
+              </select>
+            </div>
+          </div>
+        ))}
+      </div>
+    ),
   }
 
   return (

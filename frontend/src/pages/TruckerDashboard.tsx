@@ -427,7 +427,7 @@ function MyStatsTab({ profile, history }: { profile: any; history: any }) {
 
 function SettingsTab({ onLogout }: { onLogout: () => void }) {
   const items = [
-    { icon: '👤', label: 'Profile', sub: 'DOT number, CDL, insurance', to: '/profile' },
+    { icon: '👤', label: 'Profile', sub: 'DOT number, CDL, insurance', to: '/carrier/profile' },
     { icon: '⚙', label: 'Cost Profile', sub: 'Set CPM, fuel & maintenance costs', to: '/carrier/cost-profile' },
     { icon: '💳', label: 'Payments', sub: 'Bank account & payout settings', to: null },
     { icon: '📋', label: 'Load History', sub: 'All completed loads', to: null },

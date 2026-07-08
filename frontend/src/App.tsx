@@ -18,6 +18,7 @@ const LoadEditPage = lazy(() => import('@/pages/LoadEditPage').then(m => ({ defa
 const TruckerLoadDetailPage = lazy(() => import('@/pages/TruckerLoadDetailPage').then(m => ({ default: m.TruckerLoadDetailPage })))
 const ProfilePage = lazy(() => import('@/pages/ProfilePage').then(m => ({ default: m.ProfilePage })))
 const CostProfilePage = lazy(() => import('@/pages/CostProfilePage').then(m => ({ default: m.CostProfilePage })))
+const CarrierProfilePage = lazy(() => import('@/pages/CarrierProfilePage').then(m => ({ default: m.CarrierProfilePage })))
 const RatingsPage = lazy(() => import('@/pages/RatingsPage').then(m => ({ default: m.RatingsPage })))
 // const AnalyticsPage = lazy(() => import('@/features/analytics/pages/AnalyticsPage').then(m => ({ default: m.AnalyticsPage })))
 const PreferredCarriersList = lazy(() => import('@/features/shippers/components/PreferredCarriersList').then(m => ({ default: m.PreferredCarriersList })))
@@ -174,6 +175,17 @@ export default function App() {
           <ProtectedRoute role="TRUCKER">
             <Suspense fallback={<PageLoader />}>
               <CostProfilePage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/carrier/profile"
+        element={
+          <ProtectedRoute role="TRUCKER">
+            <Suspense fallback={<PageLoader />}>
+              <CarrierProfilePage />
             </Suspense>
           </ProtectedRoute>
         }

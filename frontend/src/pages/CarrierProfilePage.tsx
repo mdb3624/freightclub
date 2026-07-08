@@ -73,7 +73,7 @@ export function CarrierProfilePage() {
   // render loop (confirmed via an actual OOM crash before this guard was added).
   useEffect(() => {
     if (existingLanes && !lanesInitialized) {
-      const rows = existingLanes.slice(0, MAX_PREFERRED_LANES).map((l) => ({ id: l.id, originRegion: l.originRegion, destinationRegion: l.destinationRegion }))
+      const rows: Array<{ id?: string; originRegion: string; destinationRegion: string }> = existingLanes.slice(0, MAX_PREFERRED_LANES).map((l) => ({ id: l.id, originRegion: l.originRegion, destinationRegion: l.destinationRegion }))
       while (rows.length < MAX_PREFERRED_LANES) rows.push({ originRegion: '', destinationRegion: '' })
       setLanes(rows)
       setLanesInitialized(true)

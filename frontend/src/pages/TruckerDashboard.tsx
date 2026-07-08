@@ -222,7 +222,7 @@ function DashboardHeader({ userInitials, onProfile }: { userInitials: string; on
         gap: 8,
       }}
     >
-      <img src="/logo.png" alt="FreightClub" style={{ height: 40, width: 40, objectFit: 'contain', flexShrink: 0 }} />
+      <img src="/logo.png" alt="FreightClub" style={{ height: 36, objectFit: 'contain', flexShrink: 0 }} />
 
       <div
         data-testid="hos-chip"
@@ -427,11 +427,11 @@ function MyStatsTab({ profile, history }: { profile: any; history: any }) {
 
 function SettingsTab({ onLogout }: { onLogout: () => void }) {
   const items = [
-    { icon: '⚙', label: 'Cost Profile', sub: 'Set CPM, fuel & maintenance costs', to: '/profile' },
+    { icon: '👤', label: 'Profile', sub: 'DOT number, CDL, insurance', to: '/profile' },
+    { icon: '⚙', label: 'Cost Profile', sub: 'Set CPM, fuel & maintenance costs', to: '/carrier/cost-profile' },
     { icon: '💳', label: 'Payments', sub: 'Bank account & payout settings', to: null },
     { icon: '📋', label: 'Load History', sub: 'All completed loads', to: null },
     { icon: '🔔', label: 'Notifications', sub: 'Alerts & email preferences', to: null },
-    { icon: '👤', label: 'Profile', sub: 'DOT number, CDL, insurance', to: '/profile' },
     { icon: '❓', label: 'Support', sub: 'Help center & contact us', to: null },
   ]
   return (

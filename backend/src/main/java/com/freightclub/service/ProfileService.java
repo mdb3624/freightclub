@@ -61,6 +61,16 @@ public class ProfileService {
         user.setMcNumber(request.mcNumber());
         user.setDotNumber(request.dotNumber());
         user.setEquipmentType(request.equipmentType());
+        user.setEquipmentYear(request.equipmentYear());
+        user.setEquipmentMake(request.equipmentMake());
+        user.setEquipmentModel(request.equipmentModel());
+        user.setLicensePlate(request.licensePlate());
+        user.setVin(request.vin());
+        user.setCdlClass(request.cdlClass());
+        user.setCdlExpiry(request.cdlExpiry());
+        user.setInsuranceCarrier(request.insuranceCarrier());
+        user.setInsuranceExpiry(request.insuranceExpiry());
+        user.setMedCardExpiry(request.medCardExpiry());
         user.setTruckPaymentLease(request.truckPaymentLease());
         user.setInsurance(request.insurance());
         user.setIftaIrpPermits(request.iftaIrpPermits());

@@ -12,7 +12,7 @@
 | SEC-002 | PostgreSQL RLS Policies (5 Tables)    | DONE | Cross | — | ✅ RLS enforcement at DB level, ✅ Idempotent Flyway, ✅ 5/5 tests PASS |
 | INF-001 | Flyway Migration Idempotency (20 migrations) | DONE | Cross | — | ✅ DO block pattern, ✅ Exception handling, ✅ 20/20 migrations wrapped |
 | **US-900** | **E2E Testing Infrastructure & Standards** | **DONE** | **Cross** | **—** | **✅ All 6 Phases COMPLETE, ✅ 58 tests active (0 skipped), ✅ CI/CD integrated, ✅ READY FOR PRODUCTION** |
-| US-849 | Access Token Refresh Interceptor | DONE | Cross | — | ✅ Found while diagnosing a real "unable to create a load" report — 15-min access-token expiry had no refresh-and-retry wired up despite the refresh endpoint existing; app-wide gap, not load-specific. ✅ 8/8 unit tests, full suite 258/258, e2e 100 passed, live Docker repro confirming silent recovery. ✅ REVIEWER PASS 2026-07-08. |
+| US-849 | Access Token Refresh Interceptor | DONE | Cross | — | ✅ Found while diagnosing a real "unable to create a load" report — 15-min access-token expiry had no refresh-and-retry wired up despite the refresh endpoint existing; app-wide gap, not load-specific. ✅ 8/8 unit tests, full suite 258/258, e2e 100 passed, live Docker repro confirming silent recovery. ✅ REVIEWER PASS 2026-07-08. | Jira: FREIG-113 |
 
 ---
 

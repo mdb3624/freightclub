@@ -45,6 +45,7 @@ export function CarrierProfilePage() {
   const [form, setForm] = useState<Partial<UpdateProfileValues>>({})
   const [justSaved, setJustSaved] = useState(false)
   const [initialized, setInitialized] = useState(false)
+  const [pendingEquipmentChange, setPendingEquipmentChange] = useState<{ from: string; to: string } | null>(null)
 
   // Guarded with `initialized` (rather than depending on `profile` directly) so the
   // form is pre-filled exactly once when the profile first loads. Without this guard,
@@ -68,6 +69,16 @@ export function CarrierProfilePage() {
         setTimeout(() => setJustSaved(false), 2500)
       },
     })
+  }
+
+  const handleEquipmentTypeChange = (newType: string) => {
+    if (newType === form.equipmentType) return
+    setPendingEquipmentChange({ from: form.equipmentType ?? '', to: newType })
+  }
+
+  const confirmEquipmentChange = () => {
+    if (pendingEquipmentChange) set('equipmentType', pendingEquipmentChange.to as UpdateProfileValues['equipmentType'])
+    setPendingEquipmentChange(null)
   }
 
   const completenessChecks = [
@@ -117,7 +128,49 @@ export function CarrierProfilePage() {
         </div>
       </div>
     ),
-    equipment: null,
+    equipment: (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: '16px 14px 0' }}>
+        <Field label="Equipment type">
+          <select data-testid="equipment-type-select" style={inputStyle}
+            value={form.equipmentType ?? ''} onChange={(e) => handleEquipmentTypeChange(e.target.value)}>
+            <option value="DRY_VAN">Dry Van</option>
+            <option value="FLATBED">Flatbed</option>
+            <option value="REEFER">Reefer</option>
+            <option value="STEP_DECK">Step Deck</option>
+            <option value="REFRIGERATED">Refrigerated</option>
+            <option value="TANKER">Tanker</option>
+            <option value="SPECIALIZED">Specialized</option>
+          </select>
+          <div style={{ fontSize: 11, color: '#4A5568', fontStyle: 'italic', marginTop: 4 }}>
+            Filters every load on your board — one type only
+          </div>
+        </Field>
+        <Row2>
+          <Field label="Year">
+            <input data-testid="equipment-year-input" style={inputStyle} value={form.equipmentYear ?? ''}
+              onChange={(e) => set('equipmentYear', e.target.value)} placeholder="2019" maxLength={4} />
+          </Field>
+          <Field label="Make">
+            <input data-testid="equipment-make-input" style={inputStyle} value={form.equipmentMake ?? ''}
+              onChange={(e) => set('equipmentMake', e.target.value)} placeholder="Freightliner" />
+          </Field>
+        </Row2>
+        <Row2>
+          <Field label="Model">
+            <input data-testid="equipment-model-input" style={inputStyle} value={form.equipmentModel ?? ''}
+              onChange={(e) => set('equipmentModel', e.target.value)} placeholder="Cascadia" />
+          </Field>
+          <Field label="Plate">
+            <input data-testid="equipment-plate-input" style={{ ...inputStyle, textTransform: 'uppercase' }}
+              value={form.licensePlate ?? ''} onChange={(e) => set('licensePlate', e.target.value)} placeholder="TX-0000" />
+          </Field>
+        </Row2>
+        <Field label="VIN (optional)">
+          <input data-testid="equipment-vin-input" style={inputStyle} value={form.vin ?? ''}
+            onChange={(e) => set('vin', e.target.value)} placeholder="Leave blank if unknown" maxLength={17} />
+        </Field>
+      </div>
+    ),
     credentials: null,
     lanes: null,
   }
@@ -175,6 +228,31 @@ export function CarrierProfilePage() {
           </button>
         </div>
       </div>
+
+      {pendingEquipmentChange && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', display: 'flex', alignItems: 'flex-end', zIndex: 50 }}>
+          <div style={{ width: '100%', maxWidth: 375, margin: '0 auto', background: '#1A1A1A', borderTop: '1px solid #C9A876', borderRadius: '12px 12px 0 0', padding: 24 }}>
+            <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>Change equipment type?</div>
+            <div style={{ fontSize: 13, color: '#808080', marginBottom: 20, lineHeight: 1.6 }}>
+              <span style={{ color: '#C9A876', fontWeight: 700 }}>{pendingEquipmentChange.to}</span> loads will replace{' '}
+              <span style={{ color: '#C9A876', fontWeight: 700 }}>{pendingEquipmentChange.from}</span> on your board. Takes effect immediately.
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <button data-testid="equip-confirm-yes-btn" onClick={confirmEquipmentChange} style={{
+                height: 64, borderRadius: 8, border: '1px solid #7A5F3A', color: '#fff', fontWeight: 700, cursor: 'pointer',
+                background: 'linear-gradient(180deg,#C9A46A 0%,#B08D57 45%,#8C6D3F 100%)',
+              }}>
+                Yes, Switch
+              </button>
+              <button data-testid="equip-confirm-cancel-btn" onClick={() => setPendingEquipmentChange(null)} style={{
+                height: 56, borderRadius: 8, border: '1px solid #3A3A3A', color: '#C9A876', fontWeight: 600, cursor: 'pointer', background: 'transparent',
+              }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

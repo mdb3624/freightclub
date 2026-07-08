@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { CarrierProfilePage } from '../CarrierProfilePage'
 
@@ -30,5 +30,36 @@ describe('CarrierProfilePage', () => {
     render(<MemoryRouter><CarrierProfilePage /></MemoryRouter>)
     await waitFor(() => expect(screen.getByTestId('identity-first-name-input')).toHaveValue('Jake'))
     expect(screen.getByTestId('identity-last-name-input')).toHaveValue('Morrison')
+  })
+
+  it('switches to the Equipment tab when clicked', async () => {
+    render(<MemoryRouter><CarrierProfilePage /></MemoryRouter>)
+    await waitFor(() => expect(screen.getByTestId('identity-first-name-input')).toBeInTheDocument())
+    fireEvent.click(screen.getByTestId('tab-equipment'))
+    expect(screen.getByTestId('equipment-type-select')).toHaveValue('DRY_VAN')
+  })
+
+  it('shows a confirmation sheet before committing an equipment type change', async () => {
+    render(<MemoryRouter><CarrierProfilePage /></MemoryRouter>)
+    await waitFor(() => expect(screen.getByTestId('identity-first-name-input')).toBeInTheDocument())
+    fireEvent.click(screen.getByTestId('tab-equipment'))
+
+    fireEvent.change(screen.getByTestId('equipment-type-select'), { target: { value: 'FLATBED' } })
+    expect(screen.getByText(/Change equipment type/)).toBeInTheDocument()
+    expect(screen.getByTestId('equipment-type-select')).toHaveValue('DRY_VAN') // unchanged until confirmed
+
+    fireEvent.click(screen.getByTestId('equip-confirm-yes-btn'))
+    expect(screen.getByTestId('equipment-type-select')).toHaveValue('FLATBED')
+    expect(screen.queryByText(/Change equipment type/)).not.toBeInTheDocument()
+  })
+
+  it('cancelling the equipment-change sheet leaves the original type selected', async () => {
+    render(<MemoryRouter><CarrierProfilePage /></MemoryRouter>)
+    await waitFor(() => expect(screen.getByTestId('identity-first-name-input')).toBeInTheDocument())
+    fireEvent.click(screen.getByTestId('tab-equipment'))
+
+    fireEvent.change(screen.getByTestId('equipment-type-select'), { target: { value: 'FLATBED' } })
+    fireEvent.click(screen.getByTestId('equip-confirm-cancel-btn'))
+    expect(screen.getByTestId('equipment-type-select')).toHaveValue('DRY_VAN')
   })
 })

@@ -87,7 +87,7 @@ export function CarrierProfilePage() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: '16px 14px 0' }}>
         <Row2>
           <Field label="First name">
-            <input data-testid="identity-first-name-input" className="di" style={inputStyle}
+            <input data-testid="identity-first-name-input" style={inputStyle}
               value={form.firstName ?? ''} onChange={(e) => set('firstName', e.target.value)} placeholder="First" />
           </Field>
           <Field label="Last name">

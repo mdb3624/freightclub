@@ -12,6 +12,7 @@
 | SEC-002 | PostgreSQL RLS Policies (5 Tables)    | DONE | Cross | — | ✅ RLS enforcement at DB level, ✅ Idempotent Flyway, ✅ 5/5 tests PASS |
 | INF-001 | Flyway Migration Idempotency (20 migrations) | DONE | Cross | — | ✅ DO block pattern, ✅ Exception handling, ✅ 20/20 migrations wrapped |
 | **US-900** | **E2E Testing Infrastructure & Standards** | **DONE** | **Cross** | **—** | **✅ All 6 Phases COMPLETE, ✅ 58 tests active (0 skipped), ✅ CI/CD integrated, ✅ READY FOR PRODUCTION** |
+| US-849 | Access Token Refresh Interceptor | DONE | Cross | — | ✅ Found while diagnosing a real "unable to create a load" report — 15-min access-token expiry had no refresh-and-retry wired up despite the refresh endpoint existing; app-wide gap, not load-specific. ✅ 8/8 unit tests, full suite 258/258, e2e 100 passed, live Docker repro confirming silent recovery. ✅ REVIEWER PASS 2026-07-08. |
 
 ---
 
@@ -110,7 +111,7 @@
 | US-730d | Unified Carrier Dashboard | COMPLETED | 7a | US-730-0, US-730a-c | ✅ Via TruckerDashboard.tsx; Hero load + stats + board, hook-driven | Jira: FREIG-67 |
 | US-730e | Equipment & Lane Management | COMPLETED | 7a | — | ✅ Via CarrierProfileHub EquipmentTab/LanesTab; Equipment types, lanes, availability tab all present | Jira: FREIG-68 |
 | **US-730f** | **Payment Acknowledgment (MVP)** | **COMPLETED** | **7a** | **US-730d** | **✅ Read-only payment status endpoint + frontend display shipped (feature/US-730-carrier-workflow-verification, 2026-07-05) | ✅ Backend invoice/Stripe system already existed (Phase 9 work was further along than documented) | Scope narrowed to read-only surfacing (CHG-849) | Jira: FREIG-69** |
-| US-730a-v2 | Cost Profile Wizard Redesign (dedicated `/carrier/cost-profile` screen, summary + 3-step wizard) | IN_PROGRESS | 7a | US-730a | CHG-US730-007 — supersedes US-730a's inline `ProfilePage` section; ARCH+HFD locked 2026-07-06: `docs/architecture/ARCH_US-730a-v2_Cost_Profile_Wizard_Design.md`, `docs/hfd/US-730a-v2_Cost_Profile_Wizard_Design_Spec.md` | Jira: FREIG-111 |
+| US-730a-v2 | Cost Profile Wizard Redesign (dedicated `/carrier/cost-profile` screen, summary + 3-step wizard) | COMPLETED | 7a | US-730a | CHG-US730-007 — supersedes US-730a's inline `ProfilePage` section; ARCH+HFD locked 2026-07-06: `docs/architecture/ARCH_US-730a-v2_Cost_Profile_Wizard_Design.md`, `docs/hfd/US-730a-v2_Cost_Profile_Wizard_Design_Spec.md`. ✅ Prototype fidelity audit + shared Input/ErrorBanner persona-aware fix + wizard validation fix, all verified live. ✅ REVIEWER PASS 2026-07-08 (2 items logged as pre-existing debt, not blocking — see `.claude/learnings.md`). | Jira: FREIG-111 |
 | US-730h | Carrier Identity & Credentials Profile (dedicated `/carrier/profile` screen: identity, single equipment type, DOT/MC/CDL/insurance/med-card expiry tracking, ≤3 preferred lanes) | BACKLOG | 7a | US-730e | CHG-US730-008 — supersedes US-730e's Equipment/Lanes tabs; requires new credentials schema. Renamed from US-730g (2026-07-06) to resolve ID collision with existing Phase 7b US-730g (Per-Load Earnings Log) | Jira: FREIG-112 |
 
 ---

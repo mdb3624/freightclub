@@ -45,7 +45,7 @@ describe('expiry status helpers', () => {
 
   it('expiryLabel describes a future date as "Nd left"', () => {
     const soon = new Date(Date.now() + 10 * 86_400_000)
-    soon.setHours(23, 59, 59, 999) // avoid a same-day rounding flake
-    expect(expiryLabel(soon.toISOString().slice(0, 10))).toMatch(/^(9|10|11)d left$/)
+    soon.setUTCHours(23, 59, 59, 999) // use UTC to match toISOString() timezone
+    expect(expiryLabel(soon.toISOString().slice(0, 10))).toBe('10d left')
   })
 })

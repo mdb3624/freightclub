@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
+import { useLogout } from '@/features/auth/hooks/useLogout'
 import { useCostProfile, useSaveCostProfile } from '@/features/carrier/hooks/useCostProfile'
 import { CostProfileSummary } from '@/features/carrier/components/costProfile/CostProfileSummary'
 import { CostProfileWizard } from '@/features/carrier/components/costProfile/CostProfileWizard'
@@ -8,6 +9,7 @@ import { costProfileWizardSchema, type CostProfileWizardFormData } from '@/featu
 
 export function CostProfilePage() {
   const navigate = useNavigate()
+  const logout = useLogout()
   const { user } = useAuthStore()
   const userInitials = ((user?.firstName?.[0] ?? '') + (user?.lastName?.[0] ?? '')).toUpperCase() || 'U'
   const { data: profile, isLoading } = useCostProfile()
@@ -16,6 +18,17 @@ export function CostProfilePage() {
   const [wizardData, setWizardData] = useState<Partial<CostProfileWizardFormData>>({})
   const [justSaved, setJustSaved] = useState(false)
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const onDocClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false)
+    }
+    document.addEventListener('mousedown', onDocClick)
+    return () => document.removeEventListener('mousedown', onDocClick)
+  }, [menuOpen])
 
   const flashSaved = () => {
     const now = new Date()
@@ -75,14 +88,42 @@ export function CostProfilePage() {
           >
             {isPending ? 'Saving…' : justSaved ? '✓ Saved' : 'Save'}
           </button>
-          <button
-            data-testid="header-avatar"
-            onClick={() => navigate('/profile')}
-            aria-label="Profile"
-            style={{ width: 48, height: 48, minHeight: 48, borderRadius: '50%', background: '#B08D57', color: '#121212', fontWeight: 700, fontSize: 13, border: 'none', cursor: 'pointer', flexShrink: 0 }}
-          >
-            {userInitials}
-          </button>
+          <div ref={menuRef} style={{ position: 'relative' }}>
+            <button
+              data-testid="header-avatar"
+              onClick={() => setMenuOpen((o) => !o)}
+              aria-label="Account menu"
+              aria-haspopup="true"
+              aria-expanded={menuOpen}
+              style={{ width: 48, height: 48, minHeight: 48, borderRadius: '50%', background: '#B08D57', color: '#121212', fontWeight: 700, fontSize: 13, border: 'none', cursor: 'pointer', flexShrink: 0 }}
+            >
+              {userInitials}
+            </button>
+            {menuOpen && (
+              <div
+                role="menu"
+                data-testid="header-avatar-menu"
+                style={{
+                  position: 'absolute', top: 56, right: 0, minWidth: 140, zIndex: 20,
+                  background: '#1A1A1A', border: '1px solid #2A2A2A', borderRadius: 8,
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.4)', overflow: 'hidden',
+                }}
+              >
+                <button
+                  role="menuitem"
+                  data-testid="header-avatar-signout"
+                  onClick={() => { setMenuOpen(false); logout() }}
+                  style={{
+                    width: '100%', height: 48, padding: '0 16px', background: 'transparent',
+                    border: 'none', color: '#EF4444', fontSize: 14, fontWeight: 600,
+                    cursor: 'pointer', textAlign: 'left',
+                  }}
+                >
+                  Sign out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 

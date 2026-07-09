@@ -198,7 +198,7 @@ function DieselTicker({ dieselRegions }: { dieselRegions: Array<{ label: string;
 }
 
 /* ─── Header (CARRIER_DESIGN_SYSTEM.md: fixed 56px, #1A1A1A, logo + HOS + bell + avatar) ── */
-function DashboardHeader({ userInitials, onProfile }: { userInitials: string; onProfile: () => void }) {
+function DashboardHeader({ userInitials, onLogout }: { userInitials: string; onLogout: () => void }) {
   const [hos] = useHosState()
   const { data: unread } = useUnreadCount()
   const hoursDriven = parseFloat(hos.hoursDrivenToday) || 0
@@ -206,6 +206,17 @@ function DashboardHeader({ userInitials, onProfile }: { userInitials: string; on
   const remainingDrive = Math.max(0, 11 - hoursDriven)
   const hosColor = !hosSet ? C.dim : remainingDrive <= 2 ? '#EF4444' : remainingDrive <= 4 ? C.amber : C.green
   const unreadCount = unread?.count ?? 0
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const onDocClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false)
+    }
+    document.addEventListener('mousedown', onDocClick)
+    return () => document.removeEventListener('mousedown', onDocClick)
+  }, [menuOpen])
 
   return (
     <header
@@ -253,17 +264,45 @@ function DashboardHeader({ userInitials, onProfile }: { userInitials: string; on
             }} />
           )}
         </button>
-        <button
-          data-testid="carrier-avatar"
-          onClick={onProfile}
-          aria-label="Profile"
-          style={{
-            width: 48, height: 48, borderRadius: '50%', background: '#B08D57',
-            color: '#121212', fontWeight: 700, fontSize: 13, border: 'none', cursor: 'pointer',
-          }}
-        >
-          {userInitials}
-        </button>
+        <div ref={menuRef} style={{ position: 'relative' }}>
+          <button
+            data-testid="carrier-avatar"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label="Account menu"
+            aria-haspopup="true"
+            aria-expanded={menuOpen}
+            style={{
+              width: 48, height: 48, borderRadius: '50%', background: '#B08D57',
+              color: '#121212', fontWeight: 700, fontSize: 13, border: 'none', cursor: 'pointer',
+            }}
+          >
+            {userInitials}
+          </button>
+          {menuOpen && (
+            <div
+              role="menu"
+              data-testid="carrier-avatar-menu"
+              style={{
+                position: 'absolute', top: 56, right: 0, minWidth: 140, zIndex: 20,
+                background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.4)', overflow: 'hidden',
+              }}
+            >
+              <button
+                role="menuitem"
+                data-testid="carrier-avatar-signout"
+                onClick={() => { setMenuOpen(false); onLogout() }}
+                style={{
+                  width: '100%', height: 48, padding: '0 16px', background: 'transparent',
+                  border: 'none', color: '#EF4444', fontSize: 14, fontWeight: 600,
+                  cursor: 'pointer', textAlign: 'left',
+                }}
+              >
+                Sign out
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   )
@@ -582,7 +621,7 @@ export function TruckerDashboard() {
         overflow: 'hidden',
       }}
     >
-        <DashboardHeader userInitials={userInitials} onProfile={() => navigate('/profile')} />
+        <DashboardHeader userInitials={userInitials} onLogout={logout} />
 
         {/* Active Load Hero */}
         {activeLoad && (

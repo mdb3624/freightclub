@@ -1,17 +1,26 @@
 import { useEffect, useRef } from 'react'
 
-export function useLazyFonts(isAuthenticated: boolean) {
+export async function loadCustomFonts(): Promise<void> {
+  await Promise.all([
+    import('@fontsource/sora/400.css'),
+    import('@fontsource/sora/600.css'),
+    import('@fontsource/sora/700.css'),
+    import('@fontsource/inter/400.css'),
+    import('@fontsource/inter/500.css'),
+    import('@fontsource/inter/600.css'),
+    import('@fontsource/inter/700.css'),
+  ])
+}
+
+export function useLazyFonts(isAuthenticated: boolean, loadFonts: () => Promise<void> = loadCustomFonts) {
   const fontsLoadedRef = useRef(false)
 
   useEffect(() => {
     if (isAuthenticated && !fontsLoadedRef.current) {
-      const link = document.createElement('link')
-      link.href = '/fonts/custom-fonts.css'
-      link.rel = 'stylesheet'
-      link.onload = () => {
-        fontsLoadedRef.current = true
-      }
-      document.head.appendChild(link)
+      fontsLoadedRef.current = true
+      loadFonts().catch((error) => {
+        console.error('Failed to load custom fonts:', error)
+      })
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, loadFonts])
 }

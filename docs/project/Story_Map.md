@@ -13,6 +13,7 @@
 | INF-001 | Flyway Migration Idempotency (20 migrations) | DONE | Cross | — | ✅ DO block pattern, ✅ Exception handling, ✅ 20/20 migrations wrapped |
 | **US-900** | **E2E Testing Infrastructure & Standards** | **DONE** | **Cross** | **—** | **✅ All 6 Phases COMPLETE, ✅ 58 tests active (0 skipped), ✅ CI/CD integrated, ✅ READY FOR PRODUCTION** |
 | US-849 | Access Token Refresh Interceptor | DONE | Cross | — | ✅ Found while diagnosing a real "unable to create a load" report — 15-min access-token expiry had no refresh-and-retry wired up despite the refresh endpoint existing; app-wide gap, not load-specific. ✅ 8/8 unit tests, full suite 258/258, e2e 100 passed, live Docker repro confirming silent recovery. ✅ REVIEWER PASS 2026-07-08. | Jira: FREIG-113 |
+| US-850 | Custom Font Loading — Vite Import Fix | DONE | Cross | — | ✅ Found via production smoke test — public/fonts/custom-fonts.css used raw CSS @import of bare npm specifiers, resolved fine under Vite dev server (masking it in Docker test env) but 404'd under nginx-served prod build. Switched to dynamic import() so Vite bundles real hashed font files in both environments. ✅ 7/7 unit tests, ✅ 8/8 E2E (login-integration.spec.ts, new regression guard added), ✅ verified against `vite preview` static serving (prod-equivalent) with zero font-related console errors. | Jira: FREIG-114 |
 
 ---
 

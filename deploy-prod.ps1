@@ -1,5 +1,24 @@
-# FreightClub US-757 Production Deployment Script
+# FreightClub Production Deployment Script
 # Deploys backend and frontend to Google Cloud Run
+#
+# PRE-REQUISITE: Images must already be built (--no-cache) and pushed to Artifact
+# Registry as freightclub-backend:latest / freightclub-frontend:latest before running
+# this script. This script only deploys; it does not build. Sequence:
+#   1. mvn clean package -DskipTests            (backend/)
+#   2. npm run build                             (frontend/)
+#   3. docker build --no-cache -t $ImageRepo/freightclub-backend:latest ./backend
+#      docker build --no-cache -t $ImageRepo/freightclub-frontend:latest ./frontend
+#   4. docker push $ImageRepo/freightclub-backend:latest
+#      docker push $ImageRepo/freightclub-frontend:latest
+#   5. .\deploy-prod.ps1
+#
+# --no-cache is mandatory: a cached `docker build` can silently redeploy stale
+# application code even when the image tag and gcloud output look correct.
+#
+# Secrets are pulled from Secret Manager at deploy time — never hardcode
+# credentials in this file. (2026-05-19 -> 2026-07-11: this script previously had
+# DB_PASSWORD/APP_JWT_SECRET/JWT_SECRET hardcoded in plaintext and committed to git.
+# Those values must be rotated; see project security follow-up.)
 
 $ProjectID = "freight-club-495117"
 $Region = "us-central1"
@@ -7,99 +26,103 @@ $Registry = "us-central1-docker.pkg.dev"
 $ImageRepo = "$Registry/$ProjectID/freightclub-repo"
 $ImageTag = "latest"
 
-# Load environment from .env.prod
-$env:SPRING_PROFILES_ACTIVE = "prod"
-$env:PORT = "8080"
-$env:DB_URL = "jdbc:postgresql://ep-lively-tree-amv4cqt0-pooler.c-5.us-east-1.aws.neon.tech/freightclub_db?sslmode=require&currentSchema=freightclub"
-$env:DB_USERNAME = "neondb_owner"
-$env:DB_PASSWORD = "npg_H0O3SomrgjPK"
-$env:APP_JWT_SECRET = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970"
-$env:JWT_SECRET = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970"
-$env:JWT_ISSUER = "freightclub"
-$env:JWT_AUDIENCE = "freightclub-api"
-$env:JWT_ACCESS_EXPIRY_MS = "900000"
-$env:JWT_REFRESH_EXPIRY_MS = "604800000"
-$env:CORS_ALLOWED_ORIGINS = "https://freightclub.app,https://freightclub-frontend-404925591110.us-central1.run.app"
-
-Write-Host "=== FreightClub US-757 Production Deployment ===" -ForegroundColor Green
+Write-Host "=== FreightClub Production Deployment ===" -ForegroundColor Green
 Write-Host "Project: $ProjectID"
 Write-Host "Region: $Region"
 Write-Host "Image Tag: $ImageTag"
 Write-Host ""
 
-# Deploy Backend
+# Fetch secrets from Secret Manager (never hardcode these)
+Write-Host "Fetching secrets from Secret Manager..." -ForegroundColor Cyan
+$DbUrl = $(gcloud secrets versions access latest --secret=DB_URL --project=$ProjectID 2>$null).Trim()
+$DbUsername = $(gcloud secrets versions access latest --secret=DB_USERNAME --project=$ProjectID 2>$null).Trim()
+$DbPassword = $(gcloud secrets versions access latest --secret=DB_PASSWORD --project=$ProjectID 2>$null).Trim()
+$JwtSecret = $(gcloud secrets versions access latest --secret=APP_JWT_SECRET --project=$ProjectID 2>$null).Trim()
+
+if (-not $DbUrl -or -not $DbUsername -or -not $DbPassword -or -not $JwtSecret) {
+    Write-Host "FAILED: Missing one or more required secrets (DB_URL, DB_USERNAME, DB_PASSWORD, APP_JWT_SECRET)" -ForegroundColor Red
+    exit 1
+}
+
+$BackendUrl = "freightclub-backend-5gecbdg27a-uc.a.run.app"
+$BackendUrlAlt = "freightclub-backend-404925591110.us-central1.run.app"
+$FrontendUrl = "freightclub-frontend-5gecbdg27a-uc.a.run.app"
+$FrontendUrlAlt = "freightclub-frontend-404925591110.us-central1.run.app"
+
+# CORS_ALLOWED_ORIGINS contains commas -> must use --env-vars-file, not --set-env-vars
+# (a bare --set-env-vars with comma-joined origins silently corrupts the value)
+$BackendEnvVarsContent = @"
+SPRING_PROFILES_ACTIVE: prod
+DB_URL: $DbUrl
+DB_USERNAME: $DbUsername
+DB_PASSWORD: $DbPassword
+APP_JWT_SECRET: $JwtSecret
+JWT_SECRET: $JwtSecret
+CORS_ALLOWED_ORIGINS: https://freightclub.app,https://$FrontendUrl,https://$FrontendUrlAlt
+"@
+$BackendEnvVarsFile = "$env:TEMP\freightclub-backend-env.txt"
+[System.IO.File]::WriteAllText($BackendEnvVarsFile, $BackendEnvVarsContent)
+
 Write-Host "Deploying Backend Service..." -ForegroundColor Cyan
-
-# Build env vars with proper escaping for CORS_ALLOWED_ORIGINS
-# NOTE: PORT is reserved in Cloud Run and automatically set - do not include
-$EnvVars = @(
-  "SPRING_PROFILES_ACTIVE=prod",
-  "DB_URL=$($env:DB_URL)",
-  "DB_USERNAME=$($env:DB_USERNAME)",
-  "DB_PASSWORD=$($env:DB_PASSWORD)",
-  "APP_JWT_SECRET=$($env:APP_JWT_SECRET)",
-  "JWT_SECRET=$($env:JWT_SECRET)",
-  "JWT_ISSUER=$($env:JWT_ISSUER)",
-  "JWT_AUDIENCE=$($env:JWT_AUDIENCE)",
-  "JWT_ACCESS_EXPIRY_MS=$($env:JWT_ACCESS_EXPIRY_MS)",
-  "JWT_REFRESH_EXPIRY_MS=$($env:JWT_REFRESH_EXPIRY_MS)",
-  "CORS_ALLOWED_ORIGINS=https://freightclub.app;https://freightclub-frontend-404925591110.us-central1.run.app"
-) -join ","
-
 gcloud run deploy freightclub-backend `
   --image="$ImageRepo/freightclub-backend:$ImageTag" `
   --platform=managed `
   --region=$Region `
   --project=$ProjectID `
-  --memory=1Gi `
+  --memory=2Gi `
   --cpu=1 `
-  --timeout=3600 `
+  --timeout=600 `
   --max-instances=10 `
   --allow-unauthenticated `
-  --set-env-vars=$EnvVars `
+  --env-vars-file=$BackendEnvVarsFile `
   --quiet
 
-if ($LASTEXITCODE -eq 0) {
-    Write-Host "✓ Backend deployed successfully" -ForegroundColor Green
+Remove-Item -Force $BackendEnvVarsFile
 
-    # Get backend URL
-    $BackendURL = & gcloud run services describe freightclub-backend --region=$Region --project=$ProjectID --format='value(status.url)'
-    $BackendHost = $BackendURL -replace "https://", ""
-    Write-Host "Backend URL: $BackendURL"
-    Write-Host ""
-
-    # Deploy Frontend
-    Write-Host "Deploying Frontend Service..." -ForegroundColor Cyan
-    gcloud run deploy freightclub-frontend `
-      --image="$ImageRepo/freightclub-frontend:$ImageTag" `
-      --platform=managed `
-      --region=$Region `
-      --project=$ProjectID `
-      --memory=512Mi `
-      --cpu=1 `
-      --timeout=120 `
-      --max-instances=10 `
-      --allow-unauthenticated `
-      --set-env-vars="BACKEND_URL=$BackendURL,BACKEND_HOST=$BackendHost" `
-      --quiet
-
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "✓ Frontend deployed successfully" -ForegroundColor Green
-
-        $FrontendURL = & gcloud run services describe freightclub-frontend --region=$Region --project=$ProjectID --format='value(status.url)'
-        Write-Host "Frontend URL: $FrontendURL"
-        Write-Host ""
-        Write-Host "=== Deployment Complete ===" -ForegroundColor Green
-        Write-Host "Backend: $BackendURL"
-        Write-Host "Frontend: $FrontendURL"
-        Write-Host ""
-        Write-Host "Next Steps:" -ForegroundColor Yellow
-        Write-Host "1. Wait 2 minutes for Flyway migrations to complete"
-        Write-Host "2. Test login: carrier@test.com / N1kk101!"
-        Write-Host "3. Verify cost profile section loads"
-        Write-Host "4. Run: npm run test:e2e"
-    }
-} else {
-    Write-Host "✗ Backend deployment failed" -ForegroundColor Red
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Backend deployment failed" -ForegroundColor Red
     exit 1
+}
+
+Write-Host "Backend deployed successfully" -ForegroundColor Green
+$BackendServiceUrl = & gcloud run services describe freightclub-backend --region=$Region --project=$ProjectID --format='value(status.url)'
+Write-Host "Backend URL: $BackendServiceUrl"
+Write-Host ""
+
+Write-Host "Deploying Frontend Service..." -ForegroundColor Cyan
+gcloud run deploy freightclub-frontend `
+  --image="$ImageRepo/freightclub-frontend:$ImageTag" `
+  --platform=managed `
+  --region=$Region `
+  --project=$ProjectID `
+  --memory=512Mi `
+  --cpu=1 `
+  --timeout=120 `
+  --max-instances=10 `
+  --allow-unauthenticated `
+  --quiet
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Frontend deployment failed" -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "Frontend deployed successfully" -ForegroundColor Green
+$FrontendServiceUrl = & gcloud run services describe freightclub-frontend --region=$Region --project=$ProjectID --format='value(status.url)'
+Write-Host "Frontend URL: $FrontendServiceUrl"
+Write-Host ""
+
+Write-Host "=== Deployment Complete ===" -ForegroundColor Green
+Write-Host "Backend: $BackendServiceUrl"
+Write-Host "Frontend: $FrontendServiceUrl"
+Write-Host ""
+
+# Smoke test
+Write-Host "Running health check..." -ForegroundColor Yellow
+$HealthUrl = "https://freightclub-backend-5gecbdg27a-uc.a.run.app/actuator/health"
+try {
+    $response = Invoke-WebRequest -Uri $HealthUrl -UseBasicParsing -TimeoutSec 15
+    Write-Host "Health check passed (HTTP $($response.StatusCode))" -ForegroundColor Green
+} catch {
+    Write-Host "Health check failed: $($_.Exception.Message)" -ForegroundColor Red
 }

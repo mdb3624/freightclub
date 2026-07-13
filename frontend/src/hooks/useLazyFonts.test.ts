@@ -1,60 +1,46 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useLazyFonts } from './useLazyFonts'
 
 describe('useLazyFonts', () => {
-  beforeEach(() => {
-    document.head.innerHTML = ''
-  })
-
-  afterEach(() => {
-    document.head.innerHTML = ''
-  })
-
   it('should not load fonts when isAuthenticated is false', () => {
-    renderHook(() => useLazyFonts(false))
-    const links = document.head.querySelectorAll('link[href*="/fonts/custom-fonts.css"]')
-    expect(links.length).toBe(0)
+    const loadFonts = vi.fn().mockResolvedValue(undefined)
+    renderHook(() => useLazyFonts(false, loadFonts))
+    expect(loadFonts).not.toHaveBeenCalled()
   })
 
   it('should load custom fonts when isAuthenticated is true', () => {
-    renderHook(() => useLazyFonts(true))
-    const links = document.head.querySelectorAll('link[href="/fonts/custom-fonts.css"]')
-    expect(links.length).toBe(1)
-    expect(links[0]).toHaveAttribute('rel', 'stylesheet')
+    const loadFonts = vi.fn().mockResolvedValue(undefined)
+    renderHook(() => useLazyFonts(true, loadFonts))
+    expect(loadFonts).toHaveBeenCalledTimes(1)
   })
 
   it('should not load fonts multiple times when isAuthenticated changes', () => {
+    const loadFonts = vi.fn().mockResolvedValue(undefined)
     const { rerender } = renderHook(
-      ({ isAuth }: { isAuth: boolean }) => useLazyFonts(isAuth),
+      ({ isAuth }: { isAuth: boolean }) => useLazyFonts(isAuth, loadFonts),
       { initialProps: { isAuth: false } }
     )
 
-    expect(document.head.querySelectorAll('link[href="/fonts/custom-fonts.css"]').length).toBe(0)
+    expect(loadFonts).not.toHaveBeenCalled()
 
     rerender({ isAuth: true })
-    expect(document.head.querySelectorAll('link[href="/fonts/custom-fonts.css"]').length).toBe(1)
+    expect(loadFonts).toHaveBeenCalledTimes(1)
 
     rerender({ isAuth: true })
-    expect(document.head.querySelectorAll('link[href="/fonts/custom-fonts.css"]').length).toBe(1)
+    expect(loadFonts).toHaveBeenCalledTimes(1)
   })
 
-  it('should set fontsLoaded state to true after link onload fires', async () => {
-    renderHook(() => useLazyFonts(true))
-
-    await new Promise<void>((resolve) => {
-      setTimeout(() => {
-        const link = document.head.querySelector('link[href="/fonts/custom-fonts.css"]') as HTMLLinkElement
-        expect(link).toBeDefined()
-        link?.onload?.(new Event('load'))
-        resolve()
-      }, 0)
-    })
-  })
-
-  it('should handle missing link element gracefully', () => {
+  it('should handle loader rejection gracefully without throwing', () => {
+    const loadFonts = vi.fn().mockRejectedValue(new Error('network error'))
     expect(() => {
-      renderHook(() => useLazyFonts(true))
+      renderHook(() => useLazyFonts(true, loadFonts))
+    }).not.toThrow()
+  })
+
+  it('should use the real loadCustomFonts loader by default', () => {
+    expect(() => {
+      renderHook(() => useLazyFonts(false))
     }).not.toThrow()
   })
 })

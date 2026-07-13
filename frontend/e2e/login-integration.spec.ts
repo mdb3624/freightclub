@@ -261,4 +261,60 @@ test.describe('Login Integration Tests (US-756)', () => {
       }
     }
   });
+
+  // ============================================================================
+  // TEST 8: No failed network requests post-login (FREIG-114 regression guard)
+  //
+  // FREIG-114: public/fonts/custom-fonts.css used raw CSS @import with bare
+  // npm specifiers, which resolved fine under Vite's dev server but 404'd under
+  // nginx-served production. No test caught this because nothing asserted on
+  // failed requests. This test is a standing guard against that whole class of
+  // bug, not just fonts specifically.
+  // ============================================================================
+  test('should not produce any failed network requests after login (FREIG-114)', async ({
+    page,
+    request,
+  }) => {
+    const seeder = new TestDataSeeder(request);
+    const testUser = await seeder.createTestUser({ role: 'SHIPPER' });
+
+    const failedRequests: string[] = [];
+    page.on('requestfailed', (req) => failedRequests.push(req.url()));
+    page.on('response', (res) => {
+      if (res.status() >= 400) failedRequests.push(`${res.status()} ${res.url()}`);
+    });
+
+    try {
+      await page.goto('/login');
+
+      await page.locator('[data-testid="email-input"]').fill(testUser.email);
+      await page.locator('[data-testid="password-input"]').fill(testUser.password);
+
+      const loginPromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('/api/v1/auth/login') && response.status() === 200
+      );
+      await page.locator('[data-testid="login-submit-btn"]').click();
+      await loginPromise;
+
+      await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
+
+      // Let lazily-loaded resources (e.g. useLazyFonts) finish requesting
+      await page.waitForTimeout(1000);
+
+      const assetFailures = failedRequests.filter(
+        (url) => !url.includes('/api/') // API 5xx/4xx are covered by other specs; this guards static assets
+      );
+
+      expect(assetFailures, `Unexpected failed asset requests: ${assetFailures.join(', ')}`).toEqual([]);
+
+      console.log('✓ No failed static asset requests after login');
+    } finally {
+      try {
+        await seeder.cleanup();
+      } catch (e) {
+        console.warn('[cleanup] Failed (non-fatal):', e);
+      }
+    }
+  });
 });

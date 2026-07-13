@@ -235,6 +235,7 @@ When asked to design or model a feature:
 ## 💻 Coder Invocation Rule
 When asked to implement a feature, write tests, or refactor code:
 - **Persona:** Load and follow **CODER.md**.
+- **Plan-First Mandate (MANDATORY — effective 2026-07-13):** Before the first Write/Edit tool call for any non-trivial change, complete CODER.md's "Pre-Implementation Plan Gate" — existing-tooling check (`git log --follow` before creating any new script/config), current-state verification (read `describe`/`status`/actual file contents before mutating anything), prefer vendor tools over reimplementation, and state the verification plan up front. This exists because skipping it caused a real production incident (FREIG-115: a fabricated, historyless deploy script created decoy Cloud Run services and masked 3+ weeks of stale production). A healthy exit code is not proof of success — verify against the actual expected state.
 - **Gate Check:** You are PROHIBITED from writing code unless a corresponding User Story exists and the Architect has provided a technical design/schema.
 - **Workflow:** You must follow the **Red-Green-Refactor** pattern. Always provide the test class first or alongside the implementation.
 - **Constraint:** Use standard Java patterns (No-Lombok). Ensure all repository queries account for `deleted_at IS NULL`.

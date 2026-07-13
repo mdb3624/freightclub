@@ -191,7 +191,7 @@ When you deliver a load, you earn the contracted rate minus a small platform fee
 **User benefit:** Get paid fast. Flexible payout timing. Your money moves immediately if you need it.
 
 ### Track Your Earnings
-View per-load profitability (revenue minus fuel, maintenance, fixed costs). See your monthly P&L and year-to-date earnings. Export tax summaries for your accountant.
+View per-load profitability (revenue minus fuel, maintenance, fixed costs). See your monthly P&L and year-to-date earnings. Export tax summaries for your accountant. Fuel cost reflects the actual region a load runs through (not just your home base), so profitability estimates stay accurate on long-haul lanes that leave your usual area (US-854).
 
 **User benefit:** Know exactly how much you're making. Prepare tax returns faster. Identify profitable vs unprofitable lanes.
 

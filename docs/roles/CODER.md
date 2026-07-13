@@ -36,6 +36,29 @@ If rejected: LIBRARIAN decides whether to fix inputs or create Change Request (C
 
 ---
 
+## 🗺️ Pre-Implementation Plan Gate (MANDATORY — Effective 2026-07-13)
+
+**Before the first Write/Edit tool call for any non-trivial change** (anything beyond a one-line fix), produce an explicit plan — as a TaskCreate list or a short written plan in chat — covering the four items below. This exists because a real production incident (FREIG-115) traced directly to skipping it: a deploy script was fabricated from scratch instead of checking for an existing one, creating decoy Cloud Run services that masked 3+ weeks of stale production.
+
+**1. Existing-tooling check.** Before creating ANY new script, config file, or tool wrapper:
+- `git log --follow -- <path>` on anything you're about to create or trust — a file with no history is not a blank slate, it's a red flag that something else may already do this
+- `ls`/`Glob` for similarly-named files first
+- Check `CLAUDE.md` and project docs for a documented canonical script/tool before inventing one
+
+**2. Current-state verification.** Before mutating any existing config, service, or infrastructure:
+- Read its current state first (`describe`, `status`, `--format=yaml`, existing file contents) — not as a debugging step after a failure, but as a precondition
+- Specifically check binding/type of anything you're about to overwrite (e.g., is an env var a plain string or a secret reference?) — guessing and re-trying after an error is the failure mode to avoid, not a normal part of the workflow
+
+**3. Prefer the vendor/platform tool over reimplementing.** If a platform (Flyway, gcloud, the framework itself) has its own tool for a task, use it — do not hand-roll an algorithm or workaround that the platform already solves correctly.
+
+**4. Verification plan, stated up front.** Name the specific command/check that will prove the change worked (e.g., "diff the served bundle hash," "grep the log for the checksum line," not just "run it and see"). A healthy exit code or HTTP 200 is not proof — confirm against the actual failure mode, not just that the command didn't error.
+
+**Verdict:**
+- ✅ Plan covers all four items → proceed to Input Acceptance Gate / Red-Green-Refactor
+- ❌ Any item skipped → stop and complete it before the first Write/Edit call
+
+---
+
 ## 🔄 Service Reuse Check (Phase 10+)
 
 **Before writing implementation code**, verify service reusability:

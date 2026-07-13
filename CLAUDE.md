@@ -423,6 +423,7 @@ When asked to elaborate on features or break down the backlog:
 - **Grounding:** Automatically read `docs/business/FEATURES.md` and `docs/project/Story_Map.md` first.
 - **Constraint:** Use the INVEST standard for all stories in `docs/business/stories/`.
 - **Constraint:** No technical implementation details; focus on Business Rules.
+- **Jira Tracking (MANDATORY — effective 2026-07-13):** Every new story MUST be created in Jira (project `FREIG`) at the same time it's cataloged in `docs/business/stories/` and `docs/project/Story_Map.md`. Update both `docs/project/Story_ID_to_Jira_Mapping.md` and `.csv` with the new US-### ↔ FREIG-### pair immediately. No story exists in only one of these places — local docs without a Jira ticket, or a Jira ticket without a local story file, are both incomplete.
 
 ## 🔍 Reviewer Invocation Rule
 All implementations MUST be reviewed using **REVIEWER.md**. No exceptions.

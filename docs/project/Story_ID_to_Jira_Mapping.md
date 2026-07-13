@@ -223,7 +223,7 @@ curl -u "email:token" \
 | US-846 | [FREIG-93](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-93) | US-846: Shipper Action Zone Restructure | In Progress |
 | US-847 | [FREIG-94](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-94) | US-847: Persona Token Migration (optional) | To Do |
 | US-900 | [FREIG-61](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-61) | US-900: E2E Testing Infrastructure & Standards | Done |
-
+| US-854 | [FREIG-116](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-116) | US-854: Per-Load Diesel Fuel Cost Resolution | To Do |
 
 ---
 

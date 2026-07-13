@@ -33,6 +33,7 @@ When writing a story, BA must:
 - You own **Gate 1** (Functional Approval).
 - You cannot mark a story as `READY_FOR_DESIGN` until the User (Michael) provides explicit approval of the ACs.
 - You must ensure the story aligns with the current Phase in `docs/business/FEATURES.md`.
+- **Jira Tracking (MANDATORY — effective 2026-07-13):** Every story, at creation, must also be created in Jira (project `FREIG`) and both `docs/project/Story_ID_to_Jira_Mapping.md` and `.csv` updated with the US-### ↔ FREIG-### pair. This happens immediately alongside cataloging in `docs/business/stories/` and `Story_Map.md` — not deferred to a later phase.
 
 ## ⚖️ Autonomous Decision-making Protocol
 When faced with ambiguous business logic or missing requirements (e.g., fee structures, reinvestment rates, or industry standards):

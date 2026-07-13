@@ -6,6 +6,12 @@
 
 ---
 
+## ⚠️ Known Limitation: Docker Test Env Cannot Catch Vite-Dev-vs-Prod Asset Bugs (2026-07-11)
+
+The Docker test environment (`docker-compose.test.yml`) runs the frontend via `Dockerfile.dev` (`npm run dev`, Vite dev server) — NOT the production build path (`npm run build` + nginx serving `dist/`). Vite's dev server has live bare-specifier resolution middleware that can silently mask bugs in raw `public/` CSS `@import`s or similar asset-loading code, which only manifest once nginx serves the static build (FREIG-114). **The Docker test env passing is not sufficient evidence for any change to font/asset loading, `public/` file references, or static serving behavior** — verify with a real `npm run build` + `vite preview` (or equivalent nginx-equivalent static serving) before sign-off.
+
+---
+
 ## Architecture: Page Object Model (POM)
 
 All UI automation tests MUST follow the Page Object Model pattern:

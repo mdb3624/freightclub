@@ -32,17 +32,9 @@ Write-Host "Region: $Region"
 Write-Host "Image Tag: $ImageTag"
 Write-Host ""
 
-# Fetch secrets from Secret Manager (never hardcode these)
-Write-Host "Fetching secrets from Secret Manager..." -ForegroundColor Cyan
-$DbUrl = $(gcloud secrets versions access latest --secret=DB_URL --project=$ProjectID 2>$null).Trim()
-$DbUsername = $(gcloud secrets versions access latest --secret=DB_USERNAME --project=$ProjectID 2>$null).Trim()
-$DbPassword = $(gcloud secrets versions access latest --secret=DB_PASSWORD --project=$ProjectID 2>$null).Trim()
-$JwtSecret = $(gcloud secrets versions access latest --secret=APP_JWT_SECRET --project=$ProjectID 2>$null).Trim()
-
-if (-not $DbUrl -or -not $DbUsername -or -not $DbPassword -or -not $JwtSecret) {
-    Write-Host "FAILED: Missing one or more required secrets (DB_URL, DB_USERNAME, DB_PASSWORD, APP_JWT_SECRET)" -ForegroundColor Red
-    exit 1
-}
+# Secrets are bound as live Secret Manager references (--set-secrets), never
+# resolved to plaintext and baked into the revision spec.
+$SecretRefs = "DB_URL=DB_URL:latest,DB_USERNAME=DB_USERNAME:latest,DB_PASSWORD=DB_PASSWORD:latest,APP_JWT_SECRET=APP_JWT_SECRET:latest,JWT_SECRET=APP_JWT_SECRET:latest"
 
 $BackendUrl = "freightclub-backend-5gecbdg27a-uc.a.run.app"
 $BackendUrlAlt = "freightclub-backend-404925591110.us-central1.run.app"
@@ -53,11 +45,6 @@ $FrontendUrlAlt = "freightclub-frontend-404925591110.us-central1.run.app"
 # (a bare --set-env-vars with comma-joined origins silently corrupts the value)
 $BackendEnvVarsContent = @"
 SPRING_PROFILES_ACTIVE: prod
-DB_URL: $DbUrl
-DB_USERNAME: $DbUsername
-DB_PASSWORD: $DbPassword
-APP_JWT_SECRET: $JwtSecret
-JWT_SECRET: $JwtSecret
 CORS_ALLOWED_ORIGINS: https://freightclub.app,https://$FrontendUrl,https://$FrontendUrlAlt
 "@
 $BackendEnvVarsFile = "$env:TEMP\freightclub-backend-env.txt"
@@ -74,6 +61,7 @@ gcloud run deploy freightclub-backend `
   --timeout=600 `
   --max-instances=10 `
   --allow-unauthenticated `
+  --set-secrets=$SecretRefs `
   --env-vars-file=$BackendEnvVarsFile `
   --quiet
 

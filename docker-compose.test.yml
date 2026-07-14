@@ -31,6 +31,8 @@ services:
     depends_on:
       test-db:
         condition: service_healthy
+    env_file:
+      - .env.test
     environment:
       SPRING_PROFILES_ACTIVE: test
       PORT: 9091

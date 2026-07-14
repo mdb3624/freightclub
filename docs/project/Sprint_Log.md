@@ -120,3 +120,26 @@
 **REVIEWER hard-gate exception, explicitly flagged (not silently passed):** Backend JaCoCo branch coverage is **69%**, below the 80% hard gate in `docs/roles/REVIEWER.md`. This is **pre-existing** — not introduced by this PR — and is unrelated to the CI-infrastructure scope of CHG-US730-002/003/004/005. Per CHG protocol, escalating as a separate backlog item rather than blocking this PR on a pre-existing condition it didn't cause and isn't scoped to fix.
 
 **Verdict:** REVIEWER_PASS for the CI-infrastructure scope (CHG-US730-002/003/004/005), with two explicitly-flagged, non-blocking exceptions carried forward as backlog debt: backend coverage (69% < 80%) and e2e suite debt (CHG-US730-006). **PR #7 is ready but has NOT been merged** — merging requires explicit user authorization, not given in this session.
+
+---
+
+## LIBRARIAN_SIGN_OFF: US-854 (Per-Load Diesel Fuel Cost Resolution) — 2026-07-14
+
+**Full lifecycle this session:** BA Gate 1 (2026-07-13) → ARCH design → HFD design (Phase 4 device test waived by user, justified) → CODER implementation → REVIEWER pass (2 rounds) → LIBRARIAN sign-off.
+
+**REVIEWER round 1:** Rejected — missing Playwright golden-path E2E spec and missing evidence screenshot for the fuel-region caption. The earlier CODER-phase disclosure that this was "blocked by a datetime-local browser-automation limitation" was found to be a false blocker specific to the `browser-use` MCP manual-exploration tool; real Playwright `fill()` on `datetime-local` inputs already works elsewhere in this suite (`US-845-load-form.spec.ts`).
+
+**Fix, added this session:** `frontend/e2e/design-system/US-854-diesel-region-caption.spec.ts` — seeds a real shipper/trucker/load through the actual backend API (not mocked) and asserts AC-1 (per-load origin region overrides the carrier's saved home region), AC-2 (as-of date shown), AC-3 (fallback indicator for an unresolvable origin state). First CI run then failed because GitHub Actions has no `EIA_API_KEY` configured (same documented constraint as `us-730a-v2-cost-profile-wizard.spec.ts`) — the region resolves correctly server-side but falls through to the fallback price when EIA itself is unreachable, so a hard assertion on the live-data path isn't CI-safe. Spec was made environment-aware (checks `/api/v1/market/diesel-prices`'s `available` flag and asserts whichever path the running environment actually took); verified locally against the live-EIA branch and in CI against the no-EIA branch, both green.
+
+**Separately, also found and fixed in REVIEWER round 1:** `docker-compose.test.yml` and `application.yml` never wired `EIA_API_KEY`/`EIA_ENABLED` end-to-end at all — the entire feature silently returned `available:false` in every environment despite a 100%-green mocked test suite. This is now codified as a permanent gate (`docs/roles/CODER.md`, `.claude/rules/reviewer-checklist.md`, `.claude/rules/testing_standards.md`): any story introducing a new external API key/env-var-backed config must prove live wiring against the real endpoint before being declared complete, not rely on mocked-test evidence alone.
+
+**REVIEWER round 2:** PASS. Backend 902/902, frontend 291/291 + 4 new, E2E 106/106 (104 existing + 2 new, 0 regressions), JaCoCo ≥80% on all touched classes, all 9 GitHub Actions CI checks green on PR #37.
+
+**LIBRARIAN verification:**
+- [x] Reviewer PASS confirmed in chat history (this session)
+- [x] Story_Map.md updated to `COMPLETED`
+- [x] Traceability: BA story → ARCH design → HFD spec → CODER implementation → REVIEWER verdict, all linked and consistent
+- [x] Jira FREIG-116 transitioned to Done, closeout comment posted linking PR #37
+- [x] Evidence artifacts present: `test-results/evidence/US-854-diesel-region-caption.png`, `US-854-fallback-indicator.png`
+
+**Status:** ✅ DONE. **PR #37 not yet merged to main** — merging is a separate action requiring explicit user authorization.

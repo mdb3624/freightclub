@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import com.freightclub.domain.*;
 import com.freightclub.dto.*;
 import com.freightclub.modules.carrier.application.CarrierCostProfileService;
+import com.freightclub.modules.carrier.domain.CarrierCostProfile;
 import com.freightclub.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,10 +38,17 @@ class MinRpmFilteringTest {
 
     @BeforeEach
     void setUp() {
-        // Mock the trucker's required minimum RPM[cite: 1]
-        lenient().when(carrierCostProfileService.calculateMinimumRPM(truckerId))
-            .thenReturn(new BigDecimal("0.94"));
-        
+        // US-854: listOpenLoads now fetches the profile once via
+        // getCostProfile() and computes minRpm per-load, instead of calling
+        // the single-value calculateMinimumRPM(truckerId) orchestration
+        // method. Mock a legacy (non-wizard) profile whose
+        // calculateMinimumRPM() resolves to the same 0.94 this test
+        // originally exercised at the orchestration layer.
+        CarrierCostProfile legacyProfile = mock(CarrierCostProfile.class);
+        lenient().when(legacyProfile.hasWizardFields()).thenReturn(false);
+        lenient().when(legacyProfile.calculateMinimumRPM()).thenReturn(new BigDecimal("0.94"));
+        lenient().when(carrierCostProfileService.getCostProfile(truckerId)).thenReturn(legacyProfile);
+
         // Mock the rating service to return empty summaries to avoid NPE
         lenient().when(ratingService.getShipperRatingSummaries(anySet()))
             .thenReturn(Collections.emptyMap());

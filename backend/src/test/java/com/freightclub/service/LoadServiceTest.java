@@ -15,6 +15,7 @@ import com.freightclub.exception.LoadNotFoundException;
 import com.freightclub.exception.LoadStatusTransitionException;
 import com.freightclub.exception.ProfileIncompleteException;
 import com.freightclub.modules.carrier.application.CarrierCostProfileService;
+import com.freightclub.modules.carrier.domain.CarrierCostProfile;
 import com.freightclub.modules.payment.application.PaymentService;
 import com.freightclub.modules.shipper.application.ShipperProfileService;
 import com.freightclub.repository.ClaimRepository;
@@ -973,6 +974,115 @@ class LoadServiceTest {
             assertThat(draft.pickupTo()).isEqualTo(oneDayLater);
             assertThat(draft.deliveryFrom()).isEqualTo(oneDayLater.plusHours(1));
             assertThat(draft.deliveryTo()).isEqualTo(twoDaysLater);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // US-854: per-load diesel region resolution in the load board list
+    // -------------------------------------------------------------------------
+
+    @Nested
+    @DisplayName("listOpenLoads (US-854 per-load fuel region)")
+    class ListOpenLoads {
+
+        private static final String TRUCKER_ID = "trucker-1";
+
+        private com.freightclub.dto.LoadBoardFilter filterWithEquipment() {
+            return new com.freightclub.dto.LoadBoardFilter(
+                    null, null, EquipmentType.DRY_VAN, null, null, null, null);
+        }
+
+        private Load buildOpenLoad(String id, String originState, BigDecimal payRate) {
+            Load load = new Load();
+            ReflectionTestUtils.setField(load, "id", id);
+            load.setTenantId(TENANT_ID);
+            load.setShipperId(SHIPPER_ID);
+            load.setStatus(LoadStatus.OPEN);
+            load.setOriginCity("City");
+            load.setOriginState(originState);
+            load.setDestinationCity("Other City");
+            load.setDestinationState("IL");
+            load.setEquipmentType(EquipmentType.DRY_VAN);
+            load.setPayRate(payRate);
+            return load;
+        }
+
+        @Test
+        @DisplayName("different loads on the same page get different region-specific thresholds")
+        void perLoadRegionResolution_differentOrigins_getDifferentThresholds() {
+            CarrierCostProfile profile = CarrierCostProfile.createNewWizard(
+                    TENANT_ID, TRUCKER_ID, "SOUTH", new BigDecimal("6.5"),
+                    new BigDecimal("0.08"), new BigDecimal("1200"), new BigDecimal("600"),
+                    new BigDecimal("150"), 120000, new BigDecimal("2000"), 48);
+
+            // With milesPerGallon=6.5, additionalCostPerMile=0.08,
+            // annualFixedCPM=0.195, annualMarginCPM=0.8: EAST (4.50/gal)
+            // minRPM ~= 1.7673, SOUTH (3.50/gal) minRPM ~= 1.6135. A 1.70
+            // payRate clears SOUTH's threshold but not EAST's.
+            Load nyLoad = buildOpenLoad("load-ny", "NY", new BigDecimal("1.70"));
+            Load txLoad = buildOpenLoad("load-tx", "TX", new BigDecimal("1.70"));
+
+            when(carrierCostProfileService.getCostProfile(TRUCKER_ID)).thenReturn(profile);
+            var eastResolution = new com.freightclub.modules.carrier.application.DieselPriceResolution(
+                    new BigDecimal("4.50"), "EAST", "2026-07-06", false);
+            var southResolution = new com.freightclub.modules.carrier.application.DieselPriceResolution(
+                    new BigDecimal("3.50"), "SOUTH", "2026-07-06", false);
+            when(carrierCostProfileService.resolveDieselPriceForLoad(profile, "NY")).thenReturn(eastResolution);
+            when(carrierCostProfileService.resolveDieselPriceForLoad(profile, "TX")).thenReturn(southResolution);
+
+            when(loadRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(org.springframework.data.domain.Pageable.class)))
+                    .thenReturn(new org.springframework.data.domain.PageImpl<>(List.of(nyLoad, txLoad)));
+            when(ratingService.getShipperRatingSummaries(any())).thenReturn(Map.of());
+
+            var result = loadService.listOpenLoads(TRUCKER_ID, filterWithEquipment(), 0, 20);
+
+            // Both loads pay the same rate, but the NY (EAST, pricier fuel)
+            // load has a higher minimum-RPM threshold than the TX (SOUTH,
+            // cheaper fuel) load -- with a $3.00 payRate, only the cheaper
+            // TX-origin load should clear its own threshold.
+            assertThat(result.getContent()).extracting("id").containsExactly("load-tx");
+            assertThat(result.getContent().get(0).regionUsed()).isEqualTo("SOUTH");
+            assertThat(result.getContent().get(0).asOfPeriod()).isEqualTo("2026-07-06");
+            assertThat(result.getContent().get(0).isFallback()).isFalse();
+        }
+
+        @Test
+        @DisplayName("no cost profile: all loads pass, no region fields populated")
+        void noProfile_allLoadsPass_noResolutionFields() {
+            Load load = buildOpenLoad("load-1", "NY", new BigDecimal("0.01"));
+
+            when(carrierCostProfileService.getCostProfile(TRUCKER_ID)).thenReturn(null);
+            when(loadRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(org.springframework.data.domain.Pageable.class)))
+                    .thenReturn(new org.springframework.data.domain.PageImpl<>(List.of(load)));
+            when(ratingService.getShipperRatingSummaries(any())).thenReturn(Map.of());
+
+            var result = loadService.listOpenLoads(TRUCKER_ID, filterWithEquipment(), 0, 20);
+
+            assertThat(result.getContent()).hasSize(1);
+            assertThat(result.getContent().get(0).regionUsed()).isNull();
+            assertThat(result.getContent().get(0).asOfPeriod()).isNull();
+            assertThat(result.getContent().get(0).isFallback()).isFalse();
+            verify(carrierCostProfileService, never()).resolveDieselPriceForLoad(any(), any());
+        }
+
+        @Test
+        @DisplayName("legacy (non-wizard) profile: origin ignored, resolveDieselPriceForLoad never called")
+        void legacyProfile_originIgnored_resolutionNeverCalled() {
+            CarrierCostProfile legacyProfile = CarrierCostProfile.createNew(
+                    TENANT_ID, TRUCKER_ID, new BigDecimal("2500"), new BigDecimal("3.50"),
+                    new BigDecimal("6.5"), new BigDecimal("0.15"), 10000, new BigDecimal("0.50"));
+            Load load = buildOpenLoad("load-1", "NY", new BigDecimal("100"));
+
+            when(carrierCostProfileService.getCostProfile(TRUCKER_ID)).thenReturn(legacyProfile);
+            when(loadRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), any(org.springframework.data.domain.Pageable.class)))
+                    .thenReturn(new org.springframework.data.domain.PageImpl<>(List.of(load)));
+            when(ratingService.getShipperRatingSummaries(any())).thenReturn(Map.of());
+
+            var result = loadService.listOpenLoads(TRUCKER_ID, filterWithEquipment(), 0, 20);
+
+            assertThat(result.getContent()).hasSize(1);
+            assertThat(result.getContent().get(0).regionUsed()).isNull();
+            verify(carrierCostProfileService, never()).resolveDieselPriceForLoad(any(), any());
         }
     }
 }

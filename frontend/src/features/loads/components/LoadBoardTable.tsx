@@ -31,6 +31,26 @@ function rpmBorder(rpm: number | null): string {
   return '#EF4444'
 }
 
+// US-854: human-readable labels for EIA's 5 diesel price regions.
+const EIA_REGION_LABELS: Record<string, string> = {
+  EAST: 'East Coast',
+  MIDWEST: 'Midwest',
+  SOUTH: 'Gulf Coast',
+  ROCKY: 'Rocky Mountain',
+  WEST: 'West Coast',
+}
+
+function formatShortDate(isoDate: string): string {
+  // isoDate is a plain YYYY-MM-DD string (EIA's period field) -- parse and
+  // format in UTC so the displayed date doesn't shift a day in negative-UTC
+  // timezones.
+  return new Date(`${isoDate}T00:00:00Z`).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
 export function LoadBoardTable({ loads, sortBy, sortDir, onSort }: LoadBoardTableProps) {
   const navigate = useNavigate()
 
@@ -152,6 +172,15 @@ export function LoadBoardTable({ loads, sortBy, sortDir, onSort }: LoadBoardTabl
               </span>
               <span>{load.equipmentType.replace(/_/g, ' ')}</span>
               <span>Pickup {new Date(load.pickupFrom).toLocaleDateString()}</span>
+              {load.regionUsed != null && (
+                <span style={{ color: load.isFallback ? '#F59E0B' : '#808080' }}>
+                  {load.isFallback
+                    ? '⛽ Est. (home region)'
+                    : `⛽ Diesel: ${EIA_REGION_LABELS[load.regionUsed] ?? load.regionUsed}${
+                        load.asOfPeriod != null ? ` (as of ${formatShortDate(load.asOfPeriod)})` : ''
+                      }`}
+                </span>
+              )}
             </div>
           </div>
         )

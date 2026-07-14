@@ -3,7 +3,7 @@
 **Story ID:** US-854
 **Jira:** FREIG-116
 **Phase:** Cross (Trucker Load Profitability)
-**Status:** DRAFT — AWAITING BA SIGN-OFF (Gate 1)
+**Status:** READY_FOR_DESIGN — Gate 1 approved by User 2026-07-13; ARCH design complete, see `docs/architecture/US-854_Diesel_Cost_Resolution_Design.md`
 **Scope:** FULL_STACK
 **Priority:** P2
 
@@ -86,5 +86,5 @@ Then the Trucker's saved home-region price is used, since no specific load conte
 
 ## Gate 1 Sign-Off
 
-- [ ] User (Michael) has reviewed and approved these Acceptance Criteria
-- [ ] Status may be updated to `READY_FOR_DESIGN` only after the box above is checked
+- [x] User (Michael) has reviewed and approved these Acceptance Criteria (2026-07-13)
+- [x] Status updated to `READY_FOR_DESIGN`

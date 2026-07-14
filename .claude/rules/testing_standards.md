@@ -12,6 +12,19 @@ The Docker test environment (`docker-compose.test.yml`) runs the frontend via `D
 
 ---
 
+## ⚠️ Known Limitation: Mocked Tests Cannot Catch Config/Wiring Bugs (2026-07-14)
+
+Unit and jsdom-level tests that mock a service (`EiaFuelPriceService`, `apiClient`, etc.) prove the code's *logic* is correct given a value — they cannot prove the value ever arrives. FREIG-116/US-854: all backend unit tests and the frontend `LoadBoardTable.test.tsx` passed with 100% green, but `docker-compose.test.yml` never passed `EIA_API_KEY`/`EIA_ENABLED` to the container AND `application.yml` never bound `app.eia.api-key`/`app.eia.enabled` to those env vars in the first place — so the live feature returned `available:false` in every environment that existed. Nothing in the automated suite exercised the real seam (env var → Spring property → external HTTP call → response).
+
+**Mandatory rule:** Any story that reads a new external API key, external service config, or env-var-backed `@Value` property MUST include, before sign-off:
+1. A `curl`/fetch against the ACTUAL unmocked endpoint in the Docker test environment, with the real response pasted into the PR/story doc.
+2. Confirmation that the property is declared in every `application-*.yml` profile actually used (`application.yml`, `application-test.yml`, `application-prod.yml` as applicable) — not just referenced via `@Value`.
+3. Confirmation the corresponding env var(s) are passed through in every relevant `docker-compose*.yml` (via explicit `environment:` entries or `env_file:`).
+
+A fully-mocked green test suite is evidence the logic works, not evidence the feature works. Do not declare a story CODER-complete on mocked-test evidence alone when the story's core value depends on an external integration.
+
+---
+
 ## Architecture: Page Object Model (POM)
 
 All UI automation tests MUST follow the Page Object Model pattern:

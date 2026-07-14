@@ -34,6 +34,7 @@ This checklist defines the mandatory "Hard Gates" for any code merge. Failure to
 * [ ] **Transactional Integrity**: Are Domain Events and Entity state changes wrapped in a single atomic transaction?
 * [ ] **Outbox Pattern**: Does the logic correctly use the `message_outbox` for asynchronous event propagation?
 * [ ] **Idempotency**: Is the system resilient to duplicate events or messages?
+* [ ] **External Config/Secret Wiring Gate**: If the story introduces a new `@Value("${app.x.y}")`, env var, or external API credential, has CODER pasted the ACTUAL response of the live endpoint (hit against the real Docker test environment, not a mocked service) showing non-null/non-fallback data — not just a passing unit test? FREIG-116/US-854 (2026-07-14): `EiaFuelPriceService` unit tests all passed with mocks, but `docker-compose.test.yml` never passed `EIA_API_KEY`/`EIA_ENABLED` through AND `application.yml` never bound `app.eia.*` to those env vars at all — the feature silently returned `available:false`/all-nulls in every environment until a human manually curled the endpoint. Any new `@Value` binding must be grepped against every `application-*.yml` profile AND every `docker-compose*.yml` env block before sign-off; a green test suite where every external dependency is mocked is not evidence the wiring works.
 
 ## 5. API Contract Gate (Integration Gate)
 * [ ] **Version Consistency**: If a new backend controller is added, its `@RequestMapping` version prefix matches `apiClient.ts` baseURL — or the mismatch is explicitly justified and all callers are updated.

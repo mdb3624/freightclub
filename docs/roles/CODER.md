@@ -117,6 +117,20 @@ Repeat for each AC.
 
 ---
 
+## 🔌 External Config/Secret Wiring Verification (MANDATORY — Effective 2026-07-14)
+
+Mocked unit/component tests prove your logic is correct given a value — they cannot prove the value ever arrives. FREIG-116/US-854: 100% green tests (backend unit tests mocking `EiaFuelPriceService`, frontend `LoadBoardTable.test.tsx` given a hand-built prop) shipped while the real feature returned `available:false` in every environment, because `docker-compose.test.yml` never passed the API key/enabled env vars through AND `application.yml` never bound them to a `@Value` property in the first place. Nothing in the automated suite touched that seam.
+
+**Before declaring any story complete that introduces a new external API key, external service config, or env-var-backed `@Value` property:**
+1. Grep every `application-*.yml` actually in use and confirm the new property is declared there (not just referenced via `@Value("${...}")` — an undeclared property silently binds to its default).
+2. Grep every `docker-compose*.yml` relevant to the environments you're claiming pass, and confirm the backing env var is passed through (`environment:` entry or `env_file:`).
+3. Hit the real, unmocked endpoint in the actual Docker test environment (not a mock, not a unit test) and paste the live response into the PR/story doc as evidence.
+4. Only after 1–3 pass, treat the mocked unit/component tests as sufficient evidence for the logic layer.
+
+A green mocked test suite is not evidence the feature works end-to-end when the story's value depends on an external integration — do not declare CODER-complete on that evidence alone.
+
+---
+
 ## 🎨 HFE Compliance Ownership (MANDATORY — Effective 2026-06-08)
 
 CODER is **equally responsible** for UI visual outcome as the HFD persona. Tests passing is not sufficient if visual evidence deviates from the design reference.

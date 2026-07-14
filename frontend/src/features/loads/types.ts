@@ -106,6 +106,12 @@ export interface LoadSummary {
   createdAt: string
   shipperAvgStars: number | null
   shipperRatingCount: number
+  /** US-854: EIA region used for this load's fuel-cost estimate (e.g. "EAST"), null if not resolved */
+  regionUsed: string | null
+  /** US-854: date the diesel price is from (ISO string), null if not resolved */
+  asOfPeriod: string | null
+  /** US-854: true if regionUsed came from the carrier's saved home region, not this load's origin */
+  isFallback: boolean
 }
 
 export interface LoadFormValues {

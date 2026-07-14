@@ -6,6 +6,7 @@ import com.freightclub.modules.carrier.infrastructure.CarrierCostProfileEntity;
 import com.freightclub.modules.carrier.infrastructure.CarrierCostProfileRepository;
 import com.freightclub.security.TenantContextHolder;
 import com.freightclub.service.EiaFuelPriceService;
+import com.freightclub.service.StateToEiaRegionResolver;
 import java.math.BigDecimal;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -105,16 +106,35 @@ public class CarrierCostProfileService {
       return BigDecimal.ZERO;
     }
     DieselPriceResponse prices = eiaFuelPriceService.getDieselPrices();
-    Double price =
-        switch (profile.getDieselRegion()) {
-          case "EAST" -> prices.eastPrice();
-          case "MIDWEST" -> prices.midwestPrice();
-          case "SOUTH" -> prices.southPrice();
-          case "ROCKY" -> prices.rockyPrice();
-          case "WEST" -> prices.westPrice();
-          default -> null;
-        };
+    Double price = priceForRegion(prices, profile.getDieselRegion());
     return price != null ? BigDecimal.valueOf(price) : BigDecimal.ZERO;
+  }
+
+  private Double priceForRegion(DieselPriceResponse prices, String region) {
+    return switch (region) {
+      case "EAST" -> prices.eastPrice();
+      case "MIDWEST" -> prices.midwestPrice();
+      case "SOUTH" -> prices.southPrice();
+      case "ROCKY" -> prices.rockyPrice();
+      case "WEST" -> prices.westPrice();
+      default -> null;
+    };
+  }
+
+  // US-854: resolves the live diesel price for a specific load's origin
+  // state, falling back to the carrier's saved home-region price when the
+  // origin can't be mapped to an EIA region or has no live price available.
+  public DieselPriceResolution resolveDieselPriceForLoad(CarrierCostProfile profile, String originState) {
+    String region = StateToEiaRegionResolver.resolve(originState);
+    if (region != null) {
+      DieselPriceResponse prices = eiaFuelPriceService.getDieselPrices();
+      Double price = priceForRegion(prices, region);
+      if (price != null) {
+        return new DieselPriceResolution(BigDecimal.valueOf(price), region, prices.period(), false);
+      }
+    }
+    BigDecimal fallbackPrice = resolveDieselPrice(profile);
+    return new DieselPriceResolution(fallbackPrice, profile.getDieselRegion(), null, true);
   }
 
   // US-705 / US-730a-v2: LoadService calls this unchanged; internally now prefers
@@ -126,6 +146,22 @@ public class CarrierCostProfileService {
     }
     if (profile.hasWizardFields()) {
       return profile.calculateMinimumRPM(resolveDieselPrice(profile));
+    }
+    return profile.calculateMinimumRPM();
+  }
+
+  // US-854: per-load overload -- uses the load's origin region instead of
+  // the carrier's saved home region. Legacy (non-wizard) profiles have no
+  // region concept at all, so origin is ignored and behavior matches the
+  // no-origin overload exactly.
+  public BigDecimal calculateMinimumRPM(String truckerId, String originState) {
+    CarrierCostProfile profile = getCostProfile(truckerId);
+    if (profile == null) {
+      return BigDecimal.ZERO;
+    }
+    if (profile.hasWizardFields()) {
+      DieselPriceResolution resolution = resolveDieselPriceForLoad(profile, originState);
+      return profile.calculateMinimumRPM(resolution.pricePerGallon());
     }
     return profile.calculateMinimumRPM();
   }

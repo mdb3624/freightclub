@@ -194,11 +194,32 @@ public class LoadService {
         org.springframework.data.domain.Page<com.freightclub.domain.Load> loadPage =
                 loadRepository.findAll(LoadSpecifications.withFilter(effective), pageable);
 
-        // [US-705] Filter loads by trucker's minimum RPM requirement
-        BigDecimal minRpm = carrierCostProfileService.calculateMinimumRPM(truckerId);
-        java.util.List<com.freightclub.domain.Load> filteredLoads = loadPage.getContent().stream()
-                .filter(load -> load.getPayRate() != null && load.getPayRate().compareTo(minRpm) >= 0)
-                .collect(Collectors.toList());
+        // [US-705] Filter loads by trucker's minimum RPM requirement.
+        // [US-854] The threshold is now resolved PER LOAD using that load's
+        // origin diesel region, not a single value computed once for the
+        // whole page -- different loads on the same page can have different
+        // origins. The profile itself is still fetched once (cached).
+        com.freightclub.modules.carrier.domain.CarrierCostProfile costProfile =
+                carrierCostProfileService.getCostProfile(truckerId);
+        java.util.List<com.freightclub.domain.Load> filteredLoads = new java.util.ArrayList<>();
+        java.util.Map<String, com.freightclub.modules.carrier.application.DieselPriceResolution> resolutionByLoadId =
+                new java.util.HashMap<>();
+        for (com.freightclub.domain.Load load : loadPage.getContent()) {
+            BigDecimal minRpm = BigDecimal.ZERO;
+            com.freightclub.modules.carrier.application.DieselPriceResolution resolution = null;
+            if (costProfile != null) {
+                if (costProfile.hasWizardFields()) {
+                    resolution = carrierCostProfileService.resolveDieselPriceForLoad(costProfile, load.getOriginState());
+                    minRpm = costProfile.calculateMinimumRPM(resolution.pricePerGallon());
+                } else {
+                    minRpm = costProfile.calculateMinimumRPM();
+                }
+            }
+            if (load.getPayRate() != null && load.getPayRate().compareTo(minRpm) >= 0) {
+                filteredLoads.add(load);
+                resolutionByLoadId.put(load.getId(), resolution);
+            }
+        }
 
         Set<String> shipperIds = filteredLoads.stream()
                 .map(com.freightclub.domain.Load::getShipperId)
@@ -209,7 +230,9 @@ public class LoadService {
                 filteredLoads.stream()
                         .map(load -> {
                             double[] r = ratings.get(load.getShipperId());
-                            return LoadSummaryResponse.from(load, r != null ? r[0] : null, r != null ? (long) r[1] : 0L);
+                            return LoadSummaryResponse.from(
+                                    load, r != null ? r[0] : null, r != null ? (long) r[1] : 0L,
+                                    resolutionByLoadId.get(load.getId()));
                         })
                         .collect(Collectors.toList()),
                 pageable,

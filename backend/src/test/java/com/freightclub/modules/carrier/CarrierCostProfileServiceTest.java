@@ -277,6 +277,108 @@ class CarrierCostProfileServiceTest {
     assertThat(updated.getMilesPerGallon()).isEqualByComparingTo("7.0");
   }
 
+  // ── US-854: per-load diesel price resolution ──────────────────────────────
+
+  @Test
+  void testResolveDieselPriceForLoad_originStateResolves_usesOriginRegion_notProfileRegion() {
+    org.mockito.Mockito.when(eiaFuelPriceService.getDieselPrices())
+        .thenReturn(new DieselPriceResponse(
+            4.00, null,   // east, eastDelta
+            null, null,   // midwest, midwestDelta
+            3.50, null,   // south, southDelta
+            null, null, null, null, // rocky, rockyDelta, west, westDelta
+            "2026-07-06", false, true));
+
+    var input = new com.freightclub.modules.carrier.application.CostProfileWizardInput(
+        "SOUTH", new BigDecimal("6.5"), new BigDecimal("0.08"),
+        new BigDecimal("1200"), new BigDecimal("600"), new BigDecimal("150"),
+        120000, new BigDecimal("2000"), 48);
+    CarrierCostProfile profile = service.upsertWizardProfile(TRUCKER_ID, input);
+
+    // Profile's saved home region is SOUTH (3.50), but this load originates
+    // in NY (EAST, 4.00) -- resolution must use the load's origin, not the
+    // carrier's saved home region.
+    com.freightclub.modules.carrier.application.DieselPriceResolution resolution =
+        service.resolveDieselPriceForLoad(profile, "NY");
+
+    assertThat(resolution.pricePerGallon()).isEqualByComparingTo("4.00");
+    assertThat(resolution.regionUsed()).isEqualTo("EAST");
+    assertThat(resolution.asOfPeriod()).isEqualTo("2026-07-06");
+    assertThat(resolution.isFallback()).isFalse();
+  }
+
+  @Test
+  void testResolveDieselPriceForLoad_unresolvableOriginState_fallsBackToProfileRegion() {
+    org.mockito.Mockito.when(eiaFuelPriceService.getDieselPrices())
+        .thenReturn(new DieselPriceResponse(
+            null, null, null, null,
+            3.50, null, // south
+            null, null, null, null,
+            "2026-07-06", false, true));
+
+    var input = new com.freightclub.modules.carrier.application.CostProfileWizardInput(
+        "SOUTH", new BigDecimal("6.5"), new BigDecimal("0.08"),
+        new BigDecimal("1200"), new BigDecimal("600"), new BigDecimal("150"),
+        120000, new BigDecimal("2000"), 48);
+    CarrierCostProfile profile = service.upsertWizardProfile(TRUCKER_ID, input);
+
+    com.freightclub.modules.carrier.application.DieselPriceResolution resolution =
+        service.resolveDieselPriceForLoad(profile, null);
+
+    assertThat(resolution.pricePerGallon()).isEqualByComparingTo("3.50");
+    assertThat(resolution.isFallback()).isTrue();
+  }
+
+  @Test
+  void testCalculateMinimumRPM_withOriginState_wizardProfile_usesOriginRegionPrice() {
+    org.mockito.Mockito.when(eiaFuelPriceService.getDieselPrices())
+        .thenReturn(new DieselPriceResponse(
+            4.00, null, null, null, // east
+            3.50, null,             // south
+            null, null, null, null,
+            "2026-07-06", false, true));
+
+    var input = new com.freightclub.modules.carrier.application.CostProfileWizardInput(
+        "SOUTH", new BigDecimal("6.5"), new BigDecimal("0.08"),
+        new BigDecimal("1200"), new BigDecimal("600"), new BigDecimal("150"),
+        120000, new BigDecimal("2000"), 48);
+    service.upsertWizardProfile(TRUCKER_ID, input);
+
+    BigDecimal minRpmForNyLoad = service.calculateMinimumRPM(TRUCKER_ID, "NY");
+    BigDecimal minRpmForGeneralProfile = service.calculateMinimumRPM(TRUCKER_ID);
+
+    // NY (EAST, 4.00/gal) load must price higher than the profile's saved
+    // SOUTH (3.50/gal) home-region default -- proves origin, not home
+    // region, drives the per-load figure.
+    assertThat(minRpmForNyLoad).isGreaterThan(minRpmForGeneralProfile);
+  }
+
+  @Test
+  void testCalculateMinimumRPM_withOriginState_notFound_returnsZero() {
+    BigDecimal minRpm = service.calculateMinimumRPM("nonexistent-trucker", "NY");
+    assertThat(minRpm).isEqualTo(BigDecimal.ZERO);
+  }
+
+  @Test
+  void testCalculateMinimumRPM_withOriginState_legacyProfile_matchesNoOriginOverload() {
+    service.createCostProfile(
+        TRUCKER_ID,
+        new BigDecimal("2500"),
+        new BigDecimal("3.50"),
+        new BigDecimal("6.5"),
+        new BigDecimal("0.15"),
+        10000,
+        new BigDecimal("0.50"));
+
+    // Legacy (non-wizard) profiles have no dieselRegion at all -- origin
+    // state must be ignored, falling back to the legacy static formula
+    // identically to the no-origin overload.
+    BigDecimal minRpmWithOrigin = service.calculateMinimumRPM(TRUCKER_ID, "NY");
+    BigDecimal minRpmNoOrigin = service.calculateMinimumRPM(TRUCKER_ID);
+
+    assertThat(minRpmWithOrigin).isEqualByComparingTo(minRpmNoOrigin);
+  }
+
   @Test
   void testResolveDieselPrice_legacyProfileWithNullRegion_returnsZero_doesNotThrow() {
     CarrierCostProfile profile =

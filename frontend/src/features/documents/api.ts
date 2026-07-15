@@ -8,6 +8,9 @@ export const documentsApi = {
   list: (loadId: string) =>
     apiGet<LoadDocument[]>(`/documents/${loadId}`),
 
+  listMine: () =>
+    apiGet<LoadDocument[]>('/documents/mine'),
+
   uploadBolPhoto: (loadId: string, file: File) => {
     const form = new FormData()
     form.append('file', file)

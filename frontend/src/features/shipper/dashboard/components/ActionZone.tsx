@@ -248,7 +248,7 @@ const LoadSelectedState: React.FC<LoadSelectedStateProps> = ({
         <div style={{ display: 'flex', gap: 8 }}>
           <button
             data-testid="action-zone-view-docs"
-            onClick={() => navigate(`/shipper/loads/${shipment.loadId}/documents`)}
+            onClick={() => navigate(`/shipper/loads/${shipment.loadId}`)}
             style={{ ...bronzePrimaryStyle, flex: 1, fontSize: 12, padding: '7px 10px' }}
           >
             View Documents

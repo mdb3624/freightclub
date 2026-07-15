@@ -54,8 +54,10 @@ git commit -m "docs(US-302-v2): register BOL pickup attestation story"
 
 ## Task 1: Database migration — `bol_attestations` table + `load_documents` lock columns + new DocumentType
 
+**Drift correction (2026-07-15):** since this plan was written, CHG-856 merged and added `V20260715_0900__AddContentTypeToLoadDocuments.sql`. Use `V20260715_1100__BolAttestation_US302v2.sql` (not the original `V20260714_1000` filename below) so this migration sorts after it — avoids relying on Flyway's `out-of-order: true` leniency.
+
 **Files:**
-- Create: `backend/src/main/resources/db/migration/V20260714_1000__BolAttestation_US302v2.sql`
+- Create: `backend/src/main/resources/db/migration/V20260715_1100__BolAttestation_US302v2.sql`
 - Modify: `backend/src/main/java/com/freightclub/domain/DocumentType.java`
 
 **Interfaces:**
@@ -130,12 +132,12 @@ cd backend && mvn clean package -DskipTests -Djacoco.skip=true -q && cd ..
 docker compose -f docker-compose.test.yml up --build -d
 ```
 
-Expected: `backend-tester` logs show `Migrating schema "freightclub" to version "20260714_1000 - BolAttestation US302v2"` with no errors.
+Expected: `backend-tester` logs show `Migrating schema "freightclub" to version "20260715_1100 - BolAttestation US302v2"` with no errors.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add backend/src/main/resources/db/migration/V20260714_1000__BolAttestation_US302v2.sql backend/src/main/java/com/freightclub/domain/DocumentType.java
+git add backend/src/main/resources/db/migration/V20260715_1100__BolAttestation_US302v2.sql backend/src/main/java/com/freightclub/domain/DocumentType.java
 git commit -m "feat(US-302-v2): add bol_attestations table and load_documents lock columns"
 ```
 
@@ -298,8 +300,10 @@ git commit -m "feat(US-302-v2): add BolAttestation entity and repository"
 - Create: `backend/src/main/java/com/freightclub/service/BolAttestationService.java`
 - Test: `backend/src/test/java/com/freightclub/service/BolAttestationServiceTest.java`
 
+**Drift correction (2026-07-15):** since this plan was written, CHG-856 merged and extracted a `StorageService` interface (`backend/src/main/java/com/freightclub/storage/StorageService.java`) — `DocumentService` now depends on that interface, not the concrete `LocalStorageService`, so `BolAttestationService` should too (it'll get `GcsStorageService` in prod / `LocalStorageService` in dev/test automatically via the existing `@Profile` wiring). Every `LocalStorageService` reference in the code/test below should read `StorageService` instead (same method signatures, `store(...)`/`retrieve(...)`, unchanged).
+
 **Interfaces:**
-- Consumes: `DocumentRepository.findByLoadIdAndDeletedAtIsNull(String): List<LoadDocument>` (existing, `DocumentRepository.java:10`); `BolAttestationRepository` (Task 2); `DocumentAuditService.logEvent(String documentId, String userId, String action, Map<String,Object> metadata)` (existing, used throughout `DocumentService.java`); `LocalStorageService.store(tenantId, loadId, DocumentType, filename, contentType, bytes): String` (existing, `DocumentService.java:64-66` shows call shape).
+- Consumes: `DocumentRepository.findByLoadIdAndDeletedAtIsNull(String): List<LoadDocument>` (existing, `DocumentRepository.java:10`); `BolAttestationRepository` (Task 2); `DocumentAuditService.logEvent(String documentId, String userId, String action, Map<String,Object> metadata)` (existing, used throughout `DocumentService.java`); `StorageService.store(tenantId, loadId, DocumentType, filename, contentType, bytes): String` (existing interface, `backend/src/main/java/com/freightclub/storage/StorageService.java` — `DocumentService.java` shows the call shape).
 - Produces: `BolAttestationService.recordAttestation(String loadId, String tenantId, String truckerId, String exceptionNotes, MultipartFile exceptionPhoto): BolAttestation` — used by `LoadService` in Task 4.
 
 - [ ] **Step 1: Write the failing test**
@@ -313,7 +317,7 @@ import com.freightclub.domain.LoadDocument;
 import com.freightclub.repository.BolAttestationRepository;
 import com.freightclub.repository.DocumentRepository;
 import com.freightclub.modules.document.application.DocumentAuditService;
-import com.freightclub.storage.LocalStorageService;
+import com.freightclub.storage.StorageService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -332,7 +336,7 @@ class BolAttestationServiceTest {
 
     @Mock private BolAttestationRepository attestationRepository;
     @Mock private DocumentRepository documentRepository;
-    @Mock private LocalStorageService storageService;
+    @Mock private StorageService storageService;
     @Mock private DocumentAuditService auditService;
 
     private BolAttestationService service;
@@ -418,7 +422,7 @@ import com.freightclub.domain.LoadDocument;
 import com.freightclub.repository.BolAttestationRepository;
 import com.freightclub.repository.DocumentRepository;
 import com.freightclub.modules.document.application.DocumentAuditService;
-import com.freightclub.storage.LocalStorageService;
+import com.freightclub.storage.StorageService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -434,12 +438,12 @@ public class BolAttestationService {
 
     private final BolAttestationRepository attestationRepository;
     private final DocumentRepository documentRepository;
-    private final LocalStorageService storageService;
+    private final StorageService storageService;
     private final DocumentAuditService auditService;
 
     public BolAttestationService(BolAttestationRepository attestationRepository,
                                   DocumentRepository documentRepository,
-                                  LocalStorageService storageService,
+                                  StorageService storageService,
                                   DocumentAuditService auditService) {
         this.attestationRepository = attestationRepository;
         this.documentRepository = documentRepository;

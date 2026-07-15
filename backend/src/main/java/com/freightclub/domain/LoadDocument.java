@@ -52,6 +52,12 @@ public class LoadDocument {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Column(name = "locked", nullable = false)
+    private boolean locked = false;
+
+    @Column(name = "locked_at")
+    private LocalDateTime lockedAt;
+
     @PrePersist
     private void assignId() {
         if (this.id == null) {
@@ -84,4 +90,8 @@ public class LoadDocument {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getDeletedAt() { return deletedAt; }
     public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
+    public boolean isLocked() { return locked; }
+    public void setLocked(boolean locked) { this.locked = locked; }
+    public LocalDateTime getLockedAt() { return lockedAt; }
+    public void setLockedAt(LocalDateTime lockedAt) { this.lockedAt = lockedAt; }
 }

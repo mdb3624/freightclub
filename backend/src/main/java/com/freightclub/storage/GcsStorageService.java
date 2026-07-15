@@ -6,6 +6,7 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class GcsStorageService implements StorageService {
     private final Storage storage;
     private final String bucketName;
 
+    @Autowired
     public GcsStorageService(@Value("${app.storage.gcs-bucket}") String bucketName) {
         this(StorageOptions.getDefaultInstance().getService(), bucketName);
     }

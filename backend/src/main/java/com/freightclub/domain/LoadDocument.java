@@ -36,7 +36,7 @@ public class LoadDocument {
     @Column(name = "original_filename", nullable = false, length = 255)
     private String originalFilename;
 
-    @Transient
+    @Column(name = "content_type", length = 100)
     private String contentType;
 
     @Column(name = "file_size_bytes", nullable = false)

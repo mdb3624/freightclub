@@ -67,7 +67,7 @@ export function ShipperPageHeader() {
   }
 
   const handleSettingsClick = () => {
-    navigate('/settings')
+    navigate('/settings/preferred-carriers')
     setShowDropdown(false)
   }
 

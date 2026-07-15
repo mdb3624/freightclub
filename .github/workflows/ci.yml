@@ -73,6 +73,10 @@ jobs:
         working-directory: frontend
         run: npm run lint
 
+      - name: Check route consistency
+        working-directory: frontend
+        run: npm run check:routes
+
       - name: Test
         working-directory: frontend
         run: npm run test

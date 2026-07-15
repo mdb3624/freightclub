@@ -183,7 +183,7 @@ export const KPISummary: React.FC<KPISummaryProps> = ({
 
       {/* KPI Cards Grid - Responsive layout */}
       {showEmptyState ? (
-        <EmptyState onCreateClick={() => navigate('/loads/create')} />
+        <EmptyState onCreateClick={() => navigate('/shipper/loads/new')} />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {/* Card 1: Active Shipments */}

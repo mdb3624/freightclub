@@ -30,9 +30,6 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       APP_JWT_SECRET: ${JWT_SECRET}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://freightclub.app}
-      STORAGE_PATH: /app/uploads
-    volumes:
-      - uploads_data:/app/uploads
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 30s
@@ -40,6 +37,3 @@ services:
       retries: 3
       start_period: 30s
     restart: unless-stopped
-
-volumes:
-  uploads_data:

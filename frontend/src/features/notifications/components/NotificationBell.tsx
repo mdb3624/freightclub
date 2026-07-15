@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUnreadCount, useNotifications, useMarkRead, useMarkAllRead } from '../hooks/useNotifications'
+import { useAuthStore } from '@/store/authStore'
 
 function timeAgo(iso: string) {
   const diff = Date.now() - new Date(iso).getTime()
@@ -16,6 +17,7 @@ export function NotificationBell() {
   const [open, setOpen] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
+  const { user } = useAuthStore()
 
   const { data: countData } = useUnreadCount()
   const { data: notifData, refetch: refetchNotifs } = useNotifications()
@@ -42,7 +44,8 @@ export function NotificationBell() {
   function handleNotificationClick(notifId: string, loadId: string, isRead: boolean) {
     if (!isRead) markRead.mutate(notifId)
     setOpen(false)
-    navigate(`/loads/${loadId}`)
+    const path = user?.role === 'SHIPPER' ? `/shipper/loads/${loadId}` : `/trucker/loads/${loadId}`
+    navigate(path)
   }
 
   return (

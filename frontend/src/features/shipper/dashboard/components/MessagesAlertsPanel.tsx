@@ -71,7 +71,7 @@ export const MessagesAlertsPanel: React.FC = () => {
    */
   const handleNotificationClick = (loadId: string, notificationId: string) => {
     markReadMutation.mutate(notificationId);
-    navigate(`/loads/${loadId}`);
+    navigate(`/shipper/loads/${loadId}`);
   };
 
   /**

@@ -1,5 +1,5 @@
 import { Component, type ReactNode, lazy, Suspense } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { TruckerLandingPage } from '@/pages/TruckerLandingPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { RegisterPage } from '@/pages/RegisterPage'
@@ -26,6 +26,7 @@ const PreferredCarriersList = lazy(() => import('@/features/shippers/components/
 const CarrierPublicProfilePage = lazy(() => import('@/features/carriers/components/CarrierPublicProfilePage').then(m => ({ default: m.CarrierPublicProfilePage })))
 const CarrierNetworkPage = lazy(() => import('@/features/shipper/pages/CarrierNetworkPage').then(m => ({ default: m.CarrierNetworkPage })))
 const QuoteRequestPlaceholder = lazy(() => import('@/pages/QuoteRequestPlaceholder').then(m => ({ default: m.QuoteRequestPlaceholder })))
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })))
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
   state = { hasError: false }
@@ -273,7 +274,14 @@ export default function App() {
       />
 
       <Route path="/" element={<TruckerLandingPage />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route
+        path="*"
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <NotFoundPage />
+          </Suspense>
+        }
+      />
     </Routes>
     </PersonaThemeProvider>
     </AuthInitializer>

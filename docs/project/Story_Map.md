@@ -62,6 +62,7 @@
 | US-301 | S3 File Storage & Signed Upload URLs | COMPLETED             | 3     | US-101     | ✅ RLS, ✅ No-Lombok                     |
 | US-302 | Platform-Generated BOL               | COMPLETED             | 3     | US-301     | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (5m TTL) |
 | US-303 | BOL/POD Photo Upload & Viewing       | COMPLETED             | 3     | US-301     | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (5m TTL) |
+| US-302-v2 | BOL Pickup Attestation (Carrier Confirm+Lock) | IN_PROGRESS | 3  | US-302, US-303 | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (5m TTL) |
 | US-305 | POD Upload UI Completion             | COMPLETED             | 3     | US-301     | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (5m TTL) |
 | US-308 | **Document Audit Log Service**       | **COMPLETED**         | **3** | **US-303** | ✅ RLS, ✅ No-Lombok, ✅ NFR-504 (5m TTL) |
 |        |                                      |                       |       |            |                                        |

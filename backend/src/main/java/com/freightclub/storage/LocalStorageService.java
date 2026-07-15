@@ -5,6 +5,7 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -12,20 +13,13 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
-public class LocalStorageService {
+@Profile({"dev", "test"})
+public class LocalStorageService implements StorageService {
 
     private static final Logger log = LoggerFactory.getLogger(LocalStorageService.class);
-
-    private static final Map<String, String> EXTENSIONS = Map.of(
-            "image/jpeg", ".jpg",
-            "image/png",  ".png",
-            "image/webp", ".webp",
-            "application/pdf", ".pdf"
-    );
 
     @Value("${app.storage.local-path:${user.home}/freightclub-uploads}")
     private String storagePath;
@@ -40,9 +34,10 @@ public class LocalStorageService {
         }
     }
 
+    @Override
     public String store(String tenantId, String loadId, DocumentType type,
                         String originalFilename, String contentType, byte[] data) {
-        String ext = EXTENSIONS.getOrDefault(contentType, ".bin");
+        String ext = StorageExtensions.resolve(contentType);
         String key = tenantId + "/" + loadId + "/" + type.name() + "/" + UUID.randomUUID() + ext;
         Path dest = Paths.get(storagePath, key);
         try {
@@ -55,6 +50,7 @@ public class LocalStorageService {
         }
     }
 
+    @Override
     public byte[] retrieve(String storageKey) {
         if (storageKey == null || storageKey.isEmpty() || storageKey.contains("..")) {
             throw new IllegalArgumentException("Invalid storage key");

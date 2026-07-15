@@ -25,7 +25,7 @@ app:
   cookie:
     secure: true
   storage:
-    local-path: /tmp/freightclub-uploads
+    gcs-bucket: ${GCS_BUCKET_NAME:freightclub-documents-prod}
   jwt:
     secret: ${APP_JWT_SECRET}
     issuer: ${JWT_ISSUER:freightclub}

@@ -20,6 +20,16 @@ import java.lang.annotation.Target;
 @DataJpaTest
 @TestPropertySource(properties = {
         "spring.flyway.enabled=false",
-        "spring.jpa.hibernate.ddl-auto=create-drop"
+        "spring.jpa.hibernate.ddl-auto=create-drop",
+        // application.yml sets spring.jpa.properties.hibernate.hbm2ddl.auto=none, which wins over
+        // spring.jpa.hibernate.ddl-auto above (properties.* is merged directly into Hibernate's
+        // settings map after ddl-auto is applied). Must be overridden explicitly here too.
+        "spring.jpa.properties.hibernate.hbm2ddl.auto=create-drop",
+        // src/test/resources/application-test.yml (active under the "test" Spring profile, as used
+        // in the Docker test environment) sets jakarta.persistence.schema-generation.database.action=none.
+        // Per the JPA spec, when this property is explicitly present Hibernate honors it and ignores
+        // hibernate.hbm2ddl.auto entirely — silently skipping schema generation. Must be overridden too,
+        // or this test only passes on a bare host run (no "test" profile active) and fails under Docker.
+        "spring.jpa.properties.jakarta.persistence.schema-generation.database.action=drop-and-create"
 })
 public @interface DataJpaSliceTest {}

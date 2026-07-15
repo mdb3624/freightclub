@@ -10,19 +10,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.UUID;
 
 @Service
 @Profile("prod")
 public class GcsStorageService implements StorageService {
-
-    private static final Map<String, String> EXTENSIONS = Map.of(
-            "image/jpeg", ".jpg",
-            "image/png",  ".png",
-            "image/webp", ".webp",
-            "application/pdf", ".pdf"
-    );
 
     private final Storage storage;
     private final String bucketName;
@@ -39,7 +31,7 @@ public class GcsStorageService implements StorageService {
     @Override
     public String store(String tenantId, String loadId, DocumentType type,
                          String originalFilename, String contentType, byte[] data) {
-        String ext = EXTENSIONS.getOrDefault(contentType, ".bin");
+        String ext = StorageExtensions.resolve(contentType);
         String key = tenantId + "/" + loadId + "/" + type.name() + "/" + UUID.randomUUID() + ext;
         BlobId blobId = BlobId.of(bucketName, key);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(contentType).build();

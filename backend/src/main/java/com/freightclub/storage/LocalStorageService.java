@@ -13,7 +13,6 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -21,13 +20,6 @@ import java.util.UUID;
 public class LocalStorageService implements StorageService {
 
     private static final Logger log = LoggerFactory.getLogger(LocalStorageService.class);
-
-    private static final Map<String, String> EXTENSIONS = Map.of(
-            "image/jpeg", ".jpg",
-            "image/png",  ".png",
-            "image/webp", ".webp",
-            "application/pdf", ".pdf"
-    );
 
     @Value("${app.storage.local-path:${user.home}/freightclub-uploads}")
     private String storagePath;
@@ -45,7 +37,7 @@ public class LocalStorageService implements StorageService {
     @Override
     public String store(String tenantId, String loadId, DocumentType type,
                         String originalFilename, String contentType, byte[] data) {
-        String ext = EXTENSIONS.getOrDefault(contentType, ".bin");
+        String ext = StorageExtensions.resolve(contentType);
         String key = tenantId + "/" + loadId + "/" + type.name() + "/" + UUID.randomUUID() + ext;
         Path dest = Paths.get(storagePath, key);
         try {

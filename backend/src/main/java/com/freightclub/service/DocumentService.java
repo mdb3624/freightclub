@@ -184,6 +184,12 @@ public class DocumentService {
         return bolGeneratorService.generateExport(load, shipper, trucker, docs);
     }
 
+    @Transactional(readOnly = true)
+    public List<DocumentResponse> getAllDocumentsForShipper(String shipperId) {
+        return documentRepository.findAllForShipper(shipperId)
+                .stream().map(DocumentResponse::from).toList();
+    }
+
     public boolean hasBolPhoto(String loadId) {
         return documentRepository.existsByLoadIdAndDocumentTypeAndDeletedAtIsNull(loadId, DocumentType.BOL_PHOTO);
     }

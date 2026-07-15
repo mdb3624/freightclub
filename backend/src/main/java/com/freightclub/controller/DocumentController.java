@@ -25,6 +25,12 @@ public class DocumentController {
         this.documentService = documentService;
     }
 
+    @GetMapping("/mine")
+    @PreAuthorize("hasRole('SHIPPER')")
+    public List<DocumentResponse> listMyDocuments(@AuthenticationPrincipal String userId) {
+        return documentService.getAllDocumentsForShipper(userId);
+    }
+
     @GetMapping("/{loadId}")
     @PreAuthorize("isAuthenticated()")
     public List<DocumentResponse> listDocuments(@PathVariable String loadId,

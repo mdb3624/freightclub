@@ -808,4 +808,46 @@ class DocumentServiceTest {
             assertThat(result).containsExactly(5, 6);
         }
     }
+
+    // ── getAllDocumentsForShipper ─────────────────────────────────────────────
+
+    @Nested
+    @DisplayName("getAllDocumentsForShipper")
+    class GetAllDocumentsForShipper {
+
+        @Test
+        @DisplayName("returns documents across all of the shipper's loads")
+        void returnsDocumentsAcrossAllLoads() {
+            LoadDocument doc1 = new LoadDocument();
+            doc1.setId("doc-1");
+            doc1.setLoadId("load-1");
+            doc1.setDocumentType(DocumentType.BOL_GENERATED);
+            doc1.setOriginalFilename("bill-of-lading.pdf");
+
+            LoadDocument doc2 = new LoadDocument();
+            doc2.setId("doc-2");
+            doc2.setLoadId("load-2");
+            doc2.setDocumentType(DocumentType.BOL_PHOTO);
+            doc2.setOriginalFilename("bol-photo.jpg");
+
+            when(documentRepository.findAllForShipper("shipper-1"))
+                    .thenReturn(List.of(doc1, doc2));
+
+            List<DocumentResponse> result = documentService.getAllDocumentsForShipper("shipper-1");
+
+            assertThat(result).hasSize(2);
+            assertThat(result).extracting(DocumentResponse::id).containsExactly("doc-1", "doc-2");
+            assertThat(result).extracting(DocumentResponse::loadId).containsExactly("load-1", "load-2");
+        }
+
+        @Test
+        @DisplayName("returns an empty list when the shipper has no documents")
+        void returnsEmptyListWhenNoDocuments() {
+            when(documentRepository.findAllForShipper("shipper-1")).thenReturn(List.of());
+
+            List<DocumentResponse> result = documentService.getAllDocumentsForShipper("shipper-1");
+
+            assertThat(result).isEmpty();
+        }
+    }
 }

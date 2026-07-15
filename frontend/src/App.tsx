@@ -15,6 +15,7 @@ const LoadsListPage = lazy(() => import('@/pages/LoadsListPage').then(m => ({ de
 const LoadCreatePage = lazy(() => import('@/pages/LoadCreatePage').then(m => ({ default: m.LoadCreatePage })))
 const LoadDetailPage = lazy(() => import('@/pages/LoadDetailPage').then(m => ({ default: m.LoadDetailPage })))
 const LoadEditPage = lazy(() => import('@/pages/LoadEditPage').then(m => ({ default: m.LoadEditPage })))
+const MyDocumentsPage = lazy(() => import('@/pages/MyDocumentsPage').then(m => ({ default: m.MyDocumentsPage })))
 const TruckerLoadDetailPage = lazy(() => import('@/pages/TruckerLoadDetailPage').then(m => ({ default: m.TruckerLoadDetailPage })))
 const ProfilePage = lazy(() => import('@/pages/ProfilePage').then(m => ({ default: m.ProfilePage })))
 const CostProfilePage = lazy(() => import('@/pages/CostProfilePage').then(m => ({ default: m.CostProfilePage })))
@@ -140,6 +141,16 @@ export default function App() {
           <ProtectedRoute role="SHIPPER">
             <Suspense fallback={<PageLoader />}>
               <LoadEditPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/shipper/documents"
+        element={
+          <ProtectedRoute role="SHIPPER">
+            <Suspense fallback={<PageLoader />}>
+              <MyDocumentsPage />
             </Suspense>
           </ProtectedRoute>
         }

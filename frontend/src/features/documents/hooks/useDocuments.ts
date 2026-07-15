@@ -10,6 +10,13 @@ export function useLoadDocuments(loadId: string | undefined) {
   })
 }
 
+export function useMyDocuments() {
+  return useQuery({
+    queryKey: ['documents', 'mine'],
+    queryFn: () => documentsApi.listMine(),
+  })
+}
+
 export function useUploadBolPhoto(loadId: string) {
   const queryClient = useQueryClient()
   const toast = useToastStore()

@@ -13,7 +13,7 @@ import com.freightclub.repository.DocumentRepository;
 import com.freightclub.repository.LoadRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
-import com.freightclub.storage.LocalStorageService;
+import com.freightclub.storage.StorageService;
 import com.freightclub.modules.document.application.DocumentAuditService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,7 +43,7 @@ class DocumentServiceTest {
     @Mock private DocumentRepository documentRepository;
     @Mock private LoadRepository loadRepository;
     @Mock private UserRepository userRepository;
-    @Mock private LocalStorageService storageService;
+    @Mock private StorageService storageService;
     @Mock private BolGeneratorService bolGeneratorService;
     @Mock private DocumentAuditService auditService;
 

@@ -5,6 +5,7 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,7 +17,8 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-public class LocalStorageService {
+@Profile({"dev", "test"})
+public class LocalStorageService implements StorageService {
 
     private static final Logger log = LoggerFactory.getLogger(LocalStorageService.class);
 
@@ -40,6 +42,7 @@ public class LocalStorageService {
         }
     }
 
+    @Override
     public String store(String tenantId, String loadId, DocumentType type,
                         String originalFilename, String contentType, byte[] data) {
         String ext = EXTENSIONS.getOrDefault(contentType, ".bin");
@@ -55,6 +58,7 @@ public class LocalStorageService {
         }
     }
 
+    @Override
     public byte[] retrieve(String storageKey) {
         if (storageKey == null || storageKey.isEmpty() || storageKey.contains("..")) {
             throw new IllegalArgumentException("Invalid storage key");

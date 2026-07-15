@@ -12,7 +12,7 @@ import com.freightclub.repository.DocumentRepository;
 import com.freightclub.repository.LoadRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
-import com.freightclub.storage.LocalStorageService;
+import com.freightclub.storage.StorageService;
 import com.freightclub.modules.document.application.DocumentAuditService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -38,14 +38,14 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
     private final LoadRepository loadRepository;
     private final UserRepository userRepository;
-    private final LocalStorageService storageService;
+    private final StorageService storageService;
     private final BolGeneratorService bolGeneratorService;
     private final DocumentAuditService auditService;
 
     public DocumentService(DocumentRepository documentRepository,
                            LoadRepository loadRepository,
                            UserRepository userRepository,
-                           LocalStorageService storageService,
+                           StorageService storageService,
                            BolGeneratorService bolGeneratorService,
                            DocumentAuditService auditService) {
         this.documentRepository = documentRepository;

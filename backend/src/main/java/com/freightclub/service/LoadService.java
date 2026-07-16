@@ -35,6 +35,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -60,6 +61,7 @@ public class LoadService {
     private final CarrierCostProfileService carrierCostProfileService;
     private final ShipperProfileService shipperProfileService;
     private final PaymentService paymentService;
+    private final BolAttestationService bolAttestationService;
 
     public LoadService(LoadRepository loadRepository, UserRepository userRepository,
                        DocumentService documentService, RatingService ratingService,
@@ -67,7 +69,8 @@ public class LoadService {
                        ApplicationEventPublisher eventPublisher,
                        CarrierCostProfileService carrierCostProfileService,
                        ShipperProfileService shipperProfileService,
-                       PaymentService paymentService) {
+                       PaymentService paymentService,
+                       BolAttestationService bolAttestationService) {
         this.loadRepository = loadRepository;
         this.userRepository = userRepository;
         this.documentService = documentService;
@@ -78,6 +81,7 @@ public class LoadService {
         this.carrierCostProfileService = carrierCostProfileService;
         this.shipperProfileService = shipperProfileService;
         this.paymentService = paymentService;
+        this.bolAttestationService = bolAttestationService;
     }
 
     public LoadResponse createDraft(CreateLoadRequest request, String shipperId) {
@@ -267,7 +271,7 @@ public class LoadService {
         return buildResponse(saved);
     }
 
-    public LoadResponse markPickedUp(String id, String truckerId) {
+    public LoadResponse markPickedUp(String id, String truckerId, String exceptionNotes, MultipartFile exceptionPhoto) {
         Load load = findAssignedLoad(id, truckerId);
         if (load.getStatus() != LoadStatus.CLAIMED) {
             throw new LoadStatusTransitionException("Load must be CLAIMED to mark as picked up");
@@ -276,6 +280,7 @@ public class LoadService {
             throw new DocumentUploadRequiredException(
                     "A BOL photo is required before marking the load as picked up. Upload a photo of the Bill of Lading first.");
         }
+        bolAttestationService.recordAttestation(id, load.getTenantId(), truckerId, exceptionNotes, exceptionPhoto);
         load.setStatus(LoadStatus.IN_TRANSIT);
         load.setPickedUpAt(LocalDateTime.now());
         Load saved = loadRepository.save(load);

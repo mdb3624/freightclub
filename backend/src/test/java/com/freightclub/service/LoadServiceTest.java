@@ -82,6 +82,9 @@ class LoadServiceTest {
     @Mock
     private PaymentService paymentService;
 
+    @Mock
+    private BolAttestationService bolAttestationService;
+
     @InjectMocks
     private LoadService loadService;
 
@@ -397,7 +400,7 @@ class LoadServiceTest {
             when(loadRepository.findByIdAndDeletedAtIsNull(LOAD_ID))
                     .thenReturn(Optional.of(load));
 
-            assertThatThrownBy(() -> loadService.markPickedUp(LOAD_ID, "trucker-1"))
+            assertThatThrownBy(() -> loadService.markPickedUp(LOAD_ID, "trucker-1", null, null))
                     .isInstanceOf(LoadStatusTransitionException.class)
                     .hasMessageContaining("CLAIMED");
         }
@@ -411,7 +414,7 @@ class LoadServiceTest {
                     .thenReturn(Optional.of(load));
             when(documentService.hasBolPhoto(LOAD_ID)).thenReturn(false);
 
-            assertThatThrownBy(() -> loadService.markPickedUp(LOAD_ID, "trucker-1"))
+            assertThatThrownBy(() -> loadService.markPickedUp(LOAD_ID, "trucker-1", null, null))
                     .isInstanceOf(DocumentUploadRequiredException.class)
                     .hasMessageContaining("BOL");
         }
@@ -426,7 +429,7 @@ class LoadServiceTest {
             when(documentService.hasBolPhoto(LOAD_ID)).thenReturn(true);
             when(loadRepository.save(any())).thenReturn(load);
 
-            loadService.markPickedUp(LOAD_ID, "trucker-1");
+            loadService.markPickedUp(LOAD_ID, "trucker-1", null, null);
 
             assertThat(load.getStatus()).isEqualTo(LoadStatus.IN_TRANSIT);
             verify(eventPublisher).publishEvent(any(LoadPickedUpEvent.class));
@@ -440,8 +443,25 @@ class LoadServiceTest {
             when(loadRepository.findByIdAndDeletedAtIsNull(LOAD_ID))
                     .thenReturn(Optional.of(load));
 
-            assertThatThrownBy(() -> loadService.markPickedUp(LOAD_ID, "other-trucker"))
+            assertThatThrownBy(() -> loadService.markPickedUp(LOAD_ID, "other-trucker", null, null))
                     .isInstanceOf(LoadNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("records a BOL attestation and locks the BOL on successful pickup")
+        void bolPhotoPresent_recordsAttestation() {
+            Load load = buildLoad(LoadStatus.CLAIMED);
+            load.setTruckerId("trucker-1");
+            when(loadRepository.findByIdAndDeletedAtIsNull(LOAD_ID))
+                    .thenReturn(Optional.of(load));
+            when(documentService.hasBolPhoto(LOAD_ID)).thenReturn(true);
+            when(loadRepository.save(any())).thenReturn(load);
+
+            loadService.markPickedUp(LOAD_ID, "trucker-1", "Minor scuff on one pallet", null);
+
+            verify(bolAttestationService).recordAttestation(
+                    eq(LOAD_ID), eq(load.getTenantId()), eq("trucker-1"),
+                    eq("Minor scuff on one pallet"), isNull());
         }
     }
 

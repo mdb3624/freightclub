@@ -97,6 +97,11 @@ export function DocumentSection({ loadId, loadStatus, role, documents }: Props) 
                   <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${isCarrier ? 'bg-carrier-border text-carrier-text' : 'bg-gray-100 text-gray-700'}`}>
                     {DOCUMENT_LABELS[doc.documentType]}
                   </span>
+                  {doc.documentType === 'BOL_GENERATED' && doc.locked && (
+                    <span data-testid="bol-locked-badge" className="ml-2 rounded bg-emerald-900/40 px-2 py-0.5 text-xs font-medium text-emerald-400">
+                      Locked
+                    </span>
+                  )}
                   <span className={`text-sm ${isCarrier ? textClassName : 'text-gray-800'} truncate`}>{doc.originalFilename}</span>
                   <span className={`text-xs ${mutedClassName}`}>{formatBytes(doc.fileSizeBytes)}</span>
                 </div>

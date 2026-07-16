@@ -1,6 +1,6 @@
 # Sprint Log: Resilience Logistics
 
-**Last Updated:** 2026-06-18  
+**Last Updated:** 2026-07-16  
 **Maintained By:** Librarian
 
 | Sprint | Goal | Status | Key Deliverable |
@@ -143,3 +143,28 @@
 - [x] Evidence artifacts present: `test-results/evidence/US-854-diesel-region-caption.png`, `US-854-fallback-indicator.png`
 
 **Status:** ✅ DONE. **PR #37 not yet merged to main** — merging is a separate action requiring explicit user authorization.
+
+---
+
+## LIBRARIAN_SIGN_OFF: CHG-856 (Document Storage — GCS Migration) — 2026-07-16
+
+**Origin:** Discovered by CODER during live browser + API verification of CHG-855's BOL workflow (2026-07-14) — not a planned story, a live production bug found against two already-COMPLETED stories (US-302, US-303): `LoadDocument.contentType` was `@Transient` (never persisted, causing every document download to 400), and production document storage was hardcoded to Cloud Run's ephemeral `/tmp`.
+
+**Full lifecycle:** CODER discovery → CHG ticket + implementation plan → subagent-driven-development execution (`docs/superpowers/plans/2026-07-15-document-storage-gcs-migration.md`) → PR #38 merged (CODE-COMPLETE, prod verification explicitly deferred per user instruction not to deploy an unmerged branch) → PR #41 (US-302-v2/CHG-855) merged separately → user authorized prod deploy → deployed to Cloud Run (`freightclub-backend-00070-cxd`) → live-verified against real production → PR #42 (closure docs) merged.
+
+**REVIEWER equivalent (live production verification, not a mocked test):**
+- Registered a real SHIPPER user via `POST /auth/register` against the live backend.
+- Created a real load via `POST /api/v1/loads` (triggers `generateBolOnPublish`) — response confirmed `contentType: "application/pdf"` actually persisted (previously silently `@Transient`/null).
+- Downloaded the generated document via `GET /api/v1/documents/file/{id}`: **200 OK**, correct `Content-Type: application/pdf`, 1409 real bytes starting with `%PDF-1.6` — this exact call previously returned `400 {"message":"Invalid mime type \"null\"..."}`, reproducing and disproving the original bug in the same environment it was found broken in.
+- Confirmed via `gcloud storage ls` that the object physically exists at `gs://freightclub-documents-prod/{tenantId}/{loadId}/BOL_GENERATED/{uuid}.pdf` — proving GCS, not ephemeral `/tmp`, served the request.
+- Cleaned up the verification load via its own in-app `PATCH /{id}/cancel` endpoint (soft-delete, not a manual DB/bucket edit) — no synthetic data left active in production.
+- Satisfies `testing_standards.md`'s external-config-wiring gate: a mocked test alone would not have been sufficient evidence for this class of bug (matches the FREIG-116/US-854 precedent this gate was written for).
+
+**LIBRARIAN verification:**
+- [x] Live production verification confirmed in chat history (this session) — functionally equivalent to REVIEWER PASS for an infrastructure fix with no new UI surface to review
+- [x] `docs/changes/CHG-856.md` status → RESOLVED, with full verification evidence recorded
+- [x] Technical Debt Ledger row in `.claude/learnings.md` → RESOLVED
+- [x] Traceability: Flyway migration `V20260715_0900__AddContentTypeToLoadDocuments.sql` linked; no separate Story_Map row needed (CHG-856 is a bugfix against already-COMPLETED US-302/US-303, not a new story)
+- [x] PR #38 (implementation) and PR #42 (closure docs) both merged to `main`
+
+**Status:** ✅ DONE. Deployed to production and merged. No PR pending.

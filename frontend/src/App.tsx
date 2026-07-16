@@ -26,6 +26,7 @@ const PreferredCarriersList = lazy(() => import('@/features/shippers/components/
 const CarrierPublicProfilePage = lazy(() => import('@/features/carriers/components/CarrierPublicProfilePage').then(m => ({ default: m.CarrierPublicProfilePage })))
 const CarrierNetworkPage = lazy(() => import('@/features/shipper/pages/CarrierNetworkPage').then(m => ({ default: m.CarrierNetworkPage })))
 const QuoteRequestPlaceholder = lazy(() => import('@/pages/QuoteRequestPlaceholder').then(m => ({ default: m.QuoteRequestPlaceholder })))
+const PaymentsPlaceholder = lazy(() => import('@/pages/PaymentsPlaceholder').then(m => ({ default: m.PaymentsPlaceholder })))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })))
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
@@ -164,6 +165,18 @@ export default function App() {
           <ProtectedRoute role="SHIPPER">
             <Suspense fallback={<PageLoader />}>
               <QuoteRequestPlaceholder />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* US-824: Quick Actions Panel → Payments Stub (Phase 5: Payments & Invoicing, deferred) */}
+      <Route
+        path="/shipper/payments"
+        element={
+          <ProtectedRoute role="SHIPPER">
+            <Suspense fallback={<PageLoader />}>
+              <PaymentsPlaceholder />
             </Suspense>
           </ProtectedRoute>
         }

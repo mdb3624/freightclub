@@ -6,6 +6,16 @@
 
 ---
 
+## ⚠️ Known Limitation: `page.goto()`-to-destination E2E Specs Don't Exercise the Real Navigation Path (2026-07-16)
+
+US-822 (2026-07-16): production shipper users clicking "My Documents" or a shipment row landed on the home page (`TruckerLandingPage`) instead of the intended route. Root cause was a repeat of the FREIG-114 caching pattern below — `index.html` was served with no `Cache-Control` header, so browsers cached it; after a redeploy replaced the content-hashed asset chunks, a stale-cached shell's `import()` for the target lazy route 404'd, breaking client-side navigation (full page loads, which always re-fetch `index.html`, were unaffected — only in-app link clicks broke). The existing `shipper-documents-routing.spec.ts` (added with the original US-822 fix, PR #39) passed throughout and never caught this: it used `page.goto('/shipper/documents')` / `page.goto('/shipper/loads/:id')` directly, which proves the route renders correctly in isolation but never exercises the button's `onClick` → `navigate()` path — the exact path where the regression lived.
+
+**Mandatory rule:** Any golden-path E2E spec whose purpose is to verify in-app navigation (clicking a link/button that routes elsewhere) MUST drive the click through the actual UI element from a real starting page — never `page.goto()` straight to the destination URL as the primary assertion. `page.goto()` to a destination is acceptable only for verifying the destination page's own rendering, not for proving the navigation action that reaches it works. See the corrected spec at `frontend/e2e/shipper-documents-routing.spec.ts` for the pattern (click `shipment-row-${loadId}` / `action-zone-documents`, then assert the resulting URL and content).
+
+Fix: `frontend/docker-entrypoint.sh` (the file that actually generates the running nginx config — `frontend/nginx.conf` is a template that is never read at runtime) now sets `Cache-Control: no-cache, must-revalidate` on both the `/` SPA-fallback location and the exact-match `/index.html` location.
+
+---
+
 ## ⚠️ Known Limitation: Docker Test Env Cannot Catch Vite-Dev-vs-Prod Asset Bugs (2026-07-11)
 
 The Docker test environment (`docker-compose.test.yml`) runs the frontend via `Dockerfile.dev` (`npm run dev`, Vite dev server) — NOT the production build path (`npm run build` + nginx serving `dist/`). Vite's dev server has live bare-specifier resolution middleware that can silently mask bugs in raw `public/` CSS `@import`s or similar asset-loading code, which only manifest once nginx serves the static build (FREIG-114). **The Docker test env passing is not sufficient evidence for any change to font/asset loading, `public/` file references, or static serving behavior** — verify with a real `npm run build` + `vite preview` (or equivalent nginx-equivalent static serving) before sign-off.

@@ -73,6 +73,19 @@ const openLoad = {
   updatedAt: '2026-07-15T09:00:00Z',
 }
 
+const activeShipment = {
+  loadId: LOAD_ID,
+  status: 'OPEN',
+  progress: 0,
+  equipment: 'DRY_VAN',
+  carrier: null,
+  rating: null,
+  destination: 'Detroit',
+  origin: 'San Francisco',
+  originState: 'CA',
+  destinationState: 'MI',
+}
+
 const bolDocument = {
   id: 'doc-bol-1',
   loadId: LOAD_ID,
@@ -112,7 +125,7 @@ async function setupCommonRoutes(page: Page) {
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(emptyPage) })
   )
   await page.route('**/api/v1/shipper/shipments/active', (route) =>
-    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) })
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([activeShipment]) })
   )
   await page.route(`**/api/v1/loads/${LOAD_ID}/events`, (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) })
@@ -144,11 +157,21 @@ async function loginAsShipper(page: Page) {
 }
 
 test.describe('Shipper documents routing — golden path', () => {
+  // These specs click through the real dashboard UI rather than page.goto()-ing
+  // straight to the destination URL. A goto()-based version of this exact spec
+  // passed while the underlying bug was still live in production: it proved the
+  // route and page render correctly in isolation, but never exercised the
+  // button's onClick → navigate() path, which is where a real regression can
+  // hide (e.g. a stale cached app-shell whose lazy-loaded route chunk 404s on
+  // client-side navigation, even though a fresh full-page load of the same URL
+  // works fine). Clicking through the dashboard is what a real user does.
   test('per-load View Documents opens the load detail page, not the home page', async ({ page }) => {
     await setupCommonRoutes(page)
     await loginAsShipper(page)
 
-    await page.goto(`/shipper/loads/${LOAD_ID}`)
+    await page.goto('/dashboard/shipper')
+    await page.getByTestId(`shipment-row-${LOAD_ID}`).click()
+    await page.getByTestId('action-zone-view-docs').click()
 
     // The bug redirected to "/" — confirm we land on, and stay on, the load detail page.
     await expect(page).toHaveURL(new RegExp(`/shipper/loads/${LOAD_ID}$`))
@@ -160,7 +183,8 @@ test.describe('Shipper documents routing — golden path', () => {
     await setupCommonRoutes(page)
     await loginAsShipper(page)
 
-    await page.goto('/shipper/documents')
+    await page.goto('/dashboard/shipper')
+    await page.getByTestId('action-zone-documents').click()
 
     // The bug redirected to "/" — confirm we land on, and stay on, /shipper/documents.
     await expect(page).toHaveURL(/\/shipper\/documents$/)

@@ -32,6 +32,20 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
+    # Service worker kill-switch: must never be cached, so browsers with a
+    # stale service worker from a previous site on this domain can actually
+    # fetch the replacement and unregister it. Exact-match locations take
+    # priority over the regex asset-caching block below.
+    location = /sw.js {
+        add_header Cache-Control "no-cache";
+    }
+    location = /service-worker.js {
+        add_header Cache-Control "no-cache";
+    }
+    location = /serviceworker.js {
+        add_header Cache-Control "no-cache";
+    }
+
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
         expires 1y;
         add_header Cache-Control "public, immutable";

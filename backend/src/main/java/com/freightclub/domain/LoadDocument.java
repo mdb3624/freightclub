@@ -52,6 +52,9 @@ public class LoadDocument {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    // Advisory only (set by BolAttestationService on pickup confirmation) — no
+    // upload/regeneration endpoint currently checks this flag. Any future BOL
+    // regeneration or re-upload flow must reject when locked=true.
     @Column(name = "locked", nullable = false)
     private boolean locked = false;
 

@@ -8,10 +8,12 @@ import com.freightclub.dto.LoadSummaryResponse;
 import com.freightclub.service.LoadService;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -76,11 +78,13 @@ public class LoadBoardController {
                 .orElse(ResponseEntity.noContent().build());
     }
 
-    @PostMapping("/{id}/pickup")
+    @PostMapping(value = "/{id}/pickup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('TRUCKER')")
     public LoadResponse markPickedUp(@PathVariable String id,
+                                     @RequestParam(required = false) String exceptionNotes,
+                                     @RequestPart(name = "exceptionPhoto", required = false) MultipartFile exceptionPhoto,
                                      @AuthenticationPrincipal String userId) {
-        return loadService.markPickedUp(id, userId);
+        return loadService.markPickedUp(id, userId, exceptionNotes, exceptionPhoto);
     }
 
     @PostMapping("/{id}/deliver")

@@ -92,8 +92,12 @@ export const loadsApi = {
   getMyLoadHistory: (page = 0, size = 20) =>
     apiGet<Page<LoadSummary>>('/board/my-history', { params: { page, size } }),
 
-  pickup: (id: string) =>
-    apiPost<Load>(`/board/${id}/pickup`),
+  pickup: (id: string, payload?: { exceptionNotes?: string; exceptionPhoto?: File }) => {
+    const form = new FormData()
+    if (payload?.exceptionNotes) form.append('exceptionNotes', payload.exceptionNotes)
+    if (payload?.exceptionPhoto) form.append('exceptionPhoto', payload.exceptionPhoto)
+    return apiPost<Load>(`/board/${id}/pickup`, form, { headers: { 'Content-Type': 'multipart/form-data' } })
+  },
 
   deliver: (id: string) =>
     apiPost<Load>(`/board/${id}/deliver`),

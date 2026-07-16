@@ -14,7 +14,9 @@ public record DocumentResponse(
         long fileSizeBytes,
         String note,
         String uploadedBy,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        boolean locked,
+        LocalDateTime lockedAt
 ) {
     public static DocumentResponse from(LoadDocument doc) {
         return new DocumentResponse(
@@ -26,7 +28,9 @@ public record DocumentResponse(
                 doc.getFileSizeBytes(),
                 doc.getNote(),
                 doc.getUploadedBy(),
-                doc.getCreatedAt()
+                doc.getCreatedAt(),
+                doc.isLocked(),
+                doc.getLockedAt()
         );
     }
 }

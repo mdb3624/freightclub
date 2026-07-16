@@ -14,9 +14,11 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -106,11 +108,13 @@ public class LoadController {
         return loadService.getLoadStatusCounts(userId);
     }
 
-    @PatchMapping("/{id}/pickup")
+    @PatchMapping(value = "/{id}/pickup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @CacheEvict(cacheNames = {"loads", "shipment-status"}, allEntries = true)
     public LoadResponse markPickedUp(@PathVariable String id,
+                                     @RequestParam(required = false) String exceptionNotes,
+                                     @RequestPart(name = "exceptionPhoto", required = false) MultipartFile exceptionPhoto,
                                      @AuthenticationPrincipal String userId) {
-        return loadService.markPickedUp(id, userId);
+        return loadService.markPickedUp(id, userId, exceptionNotes, exceptionPhoto);
     }
 
     @PatchMapping("/{id}/deliver")

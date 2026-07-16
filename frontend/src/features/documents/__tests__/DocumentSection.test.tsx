@@ -37,6 +37,8 @@ const podDoc: LoadDocument = {
   note: null,
   uploadedBy: 'trucker@test.com',
   createdAt: '2026-05-12T10:00:00Z',
+  locked: false,
+  lockedAt: null,
 }
 
 const bolDoc: LoadDocument = {
@@ -161,5 +163,27 @@ describe('DocumentSection — document list', () => {
     await waitFor(() => {
       expect(downloadBlob).toHaveBeenCalled()
     })
+  })
+
+  it('shows a Locked badge on an attested BOL_GENERATED document', () => {
+    const documents: LoadDocument[] = [
+      {
+        id: 'doc-1',
+        loadId: 'load-1',
+        documentType: 'BOL_GENERATED',
+        originalFilename: 'bill-of-lading.pdf',
+        contentType: 'application/pdf',
+        fileSizeBytes: 100,
+        note: null,
+        uploadedBy: 'shipper-1',
+        createdAt: new Date().toISOString(),
+        locked: true,
+        lockedAt: new Date().toISOString(),
+      },
+    ]
+
+    render(<DocumentSection {...defaultProps} loadId="load-1" loadStatus="IN_TRANSIT" role="SHIPPER" documents={documents} />)
+
+    expect(screen.getByTestId('bol-locked-badge')).toBeInTheDocument()
   })
 })

@@ -37,6 +37,8 @@ export function TruckerLoadDetailPage() {
   const navigate = useNavigate()
   const toast = useToastStore()
   const [pendingAction, setPendingAction] = useState<PendingAction>(null)
+  const [exceptionNotes, setExceptionNotes] = useState('')
+  const [exceptionPhoto, setExceptionPhoto] = useState<File | undefined>(undefined)
 
   const { data: myRating } = useMyRatingForLoad(load?.status === 'DELIVERED' || load?.status === 'SETTLED' ? id : undefined)
   const { mutate: rateShipper, isPending: isRating } = useRateShipper(id ?? '')
@@ -55,15 +57,18 @@ export function TruckerLoadDetailPage() {
 
   function confirmAction() {
     if (pendingAction === 'pickup') {
-      markPickedUp(load!.id, {
-        onSuccess: () => navigate('/dashboard/trucker'),
-      })
+      markPickedUp(
+        { id: load!.id, exceptionNotes: exceptionNotes.trim() || undefined, exceptionPhoto },
+        { onSuccess: () => navigate('/dashboard/trucker') }
+      )
     } else if (pendingAction === 'deliver') {
       markDelivered(load!.id, {
         onSuccess: () => navigate('/dashboard/trucker'),
       })
     }
     setPendingAction(null)
+    setExceptionNotes('')
+    setExceptionPhoto(undefined)
   }
 
   return (
@@ -208,6 +213,27 @@ export function TruckerLoadDetailPage() {
                       ? 'You are confirming you have physically picked up this load at the origin. The load will move to In Transit.'
                       : 'You are confirming this load has been delivered to the destination. The shipper will be notified.'}
                   </p>
+                  {pendingAction === 'pickup' && (
+                    <div className="mt-3 space-y-2">
+                      <label htmlFor="pickup-exception-notes" className="block text-xs font-medium text-amber-300">
+                        Note any exceptions (optional) — damage, shortage, wrong count
+                      </label>
+                      <textarea
+                        id="pickup-exception-notes"
+                        data-testid="pickup-exception-notes"
+                        className="w-full rounded border border-carrier-border bg-carrier-surface p-2 text-sm text-carrier-text"
+                        rows={2}
+                        value={exceptionNotes}
+                        onChange={(e) => setExceptionNotes(e.target.value)}
+                      />
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        data-testid="pickup-exception-photo"
+                        onChange={(e) => setExceptionPhoto(e.target.files?.[0])}
+                      />
+                    </div>
+                  )}
                   <div className="mt-3 flex gap-3">
                     <Button
                       isLoading={isPickingUp || isDelivering}

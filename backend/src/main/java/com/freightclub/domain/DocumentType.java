@@ -4,5 +4,6 @@ public enum DocumentType {
     BOL_GENERATED,
     BOL_PHOTO,
     POD_PHOTO,
-    ISSUE_PHOTO
+    ISSUE_PHOTO,
+    PICKUP_EXCEPTION_PHOTO
 }

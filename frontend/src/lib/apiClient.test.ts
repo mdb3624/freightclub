@@ -82,7 +82,7 @@ describe('apiClient refresh-on-401 interceptor', () => {
     expect(useAuthStore.getState().accessToken).toBe('fresh-token')
   })
 
-  it('AC-2: clears auth state and redirects to /login when refresh itself fails', async () => {
+  it('AC-2: clears auth state and redirects to / when refresh itself fails', async () => {
     const adapter: AxiosAdapter = async (config) => {
       if (config.url === '/loads') throw unauthorizedError(config)
       if (config.url === '/auth/refresh') throw unauthorizedError(config)
@@ -95,7 +95,7 @@ describe('apiClient refresh-on-401 interceptor', () => {
     const state = useAuthStore.getState()
     expect(state.isAuthenticated).toBe(false)
     expect(state.accessToken).toBeNull()
-    expect(window.location.href).toBe('/login')
+    expect(window.location.href).toBe('/')
   })
 
   it('AC-3: two concurrent 401s share a single refresh call', async () => {

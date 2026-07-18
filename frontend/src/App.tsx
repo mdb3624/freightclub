@@ -1,7 +1,6 @@
 import { Component, type ReactNode, lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import { TruckerLandingPage } from '@/pages/TruckerLandingPage'
-import { LoginPage } from '@/pages/LoginPage'
+import { HomePage } from '@/pages/HomePage'
 import { RegisterPage } from '@/pages/RegisterPage'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { AuthInitializer } from '@/components/AuthInitializer'
@@ -28,6 +27,7 @@ const CarrierNetworkPage = lazy(() => import('@/features/shipper/pages/CarrierNe
 const QuoteRequestPlaceholder = lazy(() => import('@/pages/QuoteRequestPlaceholder').then(m => ({ default: m.QuoteRequestPlaceholder })))
 const PaymentsPlaceholder = lazy(() => import('@/pages/PaymentsPlaceholder').then(m => ({ default: m.PaymentsPlaceholder })))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })))
+const TruckerLandingPage = lazy(() => import('@/pages/TruckerLandingPage').then(m => ({ default: m.TruckerLandingPage })))
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
   state = { hasError: false }
@@ -68,7 +68,6 @@ export default function App() {
     <PersonaThemeProvider>
       <Toaster />
       <Routes>
-      <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
       {/* US-713: Shipper Company Profile Setup - deferred to backlog */}
@@ -286,7 +285,17 @@ export default function App() {
         }
       />
 
-      <Route path="/" element={<TruckerLandingPage />} />
+      <Route path="/" element={<HomePage />} />
+      <Route
+        path="/carrier/tools"
+        element={
+          <ProtectedRoute role="TRUCKER">
+            <Suspense fallback={<PageLoader />}>
+              <TruckerLandingPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="*"
         element={

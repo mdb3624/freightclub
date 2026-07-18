@@ -1,0 +1,22 @@
+/* ============================================================
+   FREIGHTCLUB — BORDER & RADIUS TOKENS
+   ============================================================ */
+
+:root {
+  /* ── Border Radius ─────────────────────────────────────── */
+  --radius-input:  4px;      /* Form inputs (exact — §6.3) */
+  --radius-button: 6px;      /* Standard button */
+  --radius-widget: 8px;      /* Cards, panels (exact — §6.5) */
+  --radius-pill:   9999px;   /* Badges, tags, chips */
+  --radius-full:   50%;      /* Avatars, circular elements */
+
+  /* ── Border Shorthand ──────────────────────────────────── */
+  --border-widget:  1px solid var(--color-border-primary);
+  --border-divider: 1px solid var(--color-border-secondary);
+  --border-focus:   2px solid var(--color-bronze);
+  --border-subtle:  1px dashed var(--color-divider-light);
+
+  /* ── Carrier borders ───────────────────────────────────── */
+  --carrier-border-default: 1px solid var(--carrier-border);
+  --carrier-border-accent:  1px solid var(--color-bronze-border);
+}

@@ -208,7 +208,8 @@ test.describe('US-730 carrier full load lifecycle', () => {
     })
 
     // --- Login ---
-    await page.goto('/login')
+    await page.goto('/')
+    await page.getByTestId('header-login-btn').click()
     await page.getByTestId('email-input').fill(mockAuthResponse.user.email)
     await page.getByTestId('password-input').fill('irrelevant')
     await page.getByTestId('login-submit-btn').click()

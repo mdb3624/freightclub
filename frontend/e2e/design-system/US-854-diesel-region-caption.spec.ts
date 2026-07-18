@@ -97,7 +97,8 @@ async function setCostProfile(truckerToken: string, dieselRegion: string) {
 }
 
 async function loginAsTrucker(page: any, email: string) {
-  await page.goto(`${FRONTEND}/login`)
+  await page.goto(`${FRONTEND}/`)
+  await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
   await page.fill('[data-testid="email-input"]', email)
   await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
   await page.click('[data-testid="login-submit-btn"]')

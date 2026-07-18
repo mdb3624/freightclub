@@ -168,3 +168,31 @@
 - [x] PR #38 (implementation) and PR #42 (closure docs) both merged to `main`
 
 **Status:** ✅ DONE. Deployed to production and merged. No PR pending.
+
+---
+
+## LIBRARIAN_SIGN_OFF: CHG-857 (Shipper Dashboard Navigation Regression) — 2026-07-16
+
+**Origin:** User report on production (`mdbfreightclub.com`) — "My Documents" and per-load selection on the shipper dashboard both silently redirected to the home page instead of the intended route. Bug against two already-COMPLETED stories (US-822, US-824), not a planned story.
+
+**Full lifecycle:** Investigation initially pursued a stale-Service-Worker theory, rigorously disproven via direct evidence (fresh browser session with zero prior history still reproduced the bug; the "Hauler" content in question was confirmed to be FreightClub's own `TruckerLandingPage.tsx`) → dispatched subagent found the real root cause (stale-cached `index.html` + content-hashed asset chunks deleted on redeploy) → fix implemented and committed on `fix/shipper-dashboard-routing-regression` → PR #44 → merged to `main` → deploy attempt #1 failed on a CRLF-shebang issue in `docker-entrypoint.sh` (root-caused and fixed with a new `.gitattributes`, not worked around) → deploy attempt #2 succeeded, revision `freightclub-frontend-00048-qc9` serving 100% traffic → live-verified in production.
+
+**REVIEWER equivalent (live production verification, not a mocked test):**
+- Logged in as a real shipper user (`shipper@test.com`) against `https://mdbfreightclub.com` via real browser automation.
+- "My Documents" quick action → correctly lands on `/shipper/documents` with real document data (previously redirected home).
+- "View load" link → correctly lands on `/shipper/loads/:id` (Load Detail page) with real load data (previously redirected home).
+- "Payments" quick action → correctly lands on the new `/shipper/payments` placeholder (previously hit the catch-all/home page).
+- Local E2E: rewrote `shipper-documents-routing.spec.ts` to click through the real dashboard UI instead of `page.goto()`-ing to destinations (the original version passed throughout the incident because it never exercised the `onClick` → `navigate()` path) — 2/2 passing against the Docker test environment.
+- Satisfies `testing_standards.md`'s external-config-wiring/caching gate precedent (FREIG-114): a route/page rendering correctly in isolation is not evidence the navigation action that reaches it works.
+
+**LIBRARIAN verification:**
+- [x] Live production verification confirmed in chat history (this session) — functionally equivalent to REVIEWER PASS for a caching/infra fix with no new UI surface to formally review
+- [x] `docs/changes/CHG-857.md` created and status → RESOLVED, with full verification evidence recorded
+- [x] Technical Debt Ledger row added to `.claude/learnings.md` → RESOLVED
+- [x] `.claude/rules/testing_standards.md` updated with the new mandatory click-through-UI E2E rule
+- [x] Traceability: no separate Story_Map row needed (CHG-857 is a bugfix against already-COMPLETED US-822/US-824, not a new story)
+- [x] PR #44 merged to `main`; follow-up deploy-fix commit (`.gitattributes` + CRLF fix) committed directly to `main` after merge, per the same explicit deploy authorization
+
+**Status:** ✅ DONE. Deployed to production and merged. No PR pending.
+
+Known separate issue, flagged but explicitly out of scope: `/carriers` (`CarrierNetworkPage`) has its own unrelated React runtime error caught by the app's `ErrorBoundary`, discovered during this investigation. Not fixed, not part of CHG-857.

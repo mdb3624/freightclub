@@ -29,7 +29,7 @@ test.describe('US-842 unauthenticated', () => {
   test.use({ storageState: { cookies: [], origins: [] } })
 
   test('AC-4: login page has no .legacy-dark class', async ({ page }) => {
-    await page.goto(`${FRONTEND}/login`)
+    await page.goto(`${FRONTEND}/`)
 
     const hasDark = await page.evaluate(() => !!document.querySelector('.legacy-dark'))
     expect(hasDark).toBe(false)
@@ -41,7 +41,7 @@ test.describe('US-842 unauthenticated', () => {
   })
 
   test('AC-5 adversarial: injecting legacy-dark cannot override bg-white', async ({ page }) => {
-    await page.goto(`${FRONTEND}/login`)
+    await page.goto(`${FRONTEND}/`)
     await page.evaluate(() => document.body.classList.add('legacy-dark'))
 
     const bgWhite = await page.evaluate(() => {
@@ -119,7 +119,8 @@ test.describe('US-842 carrier header', () => {
         companyName: `CarrierCo-${ts}`,
       }),
     })
-    await page.goto(`${FRONTEND}/login`)
+    await page.goto(`${FRONTEND}/`)
+    await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
     await page.fill('[data-testid="email-input"]', email)
     await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
     await page.click('[data-testid="login-submit-btn"]')

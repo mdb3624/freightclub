@@ -15,7 +15,7 @@ function renderInRouter(element: React.ReactNode) {
     <MemoryRouter initialEntries={['/protected']}>
       <Routes>
         <Route path="/protected" element={element} />
-        <Route path="/login" element={<div>Login Page</div>} />
+        <Route path="/" element={<div>Home Page</div>} />
       </Routes>
     </MemoryRouter>
   )
@@ -31,13 +31,13 @@ const mockShipper: User = {
 }
 
 describe('ProtectedRoute', () => {
-  it('redirects unauthenticated user to /login', () => {
+  it('redirects unauthenticated user to /', () => {
     renderInRouter(
       <ProtectedRoute>
         <div>Protected Content</div>
       </ProtectedRoute>
     )
-    expect(screen.getByText('Login Page')).toBeInTheDocument()
+    expect(screen.getByText('Home Page')).toBeInTheDocument()
     expect(screen.queryByText('Protected Content')).not.toBeInTheDocument()
   })
 
@@ -71,7 +71,7 @@ describe('ProtectedRoute', () => {
         <div>Trucker Content</div>
       </ProtectedRoute>
     )
-    expect(screen.getByText('Login Page')).toBeInTheDocument()
+    expect(screen.getByText('Home Page')).toBeInTheDocument()
     expect(screen.queryByText('Trucker Content')).not.toBeInTheDocument()
   })
 })

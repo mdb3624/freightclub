@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#8C6D3F"/><text x="30%" y="55%" font-size="60" fill="#EFEBE0" font-family="sans-serif" font-weight="700">FC</text></svg></template>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/freightclub-design-system-ab1e6bc4-abff-491b-9a40-ea48456ea2c8/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/freightclub-design-system-ab1e6bc4-abff-491b-9a40-ea48456ea2c8/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/freightclub-design-system-ab1e6bc4-abff-491b-9a40-ea48456ea2c8/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/freightclub-design-system-ab1e6bc4-abff-491b-9a40-ea48456ea2c8/tokens/shadows.css">
+  <link rel="stylesheet" href="_ds/freightclub-design-system-ab1e6bc4-abff-491b-9a40-ea48456ea2c8/tokens/borders.css">
+  <link rel="stylesheet" href="_ds/freightclub-design-system-ab1e6bc4-abff-491b-9a40-ea48456ea2c8/styles.css">
+  <script src="_ds/freightclub-design-system-ab1e6bc4-abff-491b-9a40-ea48456ea2c8/_ds_bundle.js"></script>
+  <style>
+    body { margin: 0; background: #EFEBE0; }
+    a { color: #8C6D3F; }
+    a:hover { color: #6B5230; }
+  </style>
+</helmet>
+
+<div style="font-family: var(--font-body); background: #EFEBE0; color: #1A1A1A; min-height: 100vh;">
+
+  <!-- Header -->
+  <header style="position: sticky; top: 0; z-index: 50; background: #FFFFFF; border-bottom: 1px solid #D8CEB8; min-height: 64px; display: flex; align-items: center;">
+    <div style="max-width: 1200px; margin: 0 auto; width: 100%; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+      <img src="assets/logo-full.png" alt="MDB Integrated Logistics" style="height: 32px; width: auto; object-fit: contain; flex-shrink: 0;">
+
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Button" size="sm" onClick="{{ openLogin }}" hint-size="auto,32px">Get Started</x-import>
+          <button onClick="{{ toggleMobileMenu }}" aria-label="Menu" style="background: none; border: none; padding: 8px; margin: 0; cursor: pointer; color: #1A1A1A;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isDesktopNav }}" hint-placeholder-val="{{ true }}">
+        <nav style="display: flex; align-items: center; gap: 32px;">
+          <a href="#features" style="font-size: 14px; font-weight: 500; text-decoration: none; color: #4A5568;">Product</a>
+          <a href="#how-it-works" style="font-size: 14px; font-weight: 500; text-decoration: none; color: #4A5568;">How It Works</a>
+          <a href="#pricing" style="font-size: 14px; font-weight: 500; text-decoration: none; color: #4A5568;">Pricing</a>
+          <button onClick="{{ openLogin }}" style="background: none; border: none; padding: 0; font-family: var(--font-body); font-size: 14px; font-weight: 500; cursor: pointer; color: #4A5568;">Log in</button>
+          <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Button" size="md" onClick="{{ openLogin }}" hint-size="auto,36px">Get Started Free</x-import>
+        </nav>
+      </sc-if>
+
+      <sc-if value="{{ mobileMenuOpen }}">
+        <nav style="width: 100%; display: flex; flex-direction: column; padding: 8px 0 16px; border-top: 1px solid #EFEBE0; gap: 4px;">
+          <a href="#features" onClick="{{ closeMobileMenu }}" style="font-size: 16px; font-weight: 500; text-decoration: none; color: #1A1A1A; padding: 12px 4px;">Product</a>
+          <a href="#how-it-works" onClick="{{ closeMobileMenu }}" style="font-size: 16px; font-weight: 500; text-decoration: none; color: #1A1A1A; padding: 12px 4px;">How It Works</a>
+          <a href="#pricing" onClick="{{ closeMobileMenu }}" style="font-size: 16px; font-weight: 500; text-decoration: none; color: #1A1A1A; padding: 12px 4px;">Pricing</a>
+          <button onClick="{{ openLogin }}" style="background: none; border: none; text-align: left; padding: 12px 4px; font-family: var(--font-body); font-size: 16px; font-weight: 500; cursor: pointer; color: #1A1A1A;">Log in</button>
+        </nav>
+      </sc-if>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section style="max-width: 1200px; margin: 0 auto; padding: 64px 32px 32px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center;">
+    <div style="flex: 1 1 440px; min-width: 320px; display: flex; flex-direction: column; gap: 24px;">
+      <span style="font-family: var(--font-body); font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C6D3F;">Profitability-First Load Board</span>
+      <h1 style="font-family: var(--font-display); font-size: 48px; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; margin: 0; color: #1A1A1A;">The only load board that tells you if a load is worth it.</h1>
+      <p style="font-size: 18px; line-height: 1.6; color: #4A5568; margin: 0; max-width: 480px;">Stop guessing. Start profiting. Build your true cost profile and instantly see per-load profitability before you claim.</p>
+      <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 8px;">
+        <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Button" size="lg" onClick="{{ openLogin }}" hint-size="auto,48px">Get Started Free</x-import>
+        <a href="#features" style="text-decoration: none;">
+          <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Button" variant="secondary" size="lg" hint-size="auto,48px">Explore the Profitability Badge</x-import>
+        </a>
+      </div>
+    </div>
+
+    <div style="flex: 1 1 380px; min-width: 300px; position: relative;">
+      <div style="position: relative; width: 100%; height: 340px; border-radius: 8px; overflow: hidden;">
+        <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="hero-truck" shape="rect" style="display: block; width: 100%; height: 100%;" placeholder="Photo: semi truck in motion on the open road" src="assets/hero-truck.png" hint-size="100%,340px"></x-import>
+      </div>
+      <div style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.4); border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; min-width: 108px;">
+        <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.05em; color: #4A4438; text-transform: uppercase;">RPM Badge</span>
+        <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.ProfitabilityBadge" rpm="{{ 3.10 }}" min-rpm="{{ 2.20 }}" hint-size="auto,22px"></x-import>
+        <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.ProfitabilityBadge" rpm="{{ 2.35 }}" min-rpm="{{ 2.20 }}" hint-size="auto,22px"></x-import>
+        <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.ProfitabilityBadge" rpm="{{ 1.80 }}" min-rpm="{{ 2.20 }}" hint-size="auto,22px"></x-import>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature cards -->
+  <section id="features" style="max-width: 1200px; margin: 0 auto; padding: 32px 32px 64px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+
+      <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Card" padding="lg" hover="{{ true }}" hint-size="auto,220px">
+        <div style="display: flex; flex-direction: column; gap: 16px; text-align: left;">
+          <div style="width: 48px; height: 48px; border-radius: 8px; background: #FBF5E8; display: flex; align-items: center; justify-content: center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8C6D3F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>
+          </div>
+          <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 700; margin: 0; color: #1A1A1A;">RPM Profitability Badge</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: #4A5568; margin: 0;">At-a-glance profitability intelligence. Know the actual worth of a load at selection.</p>
+        </div>
+      </x-import>
+
+      <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Card" padding="lg" hover="{{ true }}" hint-size="auto,220px">
+        <div style="display: flex; flex-direction: column; gap: 16px; text-align: left;">
+          <div style="width: 48px; height: 48px; border-radius: 8px; background: #FBF5E8; display: flex; align-items: center; justify-content: center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8C6D3F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="8" y1="11" x2="9" y2="11"></line><line x1="12" y1="11" x2="13" y2="11"></line><line x1="16" y1="11" x2="17" y2="11"></line><line x1="8" y1="15" x2="9" y2="15"></line><line x1="12" y1="15" x2="13" y2="15"></line><line x1="16" y1="15" x2="17" y2="15"></line><line x1="8" y1="19" x2="9" y2="19"></line><line x1="12" y1="19" x2="13" y2="19"></line></svg>
+          </div>
+          <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 700; margin: 0; color: #1A1A1A;">Trucker Cost Profile Engine</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: #4A5568; margin: 0;">Model your fixed costs, MPG, fuel price, and target margin.</p>
+        </div>
+      </x-import>
+
+      <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Card" padding="lg" hover="{{ true }}" hint-size="auto,220px">
+        <div style="display: flex; flex-direction: column; gap: 16px; text-align: left;">
+          <div style="width: 48px; height: 48px; border-radius: 8px; background: #FBF5E8; display: flex; align-items: center; justify-content: center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8C6D3F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg>
+          </div>
+          <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 700; margin: 0; color: #1A1A1A;">30-Day Earnings Insights</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: #4A5568; margin: 0;">View your performance history and make data-driven decisions.</p>
+        </div>
+      </x-import>
+
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how-it-works" style="background: #FFFFFF; border-top: 1px solid #D8CEB8; border-bottom: 1px solid #D8CEB8;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 64px 32px;">
+      <h2 style="font-family: var(--font-display); font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #636E72; text-align: center; margin: 0 0 40px;">How It Works</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px;">
+
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: #FBF5E8; border: 2px solid #E8D9B8; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8C6D3F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          </div>
+          <h3 style="font-size: 16px; font-weight: 700; margin: 0; color: #1A1A1A;">1. Input your costs.</h3>
+          <p style="font-size: 14px; color: #4A5568; margin: 0;">Enter your fixed and variable operating costs.</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: #FBF5E8; border: 2px solid #E8D9B8; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8C6D3F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </div>
+          <h3 style="font-size: 16px; font-weight: 700; margin: 0; color: #1A1A1A;">2. We analyze the load.</h3>
+          <p style="font-size: 14px; color: #4A5568; margin: 0;">Our engine calculates true profitability per mile.</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: #FBF5E8; border: 2px solid #E8D9B8; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8C6D3F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+          </div>
+          <h3 style="font-size: 16px; font-weight: 700; margin: 0; color: #1A1A1A;">3. See true profit.</h3>
+          <p style="font-size: 14px; color: #4A5568; margin: 0;">Make informed decisions with clear profit visibility.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Personas -->
+  <section style="max-width: 1200px; margin: 0 auto; padding: 64px 32px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+
+      <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Card" padding="lg" hint-size="auto,240px">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C6D3F;">For Carriers</span>
+          <h3 style="font-family: var(--font-display); font-size: 22px; font-weight: 700; margin: 0; color: #1A1A1A;">Find loads that actually pay.</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: #4A5568; margin: 0;">Set up your cost profile once. Every open load shows a color-coded RPM badge against your real numbers — no more guesswork at the board.</p>
+          <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Button" size="md" onClick="{{ openLogin }}" style="{{ marginTop8 }}" hint-size="auto,36px">Find Loads</x-import>
+        </div>
+      </x-import>
+
+      <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Card" padding="lg" hint-size="auto,240px">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8C6D3F;">For Shippers</span>
+          <h3 style="font-family: var(--font-display); font-size: 22px; font-weight: 700; margin: 0; color: #1A1A1A;">Post loads, reach owner-operators directly.</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: #4A5568; margin: 0;">Get your freight in front of carriers who claim loads because the math works for them — not because they had no better option.</p>
+          <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Button" variant="secondary" size="md" onClick="{{ openLogin }}" style="{{ marginTop8 }}" hint-size="auto,36px">Post a Load</x-import>
+        </div>
+      </x-import>
+
+    </div>
+  </section>
+
+  <!-- Comparison table -->
+  <section id="pricing" style="max-width: 960px; margin: 0 auto; padding: 0 32px 64px;">
+    <h2 style="font-family: var(--font-display); font-size: 28px; font-weight: 700; text-align: center; margin: 0 0 32px; color: #1A1A1A;">Why FreightClub</h2>
+    <div style="background: #FFFFFF; border: 1px solid #D0D0D0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow-x: auto;">
+      <table style="width: 100%; min-width: 480px; border-collapse: collapse;">
+        <thead>
+          <tr style="background: #8C6D3F;">
+            <th style="padding: 16px 24px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #FFFFFF;"></th>
+            <th style="padding: 16px 24px; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #FFFFFF; background: #7A5F3A;">Profitability-First</th>
+            <th style="padding: 16px 24px; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #FFFFFF;">Rate Data Only</th>
+            <th style="padding: 16px 24px; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #FFFFFF;">Acts as Broker</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-top: 1px solid #E8E3D8;">
+            <td style="padding: 16px 24px; font-size: 14px; font-weight: 700; color: #1A1A1A; background: #FBF5E8;">FreightClub</td>
+            <td style="padding: 16px 24px; text-align: center; background: #FBF5E8;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8C6D3F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><polyline points="20 6 9 17 4 12"></polyline></svg></td>
+            <td style="padding: 16px 24px; text-align: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+            <td style="padding: 16px 24px; text-align: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+          </tr>
+          <tr style="border-top: 1px solid #E8E3D8;">
+            <td style="padding: 16px 24px; font-size: 14px; font-weight: 500; color: #4A5568;">Other Board 2</td>
+            <td style="padding: 16px 24px; text-align: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+            <td style="padding: 16px 24px; text-align: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+            <td style="padding: 16px 24px; text-align: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+          </tr>
+          <tr style="border-top: 1px solid #E8E3D8;">
+            <td style="padding: 16px 24px; font-size: 14px; font-weight: 500; color: #4A5568;">Other Board 3</td>
+            <td style="padding: 16px 24px; text-align: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+            <td style="padding: 16px 24px; text-align: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+            <td style="padding: 16px 24px; text-align: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section style="max-width: 960px; margin: 0 auto; padding: 0 32px 64px;">
+    <div style="background: #FFFFFF; border: 1px solid #D0D0D0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 48px 32px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+      <h2 style="font-family: var(--font-display); font-size: 28px; font-weight: 700; margin: 0; color: #1A1A1A;">Let's get your first load on the board in 2 minutes.</h2>
+      <p style="font-size: 14px; color: #4A5568; margin: 0; max-width: 480px;">Set up your cost profile to see profitability ratings on loads.</p>
+      <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Button" size="lg" onClick="{{ openLogin }}" style="{{ marginTop8 }}" hint-size="auto,48px">Get Started Free</x-import>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background: #1A1A1A; color: #C9C1AF;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 64px 32px 32px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 32px; margin-bottom: 32px;">
+        <div style="grid-column: span 2; display: flex; flex-direction: column; gap: 16px; min-width: 240px;">
+          <img src="assets/logo-mobile.png" alt="MDB" style="height: 32px; width: auto; object-fit: contain;">
+          <p style="font-size: 14px; line-height: 1.6; color: #8C8578; margin: 0; max-width: 320px;">Integrated Logistics solutions for modern carriers. Profitability-first technology.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <h4 style="font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #FFFFFF; margin: 0 0 4px;">Product</h4>
+          <a href="#how-it-works" style="font-size: 14px; text-decoration: none; color: #8C8578;">How It Works</a>
+          <a href="#features" style="font-size: 14px; text-decoration: none; color: #8C8578;">Technology</a>
+          <a href="#pricing" style="font-size: 14px; text-decoration: none; color: #8C8578;">Pricing</a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <h4 style="font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #FFFFFF; margin: 0 0 4px;">Company</h4>
+          <a href="#" style="font-size: 14px; text-decoration: none; color: #8C8578;">Team</a>
+          <a href="#" style="font-size: 14px; text-decoration: none; color: #8C8578;">Contact Us</a>
+          <a href="#" style="font-size: 14px; text-decoration: none; color: #8C8578;">Privacy Policy</a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <h4 style="font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #FFFFFF; margin: 0 0 4px;">Account</h4>
+          <button onClick="{{ openLogin }}" style="background: none; border: none; padding: 0; text-align: left; font-family: var(--font-body); font-size: 14px; cursor: pointer; color: #8C8578;">Log in</button>
+        </div>
+      </div>
+      <div style="border-top: 1px solid #2A2A2A; padding-top: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; color: #6B6558;">
+        <span>© 2026 MDB Integrated Logistics</span>
+        <span>FreightClub — profitability-first load board</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Login modal -->
+  <sc-if value="{{ loginOpen }}">
+    <div style="position: fixed; inset: 0; background: rgba(26,26,26,0.6); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px;" onClick="{{ closeLoginBackdrop }}">
+      <div style="background: #FFFFFF; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.25); width: 100%; max-width: 400px; padding: 32px; display: flex; flex-direction: column; gap: 24px;" onClick="{{ stopPropagation }}">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <img src="assets/logo-mobile.png" alt="MDB" style="height: 28px; width: auto; object-fit: contain;">
+          <button onClick="{{ closeLogin }}" style="background: none; border: none; padding: 4px; cursor: pointer; color: #636E72;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <h2 style="font-family: var(--font-display); font-size: 22px; font-weight: 700; margin: 0; color: #1A1A1A;">Log in to FreightClub</h2>
+          <p style="font-size: 14px; color: #4A5568; margin: 0;">Access your loads, cost profile, and earnings.</p>
+        </div>
+
+        <form onSubmit="{{ handleLoginSubmit }}" style="display: flex; flex-direction: column; gap: 16px;">
+          <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Input" label="Email" type="email" required="{{ true }}" placeholder="you@example.com" value="{{ email }}" onChange="{{ onEmailChange }}" hint-size="100%,64px"></x-import>
+          <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Input" label="Password" type="password" required="{{ true }}" placeholder="••••••••" value="{{ password }}" onChange="{{ onPasswordChange }}" hint-size="100%,64px"></x-import>
+
+          <sc-if value="{{ loginMessage }}">
+            <div style="background: #FEF3C7; border: 1px solid #F39C12; border-radius: 4px; padding: 12px; font-size: 13px; color: #B45309;">{{ loginMessage }}</div>
+          </sc-if>
+
+          <x-import component-from-global-scope="FreightClubDesignSystem_ab1e6b.Button" type="submit" size="lg" style="{{ fullWidth }}" is-loading="{{ isLoading }}" hint-size="100%,48px">Sign In</x-import>
+        </form>
+
+        <p style="font-size: 13px; color: #4A5568; text-align: center; margin: 0;">New to FreightClub? <a href="https://mdbfreightclub.com/login" style="font-weight: 600;">Create an account</a></p>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { loginOpen: false, email: '', password: '', isLoading: false, loginMessage: '', isMobile: false, mobileMenuOpen: false };
+
+  componentDidMount() {
+    this.checkWidth();
+    this._onResize = () => this.checkWidth();
+    window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._onResize);
+  }
+  checkWidth = () => {
+    const mobile = window.innerWidth < 720;
+    if (mobile !== this.state.isMobile) this.setState({ isMobile: mobile, mobileMenuOpen: false });
+  };
+  toggleMobileMenu = () => this.setState(s => ({ mobileMenuOpen: !s.mobileMenuOpen }));
+  closeMobileMenu = () => this.setState({ mobileMenuOpen: false });
+
+  openLogin = (e) => { if (e) e.preventDefault(); this.setState({ loginOpen: true, loginMessage: '' }); };
+  closeLogin = () => this.setState({ loginOpen: false, loginMessage: '' });
+  closeLoginBackdrop = () => this.closeLogin();
+  stopPropagation = (e) => e.stopPropagation();
+  onEmailChange = (e) => this.setState({ email: e.target.value });
+  onPasswordChange = (e) => this.setState({ password: e.target.value });
+
+  handleLoginSubmit = (e) => {
+    e.preventDefault();
+    this.setState({ isLoading: true, loginMessage: '' });
+    setTimeout(() => {
+      this.setState({ isLoading: false, loginMessage: 'This is a design prototype — connect it to the FreightClub auth API to sign in for real.' });
+    }, 700);
+  };
+
+  renderVals() {
+    return {
+      loginOpen: this.state.loginOpen,
+      email: this.state.email,
+      password: this.state.password,
+      isLoading: this.state.isLoading,
+      loginMessage: this.state.loginMessage,
+      isMobile: this.state.isMobile,
+      isDesktopNav: !this.state.isMobile,
+      mobileMenuOpen: this.state.isMobile && this.state.mobileMenuOpen,
+      toggleMobileMenu: this.toggleMobileMenu,
+      closeMobileMenu: this.closeMobileMenu,
+      openLogin: this.openLogin,
+      closeLogin: this.closeLogin,
+      closeLoginBackdrop: this.closeLoginBackdrop,
+      stopPropagation: this.stopPropagation,
+      onEmailChange: this.onEmailChange,
+      onPasswordChange: this.onPasswordChange,
+      handleLoginSubmit: this.handleLoginSubmit,
+      fullWidth: { width: '100%' },
+      marginTop8: { marginTop: '8px' },
+    };
+  }
+}
+</script>
+</body>
+</html>

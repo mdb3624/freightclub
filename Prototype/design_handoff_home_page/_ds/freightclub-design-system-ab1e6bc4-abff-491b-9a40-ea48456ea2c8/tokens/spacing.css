@@ -1,0 +1,21 @@
+/* ============================================================
+   FREIGHTCLUB — SPACING TOKENS
+   8px Grid Rule: every margin/padding/gap is a multiple of 8.
+   Forbidden: 10, 12, 14, 18, 20, 22, 25, 28, 30, 38, 40px
+   ============================================================ */
+
+:root {
+  --space-xs:  4px;   /* Icon/text pairs only */
+  --space-sm:  8px;   /* Related element gaps, form labels */
+  --space-md:  16px;  /* Default component-to-component gap */
+  --space-lg:  24px;  /* Section separators, panel padding */
+  --space-xl:  32px;  /* Page-level shell padding */
+
+  /* ── Layout Dimensions ─────────────────────────────────── */
+  --header-height:            64px;  /* Shipper header */
+  --carrier-header-height:    56px;  /* Carrier header (mobile) */
+  --sidebar-width-expanded:  240px;
+  --sidebar-width-collapsed: 160px;
+  --action-zone-width:       280px;
+  --table-row-height:         48px;  /* MUST be exactly 48px */
+}

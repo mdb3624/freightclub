@@ -1,0 +1,9 @@
+/* FreightClub Design System — Global Entry Point
+   Import this one file to pull in all tokens and base styles.
+   Never add inline rules here — only @import lines. */
+
+@import './tokens/colors.css';
+@import './tokens/typography.css';
+@import './tokens/spacing.css';
+@import './tokens/shadows.css';
+@import './tokens/borders.css';

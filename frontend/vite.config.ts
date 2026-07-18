@@ -2,7 +2,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [react()],
@@ -12,16 +11,6 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html'),
-        loginApp: resolve(__dirname, 'src/apps/login-app/main.html'),
-      },
-      output: {
-        entryFileNames: 'assets/[name]-[hash].js',
-        chunkFileNames: 'assets/[name]-[hash].js',
-      },
-    },
     chunkSizeWarningLimit: 500,
   },
   test: {

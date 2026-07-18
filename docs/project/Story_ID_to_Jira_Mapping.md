@@ -224,6 +224,7 @@ curl -u "email:token" \
 | US-847 | [FREIG-94](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-94) | US-847: Persona Token Migration (optional) | To Do |
 | US-900 | [FREIG-61](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-61) | US-900: E2E Testing Infrastructure & Standards | Done |
 | US-854 | [FREIG-116](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-116) | US-854: Per-Load Diesel Fuel Cost Resolution | Done |
+| US-855 | [FREIG-117](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-117) | US-855: Marketing Home Page & In-Page Login Modal | Done |
 
 ---
 

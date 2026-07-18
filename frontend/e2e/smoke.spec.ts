@@ -17,7 +17,7 @@ test.describe('Smoke Tests - Core Functionality', () => {
     await expect(page).toHaveTitle('FreightClub');
   });
 
-  test('Unauthenticated user visiting protected route is redirected to login', async ({ page }) => {
+  test('Unauthenticated user visiting protected route is redirected home with the login modal open', async ({ page }) => {
     // Navigate first so localStorage is accessible, then clear auth state
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.context().clearCookies();
@@ -26,14 +26,15 @@ test.describe('Smoke Tests - Core Functionality', () => {
       localStorage.removeItem('freightclub_user');
     });
     await page.goto('/profile', { waitUntil: 'networkidle' });
-    await expect(page).toHaveURL(/\/login/);
+    await expect(page).toHaveURL(/^http:\/\/[^/]+\/$/);
+    await expect(page.locator('[data-testid="login-modal"]')).toBeVisible();
   });
 
-  test('Login page renders with required elements', async ({ page }) => {
-    await page.goto('/login', { waitUntil: 'networkidle' });
+  test('Login modal renders with required elements', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.locator('[data-testid="header-login-btn"]').click();
 
-    // Verify page URL
-    await expect(page).toHaveURL(/\/login/);
+    await expect(page.locator('[data-testid="login-modal"]')).toBeVisible();
 
     // Verify key login elements
     await expect(page.locator('[data-testid="login-form"]')).toBeVisible({ timeout: 5000 });
@@ -90,7 +91,7 @@ test.describe('Smoke Tests - Core Functionality', () => {
     }
   });
 
-  test('User can logout and is redirected to login', async ({ page, request }) => {
+  test('User can logout and is redirected to the home page', async ({ page, request }) => {
     const seeder = new TestDataSeeder(request);
     const user = await seeder.createTestUser({
       role: 'SHIPPER',
@@ -115,7 +116,7 @@ test.describe('Smoke Tests - Core Functionality', () => {
       await expect(logoutBtn).toBeVisible({ timeout: 3000 });
       await logoutBtn.click();
 
-      await expect(page).toHaveURL(/\/login/, { timeout: 5000 });
+      await expect(page).toHaveURL(/^http:\/\/[^/]+\/$/, { timeout: 5000 });
     } finally {
       await seeder.cleanup();
     }

@@ -34,7 +34,8 @@ async function loginAsShipper(page: any, email: string) {
       companyName: `TestShip-${Date.now()}`,
     }),
   })
-  await page.goto(`${FRONTEND}/login`)
+  await page.goto(`${FRONTEND}/`)
+  await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
   await page.fill('[data-testid="email-input"]', email)
   await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
   await page.click('[data-testid="login-submit-btn"]')
@@ -136,7 +137,8 @@ test.describe('US-846 AC-4: row selection triggers load state', () => {
     })
 
     // Login
-    await page.goto(`${FRONTEND}/login`)
+    await page.goto(`${FRONTEND}/`)
+    await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
     await page.fill('[data-testid="email-input"]', email)
     await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
     await page.click('[data-testid="login-submit-btn"]')

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
+import { useLogout } from '@/features/auth/hooks/useLogout'
 import { LogOut, User, Settings, Bell } from 'lucide-react'
 
 /**
@@ -18,7 +19,8 @@ import { LogOut, User, Settings, Bell } from 'lucide-react'
 export function ShipperPageHeader() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { user, logout, isAuthenticated } = useAuthStore()
+  const { user, isAuthenticated } = useAuthStore()
+  const logout = useLogout()
   const [showDropdown, setShowDropdown] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
   const [unreadCount] = useState(0)
@@ -56,9 +58,8 @@ export function ShipperPageHeader() {
   }, [showDropdown, showNotifications])
 
   const handleLogout = () => {
-    logout()
     setShowDropdown(false)
-    navigate('/login')
+    logout()
   }
 
   const handleProfileClick = () => {

@@ -89,6 +89,12 @@ jobs:
     name: E2E Tests — Playwright
     runs-on: ubuntu-latest
     needs: [backend, frontend]
+    # Guardrail against a hung/misbehaving E2E run consuming the GitHub Actions
+    # default 360-minute job timeout. The full local suite (22 spec files, all
+    # unit-visible retries) completes in ~2 minutes; 15 gives generous headroom
+    # for CI variance while still failing fast on a genuine hang or regression
+    # that breaks many tests at once (e.g. a shared route/selector change).
+    timeout-minutes: 15
 
     services:
       postgres:

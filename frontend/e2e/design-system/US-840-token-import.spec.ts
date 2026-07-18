@@ -58,7 +58,7 @@ test.describe('US-840 AC-3: CSS custom properties in browser', () => {
 
   test('--color-bronze and shipper tokens resolve in browser', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 })
-    await page.goto(`${FRONTEND}/login`)
+    await page.goto(`${FRONTEND}/`)
     await page.waitForLoadState('networkidle')
 
     const bronzeColor = await page.evaluate(() =>
@@ -93,7 +93,7 @@ test.describe('adversarial', () => {
     page.on('console', (msg) => {
       if (msg.type() === 'error') consoleErrors.push(msg.text())
     })
-    await page.goto(`${FRONTEND}/login`)
+    await page.goto(`${FRONTEND}/`)
     await page.waitForLoadState('networkidle')
 
     // No console errors relating to CSS imports

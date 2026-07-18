@@ -149,7 +149,8 @@ async function setupCommonRoutes(page: Page) {
 }
 
 async function loginAsShipper(page: Page) {
-  await page.goto('/login')
+  await page.goto('/')
+  await page.getByTestId('header-login-btn').click()
   await page.getByLabel('Email').fill('shipper@test.com')
   await page.getByLabel('Password').fill('password')
   await page.getByRole('button', { name: /sign in/i }).click()

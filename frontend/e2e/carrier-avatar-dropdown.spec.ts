@@ -16,7 +16,8 @@ async function registerAndLogin(page: import('@playwright/test').Page, emailPref
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password: 'E2ETestPassword123!', firstName: 'Test', lastName: 'Trucker', role: 'TRUCKER', companyName: `TestTruck-${Date.now()}` }),
   })
-  await page.goto(`${FRONTEND}/login`)
+  await page.goto(`${FRONTEND}/`)
+  await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
   await page.fill('[data-testid="email-input"]', email)
   await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
   await page.click('[data-testid="login-submit-btn"]')
@@ -42,7 +43,7 @@ test('dashboard header avatar shows a sign-out-only dropdown, does not navigate 
   // sign out actually logs out
   await page.locator('[data-testid="carrier-avatar"]').click()
   await page.locator('[data-testid="carrier-avatar-signout"]').click()
-  await page.waitForURL(/\/login/, { timeout: 10000 })
+  await page.waitForURL(/^http:\/\/[^/]+\/$/, { timeout: 10000 })
 })
 
 test('CostProfilePage header avatar shows the same sign-out-only dropdown', async ({ page }) => {
@@ -58,5 +59,5 @@ test('CostProfilePage header avatar shows the same sign-out-only dropdown', asyn
   await expect(items.first()).toHaveText('Sign out')
 
   await page.locator('[data-testid="header-avatar-signout"]').click()
-  await page.waitForURL(/\/login/, { timeout: 10000 })
+  await page.waitForURL(/^http:\/\/[^/]+\/$/, { timeout: 10000 })
 })

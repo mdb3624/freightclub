@@ -52,7 +52,7 @@ class CarrierPublicProfileControllerTest {
     @Test
     @WithMockUser(roles = "SHIPPER")
     void searchByLane_returnsLaneResults() throws Exception {
-        var result = new CarrierLaneSearchResult("id-1", "Mike Johnson", "mike@example.com", List.of("FLATBED"), null);
+        var result = new CarrierLaneSearchResult("id-1", "Mike Johnson", "mike@example.com", List.of("FLATBED"), null, List.of());
         when(carrierSearchService.searchCarriersByLane(any(), eq("Midwest"), eq("Northeast"), eq("FLATBED")))
                 .thenReturn(List.of(result));
 

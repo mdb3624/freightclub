@@ -9,5 +9,6 @@ public record CarrierLaneSearchResult(
         String companyName,
         String email,
         List<String> equipmentTypes,
-        Double onTimePct
+        Double onTimePct,
+        List<CarrierLaneDTO> lanes
 ) {}

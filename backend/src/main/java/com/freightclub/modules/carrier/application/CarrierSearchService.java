@@ -1,12 +1,16 @@
 package com.freightclub.modules.carrier.application;
 
 import com.freightclub.domain.EquipmentType;
+import com.freightclub.modules.carrier.infrastructure.CarrierLaneEntity;
+import com.freightclub.modules.carrier.infrastructure.CarrierLaneRepository;
 import com.freightclub.repository.UserRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -15,9 +19,13 @@ public class CarrierSearchService {
     private static final int MAX_RESULTS = 8;
 
     private final UserRepository userRepository;
+    private final CarrierLaneRepository laneRepository;
+    private final CarrierMapper carrierMapper;
 
-    public CarrierSearchService(UserRepository userRepository) {
+    public CarrierSearchService(UserRepository userRepository, CarrierLaneRepository laneRepository, CarrierMapper carrierMapper) {
         this.userRepository = userRepository;
+        this.laneRepository = laneRepository;
+        this.carrierMapper = carrierMapper;
     }
 
     // AC-v2-2, AC-v2-7: Search TRUCKER users within tenant by name or email
@@ -61,15 +69,35 @@ public class CarrierSearchService {
                 ? userRepository.findAllTruckers(tenantId, equipmentTypeEnum, PageRequest.of(0, MAX_RESULTS))
                 : userRepository.searchTruckersByLane(tenantId, originArg, destinationArg, equipmentTypeEnum, PageRequest.of(0, MAX_RESULTS));
 
+        if (truckers.isEmpty()) {
+            return List.of();
+        }
+
+        Map<String, List<CarrierLaneDTO>> lanesByTruckerId = lanesByTruckerId(tenantId, truckers);
+
         return truckers.stream()
                 .map(u -> new CarrierLaneSearchResult(
                         u.getId(),
                         u.getFirstName() + " " + u.getLastName(),
                         u.getEmail(),
                         u.getEquipmentType() != null ? List.of(u.getEquipmentType().name()) : List.of(),
-                        null
+                        null,
+                        lanesByTruckerId.getOrDefault(u.getId(), List.of())
                 ))
                 .toList();
+    }
+
+    // US-856 AC-1: one batched lookup for every matched carrier's full lane list, mirroring
+    // what the detail panel already shows (PublicCarrierProfileDTO.lanes) rather than only the
+    // single lane that satisfied the search filter.
+    private Map<String, List<CarrierLaneDTO>> lanesByTruckerId(String tenantId, List<com.freightclub.domain.User> truckers) {
+        List<String> truckerIds = truckers.stream().map(com.freightclub.domain.User::getId).toList();
+        List<CarrierLaneEntity> lanes = laneRepository.findByTenantIdAndTruckerIdInAndDeletedAtIsNull(tenantId, truckerIds);
+        return lanes.stream()
+                .collect(Collectors.groupingBy(
+                        CarrierLaneEntity::getTruckerId,
+                        Collectors.mapping(e -> carrierMapper.toLaneDto(e.toDomain()), Collectors.toList())
+                ));
     }
 
     private boolean isBlank(String value) {

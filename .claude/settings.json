@@ -31,7 +31,7 @@
     "browser-use",
     "jira",
     "jira-write",
-    "neon"
+    "MCP_DOCKER"
   ],
   "hooks": {
     "PreToolUse": [
@@ -47,11 +47,11 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "Write(*.sql)",
+        "matcher": "Write",
         "hooks": [
           {
             "type": "command",
-            "command": "mvn flyway:validate -f backend/pom.xml"
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); case \"$f\" in *.sql) mvn flyway:validate -f backend/pom.xml ;; esac"
           }
         ]
       }

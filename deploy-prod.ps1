@@ -45,7 +45,7 @@ $FrontendUrlAlt = "freightclub-frontend-404925591110.us-central1.run.app"
 # (a bare --set-env-vars with comma-joined origins silently corrupts the value)
 $BackendEnvVarsContent = @"
 SPRING_PROFILES_ACTIVE: prod
-CORS_ALLOWED_ORIGINS: https://freightclub.app,https://$FrontendUrl,https://$FrontendUrlAlt
+CORS_ALLOWED_ORIGINS: https://freightclub.app,https://mdbfreightclub.com,https://$FrontendUrl,https://$FrontendUrlAlt
 "@
 $BackendEnvVarsFile = "$env:TEMP\freightclub-backend-env.txt"
 [System.IO.File]::WriteAllText($BackendEnvVarsFile, $BackendEnvVarsContent)

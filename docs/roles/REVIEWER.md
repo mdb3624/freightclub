@@ -23,7 +23,8 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 * ❌ **Complexity:** Any method with cyclomatic complexity > 10.
 * ❌ **Test Coverage:** Backend branch coverage < 80% (JaCoCo).
 * ❌ *(Phase 7+)* GET endpoint without `@Cacheable` or missing `TenantContextHolder.getTenantId()`.
-* ❌ *(Phase 10+)* **Platform Integrity Violation:** Same domain logic implemented in multiple services or classes (duplicate calculations, filters, or transformations). Single source of truth must be enforced.
+* ❌ **Platform Integrity Violation (all work, not phase-gated):** Same domain logic implemented in multiple services or classes (duplicate calculations, filters, or transformations). Single source of truth must be enforced.
+* ❌ **New Endpoint Without Overlap Check (added 2026-07-20):** Any new `@GetMapping`/`@PostMapping`/`@PutMapping`/`@DeleteMapping` in the PR must be checked against `docs/project/Story_Map.md` (all statuses, not just DONE) and existing controllers for a capability match — run the same two `grep` commands from CODER.md's Endpoint/Capability Overlap Check yourself; don't just trust CODER ran them. If a plausible match exists and the PR doesn't explain why reuse wasn't possible, REJECT. Root incident: US-761/US-820 duplicate KPI implementations, undetected for months because nobody checked at either the ARCHITECT or REVIEWER stage.
 * ❌ **CI Status Not Verified:** Local `mvn test` / Docker pre-test runs are NOT a substitute for actual GitHub Actions status. REVIEWER must run `gh pr checks <PR#>` and confirm all required checks are green before issuing PASS. CHG-US730-003 (2026-06-26) found GH Actions CI had a 100% failure rate across its entire history (every run since the workflow was created on 2026-03-27) — every prior `REVIEWER_PASS` in `Sprint_Log.md` was issued on local-run evidence alone, while the actual CI gate silently failed for 3 months unnoticed.
 
 ## 📋 Review Checklist

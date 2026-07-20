@@ -1,109 +1,101 @@
 package com.freightclub.modules.shipper.application;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
+import com.freightclub.domain.Load;
+import com.freightclub.domain.User;
+import com.freightclub.repository.UserRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 @Service
 @Transactional(readOnly = true)
 public class ShipmentStatusService {
 
-    private final EntityManager em;
+    private final LoadQueryService loadQueryService;
+    private final UserRepository userRepository;
 
-    public ShipmentStatusService(EntityManager em) {
-        this.em = em;
+    public ShipmentStatusService(LoadQueryService loadQueryService, UserRepository userRepository) {
+        this.loadQueryService = loadQueryService;
+        this.userRepository = userRepository;
     }
+
+    private static final Map<String, Integer> STATUS_ORDER = Map.of(
+        "DELAYED", 1,
+        "OPEN", 2,
+        "CLAIMED", 3,
+        "IN_TRANSIT", 4,
+        "DELIVERED", 5
+    );
 
     @Cacheable(value = "shipment-status", key = "#tenantId")
     public List<ShipmentStatusDTO> getActiveShipments(String tenantId) {
-        // Activate RLS context
-        em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, true)")
-            .setParameter("tid", tenantId)
-            .getSingleResult();
+        // Shared query (LoadQueryService.findDashboardLoads) — single source of truth for
+        // "which loads are dashboard-relevant", also used by KPISummaryService, so the two
+        // can't independently drift on what counts as active again (see US-820 fix, 2026-07-20).
+        List<Load> loads = loadQueryService.findDashboardLoads(tenantId);
 
-        String sql = """
-            SELECT l.id, l.status, l.equipment_type, l.destination_city,
-                   COALESCE(u.business_name, CONCAT(u.first_name, ' ', u.last_name)), null,
-                   l.pickup_from, l.delivery_to, l.picked_up_at,
-                   l.origin_city, l.origin_state, l.destination_state
-            FROM freightclub.loads l
-            LEFT JOIN freightclub.users u ON l.trucker_id = u.id
-            WHERE l.tenant_id = :tid
-              AND l.deleted_at IS NULL
-              AND l.status NOT IN ('DRAFT', 'CANCELLED', 'SETTLED', 'DISPUTED')
-            ORDER BY CASE l.status
-                WHEN 'DELAYED' THEN 1
-                WHEN 'OPEN' THEN 2
-                WHEN 'CLAIMED' THEN 3
-                WHEN 'IN_TRANSIT' THEN 4
-                WHEN 'DELIVERED' THEN 5
-                ELSE 6
-            END ASC, l.delivery_to ASC
-            """;
+        Map<String, User> truckersById = batchLoadTruckers(loads);
 
-        Query query = em.createNativeQuery(sql);
-        query.setParameter("tid", tenantId);
-
-        @SuppressWarnings("unchecked")
-        List<Object[]> results = (List<Object[]>) query.getResultList();
-        List<ShipmentStatusDTO> shipments = new ArrayList<>();
-
-        for (Object[] row : results) {
-            String loadId = (String) row[0];
-            String status = (String) row[1];
-            String equipment = (String) row[2];
-            String destination = (String) row[3];
-            String carrierName = (String) row[4];
-            BigDecimal rating = (BigDecimal) row[5];
-            LocalDateTime pickupFrom = toLocalDateTime(row[6]);
-            LocalDateTime deliveryTo = toLocalDateTime(row[7]);
-            LocalDateTime pickedUpAt = toLocalDateTime(row[8]);
-            String origin = (String) row[9];
-            String originState = (String) row[10];
-            String destinationState = (String) row[11];
-
-            BigDecimal progress = calculateProgress(status, pickupFrom, deliveryTo, pickedUpAt);
-
-            ShipmentStatusDTO dto = new ShipmentStatusDTO(
-                loadId,
-                status,
-                progress,
-                equipment,
-                carrierName,
-                rating,
-                destination,
-                origin,
-                originState,
-                destinationState
-            );
-
-            shipments.add(dto);
-        }
-
-        return shipments;
+        return loads.stream()
+            .sorted(Comparator
+                .comparing((Load l) -> STATUS_ORDER.getOrDefault(l.getStatus().name(), 6))
+                .thenComparing(Load::getDeliveryTo, Comparator.nullsLast(Comparator.naturalOrder())))
+            .map(load -> toDto(load, truckersById))
+            .toList();
     }
 
-    private LocalDateTime toLocalDateTime(Object value) {
-        if (value == null) {
+    // Batch lane-repository-style lookup (matches the CarrierSearchService.lanesByTruckerId
+    // pattern) to avoid N+1 — one query for every distinct trucker across the result set,
+    // not one per load.
+    private Map<String, User> batchLoadTruckers(List<Load> loads) {
+        List<String> truckerIds = loads.stream()
+            .map(Load::getTruckerId)
+            .filter(java.util.Objects::nonNull)
+            .distinct()
+            .toList();
+        if (truckerIds.isEmpty()) {
+            return Map.of();
+        }
+        return userRepository.findAllById(truckerIds).stream()
+            .collect(java.util.stream.Collectors.toMap(User::getId, Function.identity()));
+    }
+
+    private ShipmentStatusDTO toDto(Load load, Map<String, User> truckersById) {
+        String status = load.getStatus().name();
+        BigDecimal progress = calculateProgress(status, load.getPickupFrom(), load.getDeliveryTo(), load.getPickedUpAt());
+        User trucker = load.getTruckerId() != null ? truckersById.get(load.getTruckerId()) : null;
+        String carrierName = carrierName(trucker);
+
+        return new ShipmentStatusDTO(
+            load.getId(),
+            status,
+            progress,
+            load.getEquipmentType() != null ? load.getEquipmentType().name() : null,
+            carrierName,
+            null, // rating: no rating join existed in the prior native-query implementation either
+            load.getDestinationCity(),
+            load.getOriginCity(),
+            load.getOriginState(),
+            load.getDestinationState()
+        );
+    }
+
+    private String carrierName(User trucker) {
+        if (trucker == null) {
             return null;
         }
-        if (value instanceof LocalDateTime) {
-            return (LocalDateTime) value;
+        if (trucker.getBusinessName() != null) {
+            return trucker.getBusinessName();
         }
-        if (value instanceof java.time.Instant) {
-            return LocalDateTime.ofInstant((java.time.Instant) value, java.time.ZoneId.systemDefault());
-        }
-        return (LocalDateTime) value;
+        return trucker.getFirstName() + " " + trucker.getLastName();
     }
 
     private BigDecimal calculateProgress(String status, LocalDateTime pickupFrom, LocalDateTime deliveryTo, LocalDateTime pickedUpAt) {

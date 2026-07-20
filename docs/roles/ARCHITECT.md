@@ -23,7 +23,7 @@ If rejected: BA must resubmit. Re-evaluate when resubmitted.
 
 ---
 
-## 🔄 Platform Reuse Check (Phase 10+)
+## 🔄 Platform Reuse Check (MANDATORY — all future work, not phase-gated)
 
 **Before finalizing domain model design**, verify reusability:
 
@@ -31,13 +31,16 @@ If rejected: BA must resubmit. Re-evaluate when resubmitted.
 2. **Duplication Detection:** For each new domain service in your design, confirm it does NOT duplicate logic in existing services
 3. **Consolidation:** If similar calculations exist across multiple stories, design ONE reusable service with multiple use cases
 4. **Traceability:** Document which stories consume which domain services in the design handoff
+5. **User-Facing Capability Check (added 2026-07-20):** Search `Story_Map.md` and the codebase for any *other* story — regardless of its current status — that already delivers the same user-facing capability (not just the same domain-service class name). A story stuck in `READY_FOR_REVIEWER_RE_AUDIT`/`PARTIAL`/`IN_PROGRESS` is still committed, routed code, not a clean slate — grep for its controller/endpoint before assuming the capability doesn't exist yet.
 
 **Example (Phase 10):**
 - US-820 (KPI Summary) needs on-time rate → Use `OnTimeRateCalculator`
 - US-821 (Status List) also displays on-time rate → Reuse same `OnTimeRateCalculator`, don't create a duplicate
 - If rate calculation varies by story, add a parameter to `OnTimeRateCalculator` instead of creating `OnTimeRateCalculator_v2`
 
-**Rejection Rule:** If your design introduces duplicate domain logic, REJECT and consolidate before handing to CODER.
+**Counter-example — what step 5 exists to catch (2026-07-20):** US-761 (Phase 7, "Dashboard Summary Aggregate Endpoint") built the exact same activeShipments/onTimeCarrierPct/estimatedCostPerMile capability as US-820 ("KPI Summary Display"), and was already committed and routed at `/shipper/dashboard-summary` when US-820 started — but stuck at `READY FOR REVIEWER RE-AUDIT`, so it read as "not really there yet." US-820 rebuilt it from scratch as `KPISummaryService`/`/shipper/dashboard/kpi-summary` without finding US-761 first. Steps 1-4 (domain-service-class dedup) would not have caught this — the duplication was at the application-service/endpoint level, for the same reason: two independently-invented "active load" definitions silently disagreed (US-820 counted `CLAIMED`/`IN_TRANSIT` only; the sibling Shipment Status feature counted `OPEN` too), producing a real, confusing production bug. US-761's dead code sat unreachable for months before being deleted.
+
+**Rejection Rule:** If your design introduces duplicate domain logic OR duplicate user-facing capability already covered by another story (any status), REJECT and consolidate before handing to CODER.
 
 ---
 

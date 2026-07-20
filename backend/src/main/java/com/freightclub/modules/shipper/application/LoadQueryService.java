@@ -10,6 +10,7 @@ import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.Objects;
  * AC-US-715: Load statistics (Endpoint 1) and pagination (Endpoint 2).
  */
 @Service
+@Transactional(readOnly = true)
 public class LoadQueryService {
 
     private final LoadRepository loadRepository;
@@ -35,6 +37,16 @@ public class LoadQueryService {
         em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, true)")
                 .setParameter("tid", tenantId)
                 .getSingleResult();
+    }
+
+    // Shared query: single source of truth for "which loads are relevant to the shipper
+    // dashboard" (excludes DRAFT/CANCELLED/SETTLED/DISPUTED per LoadStatus.excludedFromDashboard()).
+    // Both KPISummaryService (KPI tile) and ShipmentStatusService (Shipment Status panel) call
+    // this instead of writing their own independent status filters, so the two can't drift on
+    // what counts as "active" again — see US-820 fix, 2026-07-20.
+    public List<Load> findDashboardLoads(String tenantId) {
+        setTenantForRls(tenantId);
+        return loadRepository.findByTenantIdAndStatusNotInAndDeletedAtIsNull(tenantId, LoadStatus.excludedFromDashboard());
     }
 
     /**

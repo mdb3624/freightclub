@@ -1,10 +1,8 @@
 package com.freightclub.modules.shipper.infrastructure.rest;
 
-import com.freightclub.modules.shipper.application.DashboardSummaryService;
 import com.freightclub.modules.shipper.application.LoadQueryService;
 import com.freightclub.modules.shipper.application.ShipmentStatusDTO;
 import com.freightclub.modules.shipper.application.ShipmentStatusService;
-import com.freightclub.modules.shipper.infrastructure.rest.dto.DashboardSummaryResponse;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadListResponse;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.LoadStatsResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -29,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ShipperControllerTest {
   @Autowired private MockMvc mvc;
   @MockBean private LoadQueryService loadQueryService;
-  @MockBean private DashboardSummaryService dashboardSummaryService;
   @MockBean private ShipmentStatusService shipmentStatusService;
 
   @BeforeEach
@@ -134,33 +131,6 @@ class ShipperControllerTest {
   @Test
   void testGetShipperLoadsRequiresAuth() throws Exception {
     mvc.perform(get("/api/v1/shipper/loads"))
-        .andExpect(status().isUnauthorized());
-  }
-
-  // US-761 AC-1/AC-2/AC-3: dashboard-summary returns activeShipments/estimatedCostPerMile/onTimeCarrierPct KPIs
-  @Test
-  @WithMockUser(roles = "SHIPPER")
-  void testGetDashboardSummary() throws Exception {
-    var summary = new DashboardSummaryResponse(
-        new DashboardSummaryResponse.Metric(6.0, null, "Active Shipments"),
-        new DashboardSummaryResponse.Metric(2.35, "$", "Est. Cost/Mile"),
-        new DashboardSummaryResponse.Metric(92.5, "%", "On-Time Carriers")
-    );
-    when(dashboardSummaryService.getSummary()).thenReturn(summary);
-
-    mvc.perform(get("/api/v1/shipper/dashboard-summary"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.activeShipments.value").value(6.0))
-        .andExpect(jsonPath("$.activeShipments.label").value("Active Shipments"))
-        .andExpect(jsonPath("$.estimatedCostPerMile.value").value(2.35))
-        .andExpect(jsonPath("$.estimatedCostPerMile.unit").value("$"))
-        .andExpect(jsonPath("$.onTimeCarrierPct.value").value(92.5))
-        .andExpect(jsonPath("$.onTimeCarrierPct.unit").value("%"));
-  }
-
-  @Test
-  void testGetDashboardSummaryRequiresAuth() throws Exception {
-    mvc.perform(get("/api/v1/shipper/dashboard-summary"))
         .andExpect(status().isUnauthorized());
   }
 

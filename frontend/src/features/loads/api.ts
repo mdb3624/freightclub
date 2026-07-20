@@ -1,6 +1,6 @@
 import apiClient from '@/lib/apiClient'
 import { apiGet, apiPost, apiPut, apiPatch } from '@/lib/apiClient'
-import type { AvailableStates, BoardFilter, Load, LoadEvent, LoadSummary, LoadFormValues, Page } from './types'
+import type { BoardFilter, Load, LoadEvent, LoadSummary, LoadFormValues, Page } from './types'
 
 function toDecimalFt(ft: number | '', inches: number | ''): number | null {
   if (ft === '' && inches === '') return null
@@ -102,9 +102,6 @@ export const loadsApi = {
   deliver: (id: string) =>
     apiPost<Load>(`/board/${id}/deliver`),
 
-  getAvailableStates: () =>
-    apiGet<AvailableStates>('/board/available-states'),
-
   // Backend returns 200 + body when an invoice exists, or 204 with no body
   // when it doesn't. apiGet's default validateStatus would treat a 204 as
   // success too, but its `.data` would be an empty string rather than
@@ -114,6 +111,4 @@ export const loadsApi = {
       .get<PaymentStatus>(`/board/${id}/payment`, { validateStatus: (s) => s === 200 || s === 204 })
       .then((r) => (r.status === 204 ? null : r.data)),
 
-  getCounts: () =>
-    apiGet<Record<string, number>>('/loads/counts'),
 }

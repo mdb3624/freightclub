@@ -59,7 +59,7 @@ If rejected: LIBRARIAN decides whether to fix inputs or create Change Request (C
 
 ---
 
-## 🔄 Service Reuse Check (Phase 10+)
+## 🔄 Service Reuse Check (MANDATORY — all future work, not phase-gated)
 
 **Before writing implementation code**, verify service reusability:
 
@@ -67,6 +67,13 @@ If rejected: LIBRARIAN decides whether to fix inputs or create Change Request (C
 2. **Reuse vs. Build:** If service exists, use it; if not, create ONE canonical implementation
 3. **Parameter Extension:** If existing service needs a new parameter/variant, extend it (add optional parameter) rather than creating a new service
 4. **Test Inheritance:** If reusing a service, reuse its existing tests; add new tests only for new parameters/behaviors
+5. **Endpoint/Capability Overlap Check (added 2026-07-20 — mandatory, not optional):** Before creating ANY new `@Controller`/`@RestController` endpoint or application-layer service, run BOTH of these and read the output before writing code:
+   - `grep -rn "<capability keyword>" docs/project/Story_Map.md` — check every story regardless of status (`READY_FOR_REVIEWER_RE_AUDIT`/`PARTIAL`/`IN_PROGRESS` stories are committed, routed code, not a clean slate)
+   - `grep -rn "@GetMapping\|@PostMapping\|@PutMapping\|@DeleteMapping" backend/src/main/java --include="*Controller.java" | grep -i "<capability keyword>"` — an endpoint with a different URL than what you'd naturally name it is still the same capability
+
+**This is the ARCHITECT's Platform Reuse Check step 5 restated as CODER's own mandatory backstop** — if the design handoff didn't do it, CODER does not get to skip it and build a parallel implementation anyway. If overlap is found: STOP, do not write the new code, escalate to LIBRARIAN via the CHG protocol (`.claude/rules/change-request-protocol.md`) — do not silently work around a stalled-but-live story by rebuilding its capability from scratch, and do not ask ARCHITECT to redesign directly (Sequential Lock).
+
+**No extraneous code:** Implement exactly what the design handoff specifies — no new abstraction, service, or endpoint beyond what's needed for the current story's AC, even if a duplicate-looking path seems locally simpler than reusing/extending the existing one. "This is basically the same thing but slightly different" is the CHG-ticket conversation, not a license to add a second implementation.
 
 **Example (Phase 10):**
 - Story needs to calculate carrier affinity (preferred carrier ranking)
@@ -74,7 +81,9 @@ If rejected: LIBRARIAN decides whether to fix inputs or create Change Request (C
 - ✅ **REUSE:** Inject it; write tests for your story's specific use case
 - ❌ **DON'T:** Create `CarrierAffinityCalculator` or `PreferredCarrierRanker` (duplicates)
 
-**Rejection Rule:** If code review finds duplicate service implementations, CODER must refactor before merge (violates Phase 10 platform integrity).
+**Counter-example — what step 5 exists to catch (2026-07-20):** US-761 (Phase 7) already implemented the shipper dashboard's activeShipments/onTimeCarrierPct/estimatedCostPerMile KPI aggregate at `/shipper/dashboard-summary`, stuck at `READY FOR REVIEWER RE-AUDIT` but fully committed and routed. US-820 (Phase 10) rebuilt the identical capability from scratch as `KPISummaryService`/`/shipper/dashboard/kpi-summary` without finding it — steps 1-4 (domain-service-class dedup) wouldn't have caught this since the duplication was at the endpoint/application-service level. The two independently-invented "active load" status filters then silently diverged, producing a real production bug months later. US-820's `KPISummaryController`/`KPISummaryService` also shipped and lived in production with **zero tests** — REVIEWER's controller-test hard gate exists on paper but wasn't mechanically enforced at merge time.
+
+**Rejection Rule:** If code review finds duplicate service implementations OR a new endpoint that could have reused/extended an existing (even non-DONE) story's endpoint, CODER must refactor before merge (violates Phase 10 platform integrity).
 
 ---
 

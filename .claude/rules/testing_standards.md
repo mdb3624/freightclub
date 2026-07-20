@@ -6,6 +6,34 @@
 
 ---
 
+## Full Suite vs. Targeted Runs During Iteration (added 2026-07-20)
+
+The full Mandatory Pre-Test Protocol (`docker compose down -v` → build → `up --build` → full `mvn clean test` inside `backend-tester`) is expensive (multiple minutes, full dependency re-download in a cold container) and must remain the gate for **final verification before a PR/merge/deploy** — that requirement is unchanged.
+
+During red/green TDD iteration on a single class (e.g., proving a fix via a failing-then-passing test), running the full suite on every iteration wastes time without adding signal beyond the class under test. Use a targeted run against an already-running `test-db` instead:
+
+```bash
+docker compose -f docker-compose.test.yml up -d test-db
+docker run --rm --network freightclub_default \
+  -v "$(pwd)/backend:/app" -v freightclub_maven_repo:/root/.m2 -w /app \
+  -e SPRING_PROFILES_ACTIVE=test \
+  -e DB_URL="jdbc:postgresql://test-db:5432/freightclub_test?currentSchema=freightclub" \
+  -e DB_USERNAME=freightclub_runtime -e DB_PASSWORD=freightclub \
+  maven:3.9-eclipse-temurin-21 mvn test -Dtest=YourTestClass -Djacoco.skip=true
+```
+
+Reserve the full protocol for: the final pre-PR check, and any change touching more than one class's tests. Don't run it 2-3 times in a row for the same iteration cycle when a targeted run would prove the same thing faster.
+
+## Log Inspection: Grep First, Never Raw `tail` on Maven/Docker Output (added 2026-07-20)
+
+Maven dependency-resolution output (especially in a cold `backend-tester` container) can run to hundreds of lines of pure download-progress noise before the actual result. Always filter at the source instead of tailing raw output:
+
+```bash
+docker logs freightclub-tester 2>&1 | grep -E "ERROR|BUILD (SUCCESS|FAILURE)|Tests run:.*Failures: [1-9]|Tests run: [0-9]+, Failures: [0-9]+, Errors: [0-9]+, Skipped: [0-9]+$"
+```
+
+Only fall back to a wider `tail`/full log read once `grep` has localized the area of interest (e.g., a specific failing test's stack trace).
+
 ## ⚠️ Known Limitation: `page.goto()`-to-destination E2E Specs Don't Exercise the Real Navigation Path (2026-07-16)
 
 US-822 (2026-07-16): production shipper users clicking "My Documents" or a shipment row landed on the home page (`TruckerLandingPage`) instead of the intended route. Root cause was a repeat of the FREIG-114 caching pattern below — `index.html` was served with no `Cache-Control` header, so browsers cached it; after a redeploy replaced the content-hashed asset chunks, a stale-cached shell's `import()` for the target lazy route 404'd, breaking client-side navigation (full page loads, which always re-fetch `index.html`, were unaffected — only in-app link clicks broke). The existing `shipper-documents-routing.spec.ts` (added with the original US-822 fix, PR #39) passed throughout and never caught this: it used `page.goto('/shipper/documents')` / `page.goto('/shipper/loads/:id')` directly, which proves the route renders correctly in isolation but never exercises the button's `onClick` → `navigate()` path — the exact path where the regression lived.

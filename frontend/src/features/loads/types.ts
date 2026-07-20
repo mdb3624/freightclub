@@ -159,11 +159,6 @@ export interface BoardFilter {
   sortDir?: BoardSortDir
 }
 
-export interface AvailableStates {
-  originStates: string[]
-  destinationStates: string[]
-}
-
 export interface Page<T> {
   content: T[]
   totalElements: number

@@ -69,6 +69,12 @@ public interface LoadRepository extends JpaRepository<Load, String>, JpaSpecific
      */
     long countByTenantIdAndStatusAndDeletedAtIsNull(String tenantId, LoadStatus status);
 
+    // Shared dashboard query: single source of truth for "which loads are relevant to the
+    // shipper dashboard" — used by both LoadQueryService.findDashboardLoads() consumers
+    // (KPISummaryService, ShipmentStatusService) so the two can never independently drift
+    // on what counts as active. See LoadStatus.excludedFromDashboard().
+    java.util.List<Load> findByTenantIdAndStatusNotInAndDeletedAtIsNull(String tenantId, java.util.Collection<LoadStatus> excludedStatuses);
+
     /**
      * Count soft-deleted loads by tenant and status (soft-delete filter: deleted_at IS NOT NULL).
      * Used for dashboard statistics (all view, CANCELLED count).

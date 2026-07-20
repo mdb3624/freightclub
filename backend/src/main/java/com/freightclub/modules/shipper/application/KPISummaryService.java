@@ -2,7 +2,6 @@ package com.freightclub.modules.shipper.application;
 
 import com.freightclub.domain.Load;
 import com.freightclub.domain.LoadStatus;
-import com.freightclub.repository.LoadRepository;
 import com.freightclub.modules.load.domain.CostEfficiencyCalculator;
 import com.freightclub.modules.load.domain.OnTimeRateCalculator;
 import com.freightclub.modules.shipper.infrastructure.rest.dto.KPISummaryResponse;
@@ -18,16 +17,16 @@ import java.util.List;
 @Service
 public class KPISummaryService {
 
-  private final LoadRepository loadRepository;
+  private final LoadQueryService loadQueryService;
   private final OnTimeRateCalculator onTimeRateCalculator;
   private final CostEfficiencyCalculator costEfficiencyCalculator;
 
   public KPISummaryService(
-      LoadRepository loadRepository,
+      LoadQueryService loadQueryService,
       OnTimeRateCalculator onTimeRateCalculator,
       CostEfficiencyCalculator costEfficiencyCalculator
   ) {
-    this.loadRepository = loadRepository;
+    this.loadQueryService = loadQueryService;
     this.onTimeRateCalculator = onTimeRateCalculator;
     this.costEfficiencyCalculator = costEfficiencyCalculator;
   }
@@ -35,21 +34,26 @@ public class KPISummaryService {
   public KPISummaryResponse getSummary() {
     String tenantId = TenantContextHolder.getTenantId();
 
-    // Fetch all non-deleted loads for tenant
-    List<Load> allLoads = loadRepository.findByTenantIdAndDeletedAtIsNull(tenantId);
+    // Shared query (LoadQueryService.findDashboardLoads) — single source of truth for
+    // "which loads are dashboard-relevant", also used by ShipmentStatusService, so the two
+    // can't independently drift on what counts as active again (see US-820 fix, 2026-07-20).
+    List<Load> dashboardLoads = loadQueryService.findDashboardLoads(tenantId);
 
-    if (allLoads.isEmpty()) {
+    if (dashboardLoads.isEmpty()) {
       return new KPISummaryResponse(0, null, null, true);
     }
 
-    // AC-1: Count active loads (CLAIMED + IN_TRANSIT)
-    int activeLoadCount = (int) allLoads.stream()
-        .filter(load -> load.getStatus() == LoadStatus.CLAIMED || load.getStatus() == LoadStatus.IN_TRANSIT)
+    // AC-1: Count active loads — OPEN, CLAIMED, IN_TRANSIT. A freshly posted, not-yet-claimed
+    // load is reflected here the same way it appears in the Shipment Status panel below it.
+    int activeLoadCount = (int) dashboardLoads.stream()
+        .filter(load -> load.getStatus() == LoadStatus.OPEN
+            || load.getStatus() == LoadStatus.CLAIMED
+            || load.getStatus() == LoadStatus.IN_TRANSIT)
         .count();
 
     // AC-2 & AC-3: Calculate on-time % and cost per mile using domain services
-    BigDecimal onTimePercentage = onTimeRateCalculator.calculate(allLoads);
-    BigDecimal costPerMile = costEfficiencyCalculator.calculate(allLoads);
+    BigDecimal onTimePercentage = onTimeRateCalculator.calculate(dashboardLoads);
+    BigDecimal costPerMile = costEfficiencyCalculator.calculate(dashboardLoads);
 
     // AC-5: Empty state when no delivered loads (null metrics)
     boolean isEmpty = onTimePercentage == null || costPerMile == null;

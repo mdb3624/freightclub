@@ -196,3 +196,30 @@
 **Status:** ✅ DONE. Deployed to production and merged. No PR pending.
 
 Known separate issue, flagged but explicitly out of scope: `/carriers` (`CarrierNetworkPage`) has its own unrelated React runtime error caught by the app's `ErrorBoundary`, discovered during this investigation. Not fixed, not part of CHG-857.
+
+---
+
+## LIBRARIAN_SIGN_OFF: US-856 AC-1 (Lane Tags on Carrier Search Cards — Backend) — 2026-07-19
+
+**Origin:** Backlog story renumbered same-day from a US-851 ID collision (see US-851/US-856 rows in `Story_Map.md`). ARCH design produced, then CODER implemented AC-1 (backend) only via TDD.
+
+**Full lifecycle:** ARCH design (`docs/architecture/US-856_Lane_Tags_Design.md`, Platform Reuse Check + domain/sequence diagrams) → CODER TDD (`CarrierSearchServiceTest` red/green, `CarrierLaneSearchResult`/`CarrierLaneRepository`/`CarrierSearchService` implementation) → PR #52 → Story_Map/Jira synced to IN_PROGRESS → PR #52 merged to `main` → REVIEWER pass: full Docker Pre-Test Protocol re-run against `main` post-merge (924/924 backend tests, `BUILD SUCCESS`) + `gh pr checks 52` confirmed all GitHub Actions green.
+
+**REVIEWER checklist:**
+- Sequential Lock: PASS, linear BA→ARCH→CODER, no CHG needed
+- Security: `carrier_lanes` RLS pre-existing and confirmed; new query tenant-scoped + soft-delete filtered
+- Code quality: PASS (low complexity, constructor injection, clean imports)
+- Field Contract Table / Visual evidence: N/A, justified (no UI surface in this backend-only PR)
+- Testing: 924/924 backend (Docker), 14/14 `CarrierSearchServiceTest` (3 new), 3/3 `CarrierSearchIntegrationTest`, 3/3 `CarrierPublicProfileControllerTest`
+- CI: `gh pr checks 52` — all required checks green (not local-evidence-only)
+
+**Finding (non-blocking, logged as debt):** `docker-compose.test.yml`'s `backend-tester` runs `mvn clean test`, which never triggers the JaCoCo `check` goal (bound to `verify`) — the 80% branch-coverage hard gate is not actually enforced by the standard Pre-Test Protocol run. See `.claude/learnings.md` Technical Debt Ledger (OPEN, 2026-07-19).
+
+**LIBRARIAN verification:**
+- [x] Sign-off memo: `docs/project/LIBRARIAN_SIGN_OFF_US856.md`
+- [x] Story_Map.md US-856 row updated with REVIEWER PASS details (status remains IN_PROGRESS — AC-2–AC-5 frontend not started)
+- [x] Jira FREIG-105 In Progress, comment posted linking PR #52
+- [x] Technical Debt Ledger updated with the JaCoCo gate-bypass finding
+- [x] PR #52 merged to `main`
+
+**Status:** ✅ AC-1 (backend) REVIEWER PASS. US-856 as a whole remains IN_PROGRESS pending AC-2–AC-5 (frontend lane-tag rendering) — not yet DONE.

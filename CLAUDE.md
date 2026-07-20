@@ -7,7 +7,7 @@ This file provides mandatory operating context for AI interactions within the Re
 Current phase, story status, and sprint state are LIBRARIAN-owned and live in `docs/project/Sprint_Log.md` and `docs/project/Story_Map.md` — read those for what's actually in flight, not a snapshot here.
 
 - **Methodology:** TDD (Red → Green → Refactor)
-- **Core Goal:** 80% Branch Coverage & Cyclomatic Complexity < 10 (see ⚠️ Known Doc/Reality Gaps below — the enforced JaCoCo rule doesn't match this yet)
+- **Core Goal:** 80% Branch Coverage & Cyclomatic Complexity < 10. CI-enforced floor today is 65% branch (JaCoCo `check`, bound to `mvn test` — fixed 2026-07-20, previously dead config bound to `verify`, which CI never runs). 80% remains the target to ratchet toward, not yet the enforced minimum.
 
 ---
 
@@ -82,7 +82,7 @@ Full Postgres-native standards (types, RLS, indexing): `.claude/rules/postgres-n
 Flagged during the 2026-07-19 governance restructure; not actioned in that pass because they're functional/CI changes, not doc changes.
 
 - **Pre-commit hook scope:** `.git/hooks/pre-commit` currently only validates `Story_Map.md`. It does not block commits to `main` the way the branch-enforcement doc describes — GitHub branch protection (Layer 1) is the actual enforcement today. See `docs/OPERATIONS.md`.
-- **Coverage threshold mismatch:** this doc states an 80% branch-coverage goal; `backend/pom.xml`'s JaCoCo rule enforces 60% *line* coverage (a different, looser metric). Not reconciled yet — don't assume the stated 80% branch figure is actually gating CI.
+- ~~Coverage threshold mismatch~~ **Fixed 2026-07-20:** `backend/pom.xml`'s JaCoCo `check` goal was bound to `verify`, a phase neither CI nor local dev ever reach (`mvn test` is what actually runs) — so the old "60% line coverage" rule silently never executed. Now bound to `test`, checking BRANCH coverage ≥ 65% (measured actual at fix time: 69.49%, real headroom, not the 80% aspirational target). Ratchet the minimum up as coverage improves.
 - **Dangling file references:** `docs/standards/ADMIN_DESIGN_SYSTEM.md`, `docs/roles/SHIPPER_HFD_RULES.md`, and `docs/roles/ADMIN_HFD_RULES.md` are referenced by role docs but do not exist yet. If a story needs one, create it (with LIBRARIAN sign-off) rather than assuming it's there.
 
 ## ⚠️ Enforcement

@@ -27,7 +27,7 @@ Full incident narratives behind these rules: `docs/postmortems/TESTING_INCIDENTS
 
 ## Coverage Targets
 
-- Backend unit: ≥80% branch (JaCoCo). Backend integration: ≥70%. Frontend unit: ≥60%. E2E: golden path + 2 critical edge cases per story. No story marked DONE below 70% overall.
+- Backend unit: 80% branch target (CI-enforced floor is 65% branch via JaCoCo `check`, ratchets up over time — see `backend/pom.xml`). Backend integration: ≥70%. Frontend unit: ≥60%. E2E: golden path + 2 critical edge cases per story. No story marked DONE below 70% overall.
 
 ## No-Lombok in Test Fixtures
 

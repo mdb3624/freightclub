@@ -289,8 +289,21 @@
                         <goals><goal>report</goal></goals>
                     </execution>
                     <execution>
+                        <!--
+                          Bound to `test`, not `verify`: CI and local dev both invoke
+                          `mvn test`, never `mvn verify`, so a `verify`-bound check goal
+                          never actually ran (2026-07-19 finding: pom.xml claimed a 60%
+                          line-coverage gate that was silently dead in every CI run).
+                          Minimum is BRANCH at 0.65: actual branch coverage measured
+                          2026-07-19 was 69.49% (excluding the packages below), so 65%
+                          is a real, currently-passing floor with headroom, not the
+                          80% branch target CLAUDE.md/testing_standards.md still aim
+                          for. Ratchet this up as coverage improves; do not jump
+                          straight to 80% or this becomes dead weight again the moment
+                          it fails the first PR.
+                        -->
                         <id>check</id>
-                        <phase>verify</phase>
+                        <phase>test</phase>
                         <goals><goal>check</goal></goals>
                         <configuration>
                             <excludes>
@@ -304,9 +317,9 @@
                                     <element>BUNDLE</element>
                                     <limits>
                                         <limit>
-                                            <counter>LINE</counter>
+                                            <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.60</minimum>
+                                            <minimum>0.65</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

@@ -29,7 +29,7 @@ Applies to: BA, ARCH, HFD, CODER, REVIEWER, LIBRARIAN, and all automated agent o
 - **Testing (Full):** `.\build-and-test-full.ps1`
 - **Deployment (Prod):** `.\deploy-prod.ps1`
 - **Command Line:** `C:\tools\apache-maven-3.9.9\bin\mvn.cmd clean verify` from backend directory
-- **Test Coverage target:** 80%+ branch coverage per policy — see `⚠️ Known Doc/Reality Gaps` in root `CLAUDE.md`: the JaCoCo rule actually enforced in `backend/pom.xml` is 60% *line* coverage, not yet reconciled with this target.
+- **Test Coverage:** 80% branch coverage is the target to ratchet toward. CI-enforced floor today is 65% branch, via `backend/pom.xml`'s JaCoCo `check` goal (fixed 2026-07-20 — previously bound to the `verify` phase, which neither CI nor local dev ever reach, so it silently never ran; now bound to `test`, so `mvn test` alone enforces it).
 
 ---
 

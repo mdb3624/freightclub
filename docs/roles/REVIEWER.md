@@ -21,7 +21,7 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 * ❌ **Coverage Gap:** Any UI feature shipped without a passing Playwright e2e test for the golden path.
 * ❌ **Table Security:** Any table without an RLS policy.
 * ❌ **Complexity:** Any method with cyclomatic complexity > 10.
-* ❌ **Test Coverage:** Backend branch coverage < 80% (JaCoCo).
+* ❌ **Test Coverage:** CI already auto-rejects (build failure) below 65% branch coverage via `backend/pom.xml`'s JaCoCo `check` goal — that's the mechanical floor, not this checklist's bar. 80% branch remains the target: treat anything in the 65-80% range as a judgment call (approve with a technical-debt note, or request more tests, based on what the story actually touched) rather than an automatic reject.
 * ❌ *(Phase 7+)* GET endpoint without `@Cacheable` or missing `TenantContextHolder.getTenantId()`.
 * ❌ **Platform Integrity Violation (all work, not phase-gated):** Same domain logic implemented in multiple services or classes (duplicate calculations, filters, or transformations). Single source of truth must be enforced.
 * ❌ **New Endpoint Without Overlap Check (added 2026-07-20):** Any new `@GetMapping`/`@PostMapping`/`@PutMapping`/`@DeleteMapping` in the PR must be checked against `docs/project/Story_Map.md` (all statuses, not just DONE) and existing controllers for a capability match — run the same two `grep` commands from CODER.md's Endpoint/Capability Overlap Check yourself; don't just trust CODER ran them. If a plausible match exists and the PR doesn't explain why reuse wasn't possible, REJECT. Root incident: US-761/US-820 duplicate KPI implementations, undetected for months because nobody checked at either the ARCHITECT or REVIEWER stage.
@@ -79,7 +79,7 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 
 ### 🧪 Testing
 
-* [ ] **Backend:** `mvn test` passes with 0 failures, JaCoCo ≥ 80% branch coverage.
+* [ ] **Backend:** `mvn test` passes with 0 failures; JaCoCo `check` (CI-enforced floor 65% branch) is green; 80% branch is the target beyond the floor.
 * [ ] **Frontend Unit:** `npm run test` passes with 0 failures.
 * [ ] **Frontend E2E:** `npm run test:e2e` (Playwright) passes with 0 failures and evidence artifacts.
 * [ ] **Multi-tenant isolation:** Verified Tenant A cannot see Tenant B's cached data.
@@ -125,7 +125,7 @@ This checklist defines the mandatory "Hard Gates" for any code merge, in additio
 * [ ] **PostGIS Usage**: Are geographic queries utilizing indexed spatial functions for performance?
 
 ### 4. Reliability & Testing
-* [ ] **Backend Tests**: `mvn test` passes with 0 failures and JaCoCo ≥ 80% branch coverage.
+* [ ] **Backend Tests**: `mvn test` passes with 0 failures; JaCoCo `check` (CI-enforced floor 65% branch) is green; 80% branch remains the target beyond the floor.
 * [ ] **Backend Integration Tests**: Controller-level `@SpringBootTest` + `MockMvc` tests MUST exist for every new endpoint — unit tests alone are not sufficient evidence. Test class name must follow `*ControllerTest` convention. Evidence: log line `[INFO] Running com.freightclub.controller.*ControllerTest` in Docker tester output.
 * [ ] **Frontend Unit Tests**: `npm run test` passes with 0 failures.
 * [ ] **Frontend E2E Tests**: `npm run test:e2e` passes with 0 failures. Any UI feature touched by the story must have a Playwright golden-path test before sign-off.

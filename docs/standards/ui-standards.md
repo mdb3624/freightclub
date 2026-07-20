@@ -154,6 +154,7 @@ const bronzeButtonStyle: React.CSSProperties = {
 ## Data Fetching
 
 - All API calls wrapped in custom React Query hooks (e.g., `useLoadBoard`)
+- Use the global `ErrorBoundary` in `App.tsx` for component-level resilience
 - All API paths: relative (e.g., `/api/v1/...`) — never hardcoded host
 - `apiClient` already has `baseURL: '/api/v1'` — never include `/api/v1/` prefix in path args
 - `@RequestParam` backend binding → `params: { key: val }` in axios (null body)

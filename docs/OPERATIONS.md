@@ -141,7 +141,9 @@ exit 0
 Set-Content -Path ".git\hooks\pre-commit" -Value $hookContent -Encoding UTF8
 ```
 
-**Note (2026-07-19):** The `.git/hooks/pre-commit` actually installed in this repo currently only validates `Story_Map.md` — it does NOT run the branch-blocking script above. This snippet is the intended/documented behavior, not the current behavior. See `⚠️ Known Doc/Reality Gaps` in root `CLAUDE.md`.
+**Note (2026-07-20):** `.git/hooks/pre-commit` now runs the branch-blocking script above (added ahead of the existing `Story_Map.md` check) — but only in clones where someone has applied it. `.git/hooks/` is never version-controlled, so this fix does not ship via `git pull`; every clone/machine needs the setup script above run once, manually.
+
+**Commit message format:** `.git/hooks/commit-msg` (also untracked, also needs manual setup per-clone) requires every commit message to start with `type(US-XXX):` — e.g. `feat(US-501):`, `fix(US-501):`, `chore(US-501):`. For governance/process/meta work with no story ID (like this doc restructure), the accepted prefix is `chore(GOVERNANCE):`. If a fresh clone's hook rejects that prefix, it means the hook predates this convention — edit the regex in `.git/hooks/commit-msg` to add `|GOVERNANCE` to the allowed pattern, matching what's shown in the commit history for PRs #56-#59.
 
 ### Layer 3: Mandatory Pre-Commit Workflow Checklist
 

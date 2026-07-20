@@ -223,3 +223,27 @@ Known separate issue, flagged but explicitly out of scope: `/carriers` (`Carrier
 - [x] PR #52 merged to `main`
 
 **Status:** ✅ AC-1 (backend) REVIEWER PASS. US-856 as a whole remains IN_PROGRESS pending AC-2–AC-5 (frontend lane-tag rendering) — not yet DONE.
+
+---
+
+## LIBRARIAN_SIGN_OFF: US-820 Follow-up (Active Shipments KPI Fix + Query Consolidation) — 2026-07-20
+
+**Origin:** Real production bug, reported live by the user and reproduced directly against `mdbfreightclub.com` (`hongci@gmail.com`): a freshly-posted, unclaimed load showed "1 loads" in the Shipment Status panel but "0" in the Active Shipments KPI tile on the same dashboard.
+
+**Full lifecycle:** Initial diagnosis went to the wrong place — grepped for a plausibly-named service (`DashboardSummaryService`) instead of checking the browser's actual network request first, built an RLS/transaction-boundary theory, wrote a test, and deployed an unverified fix to production before discovering (via `browser_network_requests`) that the frontend actually calls a completely different, live endpoint (`KPISummaryService`/`/shipper/dashboard/kpi-summary`) — `DashboardSummaryService` was dead code from a stalled Phase 7 story (US-761) that never shipped. Root cause: `KPISummaryService` excluded `OPEN` loads from its "active" count while the Shipment Status panel included them — two independently-written status filters had drifted. Fixed the filter, then — per explicit user request to prevent recurrence — introduced `LoadQueryService.findDashboardLoads(tenantId)` as the single shared query both services now depend on. Retired the dead US-761 path entirely. A retroactive sweep for other zero-importer frontend hooks found and removed 3 more (`useAvailableStates`, `useLoadCounts`, `useActionZone`). Tightened `ARCHITECT.md`/`CODER.md`/`REVIEWER.md` reuse-check gates (non-phase-gated, mandatory grep-based overlap check at design/pre-implementation/pre-merge).
+
+**REVIEWER checklist:**
+- Sequential Lock: PASS (ARCH design doc written retroactively before continuing implementation — flagged as a process gap and corrected, not repeated)
+- Field Contract Table / Visual evidence: N/A, justified (backend-only, zero UI surface touched)
+- Code quality: PASS (clean compile, no unused imports, constructor injection, low complexity)
+- Testing: 924/924 backend (Docker), 288/288 frontend, clean `tsc`, clean prod build; `KPISummaryServiceTest`/`KPISummaryControllerTest` added (zero coverage existed on this live endpoint before this fix)
+- CI: `gh pr checks 54` — all 9 checks green (not local-evidence-only)
+
+**LIBRARIAN verification:**
+- [x] Sign-off memo: `docs/project/LIBRARIAN_SIGN_OFF_US820_KPI_ACTIVE_FIX.md`
+- [x] Story_Map.md US-820/US-761 rows updated
+- [x] Design doc: `docs/architecture/US-820_KPI_Shipment_Status_Consolidation_Design.md`
+- [x] PR #53 (US-856 sign-off, discovered still open during this closeout) merged first to avoid a stale-base surprise
+- [ ] PR #54 merge + production deploy — in progress, this entry written before that step to keep the sign-off honest about sequencing
+
+**Status:** ⏳ REVIEWER PASS + LIBRARIAN verification complete; merge and production deploy next.

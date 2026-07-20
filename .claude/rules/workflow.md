@@ -10,3 +10,7 @@ When the work is clearly within scope of the current task — editing files, run
 - Significantly broader than what was asked
 
 For all other work, execute and report the outcome.
+
+## Flag Debt Outside Current Scope
+
+If you notice a standards violation (RLS missing, coverage gap, dangling reference, doc-vs-reality mismatch, etc.) that isn't part of the current task, don't silently drop it and don't derail the current task to fix it — note it in chat and/or the PR description as you finish. Full triage and Technical Debt Ledger logging is a Librarian-invocation action (`docs/roles/LIBRARIAN.md`), but noticing and surfacing it is universal — it shouldn't depend on Librarian being loaded in the session.

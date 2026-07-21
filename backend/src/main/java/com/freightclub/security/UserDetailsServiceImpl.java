@@ -1,8 +1,6 @@
 package com.freightclub.security;
 
-import com.freightclub.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,21 +11,23 @@ import java.util.List;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final LoginLookupRepository loginLookupRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserDetailsServiceImpl(LoginLookupRepository loginLookupRepository) {
+        this.loginLookupRepository = loginLookupRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        com.freightclub.domain.User user = userRepository.findByEmailAndDeletedAtIsNull(email)
+        LoginLookupCredentials credentials = loginLookupRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
-        return new User(
-                user.getEmail(),
-                user.getPasswordHash(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+        return new AuthenticatedUserPrincipal(
+                credentials.userId(),
+                credentials.tenantId(),
+                credentials.email(),
+                credentials.passwordHash(),
+                List.of(new SimpleGrantedAuthority("ROLE_" + credentials.role().name()))
         );
     }
 }

@@ -57,6 +57,14 @@ class LoadQueryServiceTest {
     @BeforeEach
     void setup() {
         tenantId = "t" + System.nanoTime();
+        shipperId = "s" + System.nanoTime();
+
+        // US-858: bind tenant context BEFORE any RLS-protected save, not after — the
+        // shipper INSERT below needs users_tenant_isolation's WITH CHECK to see a matching
+        // app.current_tenant, which only happens once TenantContextHolder is actually bound.
+        TenantContextHolder.setTenantId(tenantId);
+        TenantContextHolder.setUserId(shipperId);
+
         // Create tenant before creating loads
         Tenant tenant = new Tenant();
         tenant.setId(tenantId);
@@ -65,7 +73,6 @@ class LoadQueryServiceTest {
         em.flush();  // Ensure tenant is persisted
 
         // Create shipper user for this tenant
-        shipperId = "s" + System.nanoTime();
         User shipper = new User(shipperId);
         shipper.setTenantId(tenantId);
         shipper.setEmail(shipperId + "@test.local");
@@ -75,9 +82,6 @@ class LoadQueryServiceTest {
         shipper.setLastName("Shipper");
         userRepository.save(shipper);
         em.flush();  // Ensure shipper is persisted
-
-        TenantContextHolder.setTenantId(tenantId);
-        TenantContextHolder.setUserId(shipperId);
 
         // Set PostgreSQL session variable for RLS policies (false = session-level, persists across transactions)
         em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, false)")
@@ -337,7 +341,11 @@ class LoadQueryServiceTest {
         t2.setName("Tenant 2");
         tenantRepository.save(t2);
 
-        String shipper2 = "s" + System.nanoTime();
+        // US-858: bind tenant2 context BEFORE saving its user — the INSERT's WITH CHECK
+        // needs app.current_tenant to already match tenant2, not tenant1 (the prior value).
+        TenantContextHolder.setTenantId(tenant2);
+        TenantContextHolder.setUserId("s" + System.nanoTime());
+        String shipper2 = TenantContextHolder.getCurrentUserId();
         User u2 = new User(shipper2);
         u2.setTenantId(tenant2);
         u2.setEmail(shipper2 + "@test.local");
@@ -347,8 +355,6 @@ class LoadQueryServiceTest {
         u2.setLastName("Shipper2");
         userRepository.save(u2);
 
-        TenantContextHolder.setTenantId(tenant2);
-        TenantContextHolder.setUserId(shipper2);
         em.createNativeQuery("SELECT set_config('app.current_tenant', :tid, false)")
                 .setParameter("tid", tenant2)
                 .getSingleResult();

@@ -22,9 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * are correctly configured), not enforcement (which requires non-superuser role).
  *
  * Actual RLS enforcement is verified by:
- * 1. Application code setting app.current_tenant via RlsStatementInspector
+ * 1. Application code setting app.current_tenant via TenantAwareDataSource (US-858 —
+ *    replaces the previous RlsStatementInspector, which was never wired into Hibernate and
+ *    whose technique was independently broken for parameterized statements)
  * 2. Production deployments using freightclub_runtime role (not superuser)
- * 3. Integration tests in staging/prod environments
+ * 3. TenantIsolationEnforcementTest (real cross-tenant enforcement, not just policy existence)
  */
 @SpringBootTest
 @ActiveProfiles("test")
@@ -126,13 +128,14 @@ class RLSPoliciesTest {
     }
 
     // ═════════════════════════════════════════════════════════════════════════════
-    // SEC-002-AC-002: Verify RlsStatementInspector prepends SET LOCAL
+    // SEC-002-AC-002: Verify TenantAwareDataSource is wired as the primary DataSource
     // ═════════════════════════════════════════════════════════════════════════════
     @Test
-    void testRlsStatementInspectorConfigured() {
-        // Verify the RlsStatementInspector bean exists and is configured
-        // This ensures every SQL statement will have app.current_tenant set
-        // The actual RLS enforcement is verified at the PostgreSQL level above
-        assertNotNull(dataSource, "DataSource should be configured for RLS");
+    void testTenantAwareDataSourceConfigured() {
+        // Confirms the DataSource Hibernate/JPA actually uses is the tenant-aware wrapper
+        // (US-858) — real per-transaction SET LOCAL enforcement is verified by
+        // TenantIsolationEnforcementTest, not here.
+        assertInstanceOf(com.freightclub.config.TenantAwareDataSource.class, dataSource,
+                "Primary DataSource must be TenantAwareDataSource for RLS context to apply");
     }
 }

@@ -11,6 +11,9 @@ spring:
     baseline-on-migrate: true
     validate-on-migrate: false
     out-of-order: true
+    placeholders:
+      login_lookup_password: ${DB_LOGIN_PASSWORD}
+      runtime_password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -24,6 +27,9 @@ app:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:https://freightclub.app,https://freightclub-frontend-5gecbdg27a-uc.a.run.app}
   cookie:
     secure: true
+  login-lookup:
+    username: ${DB_LOGIN_USER:freightclub_login_lookup}
+    password: ${DB_LOGIN_PASSWORD}
   storage:
     gcs-bucket: ${GCS_BUCKET_NAME:freightclub-documents-prod}
   jwt:

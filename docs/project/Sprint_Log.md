@@ -247,3 +247,52 @@ Known separate issue, flagged but explicitly out of scope: `/carriers` (`Carrier
 - [ ] PR #54 merge + production deploy — in progress, this entry written before that step to keep the sign-off honest about sequencing
 
 **Status:** ⏳ REVIEWER PASS + LIBRARIAN verification complete; merge and production deploy next.
+
+---
+
+## LIBRARIAN_SIGN_OFF: US-858 (RLS Write-Path Investigation & Complete BYPASSRLS Revocation) — 2026-07-22
+
+**Origin:** Direct follow-up to US-857's deferred AC-1. Mid-verification of that story, revoking `BYPASSRLS` from `freightclub_runtime` caused `new row violates row-level security policy` on INSERT even with `TenantContextHolder` correctly bound — suspected the `RlsStatementInspector` mechanism never actually worked. Deferred to this story rather than guessed at.
+
+**Full lifecycle:** Confirmed via direct JDBC reproduction that `RlsStatementInspector` was dead code (never wired into Hibernate via any `HibernatePropertiesCustomizer`) and its SQL-string-concatenation `SET LOCAL` technique is independently broken for parameterized statements — RLS write-path enforcement never worked for any table, for the life of the project. Replaced with `TenantAwareDataSource` (applies `SET LOCAL app.current_tenant` at connection acquisition) + `TenantContextHolder` re-applying/resetting it on the active transaction's connection whenever tenant context changes mid-transaction. Root-caused and fixed a deferred-write bug that surfaced across ~15 test fixtures once `BYPASSRLS` was genuinely revoked: Hibernate's write-behind queues `repository.save()` until the next flush point, so a context switch or `clear()` before that flush let the write land under the wrong (or unbound) tenant — fixed centrally by flushing the Hibernate session before every `SET LOCAL`/`RESET`, rather than patching each call site. Also found and fixed a real AC-4 fail-closed gap: `clear()` only cleared the ThreadLocal, leaving a stale `app.current_tenant` in effect on an already-open transaction.
+
+Per explicit user correction mid-session ("this is starting to feel like a lot of hacking instead of a systematic approach"), switched from reactive per-test patching to full-suite root-cause investigation before declaring done.
+
+**Post-push discoveries (same session, same PR):** `gh pr checks` showed CI red despite a fully green local Docker suite — `ci.yml` had never been updated for US-857's login-lookup dual-datasource split (`DB_LOGIN_PASSWORD` unset, no usable default) and both jobs' postgres service bootstrapped AS `freightclub_runtime` itself (a superuser, making RLS enforcement moot in CI regardless). This was the first PR to ever exercise this code path through GitHub Actions, since US-857 itself never merged to `main`. Fixed `ci.yml` to mirror `docker-compose.test.yml`'s already-correct env/role split. That in turn unblocked E2E, which then failed for real: `loads_tenant_isolation` (predates this story, from `V20260422_11`) blocked the load board from showing any cross-tenant OPEN load — a genuine marketplace-visibility gap masked since day one by the same blanket `BYPASSRLS`. Fixed the SELECT-side policy (`V20260722_0100`); the identical gap on the WRITE side (claim/pickup/delivery) is flagged as HIGH-priority technical debt, not silently fixed inline — see Technical Debt Ledger.
+
+**REVIEWER checklist:**
+- Sequential Lock: PASS (no backward requests; direct continuation of US-857's own deferred AC)
+- Field Contract Table / Visual evidence: N/A, justified (backend/security-only, zero UI surface touched)
+- Security & Data Integrity: PASS — RLS now genuinely enforced (not bypassed) on every core table; write-path mechanism verified via direct JDBC repro and 5x stress-test passes on the previously-flaky reproduction
+- Code quality: PASS (clean compile, constructor injection, no unused imports, no method over CC 10)
+- Testing: 940/940 backend (Docker Pre-Test Protocol), 0 failures/errors
+- CI: `gh pr checks 62` — all checks green including E2E (verified after the two follow-up fixes above, not local-evidence-only)
+
+**LIBRARIAN verification:**
+- [x] Story_Map.md US-858 row updated to DONE with full disposition; US-857 updated to DONE (its deferred AC-1 is now complete)
+- [x] Technical Debt Ledger (`.claude/learnings.md`) updated with the HIGH-priority cross-tenant write-authorization gap (claim/pickup/delivery), explicitly scoped out of this story
+- [x] Traceability: `docs/business/stories/US-858_RLS_Write_Path_Investigation.md`, migrations `V20260721_1405`/`V20260721_1407`/`V20260722_0100`
+- [x] PR #62 (`feature/US-858-rls-write-path-investigation` → `main`) — all CI checks green
+
+**Status:** ✅ REVIEWER PASS + LIBRARIAN verification complete. Proceeding to merge and production deploy.
+
+---
+
+## Production Deployment & Smoke Test: US-858 — 2026-07-22
+
+**PR #62 merged to `main`.** First production deploy attempt surfaced three real, previously-latent issues via a genuine functional smoke test (register → login → create load → cross-tenant load-board visibility) run against `https://freightclub-backend-5gecbdg27a-uc.a.run.app` — not just a health-check ping. Each was root-caused, fixed, covered by its own PR through the normal branch/CI/merge flow, and redeployed before the smoke test was considered complete:
+
+1. **Production `DB_USERNAME`/`DB_PASSWORD` pointed at `neondb_owner`** — the actual Postgres superuser — for the app's own runtime connection, meaning RLS has been unconditionally bypassed in production since deploy infra was first set up, independent of any `BYPASSRLS` role attribute. This made all of US-858's RLS enforcement work moot in the one environment that matters most. Fixed (PR #63, folded together with #2 below): new Secret Manager secrets (`FLYWAY_DB_USERNAME`/`PASSWORD` = `neondb_owner`, `DB_LOGIN_USER`/`PASSWORD`), `DB_USERNAME`/`DB_PASSWORD` versions updated to real `freightclub_runtime` credentials, `deploy-prod.ps1` updated to wire all of them via `--set-secrets`.
+2. **`document_audit_log`'s RLS policies used the stale `app.tenant_id` GUC name** in production — fixed in the migration file's content back on 2026-05-22, but Flyway never re-runs an already-applied migration when its file changes, so production (migrated 2026-05-06, before the fix) silently kept the broken version forever while every freshly-migrated environment got it for free. 500'd `POST /api/v1/loads` in production. Fixed via new forward migration `V20260722_0200` (PR #63).
+3. **`TestAuthController` had zero enforcement of its own "non-production only" docstring** — `/api/test/**` is `permitAll()`, and the controller had no `@Profile`/`@ConditionalOnProperty` gate, so anyone could unauthenticated-ly create arbitrary users or soft-delete any user by id in production. Discovered via this story's own smoke-test cleanup calls unexpectedly succeeding in prod. Fixed with `@Profile("!prod")` (PR #64). 8 stray smoke-test users + 3 test loads created during verification were cleaned up via direct admin DB connection (not the now-gated test endpoint).
+
+**Final smoke test (after all three fixes deployed), full pass:**
+- Health check: 200
+- `/api/test/auth/register` in production: confirmed gated (route no longer resolves)
+- Register shipper: 201; Register trucker: 201; Login: 200
+- Shipper creates a load: 201
+- Trucker views load board, sees the shipper's (different-tenant) OPEN load: 200, present — confirms both the RLS write-path fix and the marketplace-visibility SELECT policy fix (`V20260722_0100`) work against real production data, not just CI
+
+**PRs:** #62 (US-858 core), #63 (document_audit_log policy + prod secret split), #64 (TestAuthController prod gate). All merged to `main`, all deployed, all CI green.
+
+**Status:** ✅ DONE. Deployed to production and verified via functional smoke test, not just a health check.

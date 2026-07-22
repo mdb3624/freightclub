@@ -9,8 +9,14 @@ import com.freightclub.exception.EmailAlreadyExistsException;
 import com.freightclub.exception.InvalidJoinCodeException;
 import com.freightclub.repository.TenantRepository;
 import com.freightclub.repository.UserRepository;
+import com.freightclub.security.AuthenticatedUserPrincipal;
 import com.freightclub.security.JwtService;
+import com.freightclub.security.LoginLookupCredentials;
+import com.freightclub.security.LoginLookupRepository;
 import com.freightclub.security.RefreshTokenService;
+import com.freightclub.security.TenantContextHolder;
+import com.freightclub.security.TenantLookupResult;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,9 +26,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +44,7 @@ class AuthServiceTest {
 
     @Mock private UserRepository userRepository;
     @Mock private TenantRepository tenantRepository;
+    @Mock private LoginLookupRepository loginLookupRepository;
     @Mock private JwtService jwtService;
     @Mock private RefreshTokenService refreshTokenService;
     @Mock private PasswordEncoder passwordEncoder;
@@ -43,6 +52,14 @@ class AuthServiceTest {
 
     @InjectMocks
     private AuthService authService;
+
+    @AfterEach
+    void clearTenantContext() {
+        // AuthService binds/clears TenantContextHolder itself, but a thrown exception mid-test
+        // (e.g. the bad-credentials case) can still leave state if a future refactor removes
+        // the finally block — belt and suspenders against leaking into the next test.
+        TenantContextHolder.clear();
+    }
 
     // -------------------------------------------------------------------------
     // Helpers
@@ -79,14 +96,6 @@ class AuthServiceTest {
         return user;
     }
 
-    private Tenant makeTenant(String id, String name) {
-        Tenant tenant = new Tenant();
-        setField(tenant, "id", id);
-        tenant.setName(name);
-        tenant.setJoinCode("ABCD1234");
-        return tenant;
-    }
-
     private static void setField(Object target, String name, Object value) {
         try {
             Field f = target.getClass().getDeclaredField(name);
@@ -95,6 +104,13 @@ class AuthServiceTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private AuthenticatedUserPrincipal makePrincipal(String userId, String tenantId, String email, UserRole role) {
+        return new AuthenticatedUserPrincipal(
+                userId, tenantId, email, "hashed-password",
+                List.of(new SimpleGrantedAuthority("ROLE_" + role.name()))
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -106,7 +122,7 @@ class AuthServiceTest {
 
         @Test
         void createsNewTenant_whenCompanyNameProvided() {
-            when(userRepository.existsByEmail(anyString())).thenReturn(false);
+            when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
             when(tenantRepository.save(any())).thenAnswer(inv -> {
                 Tenant t = inv.getArgument(0);
                 setField(t, "id", "tenant-new");
@@ -126,13 +142,14 @@ class AuthServiceTest {
             assertThat(result.rawRefreshToken()).isEqualTo("refresh-token");
             assertThat(result.user().getEmail()).isEqualTo("shipper@example.com");
             assertThat(result.user().getRole()).isEqualTo(UserRole.SHIPPER);
+            assertThat(result.user().getTenantId()).isEqualTo("tenant-new");
             verify(tenantRepository).save(any());
             verify(userRepository).save(any());
+            verify(loginLookupRepository, never()).findTenantByJoinCode(anyString());
         }
 
         @Test
-        void joinsExistingTenant_whenJoinCodeProvided() {
-            Tenant existing = makeTenant("tenant-existing", "Existing Corp");
+        void joinsExistingTenant_viaLoginLookupRepository_whenJoinCodeProvided() {
             RegisterRequest joinRequest = new RegisterRequest(
                     "new@example.com", "password123",
                     "Charlie", "Brown",
@@ -141,8 +158,9 @@ class AuthServiceTest {
                     null, null, null
             );
 
-            when(userRepository.existsByEmail(anyString())).thenReturn(false);
-            when(tenantRepository.findByJoinCode("ABCD1234")).thenReturn(Optional.of(existing));
+            when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
+            when(loginLookupRepository.findTenantByJoinCode("ABCD1234"))
+                    .thenReturn(Optional.of(new TenantLookupResult("tenant-existing", "ABCD1234", "Existing Corp", "FREE")));
             when(userRepository.save(any())).thenAnswer(inv -> {
                 User u = inv.getArgument(0);
                 setField(u, "id", "user-joined");
@@ -155,11 +173,41 @@ class AuthServiceTest {
 
             assertThat(result.user().getTenantId()).isEqualTo("tenant-existing");
             verify(tenantRepository, never()).save(any());
+            // Registration's tenant lookup by join code must go through the pre-auth path,
+            // not the JPA repository (which has no tenant context to satisfy RLS with here).
+            verify(tenantRepository, never()).findByJoinCode(anyString());
+        }
+
+        @Test
+        void bindsAndClearsTenantContext_aroundUserSave() {
+            when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
+            when(tenantRepository.save(any())).thenAnswer(inv -> {
+                Tenant t = inv.getArgument(0);
+                setField(t, "id", "tenant-ctx-check");
+                return t;
+            });
+            when(userRepository.save(any())).thenAnswer(inv -> {
+                // The whole point of AC-1's fix: this save must succeed under
+                // users_tenant_isolation's WITH CHECK, which requires tenant context to be
+                // bound at the moment of the write.
+                assertThat(TenantContextHolder.getTenantId()).isEqualTo("tenant-ctx-check");
+                User u = inv.getArgument(0);
+                setField(u, "id", "user-ctx-check");
+                return u;
+            });
+            when(jwtService.generateAccessToken(any())).thenReturn("token");
+            when(refreshTokenService.createRefreshToken("user-ctx-check")).thenReturn("refresh");
+
+            authService.register(shipperRegisterRequest());
+
+            assertThatThrownBy(TenantContextHolder::getTenantId)
+                    .as("context must be cleared after register() returns")
+                    .isInstanceOf(IllegalStateException.class);
         }
 
         @Test
         void setsMcAndDotNumber_forTrucker() {
-            when(userRepository.existsByEmail(anyString())).thenReturn(false);
+            when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
             when(tenantRepository.save(any())).thenAnswer(inv -> {
                 Tenant t = inv.getArgument(0);
                 setField(t, "id", "tenant-new");
@@ -181,7 +229,7 @@ class AuthServiceTest {
 
         @Test
         void throws_whenEmailAlreadyExists() {
-            when(userRepository.existsByEmail("shipper@example.com")).thenReturn(true);
+            when(loginLookupRepository.existsByEmail("shipper@example.com")).thenReturn(true);
 
             assertThatThrownBy(() -> authService.register(shipperRegisterRequest()))
                     .isInstanceOf(EmailAlreadyExistsException.class);
@@ -197,8 +245,8 @@ class AuthServiceTest {
                     null, null, null
             );
 
-            when(userRepository.existsByEmail(anyString())).thenReturn(false);
-            when(tenantRepository.findByJoinCode("BADCODE")).thenReturn(Optional.empty());
+            when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
+            when(loginLookupRepository.findTenantByJoinCode("BADCODE")).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> authService.register(joinRequest))
                     .isInstanceOf(InvalidJoinCodeException.class);
@@ -214,7 +262,7 @@ class AuthServiceTest {
                     null, null, null
             );
 
-            when(userRepository.existsByEmail(anyString())).thenReturn(false);
+            when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
 
             assertThatThrownBy(() -> authService.register(invalid))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -232,7 +280,10 @@ class AuthServiceTest {
         void returnsTokens_onValidCredentials() {
             User user = makeUser("user-1", "shipper@example.com", UserRole.SHIPPER);
             LoginRequest request = new LoginRequest("shipper@example.com", "password123");
+            AuthenticatedUserPrincipal principal = makePrincipal("user-1", "tenant-1", "shipper@example.com", UserRole.SHIPPER);
 
+            when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                    .thenReturn(new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities()));
             when(userRepository.findByEmailAndDeletedAtIsNull("shipper@example.com"))
                     .thenReturn(Optional.of(user));
             when(jwtService.generateAccessToken(user)).thenReturn("access-token");
@@ -243,6 +294,28 @@ class AuthServiceTest {
             assertThat(result.accessToken()).isEqualTo("access-token");
             assertThat(result.rawRefreshToken()).isEqualTo("refresh-token");
             verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        }
+
+        @Test
+        void bindsTenantContext_fromAuthenticatedPrincipal_beforeProfileLookup() {
+            User user = makeUser("user-1", "shipper@example.com", UserRole.SHIPPER);
+            LoginRequest request = new LoginRequest("shipper@example.com", "password123");
+            AuthenticatedUserPrincipal principal = makePrincipal("user-1", "tenant-from-login", "shipper@example.com", UserRole.SHIPPER);
+
+            when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                    .thenReturn(new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities()));
+            when(userRepository.findByEmailAndDeletedAtIsNull("shipper@example.com")).thenAnswer(inv -> {
+                assertThat(TenantContextHolder.getTenantId()).isEqualTo("tenant-from-login");
+                return Optional.of(user);
+            });
+            when(jwtService.generateAccessToken(user)).thenReturn("token");
+            when(refreshTokenService.createRefreshToken("user-1")).thenReturn("refresh");
+
+            authService.login(request);
+
+            assertThatThrownBy(TenantContextHolder::getTenantId)
+                    .as("context must be cleared after login() returns")
+                    .isInstanceOf(IllegalStateException.class);
         }
 
         @Test
@@ -271,6 +344,8 @@ class AuthServiceTest {
                     new RefreshTokenService.RotationResult("new-refresh-token", "user-1");
 
             when(refreshTokenService.rotateRefreshToken("old-refresh")).thenReturn(rotation);
+            when(loginLookupRepository.findUserById("user-1"))
+                    .thenReturn(Optional.of(new LoginLookupCredentials("user-1", "tenant-1", "shipper@example.com", "hash", UserRole.SHIPPER)));
             when(userRepository.findById("user-1")).thenReturn(Optional.of(user));
             when(jwtService.generateAccessToken(user)).thenReturn("new-access-token");
 
@@ -278,6 +353,40 @@ class AuthServiceTest {
 
             assertThat(result.accessToken()).isEqualTo("new-access-token");
             assertThat(result.rawRefreshToken()).isEqualTo("new-refresh-token");
+        }
+
+        @Test
+        void resolvesTenantViaLoginLookup_beforeProfileLookup() {
+            User user = makeUser("user-1", "shipper@example.com", UserRole.SHIPPER);
+            RefreshTokenService.RotationResult rotation =
+                    new RefreshTokenService.RotationResult("new-refresh-token", "user-1");
+
+            when(refreshTokenService.rotateRefreshToken("old-refresh")).thenReturn(rotation);
+            when(loginLookupRepository.findUserById("user-1"))
+                    .thenReturn(Optional.of(new LoginLookupCredentials("user-1", "tenant-refresh", "shipper@example.com", "hash", UserRole.SHIPPER)));
+            when(userRepository.findById("user-1")).thenAnswer(inv -> {
+                assertThat(TenantContextHolder.getTenantId()).isEqualTo("tenant-refresh");
+                return Optional.of(user);
+            });
+            when(jwtService.generateAccessToken(user)).thenReturn("token");
+
+            authService.refresh("old-refresh");
+
+            assertThatThrownBy(TenantContextHolder::getTenantId)
+                    .as("context must be cleared after refresh() returns")
+                    .isInstanceOf(IllegalStateException.class);
+        }
+
+        @Test
+        void throws_whenUserNotFoundViaLoginLookup() {
+            RefreshTokenService.RotationResult rotation =
+                    new RefreshTokenService.RotationResult("new-refresh-token", "user-gone");
+
+            when(refreshTokenService.rotateRefreshToken("old-refresh")).thenReturn(rotation);
+            when(loginLookupRepository.findUserById("user-gone")).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> authService.refresh("old-refresh"))
+                    .isInstanceOf(IllegalStateException.class);
         }
     }
 

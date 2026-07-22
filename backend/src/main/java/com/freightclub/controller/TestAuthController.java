@@ -6,9 +6,12 @@ import com.freightclub.dto.AuthResponse;
 import com.freightclub.dto.RegisterRequest;
 import com.freightclub.dto.UserResponse;
 import com.freightclub.repository.UserRepository;
+import com.freightclub.security.LoginLookupRepository;
+import com.freightclub.security.TenantContextHolder;
 import com.freightclub.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -26,18 +29,29 @@ import org.springframework.web.bind.annotation.RestController;
  * TEST-ONLY Authentication Controller for E2E tests.
  * Endpoint: POST /api/test/auth/register
  * Creates a test user and returns auth response with refresh token cookie.
- * Only available in non-production environments.
+ *
+ * US-858 (2026-07-22): the class docstring has claimed "Only available in non-production
+ * environments" since this controller was created, but nothing ever enforced it — no
+ * @Profile, no @ConditionalOnProperty — and /api/test/** is permitAll() in SecurityConfig.
+ * Discovered live in production via this story's own smoke test: an unauthenticated caller
+ * could create arbitrary users (POST /api/test/auth/register) or soft-delete ANY user by id
+ * (DELETE /api/test/auth/users/{id}) with zero authentication. @Profile("!prod") makes the
+ * docstring's claim actually true.
  */
 @RestController
 @RequestMapping("/api/test/auth")
+@Profile("!prod")
 public class TestAuthController {
 
   private final AuthService authService;
   private final UserRepository userRepository;
+  private final LoginLookupRepository loginLookupRepository;
 
-  public TestAuthController(AuthService authService, UserRepository userRepository) {
+  public TestAuthController(AuthService authService, UserRepository userRepository,
+      LoginLookupRepository loginLookupRepository) {
     this.authService = authService;
     this.userRepository = userRepository;
+    this.loginLookupRepository = loginLookupRepository;
   }
 
   public static class TestUserRequest {
@@ -100,9 +114,19 @@ public class TestAuthController {
 
   @DeleteMapping("/users/{userId}")
   public ResponseEntity<Void> deleteTestUser(@PathVariable String userId) {
-    userRepository.findById(userId).ifPresent(user -> {
-      user.setDeletedAt(LocalDateTime.now());
-      userRepository.save(user);
+    // /api/test/ is skipped by JwtAuthenticationFilter, so no tenant context is bound here —
+    // resolve it via the pre-auth login-lookup role first (US-858), same as every other
+    // cross-tenant read in the auth path, otherwise this silently no-ops under RLS.
+    loginLookupRepository.findUserById(userId).ifPresent(credentials -> {
+      TenantContextHolder.setTenantId(credentials.tenantId());
+      try {
+        userRepository.findById(userId).ifPresent(user -> {
+          user.setDeletedAt(LocalDateTime.now());
+          userRepository.save(user);
+        });
+      } finally {
+        TenantContextHolder.clear();
+      }
     });
     return ResponseEntity.noContent().build();
   }

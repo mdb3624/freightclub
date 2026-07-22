@@ -117,5 +117,104 @@ When marking a story "DONE", create a memo file: `docs/project/LIBRARIAN_SIGN_OF
 
 ---
 
-*Last updated: 2026-04-27*  
+## Change Request (CHG-###) Full Protocol (relocated from `.claude/rules/change-request-protocol.md`, 2026-07-19)
+
+The short trigger/4-step summary lives in `.claude/rules/change-request-protocol.md` (always loaded). This section is the full template, decision options, and examples — read it when actually deciding a CHG.
+
+### CHG Ticket Template
+
+```markdown
+## CHG-###: [Issue Title]
+
+**Original Story:** US-###
+**Discovered By:** [Role] on [date]
+**Root Cause:** [Why input is wrong/incomplete]
+**Technical Blocker:** [How it blocks implementation]
+
+**Options:**
+1. [Option A: quickest fix]
+2. [Option B: long-term solution]
+
+**Recommendation:** [Which option]
+
+**Next Steps:**
+1. [Role] reworks inputs
+2. [Role] reviews changes
+3. New story (US-###-v2) created for implementation
+
+**Status:** CHG-### OPEN (awaiting decision)
+**Assign to:** LIBRARIAN
+```
+
+### Decision Options
+
+- **OPTION A — Finish current story with current inputs:** CODER completes implementation; PR includes note "CHG-### tracked separately"; story completes (not blocked); CHG-### becomes a backlog item for next cycle.
+- **OPTION B — Create new story for rework:** Current story marked PAUSED (not DONE); CHG-### escalated to BA; BA creates new story (US-###-v2) with reworked inputs; ARCH/HFD review new story; CODER implements US-###-v2 fresh.
+
+**If LIBRARIAN is unavailable:** the role that hit the blocker marks the story "BLOCKED: CHG-###", files the ticket noting "Awaiting LIBRARIAN decision", and does NOT proceed with implementation, rework, or ask the previous role to change inputs directly.
+
+### Worked Examples
+
+**Quick fix (Option A):**
+```markdown
+## CHG-501: Stripe API Latency
+**Original Story:** US-500 (Quick Pay)
+**Discovered By:** CODER on 2026-05-30
+**Root Cause:** BA assumed <1min payout; Stripe API has 5-min latency
+**Blocker:** AC#1 impossible as written
+**Options:** 1. Accept 5-min latency in AC#1  2. Different payment provider  3. Async notification system
+**Recommendation:** Option 1
+**Decision:** LIBRARIAN: "Finish US-500 with Option 1 noted"
+Result: CODER completes US-500, PR references CHG-501
+```
+
+**Rework required (Option B):**
+```markdown
+## CHG-502: Schema Design Conflict
+**Original Story:** US-501 (Load Claiming)
+**Discovered By:** CODER on 2026-05-31
+**Root Cause:** ARCH FK constraint conflicts with multi-tenancy rules
+**Blocker:** Cannot implement RLS policy as designed
+**Options:** 1. Rework ARCH schema (affects other stories)  2. Intermediate lookup table  3. Defer to Phase 8
+**Recommendation:** Option 1 (impacts timeline)
+**Decision:** LIBRARIAN: "Create CHG-502, pause US-501, create US-501-v2"
+Result: US-501 paused, CHG-502 goes to ARCH, US-501-v2 created after rework
+```
+
+### Anti-Patterns
+
+| Anti-Pattern | Why Wrong | Correct Approach |
+|---|---|---|
+| CODER asks BA to rewrite AC | Circular loop | CODER escalates to LIBRARIAN |
+| CODER rewrites AC themselves | Violates role boundary | LIBRARIAN handles change decision |
+| ARCH redesigns without LIBRARIAN approval | Breaks sequential lock | ARCH escalates, waits for LIBRARIAN |
+| Story reworked mid-implementation | Indefinite rework cycle | New story created via CHG process |
+| Multiple feedback loops | Timeline explodes | One escalation, one CHG ticket |
+
+### Metrics (track to prevent CHG-protocol abuse)
+
+- Stories completing without CHG: target 85%
+- Stories with 1 CHG request: target 12%
+- Stories with 2+ CHG requests: target <3%
+- Time from CHG creation to LIBRARIAN decision: target <1 day
+
+### Enforcement
+
+- LIBRARIAN must acknowledge CHG within 1 business day.
+- Every CHG decision is logged in `Sprint_Log.md`.
+- CODER making backward requests (instead of escalating) = code review failure.
+
+---
+
+## Technical Debt Logging Protocol (relocated from `.claude/rules/debt-management.md`, 2026-07-19)
+
+**Trigger:** Whenever a file is read or code is proposed that violates standards in `ARCHITECTURE.md`, `.claude/rules/postgres-native.md`, or `docs/standards/ui-standards.md`.
+
+**Mandatory action:** Before providing the final answer, append a new row to the Technical Debt Ledger tagged `[DEBT:AUTO]`: `| Feature/File | Violation | Severity | Remediation Plan |`.
+
+**Conflict resolution:** If you're ~95% sure you found debt but aren't working on that specific feature, log it silently in the background and continue with the current task — don't derail the active story to chase it.
+
+---
+
+*Last updated: 2026-07-19*  
 *Applies to: All phases; Phase 7+ includes cache verification gate*

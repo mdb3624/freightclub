@@ -38,6 +38,9 @@ class DocumentAuditLogIsolationTest {
   @Autowired
   private JdbcTemplate jdbcTemplate;
 
+  @Autowired
+  private jakarta.persistence.EntityManager entityManager;
+
   private static final String TENANT_A = "tenant-audit-a";
   private static final String TENANT_B = "tenant-audit-b";
   private static final String USER_A = "user-audit-a";
@@ -53,17 +56,24 @@ class DocumentAuditLogIsolationTest {
     createTenantIfMissing(TENANT_A, "Audit Test Tenant A");
     createTenantIfMissing(TENANT_B, "Audit Test Tenant B");
 
-    // Create users
+    // Create users and loads (required by FK on load_documents.load_id) — both are RLS-checked
+    // against their own tenant_id, so context must be switched to match each before the raw
+    // INSERT, or it's rejected under real RLS (US-858).
+    TenantContextHolder.setTenantId(TENANT_A);
     createUserIfMissing(USER_A, "user-a@test.com", TENANT_A);
-    createUserIfMissing(USER_B, "user-b@test.com", TENANT_B);
-
-    // Create loads (required by FK on load_documents.load_id)
     createLoadIfMissing(LOAD_A, TENANT_A, USER_A);
+
+    TenantContextHolder.setTenantId(TENANT_B);
+    createUserIfMissing(USER_B, "user-b@test.com", TENANT_B);
     createLoadIfMissing(LOAD_B, TENANT_B, USER_B);
 
-    // Create documents (LoadDocuments)
+    // Create documents (LoadDocuments) — createLoadDocumentIfMissing's own findById() check
+    // triggers Hibernate's implicit auto-flush, which would flush DOC_A's still-pending
+    // insert under the WRONG (already-switched) tenant context without an explicit flush
+    // here first (US-858).
     TenantContextHolder.setTenantId(TENANT_A);
     createLoadDocumentIfMissing(DOC_A, LOAD_A, USER_A, TENANT_A);
+    entityManager.flush();
 
     TenantContextHolder.setTenantId(TENANT_B);
     createLoadDocumentIfMissing(DOC_B, LOAD_B, USER_B, TENANT_B);
@@ -85,16 +95,25 @@ class DocumentAuditLogIsolationTest {
   }
 
   private void createTenantIfMissing(String tenantId, String name) {
-    jdbcTemplate.update(
-        "INSERT INTO tenants (id, name) VALUES (?, ?) ON CONFLICT (id) DO NOTHING",
-        tenantId, name);
+    // US-858: ON CONFLICT DO NOTHING fails under RLS even for a brand-new id — Postgres's
+    // conflict-check needs SELECT visibility that tenants_select (scoped to the caller's own
+    // tenant) denies. Match createLoadIfMissing's existing check-then-insert pattern instead.
+    Integer count = jdbcTemplate.queryForObject(
+        "SELECT COUNT(*) FROM tenants WHERE id = ?", Integer.class, tenantId);
+    if (count == null || count == 0) {
+      jdbcTemplate.update("INSERT INTO tenants (id, name) VALUES (?, ?)", tenantId, name);
+    }
   }
 
   private void createUserIfMissing(String userId, String email, String tenantId) {
-    jdbcTemplate.update(
-        "INSERT INTO users (id, tenant_id, email, password_hash, role, first_name, last_name) " +
-        "VALUES (?, ?, ?, '$2a$10$testpassword', 'SHIPPER', 'Test', 'User') ON CONFLICT (id) DO NOTHING",
-        userId, tenantId, email);
+    Integer count = jdbcTemplate.queryForObject(
+        "SELECT COUNT(*) FROM users WHERE id = ?", Integer.class, userId);
+    if (count == null || count == 0) {
+      jdbcTemplate.update(
+          "INSERT INTO users (id, tenant_id, email, password_hash, role, first_name, last_name) " +
+          "VALUES (?, ?, ?, '$2a$10$testpassword', 'SHIPPER', 'Test', 'User')",
+          userId, tenantId, email);
+    }
   }
 
   private void createLoadDocumentIfMissing(String docId, String loadId, String userId, String tenantId) {

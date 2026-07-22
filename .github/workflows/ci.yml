@@ -15,8 +15,12 @@ jobs:
       postgres:
         image: postgis/postgis:16-3.4
         env:
-          POSTGRES_USER: freightclub_runtime
-          POSTGRES_PASSWORD: freightclub
+          # US-858: bootstrap superuser, used only for Flyway (CREATE ROLE/POLICY, GRANT).
+          # Deliberately NOT named freightclub_runtime — superusers bypass RLS unconditionally
+          # regardless of BYPASSRLS, so running the app as this user would make every RLS
+          # test pass for the wrong reason. Mirrors docker-compose.test.yml's test-db service.
+          POSTGRES_USER: freightclub_test_admin
+          POSTGRES_PASSWORD: freightclub_admin
           POSTGRES_DB: freightclub_test
         options: >-
           --health-cmd pg_isready
@@ -40,9 +44,22 @@ jobs:
         working-directory: backend
         run: mvn test
         env:
-          DB_USERNAME: freightclub_runtime
-          DB_PASSWORD: freightclub
+          # US-858: mirrors docker-compose.test.yml's backend-tester service exactly — app
+          # traffic runs as the real, non-superuser freightclub_runtime (RLS actually applies);
+          # Flyway runs as the bootstrap superuser (needs DDL/role-management privileges the
+          # runtime role doesn't have); freightclub_login_lookup is the narrowly-scoped
+          # pre-auth role from V20260721_1400. This job never previously set any of these,
+          # which only surfaced once a PR built on the login-lookup/RLS work actually ran CI.
+          SPRING_PROFILES_ACTIVE: test
           DB_URL: jdbc:postgresql://localhost:5432/freightclub_test?currentSchema=freightclub
+          DB_USERNAME: freightclub_runtime
+          DB_PASSWORD: freightclub_runtime_pw
+          FLYWAY_DB_USERNAME: freightclub_test_admin
+          FLYWAY_DB_PASSWORD: freightclub_admin
+          DB_LOGIN_USER: freightclub_login_lookup
+          DB_LOGIN_PASSWORD: freightclub_login
+          APP_JWT_SECRET: test-secret-32-chars-minimum-required-here
+          JWT_SECRET: test-secret-32-chars-minimum-required-here
 
       - name: Upload JaCoCo report
         if: always()
@@ -100,8 +117,10 @@ jobs:
       postgres:
         image: postgis/postgis:16-3.4
         env:
-          POSTGRES_USER: freightclub_runtime
-          POSTGRES_PASSWORD: freightclub
+          # US-858: see identical note in the `backend` job above — bootstrap superuser,
+          # not freightclub_runtime, or RLS enforcement in this job is moot too.
+          POSTGRES_USER: freightclub_test_admin
+          POSTGRES_PASSWORD: freightclub_admin
           POSTGRES_DB: freightclub_test
         options: >-
           --health-cmd pg_isready
@@ -146,11 +165,17 @@ jobs:
           done
           exit 1
         env:
+          # US-858: mirrors docker-compose.test.yml's backend-test service — see note in the
+          # `backend` job above.
           SPRING_PROFILES_ACTIVE: test
           PORT: 9091
           DB_URL: jdbc:postgresql://localhost:5432/freightclub_test?currentSchema=freightclub
           DB_USERNAME: freightclub_runtime
-          DB_PASSWORD: freightclub
+          DB_PASSWORD: freightclub_runtime_pw
+          FLYWAY_DB_USERNAME: freightclub_test_admin
+          FLYWAY_DB_PASSWORD: freightclub_admin
+          DB_LOGIN_USER: freightclub_login_lookup
+          DB_LOGIN_PASSWORD: freightclub_login
           APP_JWT_SECRET: test-secret-32-chars-minimum-required-here
           JWT_SECRET: test-secret-32-chars-minimum-required-here
 

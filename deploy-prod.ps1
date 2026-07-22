@@ -34,7 +34,15 @@ Write-Host ""
 
 # Secrets are bound as live Secret Manager references (--set-secrets), never
 # resolved to plaintext and baked into the revision spec.
-$SecretRefs = "DB_URL=DB_URL:latest,DB_USERNAME=DB_USERNAME:latest,DB_PASSWORD=DB_PASSWORD:latest,APP_JWT_SECRET=APP_JWT_SECRET:latest,JWT_SECRET=APP_JWT_SECRET:latest"
+#
+# US-858 (2026-07-22): DB_USERNAME/DB_PASSWORD now point at freightclub_runtime
+# (a real, non-superuser role) instead of neondb_owner — previously the app ran
+# every query AS the Postgres superuser in production, making all RLS policies
+# unconditionally bypassed regardless of BYPASSRLS, the exact same gap this story
+# just fixed in the test environment. FLYWAY_DB_USERNAME/PASSWORD (neondb_owner)
+# let Flyway keep doing DDL/role-management that freightclub_runtime can't.
+# DB_LOGIN_USER/PASSWORD is the narrowly-scoped pre-auth role from V20260721_1400.
+$SecretRefs = "DB_URL=DB_URL:latest,DB_USERNAME=DB_USERNAME:latest,DB_PASSWORD=DB_PASSWORD:latest,APP_JWT_SECRET=APP_JWT_SECRET:latest,JWT_SECRET=APP_JWT_SECRET:latest,FLYWAY_DB_USERNAME=FLYWAY_DB_USERNAME:latest,FLYWAY_DB_PASSWORD=FLYWAY_DB_PASSWORD:latest,DB_LOGIN_USER=DB_LOGIN_USER:latest,DB_LOGIN_PASSWORD=DB_LOGIN_PASSWORD:latest"
 
 $BackendUrl = "freightclub-backend-5gecbdg27a-uc.a.run.app"
 $BackendUrlAlt = "freightclub-backend-404925591110.us-central1.run.app"

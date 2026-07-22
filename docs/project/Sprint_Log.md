@@ -217,10 +217,11 @@ Known separate issue, flagged but explicitly out of scope: `/carriers` (`Carrier
 - [x] `docs/changes/CHG-858.md` created, status RESOLVED-in-code / deploy pending
 - [x] Story_Map.md US-855 row annotated with CHG-858 reference
 - [x] Traceability: no separate Story_Map row needed (CHG-858 is a fidelity fix against already-COMPLETED US-855, not a new story) — Option A (finish as-is, CHG tracked separately)
-- [ ] Production deploy — **not yet performed**, pending explicit user go-ahead (irreversible/visible action)
-- [x] PR #66 opened against `main` (2026-07-22)
+- [x] PR #66 opened against `main`, merged 2026-07-22 (squash, commit `2785b21b`)
+- [x] Production deploy — user explicitly authorized merge + deploy 2026-07-22. Backend: `freightclub-backend-00080-qjr` (image unchanged — no backend code in this fix). Frontend: `freightclub-frontend-00054-qsk`, image digest `sha256:9ef97dbaa80e72fab1d11a342a345a977df0ac0bcf460fa45588a22169ce8560`, serving 100% traffic.
+- [x] **Live production verification (not mocked):** backend `/actuator/health` → 200; frontend root → 200; served bundle confirmed as the exact locally-built/E2E-tested artifact (`assets/index-BOkdvYGR.js`); fetched that bundle directly from production and confirmed it contains `mike.barnes@mdbfreightclub.com`, `tel:+14049609621`, and `aria-modal` — the three fix markers — proving the deployed code is the tested code, not a stale or different build.
 
-**Status:** 🏗️ PR #66 OPEN, fully verified locally. NOT merged, NOT deployed. Awaiting user authorization for merge + production deploy.
+**Status:** ✅ DONE. Merged and deployed to production 2026-07-22 (`freightclub-frontend-00054-qsk`, `freightclub-backend-00080-qjr`). Live-verified.
 
 ---
 

@@ -57,7 +57,10 @@ public class AuthService {
     }
 
     public AuthResult register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.email())) {
+        // No tenant context yet — must check across all tenants, so this goes through
+        // freightclub_login_lookup, not the JPA path (which would silently always return
+        // false under RLS with no context bound, letting duplicate emails through).
+        if (loginLookupRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyExistsException(request.email());
         }
 
@@ -99,10 +102,10 @@ public class AuthService {
             user.setEquipmentType(request.equipmentType());
         }
 
-        // users_tenant_isolation's WITH CHECK requires tenant_id = app.current_tenant —
-        // bind it for this INSERT, same pattern JwtAuthenticationFilter uses for every
-        // other authenticated request, cleared in finally to avoid leaking into whatever
-        // runs next on this thread.
+        // users_tenant_isolation's WITH CHECK requires tenant_id = app.current_tenant — bind
+        // it for this INSERT, cleared in finally to avoid leaking into whatever runs next on
+        // this thread. setTenantId itself re-applies SET LOCAL to this transaction's already-
+        // open connection (register()'s transaction started before the tenant was known).
         TenantContextHolder.setTenantId(tenantId);
         try {
             userRepository.save(user);
@@ -124,7 +127,8 @@ public class AuthService {
 
         // Tenant context wasn't known until authentication succeeded (UserDetailsServiceImpl
         // resolved it via freightclub_login_lookup). Bind it now so the full-profile read
-        // below succeeds under users_tenant_isolation instead of needing a bypass.
+        // below succeeds under users_tenant_isolation — setTenantId re-applies SET LOCAL to
+        // this transaction's already-open connection itself (mid-transaction, like register()).
         User user;
         TenantContextHolder.setTenantId(principal.getTenantId());
         TenantContextHolder.setUserId(principal.getUserId());

@@ -41,6 +41,9 @@ class CarrierProfileServiceCachingTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private jakarta.persistence.EntityManager entityManager;
+
     private String tenantId = "tenant-test";
     private String truckerId = "trucker-1";
 
@@ -149,7 +152,10 @@ class CarrierProfileServiceCachingTest {
         String trucker2 = "trucker-2";
         String tenantB = "tenant-b";
 
-        // Create second tenant and user
+        // Create second tenant and user. tenants_insert allows the tenant row with no
+        // context bound, but trucker2's user row is RLS-checked against tenantB — creating
+        // it while context is still tenantId (from @BeforeEach) gets rejected under real
+        // RLS (US-858). Switch, flush, restore.
         if (!tenantRepository.findById(tenantB).isPresent()) {
             Tenant tenant = new Tenant();
             tenant.setId(tenantB);
@@ -157,6 +163,7 @@ class CarrierProfileServiceCachingTest {
             tenantRepository.save(tenant);
         }
         if (!userRepository.findById(trucker2).isPresent()) {
+            TenantContextHolder.setTenantId(tenantB);
             User user = new User(trucker2);
             user.setTenantId(tenantB);
             user.setEmail("trucker2@test.com");
@@ -165,6 +172,8 @@ class CarrierProfileServiceCachingTest {
             user.setFirstName("Test");
             user.setLastName("Trucker2");
             userRepository.save(user);
+            entityManager.flush();
+            TenantContextHolder.setTenantId(tenantId);
         }
 
         // Create equipment in tenant-a
@@ -182,6 +191,7 @@ class CarrierProfileServiceCachingTest {
         );
         service.addEquipment(truckerId, dto1);
         service.getEquipment(truckerId);
+        entityManager.flush();
 
         // Create equipment in tenant-b
         TenantContextHolder.setTenantId(tenantB);

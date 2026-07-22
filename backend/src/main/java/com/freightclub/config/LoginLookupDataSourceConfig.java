@@ -32,13 +32,18 @@ public class LoginLookupDataSourceConfig {
             @Value("${spring.datasource.username}") String username,
             @Value("${spring.datasource.password}") String password
     ) {
-        return DataSourceBuilder.create()
+        DataSource raw = DataSourceBuilder.create()
                 .type(HikariDataSource.class)
                 .url(url)
                 .username(username)
                 .password(password)
                 .driverClassName("org.postgresql.Driver")
                 .build();
+        // US-858: wraps every connection Hibernate/JPA obtains with SET LOCAL
+        // app.current_tenant, issued as its own statement. Replaces RlsStatementInspector,
+        // which never worked (never wired into Hibernate, and its string-concatenation
+        // technique is independently broken for parameterized statements).
+        return new TenantAwareDataSource(raw);
     }
 
     @Bean(name = "loginLookupDataSource")

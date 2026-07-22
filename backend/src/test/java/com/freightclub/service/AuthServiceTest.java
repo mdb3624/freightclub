@@ -122,7 +122,7 @@ class AuthServiceTest {
 
         @Test
         void createsNewTenant_whenCompanyNameProvided() {
-            when(userRepository.existsByEmail(anyString())).thenReturn(false);
+            when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
             when(tenantRepository.save(any())).thenAnswer(inv -> {
                 Tenant t = inv.getArgument(0);
                 setField(t, "id", "tenant-new");
@@ -158,7 +158,7 @@ class AuthServiceTest {
                     null, null, null
             );
 
-            when(userRepository.existsByEmail(anyString())).thenReturn(false);
+            when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
             when(loginLookupRepository.findTenantByJoinCode("ABCD1234"))
                     .thenReturn(Optional.of(new TenantLookupResult("tenant-existing", "ABCD1234", "Existing Corp", "FREE")));
             when(userRepository.save(any())).thenAnswer(inv -> {
@@ -180,7 +180,7 @@ class AuthServiceTest {
 
         @Test
         void bindsAndClearsTenantContext_aroundUserSave() {
-            when(userRepository.existsByEmail(anyString())).thenReturn(false);
+            when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
             when(tenantRepository.save(any())).thenAnswer(inv -> {
                 Tenant t = inv.getArgument(0);
                 setField(t, "id", "tenant-ctx-check");
@@ -207,7 +207,7 @@ class AuthServiceTest {
 
         @Test
         void setsMcAndDotNumber_forTrucker() {
-            when(userRepository.existsByEmail(anyString())).thenReturn(false);
+            when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
             when(tenantRepository.save(any())).thenAnswer(inv -> {
                 Tenant t = inv.getArgument(0);
                 setField(t, "id", "tenant-new");
@@ -229,7 +229,7 @@ class AuthServiceTest {
 
         @Test
         void throws_whenEmailAlreadyExists() {
-            when(userRepository.existsByEmail("shipper@example.com")).thenReturn(true);
+            when(loginLookupRepository.existsByEmail("shipper@example.com")).thenReturn(true);
 
             assertThatThrownBy(() -> authService.register(shipperRegisterRequest()))
                     .isInstanceOf(EmailAlreadyExistsException.class);
@@ -245,7 +245,7 @@ class AuthServiceTest {
                     null, null, null
             );
 
-            when(userRepository.existsByEmail(anyString())).thenReturn(false);
+            when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
             when(loginLookupRepository.findTenantByJoinCode("BADCODE")).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> authService.register(joinRequest))
@@ -262,7 +262,7 @@ class AuthServiceTest {
                     null, null, null
             );
 
-            when(userRepository.existsByEmail(anyString())).thenReturn(false);
+            when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
 
             assertThatThrownBy(() -> authService.register(invalid))
                     .isInstanceOf(IllegalArgumentException.class);

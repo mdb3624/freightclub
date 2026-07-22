@@ -24,6 +24,21 @@ public class LoginLookupRepository {
         this.loginLookupJdbcTemplate = loginLookupJdbcTemplate;
     }
 
+    /**
+     * US-858: existsByEmail runs before any tenant is known (register()'s duplicate-email
+     * check, same pre-auth moment as the login/join-code lookups) — the JPA repository
+     * version always returned false once BYPASSRLS was revoked, since users_tenant_isolation
+     * fails closed with no context bound, silently letting duplicate registrations through.
+     */
+    public boolean existsByEmail(String email) {
+        Integer count = loginLookupJdbcTemplate.queryForObject(
+                "SELECT count(*) FROM freightclub.users WHERE email = ? AND deleted_at IS NULL",
+                Integer.class,
+                email
+        );
+        return count != null && count > 0;
+    }
+
     public Optional<LoginLookupCredentials> findUserByEmail(String email) {
         List<LoginLookupCredentials> results = loginLookupJdbcTemplate.query(
                 "SELECT id, tenant_id, email, password_hash, role FROM freightclub.users "

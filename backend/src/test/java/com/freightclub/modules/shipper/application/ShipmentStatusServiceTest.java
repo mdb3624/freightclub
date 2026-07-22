@@ -1,6 +1,7 @@
 package com.freightclub.modules.shipper.application;
 
 import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +23,11 @@ class ShipmentStatusServiceTest {
 
     @Autowired
     private EntityManager em;
+
+    @AfterEach
+    void tearDown() {
+        com.freightclub.security.TenantContextHolder.clear();
+    }
 
     @Test
     void testCalculateProgressOpen() {
@@ -62,6 +68,12 @@ class ShipmentStatusServiceTest {
         String tenantId = "test-tenant-" + suffix;
         String shipperId = "test-shipper-" + suffix;
         String loadId = "test-load-" + suffix;
+
+        // US-858: this test never bound tenant context at all — the users/loads INSERTs
+        // below get rejected under real RLS with no app.current_tenant set. tenants_insert
+        // allows WITH CHECK(true), so this first insert doesn't strictly need it, but binding
+        // before all three keeps the fixture setup consistent and correct.
+        com.freightclub.security.TenantContextHolder.setTenantId(tenantId);
 
         em.createNativeQuery(
             "INSERT INTO freightclub.tenants (id, name, plan) VALUES (:id, :name, 'FREE')"

@@ -7,7 +7,6 @@ import com.freightclub.repository.TenantRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.TenantContextHolder;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,11 +45,6 @@ class TenantIsolationEnforcementTest {
         TenantContextHolder.clear();
     }
 
-    @Disabled("BYPASSRLS revocation (V20260721_1405) deferred pending investigation into "
-            + "whether RlsStatementInspector's SET LOCAL prefix reliably reaches Hibernate's "
-            + "parameterized INSERT/UPDATE statements — see US-857 story doc. freightclub_runtime "
-            + "still has BYPASSRLS, so this correctly fails until that follow-up ships and "
-            + "V20260721_1405 is renamed back from .pending-investigation.")
     @Test
     void freightclubRuntimeCannotReadAnotherTenantsUser_byId() {
         Tenant tenantA = createTenant("Tenant A - " + System.nanoTime());
@@ -67,8 +61,6 @@ class TenantIsolationEnforcementTest {
                 .isEmpty();
     }
 
-    @Disabled("BYPASSRLS revocation deferred — see US-857 story doc; freightclub_runtime "
-            + "still bypasses RLS so this correctly fails until the follow-up ships.")
     @Test
     void freightclubRuntimeCannotReadAnotherTenantsUser_byEmail() {
         Tenant tenantA = createTenant("Tenant A - " + System.nanoTime());
@@ -82,8 +74,6 @@ class TenantIsolationEnforcementTest {
         assertThat(crossTenantRead).isEmpty();
     }
 
-    @Disabled("BYPASSRLS revocation deferred — see US-857 story doc; freightclub_runtime "
-            + "still bypasses RLS so this correctly fails until the follow-up ships.")
     @Test
     void freightclubRuntimeQueryFailsClosed_whenTenantContextUnbound() {
         Tenant tenantA = createTenant("Tenant A - " + System.nanoTime());

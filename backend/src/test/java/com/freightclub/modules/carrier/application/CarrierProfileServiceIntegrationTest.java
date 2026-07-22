@@ -41,9 +41,13 @@ class CarrierProfileServiceIntegrationTest {
   @Autowired
   private TenantRepository tenantRepository;
 
+  @Autowired
+  private jakarta.persistence.EntityManager entityManager;
+
   private static final String TENANT_A = "tenant-carrier-a";
   private static final String TENANT_B = "tenant-carrier-b";
   private static final String TRUCKER_A = "trucker-carrier-a";
+  private static final String TRUCKER_B = "trucker-carrier-b";
 
   private String tenantId;
   private String truckerId;
@@ -57,15 +61,27 @@ class CarrierProfileServiceIntegrationTest {
   }
 
   private void ensureTenantsAndUsersExist() {
-    // Create tenants first
+    // Create tenants first — tenants_insert allows this with no context bound (root of the
+    // multi-tenancy hierarchy), so no context switching needed for these three.
     createTenantIfMissing(tenantId, "Carrier Test Tenant");
     createTenantIfMissing(TENANT_A, "Carrier Tenant A");
     createTenantIfMissing(TENANT_B, "Carrier Tenant B");
 
-    // Then create users
+    // Users, however, are RLS-checked against their OWN tenant_id — creating a TENANT_A/
+    // TENANT_B user while context is still bound to tenantId gets rejected under real RLS.
+    // Switch to match each fixture's tenant, flush before switching again, then restore.
     createUserIfMissing(truckerId, "trucker456@test.com", UserRole.TRUCKER, tenantId);
+    entityManager.flush();
+
+    TenantContextHolder.setTenantId(TENANT_A);
     createUserIfMissing(TRUCKER_A, "truckera@test.com", UserRole.TRUCKER, TENANT_A);
-    createUserIfMissing(TRUCKER_A, "truckera@tenantb.com", UserRole.TRUCKER, TENANT_B);
+    entityManager.flush();
+
+    TenantContextHolder.setTenantId(TENANT_B);
+    createUserIfMissing(TRUCKER_B, "truckerb@tenantb.com", UserRole.TRUCKER, TENANT_B);
+    entityManager.flush();
+
+    TenantContextHolder.setTenantId(tenantId);
   }
 
   private void createTenantIfMissing(String tenantId, String name) {
@@ -261,6 +277,7 @@ class CarrierProfileServiceIntegrationTest {
         null
     );
     CarrierEquipmentDTO createdA = carrierProfileService.addEquipment(truckerA, equipmentA);
+    entityManager.flush();
 
     // When: Switch to Tenant B
     TenantContextHolder.setTenantId(tenantB);

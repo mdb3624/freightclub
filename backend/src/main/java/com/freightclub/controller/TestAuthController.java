@@ -6,6 +6,8 @@ import com.freightclub.dto.AuthResponse;
 import com.freightclub.dto.RegisterRequest;
 import com.freightclub.dto.UserResponse;
 import com.freightclub.repository.UserRepository;
+import com.freightclub.security.LoginLookupRepository;
+import com.freightclub.security.TenantContextHolder;
 import com.freightclub.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -34,10 +36,13 @@ public class TestAuthController {
 
   private final AuthService authService;
   private final UserRepository userRepository;
+  private final LoginLookupRepository loginLookupRepository;
 
-  public TestAuthController(AuthService authService, UserRepository userRepository) {
+  public TestAuthController(AuthService authService, UserRepository userRepository,
+      LoginLookupRepository loginLookupRepository) {
     this.authService = authService;
     this.userRepository = userRepository;
+    this.loginLookupRepository = loginLookupRepository;
   }
 
   public static class TestUserRequest {
@@ -100,9 +105,19 @@ public class TestAuthController {
 
   @DeleteMapping("/users/{userId}")
   public ResponseEntity<Void> deleteTestUser(@PathVariable String userId) {
-    userRepository.findById(userId).ifPresent(user -> {
-      user.setDeletedAt(LocalDateTime.now());
-      userRepository.save(user);
+    // /api/test/ is skipped by JwtAuthenticationFilter, so no tenant context is bound here —
+    // resolve it via the pre-auth login-lookup role first (US-858), same as every other
+    // cross-tenant read in the auth path, otherwise this silently no-ops under RLS.
+    loginLookupRepository.findUserById(userId).ifPresent(credentials -> {
+      TenantContextHolder.setTenantId(credentials.tenantId());
+      try {
+        userRepository.findById(userId).ifPresent(user -> {
+          user.setDeletedAt(LocalDateTime.now());
+          userRepository.save(user);
+        });
+      } finally {
+        TenantContextHolder.clear();
+      }
     });
     return ResponseEntity.noContent().build();
   }

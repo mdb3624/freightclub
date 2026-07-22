@@ -8,6 +8,7 @@
 - Ensure Flyway migration filenames match `VYYYYMMDD_HHmm__Desc.sql`.
 - Maintain Story Map and Sprint Log with current status.
 - Verify all traceability links (Requirements → User Stories → Designs → Code).
+- **PR state verification (added 2026-07-20 — mandatory):** Before writing "PR merged" or "merged to main" in any sign-off, Sprint_Log entry, or Story_Map row, run `gh pr view <PR#> --json state,mergedAt` (or equivalent) and confirm `state: MERGED` — never assert a merge from memory of having called `gh pr merge` earlier in the conversation. Incident: a US-856 sign-off (2026-07-19) stated PR #53 was merged; it was still `OPEN` when checked before starting the next story, discovered only by chance before it caused a stale-base conflict. The same discipline that applies to test results ("never sign off without running tests," `feedback_gate_verification_before_signoff.md`) applies to merge state.
 
 ## Document Ownership & Protection
 

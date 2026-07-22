@@ -4,6 +4,30 @@
 
 Full incident narratives behind these rules: `docs/postmortems/TESTING_INCIDENTS.md`.
 
+## Process Efficiency (added 2026-07-20)
+
+- **Full suite vs. targeted runs during iteration:** the full Mandatory Pre-Test Protocol (`docker compose down -v` → build → `up --build` → full `mvn clean test` inside `backend-tester`) is expensive and must remain the gate for **final verification before a PR/merge/deploy** — that's unchanged. During red/green TDD iteration on a single class, running the full suite every time wastes time without adding signal. Use a targeted run against an already-running `test-db` instead:
+
+  ```bash
+  docker compose -f docker-compose.test.yml up -d test-db
+  docker run --rm --network freightclub_default \
+    -v "$(pwd)/backend:/app" -v freightclub_maven_repo:/root/.m2 -w /app \
+    -e SPRING_PROFILES_ACTIVE=test \
+    -e DB_URL="jdbc:postgresql://test-db:5432/freightclub_test?currentSchema=freightclub" \
+    -e DB_USERNAME=freightclub_runtime -e DB_PASSWORD=freightclub \
+    maven:3.9-eclipse-temurin-21 mvn test -Dtest=YourTestClass -Djacoco.skip=true
+  ```
+
+  Reserve the full protocol for the final pre-PR check and any change touching more than one class's tests. Don't run it 2-3 times in a row for the same iteration cycle when a targeted run proves the same thing faster.
+
+- **Log inspection: grep first, never raw `tail` on Maven/Docker output.** Maven dependency-resolution output (especially in a cold `backend-tester` container) can run hundreds of lines of pure download-progress noise before the actual result. Filter at the source:
+
+  ```bash
+  docker logs freightclub-tester 2>&1 | grep -E "ERROR|BUILD (SUCCESS|FAILURE)|Tests run:.*Failures: [1-9]|Tests run: [0-9]+, Failures: [0-9]+, Errors: [0-9]+, Skipped: [0-9]+$"
+  ```
+
+  Only fall back to a wider `tail`/full log read once `grep` has localized the area of interest.
+
 ## Mandatory Rules (each backed by a real production incident — see postmortems doc)
 
 - **Navigation specs must click through the real UI**, not `page.goto()` straight to the destination — `page.goto()` proves the destination renders, not that the button's `onClick`/`navigate()` path works. (US-822)

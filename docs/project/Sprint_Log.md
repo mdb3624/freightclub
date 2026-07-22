@@ -275,3 +275,24 @@ Per explicit user correction mid-session ("this is starting to feel like a lot o
 - [x] PR #62 (`feature/US-858-rls-write-path-investigation` → `main`) — all CI checks green
 
 **Status:** ✅ REVIEWER PASS + LIBRARIAN verification complete. Proceeding to merge and production deploy.
+
+---
+
+## Production Deployment & Smoke Test: US-858 — 2026-07-22
+
+**PR #62 merged to `main`.** First production deploy attempt surfaced three real, previously-latent issues via a genuine functional smoke test (register → login → create load → cross-tenant load-board visibility) run against `https://freightclub-backend-5gecbdg27a-uc.a.run.app` — not just a health-check ping. Each was root-caused, fixed, covered by its own PR through the normal branch/CI/merge flow, and redeployed before the smoke test was considered complete:
+
+1. **Production `DB_USERNAME`/`DB_PASSWORD` pointed at `neondb_owner`** — the actual Postgres superuser — for the app's own runtime connection, meaning RLS has been unconditionally bypassed in production since deploy infra was first set up, independent of any `BYPASSRLS` role attribute. This made all of US-858's RLS enforcement work moot in the one environment that matters most. Fixed (PR #63, folded together with #2 below): new Secret Manager secrets (`FLYWAY_DB_USERNAME`/`PASSWORD` = `neondb_owner`, `DB_LOGIN_USER`/`PASSWORD`), `DB_USERNAME`/`DB_PASSWORD` versions updated to real `freightclub_runtime` credentials, `deploy-prod.ps1` updated to wire all of them via `--set-secrets`.
+2. **`document_audit_log`'s RLS policies used the stale `app.tenant_id` GUC name** in production — fixed in the migration file's content back on 2026-05-22, but Flyway never re-runs an already-applied migration when its file changes, so production (migrated 2026-05-06, before the fix) silently kept the broken version forever while every freshly-migrated environment got it for free. 500'd `POST /api/v1/loads` in production. Fixed via new forward migration `V20260722_0200` (PR #63).
+3. **`TestAuthController` had zero enforcement of its own "non-production only" docstring** — `/api/test/**` is `permitAll()`, and the controller had no `@Profile`/`@ConditionalOnProperty` gate, so anyone could unauthenticated-ly create arbitrary users or soft-delete any user by id in production. Discovered via this story's own smoke-test cleanup calls unexpectedly succeeding in prod. Fixed with `@Profile("!prod")` (PR #64). 8 stray smoke-test users + 3 test loads created during verification were cleaned up via direct admin DB connection (not the now-gated test endpoint).
+
+**Final smoke test (after all three fixes deployed), full pass:**
+- Health check: 200
+- `/api/test/auth/register` in production: confirmed gated (route no longer resolves)
+- Register shipper: 201; Register trucker: 201; Login: 200
+- Shipper creates a load: 201
+- Trucker views load board, sees the shipper's (different-tenant) OPEN load: 200, present — confirms both the RLS write-path fix and the marketplace-visibility SELECT policy fix (`V20260722_0100`) work against real production data, not just CI
+
+**PRs:** #62 (US-858 core), #63 (document_audit_log policy + prod secret split), #64 (TestAuthController prod gate). All merged to `main`, all deployed, all CI green.
+
+**Status:** ✅ DONE. Deployed to production and verified via functional smoke test, not just a health check.

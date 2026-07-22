@@ -49,6 +49,29 @@ test.describe('Home Page', () => {
     await expect(page.locator('[data-testid="login-modal"]')).not.toBeVisible();
   });
 
+  test('modal closes on Escape key and exposes dialog a11y semantics', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('[data-testid="header-login-btn"]').click();
+
+    const modal = page.locator('[data-testid="login-modal"]');
+    await expect(modal).toBeVisible();
+    await expect(modal).toHaveAttribute('role', 'dialog');
+    await expect(modal).toHaveAttribute('aria-modal', 'true');
+
+    await page.keyboard.press('Escape');
+    await expect(modal).not.toBeVisible();
+  });
+
+  test('footer contact info has working tel and mailto links', async ({ page }) => {
+    await page.goto('/');
+
+    await expect(page.getByRole('link', { name: '(404) 960-9621' })).toHaveAttribute('href', 'tel:+14049609621');
+    await expect(page.getByRole('link', { name: 'mike.barnes@mdbfreightclub.com' })).toHaveAttribute(
+      'href',
+      'mailto:mike.barnes@mdbfreightclub.com'
+    );
+  });
+
   test('invalid submit shows validation errors from the existing LoginForm', async ({ page }) => {
     await page.goto('/');
     await page.locator('[data-testid="header-login-btn"]').click();

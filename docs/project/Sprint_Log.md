@@ -199,6 +199,31 @@ Known separate issue, flagged but explicitly out of scope: `/carriers` (`Carrier
 
 ---
 
+## LIBRARIAN_SIGN_OFF: CHG-858 (Home Page Fidelity Gaps — Contact Info, Modal A11y) — 2026-07-22
+
+**Origin:** User directed a full re-verification of the live `/` home page against a resent design handoff (`handoff/`), treating it as source of truth. Byte-diff (ignoring line-endings) against `Prototype/design_handoff_home_page/` (the package US-855 was already built from) confirmed identical content — no new design delta. Re-verification proceeded as a spec-compliance audit of the already-COMPLETED US-855 implementation, not a new build.
+
+**Full lifecycle:** Agent-assisted audit of `HomePage.tsx`/`LoginModal.tsx` against `handoff/README.md` and `handoff/CLAUDE_CODE_PROMPT.md` found 2 confirmed gaps (dead footer "Contact Us" link; login modal missing `role="dialog"`/`aria-modal`/`aria-labelledby`/ESC-to-close/focus management) and 1 non-gap (no in-modal signup — confirmed as US-855's documented Out-of-Scope decision, not a regression). Both fixes implemented TDD on `feature/US-855-v2-prod-fidelity-verify` (RED confirmed before each implementation) → full Mandatory Pre-Test Protocol run.
+
+**REVIEWER-equivalent evidence:**
+- `tsc --noEmit`: clean.
+- Frontend unit suite: 49 files / 294 tests passing (includes 6 new tests across `HomePage.test.tsx` and `LoginModal.test.tsx`).
+- Frontend production build (`npm run build`): succeeded.
+- Docker Pre-Test Protocol (clean `down -v` → native `mvn package -DskipTests` → `npm run build` → `docker compose up --build`): backend healthy (200), full stack up.
+- E2E: `home-page.spec.ts` 9/9, `login-integration.spec.ts` + `smoke.spec.ts` 15/15 — 24/24 total, including 2 new specs (Escape-to-close + dialog semantics, footer tel/mailto hrefs).
+- Backend regression check: `mvn test` inside `freightclub-tester` — 940/940 passing, BUILD SUCCESS (unrelated ERROR-level log lines are expected simulated-failure test scenarios: EIA API mock, SMTP, Stripe).
+
+**LIBRARIAN verification:**
+- [x] `docs/changes/CHG-858.md` created, status RESOLVED-in-code / deploy pending
+- [x] Story_Map.md US-855 row annotated with CHG-858 reference
+- [x] Traceability: no separate Story_Map row needed (CHG-858 is a fidelity fix against already-COMPLETED US-855, not a new story) — Option A (finish as-is, CHG tracked separately)
+- [ ] Production deploy — **not yet performed**, pending explicit user go-ahead (irreversible/visible action)
+- [x] PR #66 opened against `main` (2026-07-22)
+
+**Status:** 🏗️ PR #66 OPEN, fully verified locally. NOT merged, NOT deployed. Awaiting user authorization for merge + production deploy.
+
+---
+
 ## LIBRARIAN_SIGN_OFF: US-856 AC-1 (Lane Tags on Carrier Search Cards — Backend) — 2026-07-19
 
 **Origin:** Backlog story renumbered same-day from a US-851 ID collision (see US-851/US-856 rows in `Story_Map.md`). ARCH design produced, then CODER implemented AC-1 (backend) only via TDD.

@@ -37,6 +37,9 @@ class PaymentAccountRepositoryTest {
     @Autowired
     private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private jakarta.persistence.EntityManager entityManager;
+
     private String testTenantId = "test-tenant-payment";
     private String testTruckerId = "trucker-payment-1";
     private PaymentAccountEntity testEntity;
@@ -71,13 +74,24 @@ class PaymentAccountRepositoryTest {
     }
 
     private void createTenantIfMissing(String tenantId, String name) {
-        jdbcTemplate.update(
-            "INSERT INTO tenants (id, name) VALUES (?, ?) ON CONFLICT (id) DO NOTHING",
-            tenantId, name);
+        // US-858: ON CONFLICT DO NOTHING fails under RLS even for a brand-new id — Postgres's
+        // conflict-check needs SELECT visibility that tenants_select (scoped to the caller's
+        // own tenant) denies. Check-then-insert instead, matching createUserIfMissing below.
+        Integer count = jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM tenants WHERE id = ?", Integer.class, tenantId);
+        if (count == null || count == 0) {
+            jdbcTemplate.update("INSERT INTO tenants (id, name) VALUES (?, ?)", tenantId, name);
+        }
     }
 
     private void createUserIfMissing(String userId, String email, UserRole role, String tenantId) {
         if (!userRepository.findById(userId).isPresent()) {
+            // US-858: this fixture creates users for tenants OTHER than testTenantId (e.g.
+            // "tenant-payment-1") — the INSERT's WITH CHECK needs app.current_tenant to match
+            // THIS user's own tenant_id, not whatever was bound when setUp() started. Switch,
+            // flush, then restore so the rest of the test still runs as testTenantId.
+            String callerTenantId = TenantContextHolder.getTenantId();
+            TenantContextHolder.setTenantId(tenantId);
             User user = new User(userId);
             user.setTenantId(tenantId);
             user.setEmail(email);
@@ -86,6 +100,8 @@ class PaymentAccountRepositoryTest {
             user.setFirstName("Test");
             user.setLastName("Trucker");
             userRepository.save(user);
+            entityManager.flush();
+            TenantContextHolder.setTenantId(callerTenantId);
         }
     }
 
@@ -202,20 +218,22 @@ class PaymentAccountRepositoryTest {
     @DisplayName("AC-6: Should enforce multi-tenancy (RLS equivalent)")
     void testMultiTenancyIsolation() {
         // Arrange
-        String tenantA = "test-tenant-123";
-        String tenantB = "tenant-1";
+        // Distinctly-scoped ids (not the generic "test-tenant-123"/"tenant-1" used elsewhere in
+        // the suite) — createTenantIfMissing's existence check is itself RLS-scoped, so a
+        // same-named tenant created by another test class under a different tenant context is
+        // invisible to this check and would collide on INSERT (US-858).
+        String tenantA = "tenant-payment-mtx-a";
+        String tenantB = "tenant-payment-mtx-b";
         String truckerA = UUID.randomUUID().toString();
         String truckerB = UUID.randomUUID().toString();
-        jdbcTemplate.update("INSERT INTO tenants (id, name) VALUES (?, ?) ON CONFLICT (id) DO NOTHING", tenantA, "Tenant A");
-        jdbcTemplate.update("INSERT INTO tenants (id, name) VALUES (?, ?) ON CONFLICT (id) DO NOTHING", tenantB, "Tenant B");
-        jdbcTemplate.update(
-            "INSERT INTO users (id, tenant_id, email, password_hash, role, first_name, last_name) " +
-            "VALUES (?, ?, ?, '$2a$10$x', 'TRUCKER', 'T', 'R') ON CONFLICT (id) DO NOTHING",
-            truckerA, tenantA, truckerA + "@test.com");
-        jdbcTemplate.update(
-            "INSERT INTO users (id, tenant_id, email, password_hash, role, first_name, last_name) " +
-            "VALUES (?, ?, ?, '$2a$10$x', 'TRUCKER', 'T', 'R') ON CONFLICT (id) DO NOTHING",
-            truckerB, tenantB, truckerB + "@test.com");
+        // US-858: raw ON CONFLICT DO NOTHING fails under RLS (conflict-check needs SELECT
+        // visibility a scoped policy denies), and each user INSERT is RLS-checked against its
+        // own tenant_id. Reuse the class's check-then-insert, context-switching helpers instead
+        // of inlining raw SQL here.
+        createTenantIfMissing(tenantA, "Tenant A");
+        createTenantIfMissing(tenantB, "Tenant B");
+        createUserIfMissing(truckerA, truckerA + "@test.com", UserRole.TRUCKER, tenantA);
+        createUserIfMissing(truckerB, truckerB + "@test.com", UserRole.TRUCKER, tenantB);
 
         PaymentAccount tenantADomain = PaymentAccount.createNew(
             "Trucker A",
@@ -237,13 +255,25 @@ class PaymentAccountRepositoryTest {
             truckerB
         );
 
+        // Save each account under its OWN tenant's context — the class's @BeforeEach left
+        // context bound to testTenantId, and createUserIfMissing above restores it after each
+        // switch, so a plain save() here would defer-write both rows under the wrong tenant
+        // (US-858).
+        TenantContextHolder.setTenantId(tenantA);
         paymentAccountRepository.save(PaymentAccountEntity.fromDomain(tenantADomain));
-        paymentAccountRepository.save(PaymentAccountEntity.fromDomain(tenantBDomain));
+        entityManager.flush();
 
-        // Act
+        TenantContextHolder.setTenantId(tenantB);
+        paymentAccountRepository.save(PaymentAccountEntity.fromDomain(tenantBDomain));
+        entityManager.flush();
+
+        // Act — each query must run under its own tenant's context too; RLS scopes SELECT
+        // visibility the same way it scopes INSERT (US-858).
+        TenantContextHolder.setTenantId(tenantA);
         List<PaymentAccountEntity> tenantAAccounts = paymentAccountRepository
             .findByTenantIdAndTruckerIdAndDeletedAtIsNull(tenantA, truckerA);
 
+        TenantContextHolder.setTenantId(tenantB);
         List<PaymentAccountEntity> tenantBAccounts = paymentAccountRepository
             .findByTenantIdAndTruckerIdAndDeletedAtIsNull(tenantB, truckerB);
 

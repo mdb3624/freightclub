@@ -136,7 +136,7 @@ class AuthorizationGateTest {
         // Setup: Create load owned by Tenant A
         TenantContextHolder.setTenantId(TENANT_A);
         Load load = createTestLoad(TENANT_A, SHIPPER_A);
-        Load savedLoad = loadRepository.save(load);
+        Load savedLoad = loadRepository.saveAndFlush(load);
 
         // Act: Check ownership as Tenant B
         TenantContextHolder.setTenantId(TENANT_B);
@@ -154,7 +154,7 @@ class AuthorizationGateTest {
         // Setup: Create load owned by Tenant A
         TenantContextHolder.setTenantId(TENANT_A);
         Load load = createTestLoad(TENANT_A, SHIPPER_A);
-        Load savedLoad = loadRepository.save(load);
+        Load savedLoad = loadRepository.saveAndFlush(load);
 
         // Act: Check ownership as Tenant A (owner)
         boolean isOwner = loadService.isOwner(savedLoad.getId());
@@ -171,11 +171,11 @@ class AuthorizationGateTest {
         // Setup: Create two loads, one per tenant
         TenantContextHolder.setTenantId(TENANT_A);
         Load loadA = createTestLoad(TENANT_A, SHIPPER_A);
-        Load savedLoadA = loadRepository.save(loadA);
+        Load savedLoadA = loadRepository.saveAndFlush(loadA);
 
         TenantContextHolder.setTenantId(TENANT_B);
         Load loadB = createTestLoad(TENANT_B, SHIPPER_B);
-        Load savedLoadB = loadRepository.save(loadB);
+        Load savedLoadB = loadRepository.saveAndFlush(loadB);
 
         // Act & Assert: Verify tenant isolation enforcement
         TenantContextHolder.setTenantId(TENANT_A);
@@ -212,11 +212,11 @@ class AuthorizationGateTest {
         // Setup: Create users in different tenants
         TenantContextHolder.setTenantId(TENANT_A);
         User userA = createTestUser(SHIPPER_A, TENANT_A, "user.a@test.com");
-        User savedUserA = userRepository.save(userA);
+        User savedUserA = userRepository.saveAndFlush(userA);
 
         TenantContextHolder.setTenantId(TENANT_B);
         User userB = createTestUser(SHIPPER_B, TENANT_B, "user.b@test.com");
-        User savedUserB = userRepository.save(userB);
+        User savedUserB = userRepository.saveAndFlush(userB);
 
         // Act & Assert: Verify tenant isolation for ProfileService.isOwner()
         TenantContextHolder.setTenantId(TENANT_A);
@@ -247,11 +247,11 @@ class AuthorizationGateTest {
         // Setup: Create equipment in different tenants
         TenantContextHolder.setTenantId(TENANT_A);
         CarrierEquipmentEntity equipmentA = createTestEquipment(TENANT_A, SHIPPER_A);
-        CarrierEquipmentEntity savedEquipmentA = carrierEquipmentRepository.save(equipmentA);
+        CarrierEquipmentEntity savedEquipmentA = carrierEquipmentRepository.saveAndFlush(equipmentA);
 
         TenantContextHolder.setTenantId(TENANT_B);
         CarrierEquipmentEntity equipmentB = createTestEquipment(TENANT_B, SHIPPER_B);
-        CarrierEquipmentEntity savedEquipmentB = carrierEquipmentRepository.save(equipmentB);
+        CarrierEquipmentEntity savedEquipmentB = carrierEquipmentRepository.saveAndFlush(equipmentB);
 
         // Act & Assert: Verify tenant isolation
         TenantContextHolder.setTenantId(TENANT_A);
@@ -282,11 +282,11 @@ class AuthorizationGateTest {
         // Setup: Create lanes in different tenants
         TenantContextHolder.setTenantId(TENANT_A);
         CarrierLaneEntity laneA = createTestLane(TENANT_A, SHIPPER_A);
-        CarrierLaneEntity savedLaneA = carrierLaneRepository.save(laneA);
+        CarrierLaneEntity savedLaneA = carrierLaneRepository.saveAndFlush(laneA);
 
         TenantContextHolder.setTenantId(TENANT_B);
         CarrierLaneEntity laneB = createTestLane(TENANT_B, SHIPPER_B);
-        CarrierLaneEntity savedLaneB = carrierLaneRepository.save(laneB);
+        CarrierLaneEntity savedLaneB = carrierLaneRepository.saveAndFlush(laneB);
 
         // Act & Assert: Verify tenant isolation
         TenantContextHolder.setTenantId(TENANT_A);

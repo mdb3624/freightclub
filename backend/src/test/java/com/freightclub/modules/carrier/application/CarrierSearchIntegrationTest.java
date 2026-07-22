@@ -29,6 +29,7 @@ class CarrierSearchIntegrationTest {
     @Autowired private CarrierSearchService carrierSearchService;
     @Autowired private UserRepository userRepository;
     @Autowired private TenantRepository tenantRepository;
+    @Autowired private jakarta.persistence.EntityManager entityManager;
 
     private String tenantId;
     private String otherTenantId;
@@ -62,7 +63,14 @@ class CarrierSearchIntegrationTest {
     @Test
     void searchCarriers_doesNotLeakAcrossTenants() {
         userRepository.save(makeTrucker(tenantId, "Alice", "Brown", "alice@test.com", null));
+        entityManager.flush();
+
+        // US-858: the otherTenantId fixture needs context bound to match its own tenant_id —
+        // creating it while still bound to tenantId gets rejected under real RLS.
+        TenantContextHolder.setTenantId(otherTenantId);
         userRepository.save(makeTrucker(otherTenantId, "Alicia", "Smith", "alicia@other.com", null));
+        entityManager.flush();
+        TenantContextHolder.setTenantId(tenantId);
 
         List<CarrierSearchResult> results = carrierSearchService.searchCarriers(tenantId, "Ali");
 

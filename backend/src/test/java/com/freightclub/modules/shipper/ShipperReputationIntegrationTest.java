@@ -181,13 +181,13 @@ class ShipperReputationIntegrationTest {
     ShipperReputation rep1 =
         ShipperReputation.createNew(tenant1, SHIPPER_ID, new BigDecimal("5"), 50, 0, 0);
     ShipperReputationEntity entity1 = ShipperReputationEntity.fromDomain(rep1);
-    entity1 = repository.save(entity1);
+    entity1 = repository.saveAndFlush(entity1);
 
     TenantContextHolder.setTenantId(tenant2);
     ShipperReputation rep2 =
         ShipperReputation.createNew(tenant2, SHIPPER_ID, new BigDecimal("10"), 100, 1, 0);
     ShipperReputationEntity entity2 = ShipperReputationEntity.fromDomain(rep2);
-    entity2 = repository.save(entity2);
+    entity2 = repository.saveAndFlush(entity2);
 
     // Verify tenant1 sees only its shipper
     TenantContextHolder.setTenantId(tenant1);

@@ -35,6 +35,7 @@ class CarrierCostProfileRepositoryTest {
   @Autowired private CarrierCostProfileRepository repository;
   @Autowired private UserRepository userRepository;
   @Autowired private TenantRepository tenantRepository;
+  @Autowired private jakarta.persistence.EntityManager entityManager;
 
   @BeforeEach
   void setup() {
@@ -67,6 +68,11 @@ class CarrierCostProfileRepositoryTest {
 
   private void createUserIfMissing(String userId, String email, UserRole role, String tenantId) {
     if (!userRepository.findById(userId).isPresent()) {
+      // US-858: this fixture creates users for tenants OTHER than TENANT_ID (e.g. "tenant-2")
+      // — the INSERT's WITH CHECK needs app.current_tenant to match THIS user's own
+      // tenant_id, not whatever was bound when setup() started. Switch, flush, restore.
+      String callerTenantId = TenantContextHolder.getTenantId();
+      TenantContextHolder.setTenantId(tenantId);
       User user = new User(userId);
       user.setTenantId(tenantId);
       user.setEmail(email);
@@ -75,6 +81,8 @@ class CarrierCostProfileRepositoryTest {
       user.setFirstName("Test");
       user.setLastName("User");
       userRepository.save(user);
+      entityManager.flush();
+      TenantContextHolder.setTenantId(callerTenantId);
     }
   }
 
@@ -202,7 +210,7 @@ class CarrierCostProfileRepositoryTest {
         new BigDecimal("0.60")
     );
     CarrierCostProfileEntity entity1 = CarrierCostProfileEntity.fromDomain(domain1);
-    CarrierCostProfileEntity saved1 = repository.save(entity1);
+    CarrierCostProfileEntity saved1 = repository.saveAndFlush(entity1);
 
     // Create profile for tenant2 (same trucker)
     TenantContextHolder.setTenantId(tenant2);

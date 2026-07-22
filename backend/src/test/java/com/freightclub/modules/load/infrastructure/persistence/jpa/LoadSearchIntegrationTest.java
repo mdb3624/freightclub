@@ -35,6 +35,7 @@ class LoadSearchIntegrationTest {
     @Autowired SpringDataLoadRepository repo;
     @Autowired UserRepository userRepository;
     @Autowired TenantRepository tenantRepository;
+    @Autowired jakarta.persistence.EntityManager entityManager;
 
     private static final String TENANT_A = "tenant-load-search-a";
     private static final String TENANT_B = "tenant-load-search-b";
@@ -77,13 +78,19 @@ class LoadSearchIntegrationTest {
     }
 
     private void ensureTenantsAndShippersExist() {
-        // Create tenants first
+        // Create tenants first — tenants_insert allows this with no context bound.
         createTenantIfMissing(TENANT_A, "Load Search Test Tenant A");
         createTenantIfMissing(TENANT_B, "Load Search Test Tenant B");
 
-        // Then create shippers
+        // Users are RLS-checked against their own tenant_id — SHIPPER_B needs context
+        // switched to TENANT_B first, or its INSERT is rejected under real RLS (US-858).
         createUserIfMissing(SHIPPER_A, "shippera@test.com", UserRole.SHIPPER, TENANT_A);
+        entityManager.flush();
+
+        TenantContextHolder.setTenantId(TENANT_B);
         createUserIfMissing(SHIPPER_B, "shipperb@test.com", UserRole.SHIPPER, TENANT_B);
+        entityManager.flush();
+        TenantContextHolder.setTenantId(TENANT_A);
     }
 
     private void createTenantIfMissing(String tenantId, String name) {
@@ -119,8 +126,14 @@ class LoadSearchIntegrationTest {
         repo.save(makeLoad(TENANT_A, SHIPPER_A, LoadStatus.PUBLISHED, EquipmentType.DRY_VAN, "Houston", BigDecimal.valueOf(1800)));
         // Tenant A — one DRAFT (must never appear in search results)
         repo.save(makeLoad(TENANT_A, SHIPPER_A, LoadStatus.DRAFT, EquipmentType.FLATBED, "Austin", BigDecimal.valueOf(2000)));
-        // Tenant B — FLATBED that matches Tenant A's equipment criteria
+        entityManager.flush();
+
+        // Tenant B — FLATBED that matches Tenant A's equipment criteria. Needs context
+        // switched to TENANT_B first, or its INSERT is rejected under real RLS (US-858).
+        TenantContextHolder.setTenantId(TENANT_B);
         repo.save(makeLoad(TENANT_B, SHIPPER_B, LoadStatus.PUBLISHED, EquipmentType.FLATBED, "Dallas", BigDecimal.valueOf(2500)));
+        entityManager.flush();
+        TenantContextHolder.setTenantId(TENANT_A);
     }
 
     @Test

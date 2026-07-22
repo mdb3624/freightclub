@@ -247,3 +247,31 @@ Known separate issue, flagged but explicitly out of scope: `/carriers` (`Carrier
 - [ ] PR #54 merge + production deploy — in progress, this entry written before that step to keep the sign-off honest about sequencing
 
 **Status:** ⏳ REVIEWER PASS + LIBRARIAN verification complete; merge and production deploy next.
+
+---
+
+## LIBRARIAN_SIGN_OFF: US-858 (RLS Write-Path Investigation & Complete BYPASSRLS Revocation) — 2026-07-22
+
+**Origin:** Direct follow-up to US-857's deferred AC-1. Mid-verification of that story, revoking `BYPASSRLS` from `freightclub_runtime` caused `new row violates row-level security policy` on INSERT even with `TenantContextHolder` correctly bound — suspected the `RlsStatementInspector` mechanism never actually worked. Deferred to this story rather than guessed at.
+
+**Full lifecycle:** Confirmed via direct JDBC reproduction that `RlsStatementInspector` was dead code (never wired into Hibernate via any `HibernatePropertiesCustomizer`) and its SQL-string-concatenation `SET LOCAL` technique is independently broken for parameterized statements — RLS write-path enforcement never worked for any table, for the life of the project. Replaced with `TenantAwareDataSource` (applies `SET LOCAL app.current_tenant` at connection acquisition) + `TenantContextHolder` re-applying/resetting it on the active transaction's connection whenever tenant context changes mid-transaction. Root-caused and fixed a deferred-write bug that surfaced across ~15 test fixtures once `BYPASSRLS` was genuinely revoked: Hibernate's write-behind queues `repository.save()` until the next flush point, so a context switch or `clear()` before that flush let the write land under the wrong (or unbound) tenant — fixed centrally by flushing the Hibernate session before every `SET LOCAL`/`RESET`, rather than patching each call site. Also found and fixed a real AC-4 fail-closed gap: `clear()` only cleared the ThreadLocal, leaving a stale `app.current_tenant` in effect on an already-open transaction.
+
+Per explicit user correction mid-session ("this is starting to feel like a lot of hacking instead of a systematic approach"), switched from reactive per-test patching to full-suite root-cause investigation before declaring done.
+
+**Post-push discoveries (same session, same PR):** `gh pr checks` showed CI red despite a fully green local Docker suite — `ci.yml` had never been updated for US-857's login-lookup dual-datasource split (`DB_LOGIN_PASSWORD` unset, no usable default) and both jobs' postgres service bootstrapped AS `freightclub_runtime` itself (a superuser, making RLS enforcement moot in CI regardless). This was the first PR to ever exercise this code path through GitHub Actions, since US-857 itself never merged to `main`. Fixed `ci.yml` to mirror `docker-compose.test.yml`'s already-correct env/role split. That in turn unblocked E2E, which then failed for real: `loads_tenant_isolation` (predates this story, from `V20260422_11`) blocked the load board from showing any cross-tenant OPEN load — a genuine marketplace-visibility gap masked since day one by the same blanket `BYPASSRLS`. Fixed the SELECT-side policy (`V20260722_0100`); the identical gap on the WRITE side (claim/pickup/delivery) is flagged as HIGH-priority technical debt, not silently fixed inline — see Technical Debt Ledger.
+
+**REVIEWER checklist:**
+- Sequential Lock: PASS (no backward requests; direct continuation of US-857's own deferred AC)
+- Field Contract Table / Visual evidence: N/A, justified (backend/security-only, zero UI surface touched)
+- Security & Data Integrity: PASS — RLS now genuinely enforced (not bypassed) on every core table; write-path mechanism verified via direct JDBC repro and 5x stress-test passes on the previously-flaky reproduction
+- Code quality: PASS (clean compile, constructor injection, no unused imports, no method over CC 10)
+- Testing: 940/940 backend (Docker Pre-Test Protocol), 0 failures/errors
+- CI: `gh pr checks 62` — all checks green including E2E (verified after the two follow-up fixes above, not local-evidence-only)
+
+**LIBRARIAN verification:**
+- [x] Story_Map.md US-858 row updated to DONE with full disposition; US-857 updated to DONE (its deferred AC-1 is now complete)
+- [x] Technical Debt Ledger (`.claude/learnings.md`) updated with the HIGH-priority cross-tenant write-authorization gap (claim/pickup/delivery), explicitly scoped out of this story
+- [x] Traceability: `docs/business/stories/US-858_RLS_Write_Path_Investigation.md`, migrations `V20260721_1405`/`V20260721_1407`/`V20260722_0100`
+- [x] PR #62 (`feature/US-858-rls-write-path-investigation` → `main`) — all CI checks green
+
+**Status:** ✅ REVIEWER PASS + LIBRARIAN verification complete. Proceeding to merge and production deploy.

@@ -218,9 +218,9 @@ Known separate issue, flagged but explicitly out of scope: `/carriers` (`Carrier
 - [x] Story_Map.md US-855 row annotated with CHG-858 reference
 - [x] Traceability: no separate Story_Map row needed (CHG-858 is a fidelity fix against already-COMPLETED US-855, not a new story) — Option A (finish as-is, CHG tracked separately)
 - [ ] Production deploy — **not yet performed**, pending explicit user go-ahead (irreversible/visible action)
-- [ ] PR — not yet opened, pending user confirmation to push `feature/US-855-v2-prod-fidelity-verify`
+- [x] PR #66 opened against `main` (2026-07-22)
 
-**Status:** 🏗️ CODE-COMPLETE, fully verified locally. NOT deployed, NOT merged. Awaiting user authorization for PR + production deploy.
+**Status:** 🏗️ PR #66 OPEN, fully verified locally. NOT merged, NOT deployed. Awaiting user authorization for merge + production deploy.
 
 ---
 

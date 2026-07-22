@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { LoginForm } from './LoginForm'
 
 interface LoginModalProps {
@@ -6,6 +7,19 @@ interface LoginModalProps {
 }
 
 export function LoginModal({ isOpen, onClose }: LoginModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!isOpen) return
+    dialogRef.current?.focus()
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose])
+
   if (!isOpen) return null
 
   return (
@@ -15,9 +29,14 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
       className="fixed inset-0 z-[100] flex items-center justify-center bg-[#1A1A1A]/60 p-6"
     >
       <div
+        ref={dialogRef}
         data-testid="login-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="login-modal-title"
+        tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
-        className="flex w-full max-w-[400px] flex-col gap-6 rounded-md bg-white p-8 shadow-lg"
+        className="flex w-full max-w-[400px] flex-col gap-6 rounded-md bg-white p-8 shadow-lg outline-none"
       >
         <div className="flex items-center justify-between">
           <img src="/assets/logo-mobile.png" alt="MDB" className="h-7 w-auto object-contain" />
@@ -36,7 +55,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
         </div>
 
         <div className="flex flex-col gap-1">
-          <h2 className="font-display text-xl font-bold text-shipper-text">Log in to FreightClub</h2>
+          <h2 id="login-modal-title" className="font-display text-xl font-bold text-shipper-text">Log in to FreightClub</h2>
           <p className="text-sm text-shipper-text-muted">Access your loads, cost profile, and earnings.</p>
         </div>
 

@@ -301,7 +301,7 @@ export function HomePage() {
       {/* Footer */}
       <footer className="bg-[#1A1A1A] text-[#C9C1AF]">
         <div className="mx-auto max-w-[1200px] px-8 pb-8 pt-16">
-          <div className="mb-8 grid grid-cols-2 gap-8 sm:grid-cols-4">
+          <div className="mb-8 grid grid-cols-2 gap-8 sm:grid-cols-5">
             <div className="col-span-2 flex min-w-[240px] flex-col gap-4">
               <img src="/assets/logo-mobile.png" alt="MDB" className="h-8 w-auto object-contain" />
               <p className="max-w-[320px] text-sm leading-relaxed text-[#8C8578]">
@@ -317,8 +317,13 @@ export function HomePage() {
             <div className="flex flex-col gap-3">
               <h4 className="mb-1 text-xs font-bold uppercase tracking-wide text-white">Company</h4>
               <a href="#" className="text-sm text-[#8C8578] hover:text-white">Team</a>
-              <a href="#" className="text-sm text-[#8C8578] hover:text-white">Contact Us</a>
               <a href="#" className="text-sm text-[#8C8578] hover:text-white">Privacy Policy</a>
+            </div>
+            <div className="flex flex-col gap-3">
+              <h4 className="mb-1 text-xs font-bold uppercase tracking-wide text-white">Contact Us</h4>
+              <span className="text-sm text-[#8C8578]">Mike Barnes</span>
+              <a href="tel:+14049609621" className="text-sm text-[#8C8578] hover:text-white">(404) 960-9621</a>
+              <a href="mailto:mike.barnes@mdbfreightclub.com" className="text-sm text-[#8C8578] hover:text-white">mike.barnes@mdbfreightclub.com</a>
             </div>
             <div className="flex flex-col gap-3">
               <h4 className="mb-1 text-xs font-bold uppercase tracking-wide text-white">Account</h4>

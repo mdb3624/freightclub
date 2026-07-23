@@ -83,6 +83,7 @@ function tokensForRole(role: string | undefined): PersonaTokens {
  * that accept a `persona` override prop — usePersonaTheme() alone only
  * reflects the surrounding page's context, not a per-instance override.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- intentional: helper colocated with its provider
 export function getPersonaTokens(persona: Persona): PersonaTokens {
   return persona === 'carrier' ? CARRIER_TOKENS : SHIPPER_TOKENS
 }

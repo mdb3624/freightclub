@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as fs from 'fs'
 import * as path from 'path'
+import { LoadFormPageObject } from '../page-objects/LoadFormPageObject'
 
 /**
  * Feature: US-845 — Load Creation Form Field Updates (Phase 6)
@@ -48,17 +49,9 @@ async function navigateToCreateLoad(page: any) {
 
 /** Fill all required fields so Zod superRefine can run (it skips when base fields fail) */
 async function fillRequiredFields(page: any) {
-  await page.locator('input[name="originAddress1"]').fill('123 Main St')
-  await page.locator('input[name="originCity"]').fill('Chicago')
-  await page.locator('select[name="originState"]').selectOption('IL')
-  await page.locator('input[name="originZip"]').fill('60601')
-  await page.locator('input[name="destinationAddress1"]').fill('456 Industrial Blvd')
-  await page.locator('input[name="destinationCity"]').fill('Detroit')
-  await page.locator('select[name="destinationState"]').selectOption('MI')
-  await page.locator('input[name="destinationZip"]').fill('48201')
-  await page.locator('input[name="commodity"]').fill('Steel coils')
-  await page.locator('input[name="weightLbs"]').fill('45000')
-  await page.locator('input[name="payRate"]').fill('2500')
+  // PROJECT_AUDIT_2026-07-23 item 6: was raw input[name="..."] CSS attribute
+  // selectors — LoadFormPageObject wraps the same fields via data-testid.
+  await new LoadFormPageObject(page).fillRequiredFields()
 }
 
 // ── AC-1: Distance display box ───────────────────────────────────────────────

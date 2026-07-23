@@ -29,7 +29,7 @@ export function RatingForm({
 
   if (existingRating) {
     return (
-      <div className={containerClass}>
+      <div className={containerClass} data-testid="rating-confirmation">
         <p className={`text-sm font-semibold ${isCarrier ? textClassName : 'text-gray-700'} mb-2`}>{label}</p>
         <div className="flex items-center gap-3">
           <StarRating value={existingRating.stars} readOnly size="md" />
@@ -46,7 +46,7 @@ export function RatingForm({
   }
 
   return (
-    <div className={containerClass}>
+    <div className={containerClass} data-testid="rating-prompt">
       <p className={`text-sm font-semibold ${isCarrier ? textClassName : 'text-gray-700'} mb-3`}>{label}</p>
       <p className={`text-xs ${mutedClassName} mb-3`}>How was your experience with {targetName}?</p>
 

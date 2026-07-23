@@ -162,25 +162,25 @@ function AddressSection({ prefix, register, errors }: AddressSectionProps) {
   return (
     <div>
       <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', gap: '12px', marginBottom: '12px' }}>
-        <Input label="Street Address" error={errors[addr1Key]?.message}
+        <Input label="Street Address" error={errors[addr1Key]?.message} testId={addr1Key}
           placeholder={prefix === 'origin' ? 'e.g. 123 Main St' : 'e.g. 456 Industrial Blvd'}
           {...register(addr1Key)} />
-        <Input label="Suite / Unit" placeholder="Suite (optional)" {...register(addr2Key)} />
+        <Input label="Suite / Unit" placeholder="Suite (optional)" testId={addr2Key} {...register(addr2Key)} />
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px', marginBottom: '12px' }}>
-        <Input label="City" error={errors[cityKey]?.message}
+        <Input label="City" error={errors[cityKey]?.message} testId={cityKey}
           placeholder={prefix === 'origin' ? 'e.g. Chicago' : 'e.g. Detroit'}
           {...register(cityKey)} />
         <div>
           <FieldLabel>State</FieldLabel>
-          <select className={selectClass} {...register(stateKey)} style={{ height: '40px', width: '100%' }}>
+          <select data-testid={stateKey} className={selectClass} {...register(stateKey)} style={{ height: '40px', width: '100%' }}>
             <option value="">Select</option>
             {US_STATES.map(([abbr, name]) => <option key={abbr} value={abbr}>{abbr} — {name}</option>)}
           </select>
           <FieldError message={errors[stateKey]?.message} />
         </div>
       </div>
-      <Input label="ZIP" error={errors[zipKey]?.message} placeholder="e.g. 60601" maxLength={10} {...register(zipKey)} />
+      <Input label="ZIP" error={errors[zipKey]?.message} testId={zipKey} placeholder="e.g. 60601" maxLength={10} {...register(zipKey)} />
     </div>
   )
 }
@@ -420,11 +420,11 @@ export function LoadForm({ onSubmit, onSaveDraft, onCancel, defaultValues, isSub
                 <FieldError message={errors.equipmentType?.message} />
               </div>
 
-              <Input label="Commodity" error={errors.commodity?.message}
+              <Input label="Commodity" error={errors.commodity?.message} testId="commodity"
                 placeholder="e.g. Steel coils" {...register('commodity')} />
 
               <div>
-                <Input label="Weight (lbs)" type="number" error={errors.weightLbs?.message}
+                <Input label="Weight (lbs)" type="number" error={errors.weightLbs?.message} testId="weightLbs"
                   step="0.01" min="0.01" {...register('weightLbs', { valueAsNumber: true })} />
                 <p style={{ fontSize: '12px', color: '#636E72', marginTop: '4px' }}>Legal max: 80,000 lbs</p>
                 {isOverweight && (
@@ -531,6 +531,7 @@ export function LoadForm({ onSubmit, onSaveDraft, onCancel, defaultValues, isSub
                 <div style={{ position: 'relative' }}>
                   <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '13px', color: '#636E72' }}>$</span>
                   <input
+                    data-testid="payRate"
                     type="number" step="0.01" min="0.01"
                     style={{ width: '100%', height: '40px', borderRadius: '4px', border: errors.payRate ? '2px solid #E74C3C' : '1px solid #D0D0D0', padding: '8px 8px 8px 28px', fontSize: '13px' }}
                     {...register('payRate', { valueAsNumber: true })}

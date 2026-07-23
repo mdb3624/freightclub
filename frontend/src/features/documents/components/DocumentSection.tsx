@@ -102,7 +102,7 @@ export function DocumentSection({ loadId, loadStatus, role, documents }: Props) 
                       Locked
                     </span>
                   )}
-                  <span className={`text-sm ${isCarrier ? textClassName : 'text-gray-800'} truncate`}>{doc.originalFilename}</span>
+                  <span data-testid="document-filename" className={`text-sm ${isCarrier ? textClassName : 'text-gray-800'} truncate`}>{doc.originalFilename}</span>
                   <span className={`text-xs ${mutedClassName}`}>{formatBytes(doc.fileSizeBytes)}</span>
                 </div>
                 {doc.note && (
@@ -132,7 +132,7 @@ export function DocumentSection({ loadId, loadStatus, role, documents }: Props) 
       {role === 'TRUCKER' && (
         <div className={`space-y-3 border-t ${isCarrier ? 'border-carrier-border' : 'border-gray-100'} pt-4`}>
           {loadStatus === 'CLAIMED' && (
-            <div className={noticeClass}>
+            <div className={noticeClass} data-testid="bol-required-notice">
               <p className={noticeTitleClass}>BOL Photo required</p>
               <p className={noticeBodyClass}>
                 Upload a photo of the Bill of Lading before marking pickup.
@@ -157,7 +157,7 @@ export function DocumentSection({ loadId, loadStatus, role, documents }: Props) 
 
           {loadStatus === 'IN_TRANSIT' && (
             <>
-              <div className={noticeClass}>
+              <div className={noticeClass} data-testid="pod-required-notice">
                 <p className={noticeTitleClass}>POD Photo required</p>
                 <p className={noticeBodyClass}>
                   Upload a photo of the signed Proof of Delivery before marking delivered.

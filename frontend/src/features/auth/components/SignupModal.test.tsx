@@ -2,28 +2,35 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { LoginModal } from './LoginModal'
+import { SignupModal } from './SignupModal'
 
-function renderModal(onClose = vi.fn()) {
+function renderModal(props: { onClose?: () => void; onSwitchToLogin?: () => void } = {}) {
   const queryClient = new QueryClient()
+  const onClose = props.onClose ?? vi.fn()
+  const onSwitchToLogin = props.onSwitchToLogin ?? vi.fn()
   render(
     <QueryClientProvider client={queryClient}>
       <MemoryRouter>
-        <LoginModal isOpen onClose={onClose} />
+        <SignupModal isOpen onClose={onClose} onSwitchToLogin={onSwitchToLogin} />
       </MemoryRouter>
     </QueryClientProvider>
   )
-  return { onClose }
+  return { onClose, onSwitchToLogin }
 }
 
-describe('LoginModal accessibility', () => {
+describe('SignupModal', () => {
+  it('renders the RegisterForm', () => {
+    renderModal()
+    expect(screen.getByRole('button', { name: /Create account/i })).toBeInTheDocument()
+  })
+
   it('exposes dialog semantics for assistive tech', () => {
     renderModal()
     const dialog = screen.getByRole('dialog')
     expect(dialog).toHaveAttribute('aria-modal', 'true')
     expect(dialog).toHaveAttribute('aria-labelledby')
     const labelId = dialog.getAttribute('aria-labelledby')
-    expect(document.getElementById(labelId!)).toHaveTextContent('Log in to FreightClub')
+    expect(document.getElementById(labelId!)).toHaveTextContent('Create your FreightClub account')
   })
 
   it('closes when Escape is pressed', () => {
@@ -38,18 +45,9 @@ describe('LoginModal accessibility', () => {
     expect(dialog).toContainElement(document.activeElement as HTMLElement)
   })
 
-  it('calls onSwitchToSignup when the Sign up link is clicked', () => {
-    const onSwitchToSignup = vi.fn()
-    const queryClient = new QueryClient()
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <LoginModal isOpen onClose={vi.fn()} onSwitchToSignup={onSwitchToSignup} />
-        </MemoryRouter>
-      </QueryClientProvider>
-    )
-
-    fireEvent.click(screen.getByRole('button', { name: /Sign up/i }))
-    expect(onSwitchToSignup).toHaveBeenCalled()
+  it('calls onSwitchToLogin when the Sign in link is clicked', () => {
+    const { onSwitchToLogin } = renderModal()
+    fireEvent.click(screen.getByRole('button', { name: /Sign in/i }))
+    expect(onSwitchToLogin).toHaveBeenCalled()
   })
 })

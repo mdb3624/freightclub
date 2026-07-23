@@ -3,7 +3,7 @@
 **Story ID:** US-860
 **Jira:** FREIG-120
 **Phase:** Cross (Public/Pre-Auth Experience)
-**Status:** READY_FOR_DESIGN
+**Status:** COMPLETED
 **Scope:** UI_ONLY (reuses existing `/register` API contract via `useRegister`/`RegisterForm`; no new endpoints, DTOs, or DB columns)
 **Priority:** P2
 
@@ -95,7 +95,18 @@ Not applicable — no new fields. Reuses `RegisterFormValues` → existing `/aut
 
 ---
 
+## Implementation Notes (for traceability)
+
+- `frontend/src/pages/HomePage.tsx` — removed `header-get-started-btn`/`header-get-started-btn-mobile`, `persona-carrier-cta`, `persona-shipper-cta`; `hero-get-started-btn`/`final-cta-btn` now call `openSignup` instead of `openLogin`; added `signupOpen` state + `switchToSignup`/`switchToLogin` handlers; added `data-testid="mobile-nav-login-btn"` to the mobile hamburger menu's Log in button (needed after removing the mobile header CTA that E2E specs previously used as a login entry point at 375px viewport).
+- `frontend/src/features/auth/components/SignupModal.tsx` (new) — mirrors `LoginModal.tsx`'s a11y pattern (role="dialog", aria-modal, aria-labelledby, ESC-to-close, focus-on-open), wraps `RegisterForm`.
+- `frontend/src/features/auth/components/LoginForm.tsx` / `RegisterForm.tsx` — added optional `onSwitchToRegister`/`onSwitchToLogin` props; when provided, the existing "Sign up"/"Sign in" links render as buttons calling the callback instead of navigating, so the two modals can swap in place. Standalone `/register` page (which doesn't pass these props) is unaffected — it still renders the original `Link` navigation.
+- Tests: `LoginForm.test.tsx` (+1), `RegisterForm.test.tsx` (new, 2 tests), `SignupModal.test.tsx` (new, 5 tests), `LoginModal.test.tsx` (+1), `HomePage.test.tsx` (+6) — all written RED-first.
+- E2E: `frontend/e2e/home-page.spec.ts` (+3 specs), fixed 2 mobile-viewport specs (`carrier-avatar-dropdown.spec.ts`, `us-730h-carrier-profile.spec.ts`) whose `registerAndLogin` helper relied on the now-removed mobile header CTA — updated to open the hamburger menu + click `mobile-nav-login-btn` instead.
+- Verification: `tsc --noEmit` clean, unit suite 51 files/309 tests passing, full Docker Pre-Test Protocol: E2E 45/45 across `home-page`, `carrier-avatar-dropdown`, `us-730h-carrier-profile`, `login-integration`, `smoke`, `us-730a-v2-cost-profile-wizard` specs, backend regression 940/940 (unchanged, no backend code touched).
+
+---
+
 ## Gate 1 Sign-Off
 
 - [x] User (Michael) reviewed and approved this scope in chat, 2026-07-22 (including AC-5, added after clarifying what "modals switch to each other" means)
-- [x] Status: `READY_FOR_DESIGN`
+- [x] Status: `COMPLETED`

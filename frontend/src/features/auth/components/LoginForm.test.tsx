@@ -152,4 +152,17 @@ describe('LoginForm', () => {
 
     expect(submitButton).toHaveAttribute('disabled')
   })
+
+  it('calls onSwitchToRegister instead of rendering a Sign up link when provided', () => {
+    const onSwitchToRegister = vi.fn()
+    render(
+      <BrowserRouter>
+        <LoginForm onSwitchToRegister={onSwitchToRegister} />
+      </BrowserRouter>
+    )
+
+    expect(screen.queryByRole('link', { name: /Sign up/i })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Sign up/i }))
+    expect(onSwitchToRegister).toHaveBeenCalled()
+  })
 })

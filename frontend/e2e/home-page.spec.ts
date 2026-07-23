@@ -15,8 +15,43 @@ test.describe('Home Page', () => {
     await page.goto('/', { waitUntil: 'networkidle' });
 
     await expect(page.getByRole('heading', { name: /the only load board/i })).toBeVisible();
-    await expect(page.locator('[data-testid="header-get-started-btn"]')).toBeVisible();
+    await expect(page.locator('[data-testid="hero-get-started-btn"]')).toBeVisible();
     await expect(page.locator('[data-testid="footer-login-btn"]')).toBeVisible();
+  });
+
+  // US-860: header/persona CTA simplification
+  test('does not render the header, persona, "Get Started" CTAs that were removed', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('[data-testid="header-get-started-btn"]')).toHaveCount(0);
+    await expect(page.locator('[data-testid="header-get-started-btn-mobile"]')).toHaveCount(0);
+    await expect(page.locator('[data-testid="persona-carrier-cta"]')).toHaveCount(0);
+    await expect(page.locator('[data-testid="persona-shipper-cta"]')).toHaveCount(0);
+  });
+
+  test('hero and final-CTA "Get Started Free" buttons open the Signup modal', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('[data-testid="hero-get-started-btn"]').click();
+    await expect(page.locator('[data-testid="signup-modal"]')).toBeVisible();
+    await expect(page.getByRole('button', { name: /Create account/i })).toBeVisible();
+    await page.locator('[data-testid="signup-modal-close-btn"]').click();
+    await expect(page.locator('[data-testid="signup-modal"]')).not.toBeVisible();
+
+    await page.locator('[data-testid="final-cta-btn"]').click();
+    await expect(page.locator('[data-testid="signup-modal"]')).toBeVisible();
+  });
+
+  test('Login and Signup modals switch to each other in place', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('[data-testid="header-login-btn"]').click();
+    await expect(page.locator('[data-testid="login-modal"]')).toBeVisible();
+
+    await page.getByRole('button', { name: /Sign up/i }).click();
+    await expect(page.locator('[data-testid="signup-modal"]')).toBeVisible();
+    await expect(page.locator('[data-testid="login-modal"]')).not.toBeVisible();
+
+    await page.getByRole('button', { name: /Sign in/i }).click();
+    await expect(page.locator('[data-testid="login-modal"]')).toBeVisible();
+    await expect(page.locator('[data-testid="signup-modal"]')).not.toBeVisible();
   });
 
   test('clicking Log in opens the login modal with the real login form', async ({ page }) => {

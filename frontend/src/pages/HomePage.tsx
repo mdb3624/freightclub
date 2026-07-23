@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { LoginModal } from '@/features/auth/components/LoginModal'
+import { SignupModal } from '@/features/auth/components/SignupModal'
 
 type Tier = 'green' | 'yellow' | 'red'
 
@@ -51,9 +52,24 @@ export function HomePage() {
   const location = useLocation()
   const navigate = useNavigate()
   const [loginOpen, setLoginOpen] = useState(false)
+  const [signupOpen, setSignupOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const openLogin = () => {
     setMobileMenuOpen(false)
+    setSignupOpen(false)
+    setLoginOpen(true)
+  }
+  const openSignup = () => {
+    setMobileMenuOpen(false)
+    setLoginOpen(false)
+    setSignupOpen(true)
+  }
+  const switchToSignup = () => {
+    setLoginOpen(false)
+    setSignupOpen(true)
+  }
+  const switchToLogin = () => {
+    setSignupOpen(false)
     setLoginOpen(true)
   }
 
@@ -85,15 +101,9 @@ export function HomePage() {
             >
               Log in
             </button>
-            <Button data-testid="header-get-started-btn" size="md" onClick={openLogin}>
-              Get Started Free
-            </Button>
           </nav>
 
           <div className="flex items-center gap-2 md:hidden">
-            <Button data-testid="header-get-started-btn-mobile" size="sm" onClick={openLogin}>
-              Get Started
-            </Button>
             <button
               type="button"
               data-testid="mobile-menu-toggle"
@@ -114,7 +124,7 @@ export function HomePage() {
               <a href="#features" onClick={() => setMobileMenuOpen(false)} className="px-1 py-3 text-base font-medium text-shipper-text">Product</a>
               <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="px-1 py-3 text-base font-medium text-shipper-text">How It Works</a>
               <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="px-1 py-3 text-base font-medium text-shipper-text">Pricing</a>
-              <button type="button" onClick={openLogin} className="px-1 py-3 text-left text-base font-medium text-shipper-text">Log in</button>
+              <button type="button" data-testid="mobile-nav-login-btn" onClick={openLogin} className="px-1 py-3 text-left text-base font-medium text-shipper-text">Log in</button>
             </nav>
           )}
         </div>
@@ -134,7 +144,7 @@ export function HomePage() {
             before you claim.
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-4">
-            <Button data-testid="hero-get-started-btn" size="lg" onClick={openLogin}>
+            <Button data-testid="hero-get-started-btn" size="lg" onClick={openSignup}>
               Get Started Free
             </Button>
             <a href="#features">
@@ -224,9 +234,6 @@ export function HomePage() {
               Set up your cost profile once. Every open load shows a color-coded RPM badge against your real numbers
               — no more guesswork at the board.
             </p>
-            <Button data-testid="persona-carrier-cta" size="md" onClick={openLogin} className="mt-2 w-fit">
-              Find Loads
-            </Button>
           </div>
           <div className="flex flex-col gap-4 rounded-md border border-shipper-accent bg-shipper-surface p-6 shadow-sm">
             <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-shipper-accent">For Shippers</span>
@@ -235,9 +242,6 @@ export function HomePage() {
               Get your freight in front of carriers who claim loads because the math works for them — not because
               they had no better option.
             </p>
-            <Button data-testid="persona-shipper-cta" variant="secondary" size="md" onClick={openLogin} className="mt-2 w-fit">
-              Post a Load
-            </Button>
           </div>
         </div>
       </section>
@@ -292,7 +296,7 @@ export function HomePage() {
           <p className="max-w-[480px] text-sm text-shipper-text-muted">
             Set up your cost profile to see profitability ratings on loads.
           </p>
-          <Button data-testid="final-cta-btn" size="lg" onClick={openLogin} className="mt-2">
+          <Button data-testid="final-cta-btn" size="lg" onClick={openSignup} className="mt-2">
             Get Started Free
           </Button>
         </div>
@@ -339,7 +343,8 @@ export function HomePage() {
         </div>
       </footer>
 
-      <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
+      <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} onSwitchToSignup={switchToSignup} />
+      <SignupModal isOpen={signupOpen} onClose={() => setSignupOpen(false)} onSwitchToLogin={switchToLogin} />
     </div>
   )
 }

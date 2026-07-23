@@ -35,7 +35,11 @@ const schema = z.object({
   path: ['confirmPassword'],
 })
 
-export function RegisterForm() {
+interface RegisterFormProps {
+  onSwitchToLogin?: () => void
+}
+
+export function RegisterForm({ onSwitchToLogin }: RegisterFormProps = {}) {
   const { mutate, isPending, error } = useRegister()
   const [joining, setJoining] = useState(false)
 
@@ -211,9 +215,19 @@ export function RegisterForm() {
 
       <p className="text-center text-sm text-gray-600">
         Already have an account?{' '}
-        <Link to="/" state={{ openLogin: true }} className="font-medium text-primary-600 hover:text-primary-700">
-          Sign in
-        </Link>
+        {onSwitchToLogin ? (
+          <button
+            type="button"
+            onClick={onSwitchToLogin}
+            className="font-medium text-primary-600 hover:text-primary-700"
+          >
+            Sign in
+          </button>
+        ) : (
+          <Link to="/" state={{ openLogin: true }} className="font-medium text-primary-600 hover:text-primary-700">
+            Sign in
+          </Link>
+        )}
       </p>
     </form>
   )

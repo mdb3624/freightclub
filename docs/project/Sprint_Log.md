@@ -322,3 +322,28 @@ Per explicit user correction mid-session ("this is starting to feel like a lot o
 **PRs:** #62 (US-858 core), #63 (document_audit_log policy + prod secret split), #64 (TestAuthController prod gate). All merged to `main`, all deployed, all CI green.
 
 **Status:** ✅ DONE. Deployed to production and verified via functional smoke test, not just a health check.
+
+---
+
+## LIBRARIAN_SIGN_OFF: US-860 (Home Page CTA Simplification & In-Page Signup Modal) — 2026-07-22
+
+**Origin:** Direct user request, addressed to "ba" — treated as a proper BA Gate 1 pass (not backfilled). Scope confirmed in chat, including a clarifying round on what "modals switch to each other" (AC-5) would mean before the user approved it. Full story: `docs/business/stories/US-860_Home_Page_CTA_Simplification_And_Signup_Modal.md`. Jira FREIG-120.
+
+**Full lifecycle:** BA story + Jira ticket created → branch `feature/US-860-cta-simplification-signup-modal` → TDD throughout (RED confirmed before every change): `LoginForm`/`RegisterForm` gained optional `onSwitchToRegister`/`onSwitchToLogin` props, new `SignupModal.tsx` (mirrors `LoginModal.tsx`'s CHG-858 a11y pattern), `HomePage.tsx` CTA removals + rewiring → full Mandatory Pre-Test Protocol.
+
+**Regression found and fixed mid-implementation:** removing the mobile header CTA broke 2 pre-existing E2E specs (`carrier-avatar-dropdown.spec.ts`, `us-730h-carrier-profile.spec.ts`) that forced a 375px viewport and used that button as their only login entry point (the desktop `header-login-btn` is hidden at that width, and `mobile-nav`'s "Log in" had no stable selector). Fixed by adding `data-testid="mobile-nav-login-btn"` and updating both specs' helper to open the hamburger menu first — not a scope violation, a necessary fix to keep existing coverage intact.
+
+**REVIEWER-equivalent evidence:**
+- `tsc --noEmit`: clean.
+- Frontend unit suite: 51 files / 309 tests passing (15 new: `LoginForm` +1, new `RegisterForm.test.tsx` 2, new `SignupModal.test.tsx` 5, `LoginModal` +1, `HomePage` +6).
+- Full Docker Pre-Test Protocol: E2E 45/45 total across `home-page.spec.ts` (+3 new specs), `carrier-avatar-dropdown.spec.ts` (2/2, fixed), `us-730h-carrier-profile.spec.ts` (3/3, fixed), `login-integration.spec.ts` (9/9), `smoke.spec.ts` (7/7), `us-730a-v2-cost-profile-wizard.spec.ts` (1/1).
+- Backend regression: `mvn test` in `freightclub-tester` — 940/940 passing, BUILD SUCCESS (no backend code touched by this story).
+
+**LIBRARIAN verification:**
+- [x] Story doc `docs/business/stories/US-860_Home_Page_CTA_Simplification_And_Signup_Modal.md` status → COMPLETED
+- [x] Story_Map.md US-860 row updated to COMPLETED with full evidence
+- [x] `docs/project/Story_ID_to_Jira_Mapping.md`/`.csv` updated to Done
+- [ ] PR — not yet opened, pending user confirmation
+- [ ] Production deploy — not yet performed, pending explicit user go-ahead (irreversible/visible action)
+
+**Status:** 🏗️ CODE-COMPLETE, fully verified locally. NOT merged, NOT deployed.

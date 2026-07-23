@@ -9,7 +9,11 @@ import type { LoginFormValues } from '../types'
 import type { AxiosError } from 'axios'
 import type { ApiError } from '@/types'
 
-export function LoginForm() {
+interface LoginFormProps {
+  onSwitchToRegister?: () => void
+}
+
+export function LoginForm({ onSwitchToRegister }: LoginFormProps = {}) {
   const { mutate, isPending, error } = useLogin()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -75,9 +79,19 @@ export function LoginForm() {
 
       <p className="text-center text-sm text-gray-600">
         Don't have an account?{' '}
-        <Link to="/register" className="font-medium text-primary-600 hover:text-primary-700">
-          Sign up
-        </Link>
+        {onSwitchToRegister ? (
+          <button
+            type="button"
+            onClick={onSwitchToRegister}
+            className="font-medium text-primary-600 hover:text-primary-700"
+          >
+            Sign up
+          </button>
+        ) : (
+          <Link to="/register" className="font-medium text-primary-600 hover:text-primary-700">
+            Sign up
+          </Link>
+        )}
       </p>
     </form>
   )

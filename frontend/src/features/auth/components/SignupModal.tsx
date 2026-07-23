@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react'
-import { LoginForm } from './LoginForm'
+import { RegisterForm } from './RegisterForm'
 
-interface LoginModalProps {
+interface SignupModalProps {
   isOpen: boolean
   onClose: () => void
-  onSwitchToSignup?: () => void
+  onSwitchToLogin: () => void
 }
 
-export function LoginModal({ isOpen, onClose, onSwitchToSignup }: LoginModalProps) {
+export function SignupModal({ isOpen, onClose, onSwitchToLogin }: SignupModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -25,25 +25,25 @@ export function LoginModal({ isOpen, onClose, onSwitchToSignup }: LoginModalProp
 
   return (
     <div
-      data-testid="login-modal-backdrop"
+      data-testid="signup-modal-backdrop"
       onClick={onClose}
       className="fixed inset-0 z-[100] flex items-center justify-center bg-[#1A1A1A]/60 p-6"
     >
       <div
         ref={dialogRef}
-        data-testid="login-modal"
+        data-testid="signup-modal"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="login-modal-title"
+        aria-labelledby="signup-modal-title"
         tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
-        className="flex w-full max-w-[400px] flex-col gap-6 rounded-md bg-white p-8 shadow-lg outline-none"
+        className="flex max-h-[90vh] w-full max-w-[440px] flex-col gap-6 overflow-y-auto rounded-md bg-white p-8 shadow-lg outline-none"
       >
         <div className="flex items-center justify-between">
           <img src="/assets/logo-mobile.png" alt="MDB" className="h-7 w-auto object-contain" />
           <button
             type="button"
-            data-testid="login-modal-close-btn"
+            data-testid="signup-modal-close-btn"
             onClick={onClose}
             aria-label="Close"
             className="p-1 text-shipper-text-muted hover:text-shipper-text"
@@ -56,11 +56,11 @@ export function LoginModal({ isOpen, onClose, onSwitchToSignup }: LoginModalProp
         </div>
 
         <div className="flex flex-col gap-1">
-          <h2 id="login-modal-title" className="font-display text-xl font-bold text-shipper-text">Log in to FreightClub</h2>
-          <p className="text-sm text-shipper-text-muted">Access your loads, cost profile, and earnings.</p>
+          <h2 id="signup-modal-title" className="font-display text-xl font-bold text-shipper-text">Create your FreightClub account</h2>
+          <p className="text-sm text-shipper-text-muted">Set up your cost profile and start seeing per-load profitability.</p>
         </div>
 
-        <LoginForm onSwitchToRegister={onSwitchToSignup} />
+        <RegisterForm onSwitchToLogin={onSwitchToLogin} />
       </div>
     </div>
   )

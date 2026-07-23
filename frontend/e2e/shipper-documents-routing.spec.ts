@@ -16,6 +16,7 @@
  * content, not on the home page — the exact failure mode reported.
  */
 import { test, expect, type Page } from '@playwright/test'
+import { ShipperLoadDetailPageObject, MyDocumentsPageObject } from './page-objects/ShipperLoadDetailPageObject'
 
 const LOAD_ID = `e2e-shipper-doc-${Date.now()}`
 
@@ -169,6 +170,7 @@ test.describe('Shipper documents routing — golden path', () => {
   test('per-load View Documents opens the load detail page, not the home page', async ({ page }) => {
     await setupCommonRoutes(page)
     await loginAsShipper(page)
+    const loadDetail = new ShipperLoadDetailPageObject(page)
 
     await page.goto('/dashboard/shipper')
     await page.getByTestId(`shipment-row-${LOAD_ID}`).click()
@@ -176,21 +178,22 @@ test.describe('Shipper documents routing — golden path', () => {
 
     // The bug redirected to "/" — confirm we land on, and stay on, the load detail page.
     await expect(page).toHaveURL(new RegExp(`/shipper/loads/${LOAD_ID}$`))
-    await expect(page.getByText('Load Detail')).toBeVisible({ timeout: 8000 })
-    await expect(page.getByText('bill-of-lading.pdf')).toBeVisible({ timeout: 8000 })
+    await loadDetail.expectLoaded()
+    await loadDetail.expectDocumentListed('bill-of-lading.pdf')
   })
 
   test('My Documents opens the aggregate documents page, not the home page', async ({ page }) => {
     await setupCommonRoutes(page)
     await loginAsShipper(page)
+    const myDocuments = new MyDocumentsPageObject(page)
 
     await page.goto('/dashboard/shipper')
     await page.getByTestId('action-zone-documents').click()
 
     // The bug redirected to "/" — confirm we land on, and stay on, /shipper/documents.
     await expect(page).toHaveURL(/\/shipper\/documents$/)
-    await expect(page.getByText('My Documents')).toBeVisible({ timeout: 8000 })
-    await expect(page.getByText('bill-of-lading.pdf')).toBeVisible({ timeout: 8000 })
-    await expect(page.getByRole('link', { name: /view load/i })).toHaveAttribute('href', `/shipper/loads/${LOAD_ID}`)
+    await myDocuments.expectLoaded()
+    await myDocuments.expectDocumentListed('bill-of-lading.pdf')
+    await expect(myDocuments.viewLoadLink).toHaveAttribute('href', `/shipper/loads/${LOAD_ID}`)
   })
 })

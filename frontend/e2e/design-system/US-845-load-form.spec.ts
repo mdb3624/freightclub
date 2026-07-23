@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as fs from 'fs'
 import * as path from 'path'
+import { LoadFormPageObject } from '../page-objects/LoadFormPageObject'
 
 /**
  * Feature: US-845 — Load Creation Form Field Updates (Phase 6)
@@ -34,7 +35,17 @@ async function loginAsShipper(page: any, email: string) {
     }),
   })
   await page.goto(`${FRONTEND}/`)
-  await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
+  // Desktop header-login-btn is hidden below the mobile breakpoint (same class
+  // of bug fixed for carrier-avatar-dropdown.spec.ts / us-730h-carrier-profile.spec.ts
+  // in US-860 — the mobile nav's "Log in" lives behind the hamburger menu, not
+  // a directly-visible header button) — this spec runs at both 1280px and 320px.
+  const desktopLoginBtn = page.locator('[data-testid="header-login-btn"]')
+  if (await desktopLoginBtn.isVisible().catch(() => false)) {
+    await desktopLoginBtn.click()
+  } else {
+    await page.click('[data-testid="mobile-menu-toggle"]')
+    await page.click('[data-testid="mobile-nav-login-btn"]')
+  }
   await page.fill('[data-testid="email-input"]', email)
   await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
   await page.click('[data-testid="login-submit-btn"]')
@@ -48,17 +59,9 @@ async function navigateToCreateLoad(page: any) {
 
 /** Fill all required fields so Zod superRefine can run (it skips when base fields fail) */
 async function fillRequiredFields(page: any) {
-  await page.locator('input[name="originAddress1"]').fill('123 Main St')
-  await page.locator('input[name="originCity"]').fill('Chicago')
-  await page.locator('select[name="originState"]').selectOption('IL')
-  await page.locator('input[name="originZip"]').fill('60601')
-  await page.locator('input[name="destinationAddress1"]').fill('456 Industrial Blvd')
-  await page.locator('input[name="destinationCity"]').fill('Detroit')
-  await page.locator('select[name="destinationState"]').selectOption('MI')
-  await page.locator('input[name="destinationZip"]').fill('48201')
-  await page.locator('input[name="commodity"]').fill('Steel coils')
-  await page.locator('input[name="weightLbs"]').fill('45000')
-  await page.locator('input[name="payRate"]').fill('2500')
+  // PROJECT_AUDIT_2026-07-23 item 6: was raw input[name="..."] CSS attribute
+  // selectors — LoadFormPageObject wraps the same fields via data-testid.
+  await new LoadFormPageObject(page).fillRequiredFields()
 }
 
 // ── AC-1: Distance display box ───────────────────────────────────────────────

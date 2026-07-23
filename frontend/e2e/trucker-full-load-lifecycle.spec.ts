@@ -27,6 +27,7 @@
 import { test, expect, type Page } from '@playwright/test'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { TruckerLoadDetailPageObject } from './page-objects/TruckerLoadDetailPageObject'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const LOAD_ID = `e2e-load-${Date.now()}`
@@ -119,6 +120,7 @@ test.describe('US-730 carrier full load lifecycle', () => {
     let hasBolPhoto = false
     let hasPodPhoto = false
     let submittedRating: { stars: number; comment?: string; createdAt: string } | null = null
+    const loadDetail = new TruckerLoadDetailPageObject(page)
 
     // Catch-all safety net — registered FIRST so specific routes below take priority
     // (proven pattern from trucker-pod-upload.spec.ts).
@@ -219,15 +221,20 @@ test.describe('US-730 carrier full load lifecycle', () => {
     await page.waitForURL(/dashboard\/trucker/, { timeout: 10000 })
 
     // --- Claim ---
-    await page.goto(`/trucker/loads/${LOAD_ID}`)
-    await expect(page.getByTestId('claim-load-btn')).toBeVisible({ timeout: 8000 })
+    await page.goto(`/trucker/loads/${LOAD_ID}`, { waitUntil: 'networkidle' })
+    // The page fires a chain of async fetches (board load -> profile -> active
+    // load) before this button renders; under a cold/first-run container this
+    // can take longer than a tight default timeout even though the app itself
+    // isn't broken (confirmed via captured DOM snapshot showing the button
+    // present with correct data shortly after a prior 8s timeout).
+    await expect(page.getByTestId('claim-load-btn')).toBeVisible({ timeout: 15000 })
     await page.getByTestId('claim-load-btn').click()
     // handleClaim() navigates to /dashboard/trucker on success (confirmed in source)
     await expect(page).toHaveURL(/dashboard\/trucker/, { timeout: 8000 })
 
     // --- BOL gate ---
     await page.goto(`/trucker/loads/${LOAD_ID}`)
-    await expect(page.getByText(/BOL Photo required/i)).toBeVisible({ timeout: 8000 })
+    await loadDetail.expectBolRequired()
     await expect(page.getByRole('button', { name: /upload bol photo to continue/i })).toBeDisabled()
 
     const testImagePath = path.join(__dirname, 'fixtures', 'test-image.png')
@@ -245,7 +252,7 @@ test.describe('US-730 carrier full load lifecycle', () => {
 
     // --- POD gate ---
     await page.goto(`/trucker/loads/${LOAD_ID}`)
-    await expect(page.getByText(/POD Photo required/i)).toBeVisible({ timeout: 8000 })
+    await loadDetail.expectPodRequired()
     await expect(page.getByRole('button', { name: /upload pod photo to continue/i })).toBeDisabled()
 
     fileChooserPromise = page.waitForEvent('filechooser')
@@ -262,10 +269,10 @@ test.describe('US-730 carrier full load lifecycle', () => {
 
     // --- Rate shipper ---
     await page.goto(`/trucker/loads/${LOAD_ID}`)
-    await expect(page.getByText(/rate this shipper/i)).toBeVisible({ timeout: 8000 })
+    await loadDetail.expectRatingPrompt()
     await expect(page.getByTestId('payment-status-card')).toBeVisible({ timeout: 8000 })
     await page.getByRole('button', { name: '5 stars' }).click()
     await page.getByRole('button', { name: /submit rating/i }).click()
-    await expect(page.getByText(/your rating for/i)).toBeVisible({ timeout: 8000 })
+    await loadDetail.expectRatingConfirmation()
   })
 })

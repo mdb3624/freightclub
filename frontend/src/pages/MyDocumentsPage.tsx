@@ -32,7 +32,7 @@ export function MyDocumentsPage() {
   return (
     <AppShell maxWidth="lg">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">My Documents</h1>
+        <h1 data-testid="my-documents-page-title" className="text-2xl font-semibold text-gray-900">My Documents</h1>
         <p className="text-sm text-gray-500">Bills of lading, photos, and issue reports across all your loads.</p>
       </div>
 
@@ -52,7 +52,7 @@ export function MyDocumentsPage() {
                   <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
                     {DOCUMENT_LABELS[doc.documentType]}
                   </span>
-                  <span className="truncate text-sm text-gray-800">{doc.originalFilename}</span>
+                  <span data-testid="document-filename" className="truncate text-sm text-gray-800">{doc.originalFilename}</span>
                   <span className="text-xs text-gray-500">{formatBytes(doc.fileSizeBytes)}</span>
                 </div>
                 <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500">

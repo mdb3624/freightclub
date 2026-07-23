@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { TruckerLoadDetailPageObject } from './page-objects/TruckerLoadDetailPageObject'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -166,6 +167,7 @@ async function loginAsTrucker(page: Page) {
 test.describe('Trucker POD upload — golden path', () => {
   test('POD upload gates Mark as Delivered and refreshes document list', async ({ page }) => {
     await setupCommonRoutes(page)
+    const loadDetail = new TruckerLoadDetailPageObject(page)
 
     let podUploaded = false
 
@@ -181,7 +183,7 @@ test.describe('Trucker POD upload — golden path', () => {
     await loginAsTrucker(page)
     await page.goto(`/trucker/loads/${LOAD_ID}`)
 
-    await expect(page.getByText(/POD Photo required/i)).toBeVisible({ timeout: 8000 })
+    await loadDetail.expectPodRequired()
     await expect(page.getByRole('button', { name: /upload pod photo to continue/i })).toBeDisabled()
 
     const testImagePath = path.join(__dirname, 'fixtures', 'test-image.png')
@@ -191,11 +193,12 @@ test.describe('Trucker POD upload — golden path', () => {
     await fileChooser.setFiles(testImagePath)
 
     await expect(page.getByRole('button', { name: /mark as delivered/i })).toBeEnabled({ timeout: 8000 })
-    await expect(page.getByText('test-image.png')).toBeVisible({ timeout: 5000 })
+    await loadDetail.expectDocumentUploaded('test-image.png')
   })
 
   test('Export PDF button is not visible for TRUCKER role', async ({ page }) => {
     await setupCommonRoutes(page)
+    const loadDetail = new TruckerLoadDetailPageObject(page)
 
     await page.route(`**/api/v1/documents/${LOAD_ID}`, (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) })
@@ -204,7 +207,7 @@ test.describe('Trucker POD upload — golden path', () => {
     await loginAsTrucker(page)
     await page.goto(`/trucker/loads/${LOAD_ID}`)
 
-    await expect(page.getByText(/POD Photo required/i)).toBeVisible({ timeout: 8000 })
+    await loadDetail.expectPodRequired()
     await expect(page.getByRole('button', { name: /export pdf/i })).not.toBeVisible()
   })
 })

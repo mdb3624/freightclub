@@ -47,7 +47,7 @@ export function LoadDetailPage() {
   return (
     <AppShell maxWidth="md">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Load Detail</h1>
+        <h1 data-testid="load-detail-page-title" className="text-2xl font-semibold text-gray-900">Load Detail</h1>
       </div>
 
       {showTruckerContact && (

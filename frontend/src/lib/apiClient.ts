@@ -10,9 +10,7 @@ const apiClient = axios.create({
 
 // Attach access token to every request
 apiClient.interceptors.request.use((config) => {
-  const store = useAuthStore.getState()
-  const token = store.accessToken
-  console.log('[apiClient] Request to', config.url, '- token exists:', !!token, '- isAuthenticated:', store.isAuthenticated)
+  const token = useAuthStore.getState().accessToken
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -32,7 +30,9 @@ function isNoRefreshPath(url?: string): boolean {
 // only one POST /auth/refresh fires — the rest await this shared promise.
 let refreshPromise: Promise<string> | null = null
 
-function refreshAccessToken(): Promise<string> {
+// Exported so AuthInitializer can attempt a silent session restore on app
+// mount, since the access token itself is never persisted (see authStore.ts).
+export function refreshAccessToken(): Promise<string> {
   if (!refreshPromise) {
     refreshPromise = apiClient
       .post<RefreshResponse>('/auth/refresh', {})

@@ -22,6 +22,14 @@ jobs:
           POSTGRES_USER: freightclub_test_admin
           POSTGRES_PASSWORD: freightclub_admin
           POSTGRES_DB: freightclub_test
+          # Matches docker-compose.test.yml's test-db service. Postgres' default
+          # max_connections=100 was never overridden here (unlike locally), so a
+          # full mvn test run — 16+ cached Spring test contexts, each with its
+          # own runtime/login-lookup/flyway-admin connection pools — could exceed
+          # it, surfacing as "remaining connection slots are reserved for roles
+          # with the SUPERUSER attribute" and cascading into unrelated test
+          # failures near the end of the run.
+          POSTGRES_INITDB_ARGS: "-c max_connections=200"
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -122,6 +130,8 @@ jobs:
           POSTGRES_USER: freightclub_test_admin
           POSTGRES_PASSWORD: freightclub_admin
           POSTGRES_DB: freightclub_test
+          # See identical note in the `backend` job above.
+          POSTGRES_INITDB_ARGS: "-c max_connections=200"
         options: >-
           --health-cmd pg_isready
           --health-interval 10s

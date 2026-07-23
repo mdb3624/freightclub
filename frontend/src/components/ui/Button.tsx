@@ -1,5 +1,5 @@
 import { type ButtonHTMLAttributes, type CSSProperties } from 'react'
-import { usePersonaTheme } from '@/contexts/PersonaThemeContext'
+import { usePersonaTheme, getPersonaTokens } from '@/contexts/PersonaThemeContext'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
@@ -7,9 +7,6 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean
   persona?: 'shipper' | 'carrier'
 }
-
-const bronzeGradient = 'linear-gradient(180deg, #C9A46A 0%, #B08D57 45%, #8C6D3F 100%)'
-const bronzeShadow = 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.35)'
 
 export function Button({
   variant = 'primary',
@@ -22,9 +19,13 @@ export function Button({
   style: extraStyle,
   ...props
 }: ButtonProps) {
-  const { persona: contextPersona } = usePersonaTheme()
+  const contextTokens = usePersonaTheme()
+  // `persona` prop overrides the ambient page context (e.g. a Shipper-themed
+  // dialog embedding a Carrier action) — usePersonaTheme() alone only knows
+  // about the surrounding page, not a per-instance override.
+  const tokens = persona ? getPersonaTokens(persona) : contextTokens
+  const resolvedPersona = tokens.persona
   const isDisabled = disabled || isLoading
-  const resolvedPersona = persona ?? contextPersona
   const borderRadius = resolvedPersona === 'carrier' ? '8px' : '4px'
 
   const base: CSSProperties = {
@@ -48,19 +49,20 @@ export function Button({
     lg: { padding: '12px 24px', fontSize: '16px', minHeight: '48px' },
   }
 
+  // primary/secondary are persona-aware Tailwind classes (see
+  // PersonaThemeContext.tsx) so they render correctly on both Shipper's
+  // cream/bronze and Carrier's dark surfaces. danger is persona-agnostic by
+  // design; ghost only varies its text color, same as before.
+  const variantClassNames: Record<string, string> = {
+    primary: tokens.actionClassName,
+    secondary: tokens.secondaryActionClassName,
+    danger: '',
+    ghost: '',
+  }
+
   const variants: Record<string, CSSProperties> = {
-    primary: {
-      background: bronzeGradient,
-      boxShadow: bronzeShadow,
-      border: '1px solid #7A5F3A',
-      color: '#FFFFFF',
-    },
-    secondary: {
-      background: 'linear-gradient(180deg, #FAF6EE 0%, #F0E9D8 100%)',
-      border: '1px solid #C9A876',
-      color: '#7A5F3A',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 3px rgba(0,0,0,0.15)',
-    },
+    primary: {},
+    secondary: {},
     danger: {
       background: 'linear-gradient(180deg, #FEF0EE 0%, #FEE2E2 100%)',
       border: '1px solid #E74C3C',
@@ -85,7 +87,7 @@ export function Button({
   return (
     <button
       disabled={isDisabled}
-      className={className}
+      className={`${variantClassNames[variant]} ${className}`.trim()}
       style={{ ...base, ...sizes[size], ...variants[variant], ...disabledStyle, ...extraStyle }}
       {...props}
     >

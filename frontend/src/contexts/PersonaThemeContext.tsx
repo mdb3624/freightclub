@@ -31,6 +31,8 @@ export interface PersonaTokens {
   shapeClassName: string
   /** Background/text/hover classes for primary CTA buttons — copper (Carrier) vs. bronze (Shipper) accent. */
   actionClassName: string
+  /** Background/border/text/hover classes for secondary (outlined) buttons — persona surface, not the accent color. */
+  secondaryActionClassName: string
   /** Page-content width — narrow & centered for Carrier's mobile-first layout, full-width dense for Shipper's desktop data tables. */
   contentWidthClassName: string
   /** Heading/primary text color. */
@@ -49,6 +51,7 @@ const CARRIER_TOKENS: PersonaTokens = {
   controlClassName: 'rounded-full',
   shapeClassName: 'rounded-3xl',
   actionClassName: 'bg-carrier-accent text-carrier-bg hover:opacity-90 focus:ring-carrier-accent',
+  secondaryActionClassName: 'bg-carrier-surface border border-carrier-border text-carrier-text hover:opacity-90 focus:ring-carrier-accent',
   contentWidthClassName: 'max-w-md mx-auto',
   headingClassName: 'text-carrier-text',
   textClassName: 'text-carrier-text',
@@ -63,6 +66,7 @@ const SHIPPER_TOKENS: PersonaTokens = {
   controlClassName: 'rounded-md',
   shapeClassName: 'rounded-md',
   actionClassName: 'bg-shipper-accent text-white hover:opacity-90 focus:ring-shipper-accent',
+  secondaryActionClassName: 'bg-shipper-surface border border-shipper-border text-shipper-text hover:opacity-90 focus:ring-shipper-accent',
   contentWidthClassName: 'max-w-full',
   headingClassName: 'text-shipper-text',
   textClassName: 'text-shipper-text',
@@ -71,6 +75,16 @@ const SHIPPER_TOKENS: PersonaTokens = {
 
 function tokensForRole(role: string | undefined): PersonaTokens {
   return role === 'TRUCKER' ? CARRIER_TOKENS : SHIPPER_TOKENS
+}
+
+/**
+ * Looks up the full token set for an explicit persona, independent of the
+ * ambient PersonaThemeProvider context. Needed by components (e.g. Button)
+ * that accept a `persona` override prop — usePersonaTheme() alone only
+ * reflects the surrounding page's context, not a per-instance override.
+ */
+export function getPersonaTokens(persona: Persona): PersonaTokens {
+  return persona === 'carrier' ? CARRIER_TOKENS : SHIPPER_TOKENS
 }
 
 const PersonaThemeContext = createContext<PersonaTokens>(SHIPPER_TOKENS)

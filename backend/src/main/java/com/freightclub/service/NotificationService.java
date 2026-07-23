@@ -16,6 +16,7 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -40,6 +41,7 @@ public class NotificationService {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void onLoadClaimed(LoadClaimedEvent event) {
         Load load = event.load();
         User trucker = userRepository.findById(event.truckerId()).orElse(null);
@@ -60,6 +62,7 @@ public class NotificationService {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void onLoadPickedUp(LoadPickedUpEvent event) {
         Load load = event.load();
         User shipper = userRepository.findById(load.getShipperId()).orElse(null);
@@ -71,6 +74,7 @@ public class NotificationService {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void onLoadDelivered(LoadDeliveredEvent event) {
         Load load = event.load();
         User shipper = userRepository.findById(load.getShipperId()).orElse(null);
@@ -88,6 +92,7 @@ public class NotificationService {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void onLoadCancelled(LoadCancelledEvent event) {
         Load load = event.load();
         User trucker = userRepository.findById(event.truckerId()).orElse(null);

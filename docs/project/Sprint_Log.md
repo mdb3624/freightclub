@@ -343,7 +343,8 @@ Per explicit user correction mid-session ("this is starting to feel like a lot o
 - [x] Story doc `docs/business/stories/US-860_Home_Page_CTA_Simplification_And_Signup_Modal.md` status → COMPLETED
 - [x] Story_Map.md US-860 row updated to COMPLETED with full evidence
 - [x] `docs/project/Story_ID_to_Jira_Mapping.md`/`.csv` updated to Done
-- [ ] PR — not yet opened, pending user confirmation
-- [ ] Production deploy — not yet performed, pending explicit user go-ahead (irreversible/visible action)
+- [x] PR #68 opened against `main`, merged 2026-07-22 (squash, commit `421dccb9`)
+- [x] Production deploy — user explicitly authorized merge + deploy 2026-07-22. Frontend redeployed as `freightclub-frontend-00055-xb8` (image digest `sha256:37864ad87c88936064a0414983bb7c5aab9390000985eea87b9c08e37f8329d5`), serving 100% traffic. Backend not redeployed — no backend code in this story.
+- [x] **Live production verification (not mocked):** confirmed the served bundle (`assets/index-D2egGjTm.js`) is the exact locally-built artifact; fetched it directly from production and confirmed it contains `signup-modal`, `mobile-nav-login-btn`, and `Create your FreightClub account` (the new-feature markers), and confirmed `persona-carrier-cta`/`persona-shipper-cta`/`header-get-started-btn` are entirely absent (the removed-CTA markers).
 
-**Status:** 🏗️ CODE-COMPLETE, fully verified locally. NOT merged, NOT deployed.
+**Status:** ✅ DONE. Merged and deployed to production 2026-07-22 (`freightclub-frontend-00055-xb8`). Live-verified.

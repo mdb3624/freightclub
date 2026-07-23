@@ -13,13 +13,18 @@ public interface LoadUseCase {
     /** Creates a minimal skeleton draft without route information. */
     LoadAggregate createDraft(String shipperId, BigDecimal weightLbs);
 
-    LoadAggregate publish(String loadId);
+    /** @param callerId authenticated principal; must be the load's shipper or a {@link com.freightclub.modules.load.application.LoadNotFoundException} is thrown */
+    LoadAggregate publish(String loadId, String callerId);
 
+    /** @param carrierId authenticated principal claiming the load, never trust a client-supplied value here */
     LoadAggregate claim(String loadId, String carrierId);
 
-    LoadAggregate cancelLoad(String loadId, String reason);
+    /** @param callerId authenticated principal; must be the load's shipper or a {@link com.freightclub.modules.load.application.LoadNotFoundException} is thrown */
+    LoadAggregate cancelLoad(String loadId, String callerId, String reason);
 
-    LoadAggregate startTrip(String loadId);
+    /** @param callerId authenticated principal; must be the load's assigned carrier or a {@link com.freightclub.modules.load.application.LoadNotFoundException} is thrown */
+    LoadAggregate startTrip(String loadId, String callerId);
 
-    LoadAggregate completeDelivery(String loadId, String podUrl);
+    /** @param callerId authenticated principal; must be the load's assigned carrier or a {@link com.freightclub.modules.load.application.LoadNotFoundException} is thrown */
+    LoadAggregate completeDelivery(String loadId, String callerId, String podUrl);
 }

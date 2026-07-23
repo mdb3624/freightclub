@@ -45,8 +45,8 @@ public class LoadApplicationService implements LoadUseCase {
     }
 
     @Override
-    public LoadAggregate publish(String loadId) {
-        LoadAggregate load = findOrThrow(loadId);
+    public LoadAggregate publish(String loadId, String callerId) {
+        LoadAggregate load = findOwnedByShipperOrThrow(loadId, callerId);
         load.publish();
         List<DomainEvent> events = load.pullDomainEvents();
         LoadAggregate saved = repository.save(load);
@@ -72,22 +72,22 @@ public class LoadApplicationService implements LoadUseCase {
     }
 
     @Override
-    public LoadAggregate cancelLoad(String loadId, String reason) {
-        LoadAggregate load = findOrThrow(loadId);
+    public LoadAggregate cancelLoad(String loadId, String callerId, String reason) {
+        LoadAggregate load = findOwnedByShipperOrThrow(loadId, callerId);
         load.cancel(reason);
         return repository.save(load);
     }
 
     @Override
-    public LoadAggregate startTrip(String loadId) {
-        LoadAggregate load = findOrThrow(loadId);
+    public LoadAggregate startTrip(String loadId, String callerId) {
+        LoadAggregate load = findOwnedByCarrierOrThrow(loadId, callerId);
         load.startTrip();
         return repository.save(load);
     }
 
     @Override
-    public LoadAggregate completeDelivery(String loadId, String podUrl) {
-        LoadAggregate load = findOrThrow(loadId);
+    public LoadAggregate completeDelivery(String loadId, String callerId, String podUrl) {
+        LoadAggregate load = findOwnedByCarrierOrThrow(loadId, callerId);
         load.completeDelivery(podUrl);
         List<DomainEvent> events = load.pullDomainEvents();
         LoadAggregate saved = repository.save(load);
@@ -106,5 +106,28 @@ public class LoadApplicationService implements LoadUseCase {
     private LoadAggregate findOrThrow(String loadId) {
         return repository.findById(loadId)
                 .orElseThrow(() -> new LoadNotFoundException(loadId));
+    }
+
+    /**
+     * Returns the load only if callerId is its shipper. Throws the same
+     * LoadNotFoundException used for missing loads (not a 403) so a non-owner
+     * can't distinguish "not mine" from "doesn't exist" — matches the
+     * anti-enumeration pattern already used for trucker-assigned loads
+     * (see LoadService.findAssignedLoad in the legacy v1 controller).
+     */
+    private LoadAggregate findOwnedByShipperOrThrow(String loadId, String callerId) {
+        LoadAggregate load = findOrThrow(loadId);
+        if (!load.getShipperId().equals(callerId)) {
+            throw new LoadNotFoundException(loadId);
+        }
+        return load;
+    }
+
+    private LoadAggregate findOwnedByCarrierOrThrow(String loadId, String callerId) {
+        LoadAggregate load = findOrThrow(loadId);
+        if (load.getCarrierId() == null || !load.getCarrierId().value().equals(callerId)) {
+            throw new LoadNotFoundException(loadId);
+        }
+        return load;
     }
 }

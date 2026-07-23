@@ -72,6 +72,12 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/v1/loads/*/claim").hasRole("TRUCKER")
                 .requestMatchers("/api/v1/loads/**").hasRole("SHIPPER")
                 .requestMatchers("/api/v1/board/**").hasRole("TRUCKER")
+                // v2 loads (modules/load hexagonal rewrite, not yet frontend-wired): mirror v1's role split.
+                // Ownership (shipper-owns-load / carrier-assigned-to-load) is enforced in LoadApplicationService.
+                .requestMatchers(HttpMethod.PUT, "/api/v2/loads/*/claim").hasRole("TRUCKER")
+                .requestMatchers(HttpMethod.PUT, "/api/v2/loads/*/start-trip").hasRole("TRUCKER")
+                .requestMatchers(HttpMethod.PUT, "/api/v2/loads/*/deliver").hasRole("TRUCKER")
+                .requestMatchers("/api/v2/loads/**").hasRole("SHIPPER")
                 // Ratings: post endpoints are role-specific; reads are authenticated
                 .requestMatchers(HttpMethod.POST, "/api/v1/ratings/*/trucker").hasRole("SHIPPER")
                 .requestMatchers(HttpMethod.POST, "/api/v1/ratings/*/shipper").hasRole("TRUCKER")

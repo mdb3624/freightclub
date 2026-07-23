@@ -35,7 +35,17 @@ async function loginAsShipper(page: any, email: string) {
     }),
   })
   await page.goto(`${FRONTEND}/`)
-  await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
+  // Desktop header-login-btn is hidden below the mobile breakpoint (same class
+  // of bug fixed for carrier-avatar-dropdown.spec.ts / us-730h-carrier-profile.spec.ts
+  // in US-860 — the mobile nav's "Log in" lives behind the hamburger menu, not
+  // a directly-visible header button) — this spec runs at both 1280px and 320px.
+  const desktopLoginBtn = page.locator('[data-testid="header-login-btn"]')
+  if (await desktopLoginBtn.isVisible().catch(() => false)) {
+    await desktopLoginBtn.click()
+  } else {
+    await page.click('[data-testid="mobile-menu-toggle"]')
+    await page.click('[data-testid="mobile-nav-login-btn"]')
+  }
   await page.fill('[data-testid="email-input"]', email)
   await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
   await page.click('[data-testid="login-submit-btn"]')

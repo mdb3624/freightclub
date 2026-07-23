@@ -221,8 +221,13 @@ test.describe('US-730 carrier full load lifecycle', () => {
     await page.waitForURL(/dashboard\/trucker/, { timeout: 10000 })
 
     // --- Claim ---
-    await page.goto(`/trucker/loads/${LOAD_ID}`)
-    await expect(page.getByTestId('claim-load-btn')).toBeVisible({ timeout: 8000 })
+    await page.goto(`/trucker/loads/${LOAD_ID}`, { waitUntil: 'networkidle' })
+    // The page fires a chain of async fetches (board load -> profile -> active
+    // load) before this button renders; under a cold/first-run container this
+    // can take longer than a tight default timeout even though the app itself
+    // isn't broken (confirmed via captured DOM snapshot showing the button
+    // present with correct data shortly after a prior 8s timeout).
+    await expect(page.getByTestId('claim-load-btn')).toBeVisible({ timeout: 15000 })
     await page.getByTestId('claim-load-btn').click()
     // handleClaim() navigates to /dashboard/trucker on success (confirmed in source)
     await expect(page).toHaveURL(/dashboard\/trucker/, { timeout: 8000 })

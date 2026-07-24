@@ -1,13 +1,17 @@
 package com.freightclub.modules.load.application;
 
+import com.freightclub.domain.Load;
 import com.freightclub.modules.load.domain.LoadAssignment;
 import com.freightclub.modules.load.infrastructure.LoadAssignmentRepository;
+import com.freightclub.repository.LoadRepository;
 import com.freightclub.security.TenantContextHolder;
+import com.freightclub.service.LoadAssignedToCarrierEvent;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +23,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoadAssignmentService {
 
   private final LoadAssignmentRepository repository;
+  private final LoadRepository loadRepository;
+  private final ApplicationEventPublisher eventPublisher;
 
-  public LoadAssignmentService(LoadAssignmentRepository repository) {
+  public LoadAssignmentService(
+      LoadAssignmentRepository repository,
+      LoadRepository loadRepository,
+      ApplicationEventPublisher eventPublisher) {
     this.repository = repository;
+    this.loadRepository = loadRepository;
+    this.eventPublisher = eventPublisher;
   }
 
   @CacheEvict(value = "assignedLoads", allEntries = true)
@@ -44,8 +55,14 @@ public class LoadAssignmentService {
         carrierId,
         shipperId);
 
-    // TODO: Publish LoadAssignedToCarrier event for notifications
-    return repository.save(assignment);
+    LoadAssignment saved = repository.save(assignment);
+
+    // AC-1 (US-861): notify the carrier that a load was directly assigned to them
+    loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(loadId, tenantId)
+        .ifPresent(load ->
+            eventPublisher.publishEvent(new LoadAssignedToCarrierEvent(load, carrierId)));
+
+    return saved;
   }
 
   @CacheEvict(value = "assignedLoads", allEntries = true)

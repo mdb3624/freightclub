@@ -1,6 +1,6 @@
 # US-861: Notify Carrier on Direct Load Assignment
 
-**Status:** IN_DEVELOPMENT (test run of `/run-story` skill)
+**Status:** DONE (test run of `/run-story` skill) — PR #80 merged 2026-07-24, all CI green, Reviewer APPROVED, Librarian sign-off `docs/project/LIBRARIAN_SIGN_OFF_US-861.md`
 **Type:** BUG_FIX (new) — no prior story covered this behavior; not a regression.
 **Scope flag:** `BACKEND_ONLY`
 

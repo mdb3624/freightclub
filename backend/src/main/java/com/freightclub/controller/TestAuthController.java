@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * TEST-ONLY Authentication Controller for E2E tests.
@@ -112,7 +113,18 @@ public class TestAuthController {
     }
   }
 
+  // Regression (found while investigating repo-wide E2E CI failures): findById() and save()
+  // below used to run as two separate Spring-managed transactions sharing one OSIV-held
+  // connection. TenantAwareDataSource applies SET LOCAL app.current_tenant once per
+  // *connection checkout*, and SET LOCAL is transaction-scoped — so it applied for
+  // findById()'s transaction, was reset at that transaction's commit, and left save()'s
+  // later UPDATE running with no tenant context. RLS's fail-closed policy then filtered the
+  // row to zero matches instead of throwing, and Hibernate raised StaleObjectStateException
+  // (500) on every call. @Transactional here makes findById()+save() one transaction, so the
+  // SET LOCAL applied when setTenantId() re-issues it onto the already-active transaction
+  // (see TenantContextHolder's javadoc) stays valid for both statements.
   @DeleteMapping("/users/{userId}")
+  @Transactional
   public ResponseEntity<Void> deleteTestUser(@PathVariable String userId) {
     // /api/test/ is skipped by JwtAuthenticationFilter, so no tenant context is bound here —
     // resolve it via the pre-auth login-lookup role first (US-858), same as every other

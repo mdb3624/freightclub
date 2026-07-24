@@ -52,7 +52,15 @@ async function loginAsCarrier(page: any, email: string) {
   })
 
   await page.goto(`${FRONTEND}/`)
-  await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
+  // header-login-btn is desktop-only (hidden below Tailwind's md breakpoint);
+  // at narrow viewports login is reachable only via the hamburger menu (CHG-862).
+  const desktopLogin = page.locator('[data-testid="header-login-btn"]')
+  if (await desktopLogin.isVisible().catch(() => false)) {
+    await desktopLogin.click()
+  } else {
+    await page.click('[data-testid="mobile-menu-toggle"]')
+    await page.click('[data-testid="mobile-nav-login-btn"]')
+  }
   await page.fill('[data-testid="email-input"]', email)
   await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
   await page.click('[data-testid="login-submit-btn"]')
@@ -60,7 +68,10 @@ async function loginAsCarrier(page: any, email: string) {
 
   // Navigate to new TruckerDashboard (not legacy /dashboard/carrier)
   await page.goto(`${FRONTEND}/dashboard/trucker`)
-  await page.waitForLoadState('networkidle')
+  // TruckerDashboard.tsx polls live data (diesel prices, load board), so
+  // 'networkidle' never resolves — wait for a concrete rendered element
+  // instead (same fix already applied in US-841-ui-primitives.spec.ts).
+  await expect(page.getByTestId('trucker-dashboard')).toBeVisible({ timeout: 15000 })
 }
 
 // ── AC-1: Equipment badge and load count label ──────────────────────────────

@@ -1,6 +1,35 @@
 import { test, expect } from '@playwright/test';
 import { TestDataSeeder } from './fixtures/test-data-seeder';
 
+const FRONTEND_URL = process.env.TEST_FRONTEND_URL || 'http://localhost:9090';
+
+// AuthInitializer unconditionally calls refreshAccessToken() on every mount
+// (the access token is deliberately memory-only, never persisted — see
+// authStore.ts) using the HTTP-only refreshToken cookie, and that cookie is
+// single-use (rotates on every call). TestDataSeeder captures the cookie
+// value on `user.refreshToken`, but the tests below neither applied it to
+// the browser context nor avoided a wasted extra mount: an initial
+// goto('/') just to seed localStorage via page.evaluate() (before switching
+// to the real target route) mounts AuthInitializer and consumes the
+// single-use token itself, leaving nothing valid for the real navigation
+// (CHG-861). addInitScript + exactly one goto() avoids both problems.
+async function loginViaSession(
+  page: import('@playwright/test').Page,
+  user: { id: string; email: string; firstName: string; lastName: string; role: string; tenantId: string; refreshToken?: string }
+) {
+  await page.context().addCookies([{
+    name: 'refreshToken',
+    value: user.refreshToken!,
+    url: FRONTEND_URL,
+    httpOnly: true,
+    sameSite: 'Lax',
+    secure: false,
+  }]);
+  await page.addInitScript((u) => {
+    localStorage.setItem('freightclub_user', JSON.stringify({ id: u.id, email: u.email, firstName: u.firstName, lastName: u.lastName, role: u.role, tenantId: u.tenantId }));
+  }, user);
+}
+
 /**
  * Smoke Tests — Core Application Functionality
  *
@@ -53,13 +82,7 @@ test.describe('Smoke Tests - Core Functionality', () => {
     });
 
     try {
-      // Navigate to base URL first so localStorage is accessible, then switch auth state
-      await page.goto('/', { waitUntil: 'domcontentloaded' });
-      await page.evaluate((u) => {
-        localStorage.setItem('freightclub_access_token', u.accessToken!);
-        localStorage.setItem('freightclub_user', JSON.stringify({ id: u.id, email: u.email, firstName: u.firstName, lastName: u.lastName, role: u.role, tenantId: u.tenantId }));
-      }, user);
-
+      await loginViaSession(page, user);
       await page.goto('/dashboard/shipper', { waitUntil: 'networkidle' });
       await expect(page.locator('[data-testid="shipper-dashboard-page"]')).toBeVisible({ timeout: 10000 });
     } finally {
@@ -77,13 +100,7 @@ test.describe('Smoke Tests - Core Functionality', () => {
     });
 
     try {
-      // Navigate to base URL first so localStorage is accessible, then switch auth state
-      await page.goto('/', { waitUntil: 'domcontentloaded' });
-      await page.evaluate((u) => {
-        localStorage.setItem('freightclub_access_token', u.accessToken!);
-        localStorage.setItem('freightclub_user', JSON.stringify({ id: u.id, email: u.email, firstName: u.firstName, lastName: u.lastName, role: u.role, tenantId: u.tenantId }));
-      }, user);
-
+      await loginViaSession(page, user);
       await page.goto('/dashboard/trucker', { waitUntil: 'networkidle' });
       await expect(page).toHaveURL(/\/dashboard\/trucker/, { timeout: 10000 });
     } finally {
@@ -101,12 +118,7 @@ test.describe('Smoke Tests - Core Functionality', () => {
     });
 
     try {
-      await page.goto('/', { waitUntil: 'domcontentloaded' });
-      await page.evaluate((u) => {
-        localStorage.setItem('freightclub_access_token', u.accessToken!);
-        localStorage.setItem('freightclub_user', JSON.stringify({ id: u.id, email: u.email, firstName: u.firstName, lastName: u.lastName, role: u.role, tenantId: u.tenantId }));
-      }, user);
-
+      await loginViaSession(page, user);
       await page.goto('/dashboard/shipper', { waitUntil: 'networkidle' });
       await expect(page.locator('[data-testid="shipper-dashboard-page"]')).toBeVisible({ timeout: 10000 });
 
@@ -132,12 +144,7 @@ test.describe('Smoke Tests - Core Functionality', () => {
     });
 
     try {
-      await page.goto('/', { waitUntil: 'domcontentloaded' });
-      await page.evaluate((u) => {
-        localStorage.setItem('freightclub_access_token', u.accessToken!);
-        localStorage.setItem('freightclub_user', JSON.stringify({ id: u.id, email: u.email, firstName: u.firstName, lastName: u.lastName, role: u.role, tenantId: u.tenantId }));
-      }, user);
-
+      await loginViaSession(page, user);
       await page.goto('/profile', { waitUntil: 'networkidle' });
       await expect(page.locator('[data-testid="profile-page"]').first()).toBeVisible({ timeout: 10000 });
       await expect(

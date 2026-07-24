@@ -35,7 +35,15 @@ async function loginAsShipper(page: any, email: string) {
     }),
   })
   await page.goto(`${FRONTEND}/`)
-  await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
+  // header-login-btn is desktop-only (hidden below Tailwind's md breakpoint);
+  // at narrow viewports login is reachable only via the hamburger menu (CHG-862).
+  const desktopLogin = page.locator('[data-testid="header-login-btn"]')
+  if (await desktopLogin.isVisible().catch(() => false)) {
+    await desktopLogin.click()
+  } else {
+    await page.click('[data-testid="mobile-menu-toggle"]')
+    await page.click('[data-testid="mobile-nav-login-btn"]')
+  }
   await page.fill('[data-testid="email-input"]', email)
   await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
   await page.click('[data-testid="login-submit-btn"]')
@@ -108,7 +116,15 @@ test.describe('US-841 AC-3: input field dimensions', () => {
     await page.setViewportSize({ width: 1280, height: 900 })
     await page.goto(`${FRONTEND}/`)
     await page.waitForLoadState('networkidle')
-    await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
+    // header-login-btn is desktop-only (hidden below Tailwind's md breakpoint);
+  // at narrow viewports login is reachable only via the hamburger menu (CHG-862).
+  const desktopLogin = page.locator('[data-testid="header-login-btn"]')
+  if (await desktopLogin.isVisible().catch(() => false)) {
+    await desktopLogin.click()
+  } else {
+    await page.click('[data-testid="mobile-menu-toggle"]')
+    await page.click('[data-testid="mobile-nav-login-btn"]')
+  }
 
     const emailInput = page.locator('[data-testid="email-input"]')
     await expect(emailInput).toBeVisible({ timeout: 10000 })
@@ -134,7 +150,15 @@ test.describe('US-841 AC-4: input focus border', () => {
     await page.setViewportSize({ width: 1280, height: 900 })
     await page.goto(`${FRONTEND}/`)
     await page.waitForLoadState('networkidle')
-    await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
+    // header-login-btn is desktop-only (hidden below Tailwind's md breakpoint);
+  // at narrow viewports login is reachable only via the hamburger menu (CHG-862).
+  const desktopLogin = page.locator('[data-testid="header-login-btn"]')
+  if (await desktopLogin.isVisible().catch(() => false)) {
+    await desktopLogin.click()
+  } else {
+    await page.click('[data-testid="mobile-menu-toggle"]')
+    await page.click('[data-testid="mobile-nav-login-btn"]')
+  }
 
     const emailInput = page.locator('[data-testid="email-input"]')
     await expect(emailInput).toBeVisible({ timeout: 10000 })
@@ -211,7 +235,15 @@ test.describe('adversarial', () => {
       }),
     })
     await page.goto(`${FRONTEND}/`)
-    await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
+    // header-login-btn is desktop-only (hidden below Tailwind's md breakpoint);
+  // at narrow viewports login is reachable only via the hamburger menu (CHG-862).
+  const desktopLogin = page.locator('[data-testid="header-login-btn"]')
+  if (await desktopLogin.isVisible().catch(() => false)) {
+    await desktopLogin.click()
+  } else {
+    await page.click('[data-testid="mobile-menu-toggle"]')
+    await page.click('[data-testid="mobile-nav-login-btn"]')
+  }
     await page.fill('[data-testid="email-input"]', email)
     await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
     await page.click('[data-testid="login-submit-btn"]')
@@ -231,7 +263,15 @@ test.describe('adversarial', () => {
     await page.setViewportSize({ width: 1280, height: 900 })
     await page.goto(`${FRONTEND}/`)
     await page.waitForLoadState('networkidle')
-    await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
+    // header-login-btn is desktop-only (hidden below Tailwind's md breakpoint);
+  // at narrow viewports login is reachable only via the hamburger menu (CHG-862).
+  const desktopLogin = page.locator('[data-testid="header-login-btn"]')
+  if (await desktopLogin.isVisible().catch(() => false)) {
+    await desktopLogin.click()
+  } else {
+    await page.click('[data-testid="mobile-menu-toggle"]')
+    await page.click('[data-testid="mobile-nav-login-btn"]')
+  }
 
     const submitBtn = page.locator('[data-testid="login-submit-btn"]')
     await expect(submitBtn).toBeVisible({ timeout: 10000 })

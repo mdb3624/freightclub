@@ -7,9 +7,12 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Home Page', () => {
-  test.beforeEach(async ({ context }) => {
-    await context.clearCookies();
-  });
+  // Full storageState isolation, not just clearCookies(): the global auth.json's
+  // persisted `freightclub_user` localStorage entry survives clearCookies(), so
+  // AuthInitializer still finds a "logged in" user on mount and attempts a
+  // refresh with no cookie to back it — producing a spurious 401 console error
+  // this suite's own "no console errors" test then fails on (CHG-861).
+  test.use({ storageState: { cookies: [], origins: [] } });
 
   test('renders hero, header, and footer', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
@@ -141,8 +144,9 @@ test.describe('Home Page', () => {
 });
 
 test.describe('Relocated carrier tools (/carrier/tools)', () => {
-  test('redirects unauthenticated users home with the login modal open', async ({ page, context }) => {
-    await context.clearCookies();
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test('redirects unauthenticated users home with the login modal open', async ({ page }) => {
     await page.goto('/carrier/tools');
     await expect(page).toHaveURL(/^http:\/\/[^/]+\/$/);
     await expect(page.locator('[data-testid="login-modal"]')).toBeVisible();

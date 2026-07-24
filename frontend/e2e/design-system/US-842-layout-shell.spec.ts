@@ -63,10 +63,38 @@ test.describe('US-842 unauthenticated', () => {
 })
 
 // ── AC-1: Shipper AppShell header on /profile ───────────────────────────────
-// Uses global auth.json (SHIPPER role) — no login needed
+// Isolated per-test login (not the global auth.json) — its refresh token is
+// single-use and rotates on every AuthInitializer mount, so tests sharing it
+// race each other and land on the logged-out home page (CHG-861).
 
 test.describe('US-842 shipper header', () => {
+  test.use({ storageState: { cookies: [], origins: [] } })
+
+  const shipperTs = Date.now()
+
+  async function loginAsShipper(page: any, email: string) {
+    await fetch(`${BACKEND}/api/test/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        password: 'E2ETestPassword123!',
+        firstName: 'Shipper',
+        lastName: 'Test',
+        role: 'SHIPPER',
+        companyName: `ShipCo-${shipperTs}`,
+      }),
+    })
+    await page.goto(`${FRONTEND}/`)
+    await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
+    await page.fill('[data-testid="email-input"]', email)
+    await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
+    await page.click('[data-testid="login-submit-btn"]')
+    await page.waitForURL(/\/dashboard/, { timeout: 30000 })
+  }
+
   test('AC-1: shipper AppShell header is 64px white with #D8CEB8 border', async ({ page }) => {
+    await loginAsShipper(page, `us842-shipper-${shipperTs}@freightclub.local`)
     await page.goto(`${FRONTEND}/profile`)
     await page.waitForLoadState('networkidle')
 

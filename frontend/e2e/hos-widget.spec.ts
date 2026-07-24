@@ -15,12 +15,30 @@
 import { test, expect } from '@playwright/test'
 import { TestDataSeeder } from './fixtures/test-data-seeder'
 
+// AuthInitializer unconditionally calls refreshAccessToken() on every mount
+// (the access token is deliberately memory-only, never persisted — see
+// authStore.ts) using the HTTP-only refreshToken cookie. TestDataSeeder
+// captures that cookie value on `user.refreshToken` but it was never actually
+// applied to the browser context here — only the (unread, dead) localStorage
+// access-token key was set — so the refresh always 401'd with no cookie to
+// back it, and the app fell back to logged-out on every navigation (CHG-861).
 async function loginAndGoToTools(page: import('@playwright/test').Page, request: import('@playwright/test').APIRequestContext) {
   const seeder = new TestDataSeeder(request)
   const user = await seeder.createTestUser({ role: 'TRUCKER' })
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
-  await page.evaluate((u) => {
-    localStorage.setItem('freightclub_access_token', u.accessToken!)
+  const frontendUrl = process.env.TEST_FRONTEND_URL || 'http://localhost:9090'
+  await page.context().addCookies([{
+    name: 'refreshToken',
+    value: user.refreshToken!,
+    url: frontendUrl,
+    httpOnly: true,
+    sameSite: 'Lax',
+    secure: false,
+  }])
+  // addInitScript (not page.evaluate after a first goto) so localStorage is
+  // seeded before the ONE real navigation below — an earlier goto('/') just
+  // to seed localStorage would itself mount AuthInitializer and consume the
+  // single-use refresh token, leaving nothing valid for the real navigation.
+  await page.addInitScript((u) => {
     localStorage.setItem('freightclub_user', JSON.stringify({
       id: u.id, email: u.email, firstName: u.firstName, lastName: u.lastName, role: u.role, tenantId: u.tenantId,
     }))

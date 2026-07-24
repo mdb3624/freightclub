@@ -12,16 +12,47 @@ import * as path from 'path'
  * AC-6: Load table last column has chevron affordance (›)
  */
 
+const BACKEND = process.env.TEST_BACKEND_URL || 'http://localhost:9091'
 const FRONTEND = process.env.TEST_FRONTEND_URL || 'http://localhost:9090'
 const EVIDENCE = path.resolve('test-results/evidence')
 
 test.beforeAll(() => fs.mkdirSync(EVIDENCE, { recursive: true }))
 test.setTimeout(60000)
 
+// Each test registers + logs in its own SHIPPER via the real UI flow, isolated
+// from the global auth.json — the shared session's refresh token is single-use
+// and rotates on every AuthInitializer mount, so tests sharing it race each
+// other and land on the logged-out home page (CHG-861).
+async function loginAsShipper(page: import('@playwright/test').Page, email: string) {
+  await fetch(`${BACKEND}/api/test/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email,
+      password: 'E2ETestPassword123!',
+      firstName: 'Shipper',
+      lastName: 'Test',
+      role: 'SHIPPER',
+      companyName: `ShipCo-${Date.now()}`,
+    }),
+  })
+  await page.goto(`${FRONTEND}/`)
+  await page.click('[data-testid="header-login-btn"]:visible, [data-testid="header-get-started-btn-mobile"]:visible')
+  await page.fill('[data-testid="email-input"]', email)
+  await page.fill('[data-testid="password-input"]', 'E2ETestPassword123!')
+  await page.click('[data-testid="login-submit-btn"]')
+  await page.waitForURL(/\/dashboard/, { timeout: 30000 })
+}
+
 // ── Golden-path: authenticated shipper ─────────────────────────────────────
-// Uses global auth.json (SHIPPER role set up by globalSetup)
 
 test.describe('US-843 shipper dashboard reskin', () => {
+  test.use({ storageState: { cookies: [], origins: [] } })
+
+  test.beforeEach(async ({ page }, testInfo) => {
+    await loginAsShipper(page, `us843-${testInfo.testId}-${Date.now()}@freightclub.local`)
+  })
+
   test('AC-1: KPI tiles have correct border, radius, padding, and white bg', async ({ page }) => {
     await page.goto(`${FRONTEND}/dashboard/shipper`)
     await page.waitForLoadState('networkidle')
@@ -154,6 +185,12 @@ test.describe('US-843 shipper dashboard reskin', () => {
 // ── Adversarial tests (required per JIRA_GIT_SETUP_PLAN.md) ────────────────
 
 test.describe('US-843 adversarial', () => {
+  test.use({ storageState: { cookies: [], origins: [] } })
+
+  test.beforeEach(async ({ page }, testInfo) => {
+    await loginAsShipper(page, `us843-adv-${testInfo.testId}-${Date.now()}@freightclub.local`)
+  })
+
   test('adversarial: no carrier dark bg leaking onto shipper canvas', async ({ page }) => {
     await page.goto(`${FRONTEND}/dashboard/shipper`)
     await page.waitForLoadState('networkidle')

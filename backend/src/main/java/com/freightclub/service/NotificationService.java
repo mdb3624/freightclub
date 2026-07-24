@@ -93,6 +93,21 @@ public class NotificationService {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
+    // AC-1 (US-861): notify the carrier when a Shipper directly assigns them a load
+    public void onLoadAssignedToCarrier(LoadAssignedToCarrierEvent event) {
+        Load load = event.load();
+        User carrier = userRepository.findById(event.carrierId()).orElse(null);
+        if (carrier == null) {
+            log.warn("Carrier not found for load assigned event, carrierId={}", event.carrierId());
+            return;
+        }
+        notify(carrier, load, "LOAD_ASSIGNED",
+                "You've been assigned a new load (" + route(load) + ").",
+                "[FreightClub] New load assigned to you");
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void onLoadCancelled(LoadCancelledEvent event) {
         Load load = event.load();
         User trucker = userRepository.findById(event.truckerId()).orElse(null);

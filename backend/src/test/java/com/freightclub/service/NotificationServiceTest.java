@@ -226,6 +226,31 @@ class NotificationServiceTest {
     }
 
     @Nested
+    // AC-1/AC-2 (US-861): carrier notified on direct assignment; no notification if carrier missing
+    class NotifyLoadAssignedToCarrier {
+
+        @Test
+        @DisplayName("notifies carrier when directly assigned a load")
+        void happyPath() {
+            User carrier = buildUser(TRUCKER_ID, "Alice", "Smith");
+            when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.of(carrier));
+            when(notificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            service.onLoadAssignedToCarrier(new LoadAssignedToCarrierEvent(buildLoad(), TRUCKER_ID));
+
+            verify(notificationRepository).save(argThat(n -> "LOAD_ASSIGNED".equals(n.getType())));
+        }
+
+        @Test
+        @DisplayName("skips when carrier not found")
+        void carrierNotFound_noOp() {
+            when(userRepository.findById(TRUCKER_ID)).thenReturn(Optional.empty());
+            service.onLoadAssignedToCarrier(new LoadAssignedToCarrierEvent(buildLoad(), TRUCKER_ID));
+            verify(notificationRepository, never()).save(any());
+        }
+    }
+
+    @Nested
     class MarkRead {
 
         @BeforeEach void setup() { TenantContextHolder.setTenantId(TENANT_ID); }

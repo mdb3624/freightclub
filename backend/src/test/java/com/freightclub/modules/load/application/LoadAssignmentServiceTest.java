@@ -4,24 +4,32 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import com.freightclub.domain.Load;
 import com.freightclub.modules.load.domain.LoadAssignment;
 import com.freightclub.modules.load.infrastructure.LoadAssignmentRepository;
+import com.freightclub.repository.LoadRepository;
 import com.freightclub.security.TenantContextHolder;
+import com.freightclub.service.LoadAssignedToCarrierEvent;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Page;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class LoadAssignmentServiceTest {
 
   @Mock private LoadAssignmentRepository repository;
+  @Mock private LoadRepository loadRepository;
+  @Mock private ApplicationEventPublisher eventPublisher;
 
   private LoadAssignmentService service;
 
@@ -34,7 +42,14 @@ class LoadAssignmentServiceTest {
   void setup() {
     TenantContextHolder.setTenantId(TEST_TENANT_ID);
     TenantContextHolder.setUserId("test-user-123");
-    service = new LoadAssignmentService(repository);
+    service = new LoadAssignmentService(repository, loadRepository, eventPublisher);
+  }
+
+  private Load buildLoad() {
+    Load load = new Load();
+    ReflectionTestUtils.setField(load, "id", TEST_LOAD_ID);
+    load.setTenantId(TEST_TENANT_ID);
+    return load;
   }
 
   @AfterEach
@@ -48,6 +63,8 @@ class LoadAssignmentServiceTest {
         .thenReturn(Optional.empty());
     when(repository.save(any(LoadAssignment.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
+    when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(TEST_LOAD_ID, TEST_TENANT_ID))
+        .thenReturn(Optional.of(buildLoad()));
 
     LoadAssignment result =
         service.assignLoadToCarrier(TEST_LOAD_ID, TEST_CARRIER_ID, TEST_SHIPPER_ID);
@@ -61,6 +78,28 @@ class LoadAssignmentServiceTest {
   }
 
   @Test
+  // AC-1: Carrier receives a notification when directly assigned a load (US-861)
+  void testAssignLoadToCarrier_PublishesLoadAssignedToCarrierEvent() {
+    when(repository.findByLoadAndTenant(TEST_LOAD_ID, TEST_TENANT_ID))
+        .thenReturn(Optional.empty());
+    when(repository.save(any(LoadAssignment.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+    Load load = buildLoad();
+    when(loadRepository.findByIdAndTenantIdAndDeletedAtIsNull(TEST_LOAD_ID, TEST_TENANT_ID))
+        .thenReturn(Optional.of(load));
+
+    service.assignLoadToCarrier(TEST_LOAD_ID, TEST_CARRIER_ID, TEST_SHIPPER_ID);
+
+    ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+    verify(eventPublisher, times(1)).publishEvent(captor.capture());
+    assertInstanceOf(LoadAssignedToCarrierEvent.class, captor.getValue());
+    LoadAssignedToCarrierEvent evt = (LoadAssignedToCarrierEvent) captor.getValue();
+    assertSame(load, evt.load());
+    assertEquals(TEST_CARRIER_ID, evt.carrierId());
+  }
+
+  @Test
+  // AC-2: Notification only fires after successful commit — no event on the failure path (US-861)
   void testAssignLoadToCarrier_ThrowsIfAlreadyAssigned() {
     LoadAssignment existing = new LoadAssignment(
         "id-1", TEST_LOAD_ID, TEST_TENANT_ID, TEST_CARRIER_ID, TEST_SHIPPER_ID);
@@ -72,6 +111,7 @@ class LoadAssignmentServiceTest {
         IllegalArgumentException.class,
         () -> service.assignLoadToCarrier(TEST_LOAD_ID, TEST_CARRIER_ID, TEST_SHIPPER_ID));
     verify(repository, never()).save(any(LoadAssignment.class));
+    verify(eventPublisher, never()).publishEvent(any());
   }
 
   @Test

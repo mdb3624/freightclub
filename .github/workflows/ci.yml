@@ -221,7 +221,11 @@ jobs:
         env:
           PLAYWRIGHT_TEST_BASE_URL: http://localhost:9090
           TEST_BACKEND_URL: http://localhost:9091
-          PLAYWRIGHT_WORKERS: "4"
+          # ubuntu-latest runners have 2 CPU cores; 4 workers oversubscribed
+          # them 2x, causing CPU contention that manifested as both slow
+          # overall runtime (missing the 15m job timeout) and elevated
+          # per-test flakiness/timeouts (CHG-861 investigation, 2026-07-24).
+          PLAYWRIGHT_WORKERS: "2"
 
       - name: Upload test results
         if: always()

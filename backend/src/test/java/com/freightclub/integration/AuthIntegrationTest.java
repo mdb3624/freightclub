@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -121,6 +122,43 @@ class AuthIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
                                 new LoginRequest("nobody@example.com", "wrongpass"))))
+                .andExpect(status().isUnauthorized());
+    }
+
+    /**
+     * Regression: DELETE /api/test/auth/users/{id} 500'd on every call once
+     * freightclub_runtime lost BYPASSRLS (US-857). deleteTestUser's findById() and save()
+     * ran as two separate Spring-managed transactions sharing one OSIV connection; SET LOCAL
+     * app.current_tenant (transaction-scoped) applied for the first transaction and was reset
+     * at its commit, so the second transaction's UPDATE ran with no tenant context, RLS's
+     * fail-closed policy filtered the row to zero matches, and Hibernate raised
+     * StaleObjectStateException. This test proves the delete actually persists (not just
+     * returns 204) by confirming the user can no longer log in afterward.
+     */
+    @Test
+    void deleteTestUser_softDeletesUser_loginFailsAfterward() throws Exception {
+        String email = "delete-test-user-" + UUID.randomUUID() + "@example.com";
+        MvcResult registerResult = mockMvc.perform(post("/api/test/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(java.util.Map.of(
+                                "email", email,
+                                "password", "Password1!",
+                                "firstName", "Delete",
+                                "lastName", "Target",
+                                "role", "SHIPPER",
+                                "companyName", "Delete Target Co"))))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String userId = objectMapper.readTree(registerResult.getResponse().getContentAsString())
+                .get("user").get("id").asText();
+
+        mockMvc.perform(delete("/api/test/auth/users/" + userId))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new LoginRequest(email, "Password1!"))))
                 .andExpect(status().isUnauthorized());
     }
 

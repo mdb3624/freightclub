@@ -115,11 +115,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: [backend, frontend]
     # Guardrail against a hung/misbehaving E2E run consuming the GitHub Actions
-    # default 360-minute job timeout. The full local suite (22 spec files, all
-    # unit-visible retries) completes in ~2 minutes; 15 gives generous headroom
-    # for CI variance while still failing fast on a genuine hang or regression
-    # that breaks many tests at once (e.g. a shared route/selector change).
-    timeout-minutes: 15
+    # default 360-minute job timeout. The ~2-minute claim this comment
+    # previously made for the full local suite did not hold up under
+    # investigation (CHG-861, 2026-07-24): 125 real browser+backend tests on
+    # a 2-core ubuntu-latest runner with video/trace capture genuinely takes
+    # longer than that, and 15m was cutting it too close even with the
+    # CHG-860/CHG-861 bugs fixed and correctness restored. Raised to 25m to
+    # give real headroom; still fails fast well short of the 360m default.
+    timeout-minutes: 25
 
     services:
       postgres:
@@ -221,11 +224,13 @@ jobs:
         env:
           PLAYWRIGHT_TEST_BASE_URL: http://localhost:9090
           TEST_BACKEND_URL: http://localhost:9091
-          # ubuntu-latest runners have 2 CPU cores; 4 workers oversubscribed
-          # them 2x, causing CPU contention that manifested as both slow
-          # overall runtime (missing the 15m job timeout) and elevated
-          # per-test flakiness/timeouts (CHG-861 investigation, 2026-07-24).
-          PLAYWRIGHT_WORKERS: "2"
+          # Reverted to 4 (CHG-861 investigation, 2026-07-24): dropping to 2
+          # to match the runner's 2 CPU cores removed contention but
+          # increased total wall-clock time enough that the run reported
+          # ZERO test results within the job timeout (vs ~80/125 at 4
+          # workers) - net worse. 4 workers + a larger timeout-minutes
+          # budget outperforms 2 workers within a tight timeout.
+          PLAYWRIGHT_WORKERS: "4"
 
       - name: Upload test results
         if: always()

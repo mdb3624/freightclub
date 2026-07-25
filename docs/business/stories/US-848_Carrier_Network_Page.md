@@ -18,7 +18,7 @@ As a shipper, I want a dedicated page to search and browse available carriers so
 
 - BR-1: Accessible at `/carriers` route, protected by SHIPPER role
 - BR-2: URL query params `?origin=X&dest=Y&equip=Z` pre-populate search filters (passed from Dashboard Action Zone)
-- BR-3: Filters include: origin state, destination state, equipment type, minimum rating, minimum on-time rate, preferred-only toggle
+- BR-3: Filters include: origin state, destination state, equipment type, minimum on-time rate, preferred-only toggle (minimum rating filter deferred — see Out of Scope; backend does not yet expose rating aggregates)
 - BR-4: Search executes against `/api/v1/carriers/search` endpoint
 - BR-5: Preferred carriers (from `/api/v1/shippers/preferred-carriers`) appear in a horizontal strip above the results grid
 - BR-6: Shipper can add or remove any carrier from their preferred list via buttons on the carrier card and detail panel

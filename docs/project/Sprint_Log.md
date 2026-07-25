@@ -1,6 +1,6 @@
 # Sprint Log: Resilience Logistics
 
-**Last Updated:** 2026-07-16  
+**Last Updated:** 2026-07-25  
 **Maintained By:** Librarian
 
 | Sprint | Goal | Status | Key Deliverable |
@@ -346,5 +346,24 @@ Per explicit user correction mid-session ("this is starting to feel like a lot o
 - [x] PR #68 opened against `main`, merged 2026-07-22 (squash, commit `421dccb9`)
 - [x] Production deploy — user explicitly authorized merge + deploy 2026-07-22. Frontend redeployed as `freightclub-frontend-00055-xb8` (image digest `sha256:37864ad87c88936064a0414983bb7c5aab9390000985eea87b9c08e37f8329d5`), serving 100% traffic. Backend not redeployed — no backend code in this story.
 - [x] **Live production verification (not mocked):** confirmed the served bundle (`assets/index-D2egGjTm.js`) is the exact locally-built artifact; fetched it directly from production and confirmed it contains `signup-modal`, `mobile-nav-login-btn`, and `Create your FreightClub account` (the new-feature markers), and confirmed `persona-carrier-cta`/`persona-shipper-cta`/`header-get-started-btn` are entirely absent (the removed-CTA markers).
+
+---
+
+## LIBRARIAN_SIGN_OFF: CHG-863 (US-848 Rating Filter/Data Contradiction + Untracked Trust-Signal Debt) — 2026-07-25
+
+**Origin:** Not a planned story — found by BA persona running a `/council-review` 48-hour test (per the RESHAPE verdict on "BA research-before-writing") that compared grounded-research AC against the already-shipped US-848 (Carrier Network Page) story doc. Full ticket: `docs/changes/CHG-863.md`.
+
+**Findings:**
+1. **AC/BR contradiction:** BR-3 requires a "minimum rating" search filter; Out of Scope excludes carrier rating data as backend-unavailable. As written, the filter has nothing to filter against.
+2. **Untracked debt:** MC/DOT authority status, insurance-on-file verification, and FMCSA safety rating — industry-standard carrier-vetting trust signals per external research — are deferred to Out of Scope with no companion tracking ticket, so the cut reads as permanent rather than acknowledged debt.
+
+**Decision:** LIBRARIAN — Option A, finish US-848 as-is; CHG-863 tracks both findings separately. Follow-up story to be cataloged once backend rating/DOT/insurance aggregate endpoints exist. Neither finding blocks US-848's current AC-1–AC-8.
+
+**LIBRARIAN verification:**
+- [x] `docs/changes/CHG-863.md` created, status OPEN
+- [x] BR-3 wording fix applied 2026-07-25 in `docs/business/stories/US-848_Carrier_Network_Page.md` (minimum-rating filter removed from BR-3, cross-referenced to Out of Scope)
+- [ ] Follow-up trust-signals story cataloged once backend support exists
+- [x] Traceability: no new Story_Map.md row needed for CHG-863 itself (bugfix/debt ticket against IN_PROGRESS US-848, not a new story)
+- ⚠️ **Separately flagged, not part of this CHG:** US-848 has a story doc but no row in `Story_Map.md` at all — a pre-existing dangling-reference gap, noted per workflow rule (`.claude/rules/workflow.md`) without derailing this ticket.
 
 **Status:** ✅ DONE. Merged and deployed to production 2026-07-22 (`freightclub-frontend-00055-xb8`). Live-verified.

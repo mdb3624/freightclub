@@ -232,6 +232,7 @@ curl -u "email:token" \
 | US-857 | [FREIG-118](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-118) | US-857: Narrow Login-Flow RLS Bypass | To Do |
 | US-858 | [FREIG-119](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-119) | US-858: RLS Write-Path Investigation & Complete BYPASSRLS Revocation | To Do |
 | US-860 | [FREIG-120](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-120) | US-860: Home Page CTA Simplification & In-Page Signup Modal | Done |
+| US-862 | [FREIG-121](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-121) | US-862: Carrier Trust & Compliance Signals (MC/DOT, Insurance, Safety Rating) | To Do |
 
 ---
 

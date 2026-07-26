@@ -1,6 +1,6 @@
 # Sprint Log: Resilience Logistics
 
-**Last Updated:** 2026-07-16  
+**Last Updated:** 2026-07-25  
 **Maintained By:** Librarian
 
 | Sprint | Goal | Status | Key Deliverable |
@@ -347,6 +347,33 @@ Per explicit user correction mid-session ("this is starting to feel like a lot o
 - [x] Production deploy — user explicitly authorized merge + deploy 2026-07-22. Frontend redeployed as `freightclub-frontend-00055-xb8` (image digest `sha256:37864ad87c88936064a0414983bb7c5aab9390000985eea87b9c08e37f8329d5`), serving 100% traffic. Backend not redeployed — no backend code in this story.
 - [x] **Live production verification (not mocked):** confirmed the served bundle (`assets/index-D2egGjTm.js`) is the exact locally-built artifact; fetched it directly from production and confirmed it contains `signup-modal`, `mobile-nav-login-btn`, and `Create your FreightClub account` (the new-feature markers), and confirmed `persona-carrier-cta`/`persona-shipper-cta`/`header-get-started-btn` are entirely absent (the removed-CTA markers).
 
+---
+
+## LIBRARIAN_SIGN_OFF: CHG-863 (US-848 Rating Filter/Data Contradiction + Untracked Trust-Signal Debt) — 2026-07-25
+
+**Origin:** Not a planned story — found by BA persona running a `/council-review` 48-hour test (per the RESHAPE verdict on "BA research-before-writing") that compared grounded-research AC against the already-shipped US-848 (Carrier Network Page) story doc. Full ticket: `docs/changes/CHG-863.md`.
+
+**Findings:**
+1. **AC/BR contradiction:** BR-3 requires a "minimum rating" search filter; Out of Scope excludes carrier rating data as backend-unavailable. As written, the filter has nothing to filter against.
+2. **Untracked debt:** MC/DOT authority status, insurance-on-file verification, and FMCSA safety rating — industry-standard carrier-vetting trust signals per external research — are deferred to Out of Scope with no companion tracking ticket, so the cut reads as permanent rather than acknowledged debt.
+
+**Decision:** LIBRARIAN — Option A, finish US-848 as-is; CHG-863 tracks both findings separately. Follow-up story to be cataloged once backend rating/DOT/insurance aggregate endpoints exist. Neither finding blocks US-848's current AC-1–AC-8.
+
+**LIBRARIAN verification:**
+- [x] `docs/changes/CHG-863.md` created, status OPEN
+- [x] BR-3 wording fix applied 2026-07-25 in `docs/business/stories/US-848_Carrier_Network_Page.md` (minimum-rating filter removed from BR-3, cross-referenced to Out of Scope)
+- [x] Follow-up trust-signals story cataloged 2026-07-25 as **US-862** (`docs/business/stories/US-862_Carrier_Trust_Compliance_Signals.md`) — Jira FREIG-121 created, `Story_ID_to_Jira_Mapping.md`/`.csv` updated, `Story_Map.md` row added with status MIGRATION_PENDING (remains BLOCKED pending a backend FMCSA SAFER/insurance data source)
+- [x] Traceability: no new Story_Map.md row needed for CHG-863 itself (bugfix/debt ticket against IN_PROGRESS US-848, not a new story) — the new row added is for **US-862**, the cataloged follow-up story, not CHG-863
+- ⚠️ **Separately flagged, not part of this CHG:** US-848 has a story doc but no row in `Story_Map.md` at all — a pre-existing dangling-reference gap, noted per workflow rule (`.claude/rules/workflow.md`) without derailing this ticket.
+
+**CHG-863 Status:** RESOLVED 2026-07-25 (both findings closed — BR-3 fix landed and PR merged main `fe6f30b8`; follow-up story cataloged as US-862).
+
+**All 4 PRs from this thread merged to `main` 2026-07-25/26** (each squash-merged, branch deleted, all 9 GH Actions checks green before merge):
+- PR #84 — `fix(US-848)`: BR-3 wording fix + CHG-863 opened → `fe6f30b8`
+- PR #85 — `chore(US-862)`: catalog carrier trust & compliance signals follow-up story → `2b7e251f`
+- PR #86 — `chore(GOVERNANCE)`: BA curated domain-KB step + seeded `TRUCKING_BEST_PRACTICES.md` → `528c5099`
+- PR #87 — `chore(GOVERNANCE)`: REVIEWER hard gate for unsourced best-practice citations → `a17c03be`
+
 **Status:** ✅ DONE. Merged and deployed to production 2026-07-22 (`freightclub-frontend-00055-xb8`). Live-verified.
 
 ---
@@ -385,3 +412,26 @@ $ gh pr view 80 --json state,mergedAt,headRefName,title
 - [x] Full sign-off memo: `docs/project/LIBRARIAN_SIGN_OFF_US-861.md`
 
 **Status:** ✅ DONE. Merged to `main` 2026-07-24 (PR #80). Test-run of `/run-story` skill, not deployed to production as part of this sign-off (no separate deploy step requested).
+
+---
+
+## LIBRARIAN_SIGN_OFF: CHG-864 (Recovery of 4 Orphaned Carrier Network Epic Stories) — 2026-07-25
+
+**Origin:** Local git branch audit (post CHG-863 cleanup) — of 22 merged local branches deleted, 3 unmerged branches were checked for still-relevant content before deletion. `feature/US-849-carrier-network-epic` (last commit 2026-07-04, never merged) contained 5 draft stories for the Carrier Network Epic. One (Lane Tags) was already rescued as US-856 on 2026-07-19; the other 4 existed nowhere on `main`. Full ticket: `docs/changes/CHG-864.md`.
+
+**Recovered stories (content preserved verbatim from original drafts, IDs/cross-references updated):**
+- Old US-849 → **US-863** (Carrier Performance Metrics on Network Page) — Jira FREIG-122
+- Old US-850 → **US-864** (Functional Carrier Results Sorting) — Jira FREIG-123
+- Old US-852 → **US-865** (Recent Carrier Reviews in Detail Panel) — Jira FREIG-124
+- US-827 → unchanged (Real Quote Request Workflow, ID untouched — still live-referenced in `frontend/src/App.tsx`) — Jira FREIG-125
+
+**Root cause (same pattern as US-851→US-856):** stories drafted on a feature branch that never merged and were never cataloged in `Story_Map.md` at draft time; their reserved IDs were later independently reused by unrelated, since-shipped work (Token Refresh Interceptor, Custom Font Loading, Plan-First Mandate).
+
+**LIBRARIAN verification:**
+- [x] 4 story docs created under `docs/business/stories/`
+- [x] 4 Jira tickets created (FREIG-122–125)
+- [x] `Story_ID_to_Jira_Mapping.md`/`.csv` updated
+- [x] `Story_Map.md` rows added, status MIGRATION_PENDING for all 4
+- [x] `docs/changes/CHG-864.md` created, status RESOLVED
+- ⚠️ US-827 explicitly flagged (inherited from original draft): needs an ARCHITECT discovery pass before further breakdown — not yet READY_FOR_DESIGN.
+- [ ] `feature/US-849-carrier-network-epic` branch to be deleted now that recovery is complete

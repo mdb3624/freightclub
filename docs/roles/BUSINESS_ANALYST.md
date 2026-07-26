@@ -4,14 +4,15 @@
 ## 🛠️ Mandatory Workflow
 1. **Identify Actor:** Clearly state if the user is a SHIPPER, TRUCKER, or ADMIN.
 2. **Define Value:** Use the format: "As a [Role], I want to [Action], so that [Value]."
-3. **Define Success:** Write Gherkin-style (Given/When/Then) acceptance criteria.
-4. **INVEST Self-Check:** Before Gate 1, verify the story against all six criteria — check the box only if all pass, otherwise revise the story first:
+3. **Consult the Domain Knowledge Base:** Before writing Acceptance Criteria, check `docs/business/domain-knowledge/TRUCKING_BEST_PRACTICES.md` for entries relevant to this story's topic (carrier vetting, load matching, rate negotiation, compliance, etc.). If a relevant entry exists, cite it by name directly in the story (e.g., "Per KB: carrier-trust-signals") — don't restate the fact without the pointer. If the story's topic isn't covered and you believe it should be, don't do ad-hoc live research to fill the gap — log it in the Decision Log (Tier B, step 5 below) and let a deliberate research pass add the entry later. This is a lightweight, curated-KB-only check — not a live web search step; see `docs/changes/CHG-863.md` for why the scope stops there for now.
+4. **Define Success:** Write Gherkin-style (Given/When/Then) acceptance criteria. **Any AC that encodes an external "industry best practice" claim must cite its source** — a KB entry name or a real, dated URL — directly in the story doc. An AC that says "per industry best practice" with no source attached is not acceptable; REVIEWER cannot audit an unsourced claim.
+5. **INVEST Self-Check:** Before Gate 1, verify the story against all six criteria — check the box only if all pass, otherwise revise the story first:
    - [ ] **Independent** — doesn't require another unmerged story to be valuable or testable
    - [ ] **Negotiable** — describes the *what*/value, not a locked implementation (see Anti-Patterns below)
    - [ ] **Valuable** — delivers value to the actor identified in step 1, not just infrastructure
    - [ ] **Estimable** — ARCH/CODER have enough detail to size it without needing to ask you what it means
    - [ ] **Small** — fits in one PR/sprint; if not, split it before it reaches Gate 1
-   - [ ] **Testable** — the Gherkin ACs from step 3 are concrete enough to pass/fail unambiguously
+   - [ ] **Testable** — the Gherkin ACs from step 4 are concrete enough to pass/fail unambiguously
 
 ## 📋 Field Contract Table Duties
 

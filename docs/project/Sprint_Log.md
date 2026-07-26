@@ -375,3 +375,26 @@ Per explicit user correction mid-session ("this is starting to feel like a lot o
 - PR #87 — `chore(GOVERNANCE)`: REVIEWER hard gate for unsourced best-practice citations → `a17c03be`
 
 **Status:** ✅ DONE. Merged and deployed to production 2026-07-22 (`freightclub-frontend-00055-xb8`). Live-verified.
+
+---
+
+## LIBRARIAN_SIGN_OFF: CHG-864 (Recovery of 4 Orphaned Carrier Network Epic Stories) — 2026-07-25
+
+**Origin:** Local git branch audit (post CHG-863 cleanup) — of 22 merged local branches deleted, 3 unmerged branches were checked for still-relevant content before deletion. `feature/US-849-carrier-network-epic` (last commit 2026-07-04, never merged) contained 5 draft stories for the Carrier Network Epic. One (Lane Tags) was already rescued as US-856 on 2026-07-19; the other 4 existed nowhere on `main`. Full ticket: `docs/changes/CHG-864.md`.
+
+**Recovered stories (content preserved verbatim from original drafts, IDs/cross-references updated):**
+- Old US-849 → **US-863** (Carrier Performance Metrics on Network Page) — Jira FREIG-122
+- Old US-850 → **US-864** (Functional Carrier Results Sorting) — Jira FREIG-123
+- Old US-852 → **US-865** (Recent Carrier Reviews in Detail Panel) — Jira FREIG-124
+- US-827 → unchanged (Real Quote Request Workflow, ID untouched — still live-referenced in `frontend/src/App.tsx`) — Jira FREIG-125
+
+**Root cause (same pattern as US-851→US-856):** stories drafted on a feature branch that never merged and were never cataloged in `Story_Map.md` at draft time; their reserved IDs were later independently reused by unrelated, since-shipped work (Token Refresh Interceptor, Custom Font Loading, Plan-First Mandate).
+
+**LIBRARIAN verification:**
+- [x] 4 story docs created under `docs/business/stories/`
+- [x] 4 Jira tickets created (FREIG-122–125)
+- [x] `Story_ID_to_Jira_Mapping.md`/`.csv` updated
+- [x] `Story_Map.md` rows added, status MIGRATION_PENDING for all 4
+- [x] `docs/changes/CHG-864.md` created, status RESOLVED
+- ⚠️ US-827 explicitly flagged (inherited from original draft): needs an ARCHITECT discovery pass before further breakdown — not yet READY_FOR_DESIGN.
+- [ ] `feature/US-849-carrier-network-epic` branch to be deleted now that recovery is complete

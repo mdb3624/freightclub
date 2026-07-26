@@ -233,6 +233,10 @@ curl -u "email:token" \
 | US-858 | [FREIG-119](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-119) | US-858: RLS Write-Path Investigation & Complete BYPASSRLS Revocation | To Do |
 | US-860 | [FREIG-120](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-120) | US-860: Home Page CTA Simplification & In-Page Signup Modal | Done |
 | US-862 | [FREIG-121](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-121) | US-862: Carrier Trust & Compliance Signals (MC/DOT, Insurance, Safety Rating) | To Do |
+| US-863 | [FREIG-122](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-122) | US-863: Carrier Performance Metrics on Network Page | To Do |
+| US-864 | [FREIG-123](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-123) | US-864: Functional Carrier Results Sorting | To Do |
+| US-865 | [FREIG-124](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-124) | US-865: Recent Carrier Reviews in Detail Panel | To Do |
+| US-827 | [FREIG-125](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-125) | US-827: Real Quote Request Workflow | To Do |
 
 ---
 

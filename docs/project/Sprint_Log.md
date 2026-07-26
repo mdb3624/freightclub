@@ -378,6 +378,43 @@ Per explicit user correction mid-session ("this is starting to feel like a lot o
 
 ---
 
+## LIBRARIAN_SIGN_OFF: US-861 (Notify Carrier on Direct Load Assignment) — 2026-07-24
+
+**Origin:** Live test run of the `/run-story` skill, not a real backlog item — Jira ticket creation explicitly skipped and logged as a deviation in the story file's "Jira Tracking" section (not silently assumed). Full story: `docs/business/stories/US-861_Notify_Carrier_On_Direct_Assignment.md`.
+
+**Root cause:** `LoadAssignmentService.assignLoadToCarrier()` carried an unimplemented `TODO: Publish LoadAssignedToCarrier event for notifications` — the one lifecycle transition (of claim/assign/pickup/deliver/cancel) missing the sibling notification pattern already present for the other four.
+
+**Full lifecycle:** BA story backfilled after an initial process violation (branch discipline broken then corrected — see story file's "Process Note") → ARCH design (new `LoadAssignedToCarrierEvent` record mirroring `LoadClaimedEvent`; `LoadAssignmentService` publishes after tenant-scoped + soft-delete-safe `Load` fetch; `NotificationService.onLoadAssignedToCarrier` as a 5th `@TransactionalEventListener(phase = AFTER_COMMIT)` sibling; Field Contract Table all-N/A, ARCH-signed, `BACKEND_ONLY`, no schema/endpoint change) → CODER TDD implementation → Reviewer APPROVED (fresh-context agent).
+
+**Reviewer evidence (independently re-verified by Librarian, not accepted from memory):**
+- Targeted test run: `Tests run: 12, Failures: 0` (LoadAssignmentServiceTest); `Tests run: 2, Failures: 0` (NotificationServiceTest$NotifyLoadAssignedToCarrier); `Tests run: 35, Failures: 0, Errors: 0, Skipped: 0` (full-class total); BUILD SUCCESS.
+- Diff scope confirmed limited to `LoadAssignmentService.java`, `LoadAssignedToCarrierEvent.java` (new), `NotificationService.java`, their tests, the story doc, and `.claude/skills/run-story/SKILL.md` (documented process fix) — no CI-infra leakage.
+- Hard gates: Sequential Lock, AC-2 AFTER_COMMIT pattern (matches sibling listeners), multi-tenancy tenant-scoped + soft-delete-safe query, cyclomatic complexity low, constructor injection, no schema change — all PASS.
+
+**PR state verification (run directly by Librarian, per mandatory rule):**
+```
+$ gh pr view 80 --json state,mergedAt,headRefName,title
+{"headRefName":"feature/US-861-notify-carrier-on-assignment","mergedAt":"2026-07-24T22:55:49Z","state":"MERGED","title":"fix(US-861): notify carrier on direct load assignment"}
+```
+
+**CI checks verification (run directly by Librarian):** `gh pr checks 80` — Backend Build&Test x2 pass, E2E Tests x2 pass, Frontend Lint/Test/Build x2 pass, Vercel pass, Vercel Preview Comments pass, check-story-files pass. All 9 required checks green.
+
+**Rebase note (informational only, not blocking):** US-861's branch was rebased mid-review onto `main` to pick up PR #81 ("CHG-860") and PR #82 ("CHG-861/862") — two separately-reviewed-and-merged fixes for pre-existing E2E CI infrastructure bugs unrelated to US-861's own code — to unblock a red CI check that was blocking this story's own Reviewer pass. Those two PRs are their own already-complete, already-merged units of work and are not part of this story's traceability chain.
+
+**LIBRARIAN verification:**
+- [x] PR #80 state independently confirmed MERGED (not accepted from Reviewer's pasted claim)
+- [x] All CI checks independently confirmed green
+- [x] Story doc status field updated: IN_DEVELOPMENT → DONE
+- [x] Story_Map.md US-861 row added, status DONE
+- [x] Not a Phase 7+ story — cache-behavior checklist correctly not applied
+- [x] Jira: explicitly skipped per documented deviation — no transition attempted, `Story_ID_to_Jira_Mapping.md`/`.csv` intentionally not updated
+- [x] Traceability: Requirements (TODO root cause) → Story (AC-1/2/3) → Design (event/listener pattern, Field Contract Table) → Code (PR #80 diff) all link correctly
+- [x] Full sign-off memo: `docs/project/LIBRARIAN_SIGN_OFF_US-861.md`
+
+**Status:** ✅ DONE. Merged to `main` 2026-07-24 (PR #80). Test-run of `/run-story` skill, not deployed to production as part of this sign-off (no separate deploy step requested).
+
+---
+
 ## LIBRARIAN_SIGN_OFF: CHG-864 (Recovery of 4 Orphaned Carrier Network Epic Stories) — 2026-07-25
 
 **Origin:** Local git branch audit (post CHG-863 cleanup) — of 22 merged local branches deleted, 3 unmerged branches were checked for still-relevant content before deletion. `feature/US-849-carrier-network-epic` (last commit 2026-07-04, never merged) contained 5 draft stories for the Carrier Network Epic. One (Lane Tags) was already rescued as US-856 on 2026-07-19; the other 4 existed nowhere on `main`. Full ticket: `docs/changes/CHG-864.md`.

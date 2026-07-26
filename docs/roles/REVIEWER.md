@@ -26,6 +26,7 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 * ❌ **Platform Integrity Violation (all work, not phase-gated):** Same domain logic implemented in multiple services or classes (duplicate calculations, filters, or transformations). Single source of truth must be enforced.
 * ❌ **New Endpoint Without Overlap Check (added 2026-07-20):** Any new `@GetMapping`/`@PostMapping`/`@PutMapping`/`@DeleteMapping` in the PR must be checked against `docs/project/Story_Map.md` (all statuses, not just DONE) and existing controllers for a capability match — run the same two `grep` commands from CODER.md's Endpoint/Capability Overlap Check yourself; don't just trust CODER ran them. If a plausible match exists and the PR doesn't explain why reuse wasn't possible, REJECT. Root incident: US-761/US-820 duplicate KPI implementations, undetected for months because nobody checked at either the ARCHITECT or REVIEWER stage.
 * ❌ **CI Status Not Verified:** Local `mvn test` / Docker pre-test runs are NOT a substitute for actual GitHub Actions status. REVIEWER must run `gh pr checks <PR#>` and confirm all required checks are green before issuing PASS. CHG-US730-003 (2026-06-26) found GH Actions CI had a 100% failure rate across its entire history (every run since the workflow was created on 2026-03-27) — every prior `REVIEWER_PASS` in `Sprint_Log.md` was issued on local-run evidence alone, while the actual CI gate silently failed for 3 months unnoticed.
+* ❌ **Unsourced "Industry Best Practice" Claim (NEW 2026-07-25):** Any AC in the story doc that invokes "industry best practice," "standard practice," or similar external-research language without naming a specific source — either an entry in `docs/business/domain-knowledge/TRUCKING_BEST_PRACTICES.md` (cited by name, e.g. "Per KB: carrier-trust-signals") or a real, dated URL. Per CHG-863, BUSINESS_ANALYST.md's Mandatory Workflow requires this citation at story-writing time; REVIEWER must independently confirm the cited KB entry or source actually exists and supports the claim — don't trust BA's self-check alone. An AC with an unsourced best-practice claim is a plausible-sounding, unverifiable requirement and gets REJECTED same as any other hard gate.
 
 ## 📋 Review Checklist
 
@@ -110,6 +111,7 @@ This checklist defines the mandatory "Hard Gates" for any code merge, in additio
 * [ ] **User Story Validation**: Does the implementation fulfill the Acceptance Criteria in `USER_STORIES.md`?
 * [ ] **Logistics Logic**: Does the code respect the **Equipment Hierarchy** (e.g., specialized equipment can haul general loads)?
 * [ ] **Edge Case Handling**: Does the logic address scenarios defined in `EDGE_CASES.md` (e.g., expired insurance, radius buffers)?
+* [ ] **Citation Check (NEW 2026-07-25):** If any AC cites "industry best practice" or similar, confirm it names a real source — a `docs/business/domain-knowledge/TRUCKING_BEST_PRACTICES.md` entry or a dated URL — and that the cited source actually supports the claim. See matching Hard Gate above.
 
 ### 2. Technical Excellence (Architect Gate)
 * [ ] **Cyclomatic Complexity**: No single method exceeds a score of **10**.

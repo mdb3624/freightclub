@@ -368,4 +368,10 @@ Per explicit user correction mid-session ("this is starting to feel like a lot o
 
 **CHG-863 Status:** RESOLVED 2026-07-25 (both findings closed — BR-3 fix landed and PR merged main `fe6f30b8`; follow-up story cataloged as US-862).
 
+**All 4 PRs from this thread merged to `main` 2026-07-25/26** (each squash-merged, branch deleted, all 9 GH Actions checks green before merge):
+- PR #84 — `fix(US-848)`: BR-3 wording fix + CHG-863 opened → `fe6f30b8`
+- PR #85 — `chore(US-862)`: catalog carrier trust & compliance signals follow-up story → `2b7e251f`
+- PR #86 — `chore(GOVERNANCE)`: BA curated domain-KB step + seeded `TRUCKING_BEST_PRACTICES.md` → `528c5099`
+- PR #87 — `chore(GOVERNANCE)`: REVIEWER hard gate for unsourced best-practice citations → `a17c03be`
+
 **Status:** ✅ DONE. Merged and deployed to production 2026-07-22 (`freightclub-frontend-00055-xb8`). Live-verified.

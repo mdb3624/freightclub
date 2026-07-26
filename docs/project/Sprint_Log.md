@@ -362,8 +362,10 @@ Per explicit user correction mid-session ("this is starting to feel like a lot o
 **LIBRARIAN verification:**
 - [x] `docs/changes/CHG-863.md` created, status OPEN
 - [x] BR-3 wording fix applied 2026-07-25 in `docs/business/stories/US-848_Carrier_Network_Page.md` (minimum-rating filter removed from BR-3, cross-referenced to Out of Scope)
-- [ ] Follow-up trust-signals story cataloged once backend support exists
-- [x] Traceability: no new Story_Map.md row needed for CHG-863 itself (bugfix/debt ticket against IN_PROGRESS US-848, not a new story)
+- [x] Follow-up trust-signals story cataloged 2026-07-25 as **US-862** (`docs/business/stories/US-862_Carrier_Trust_Compliance_Signals.md`) — Jira FREIG-121 created, `Story_ID_to_Jira_Mapping.md`/`.csv` updated, `Story_Map.md` row added with status MIGRATION_PENDING (remains BLOCKED pending a backend FMCSA SAFER/insurance data source)
+- [x] Traceability: no new Story_Map.md row needed for CHG-863 itself (bugfix/debt ticket against IN_PROGRESS US-848, not a new story) — the new row added is for **US-862**, the cataloged follow-up story, not CHG-863
 - ⚠️ **Separately flagged, not part of this CHG:** US-848 has a story doc but no row in `Story_Map.md` at all — a pre-existing dangling-reference gap, noted per workflow rule (`.claude/rules/workflow.md`) without derailing this ticket.
+
+**CHG-863 Status:** RESOLVED 2026-07-25 (both findings closed — BR-3 fix landed and PR merged main `fe6f30b8`; follow-up story cataloged as US-862).
 
 **Status:** ✅ DONE. Merged and deployed to production 2026-07-22 (`freightclub-frontend-00055-xb8`). Live-verified.

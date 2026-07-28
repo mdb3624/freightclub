@@ -180,6 +180,23 @@ git push origin feature/US-XXX-short-description -u
 gh pr create --base main --head feature/US-XXX-short-description
 ```
 
+**AFTER MERGE (added 2026-07-27 — mandatory, not just at session end):**
+```powershell
+# gh pr merge --delete-branch handles the immediate branch (local + remote)
+# automatically when run from a checkout that has it. Beyond that:
+
+git checkout main
+git pull --ff-only
+
+# Clear stale remote-tracking refs for branches deleted on GitHub
+git fetch origin --prune
+
+# Find and delete local branches whose content is already on main
+git branch --merged main | grep -v '^\*\|main$\|master$' | xargs -r git branch -d
+```
+
+**Why this matters:** a 2026-07-25/26 audit found 59 already-merged local branches and 22 stale remote-tracking refs accumulated across sessions. None were individually harmful, but their sheer volume is what let two real incidents hide in plain sight for weeks: a story-doc branch with genuinely orphaned content (`feature/US-849-carrier-network-epic`, recovered as CHG-864) and an open, unmerged closeout PR (#83, see `docs/roles/LIBRARIAN.md`'s "Story close-out ships in the same PR" rule) — both indistinguishable from ordinary cruft until someone checked every branch individually. Doing this after every merge keeps the local branch list small enough that a genuinely unmerged branch stands out instead of hiding among dozens of already-shipped ones.
+
 ### Anti-Patterns
 
 | Anti-Pattern | Why Wrong | Fix |
@@ -188,6 +205,8 @@ gh pr create --base main --head feature/US-XXX-short-description
 | `git add .` | Stages unrelated files | Use `git add <specific-files>` |
 | `git push origin main` | Bypasses PR review | GitHub protection blocks this |
 | Committing directly to main | No REVIEWER audit trail | All commits must go through PR |
+| Never deleting merged branches | Real unmerged work hides among dozens of stale ones | Run the "After Merge" cleanup above every time, not just at session end |
+| Splitting code and its close-out docs into two PRs | Second PR is easy to forget once code is already shipped | One PR: code + Sprint_Log/Story_Map update together |
 
 ### Quick Verification
 

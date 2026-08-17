@@ -1,9 +1,9 @@
 package com.freightclub.modules.recommendation.application;
 
 // LoadRecommendationService coverage
-import com.freightclub.domain.CarrierEquipment;
-import com.freightclub.domain.CarrierLane;
 import com.freightclub.domain.Load;
+import com.freightclub.modules.carrier.domain.CarrierEquipment;
+import com.freightclub.modules.carrier.domain.CarrierLane;
 import com.freightclub.modules.carrier.domain.EquipmentCondition;
 import com.freightclub.modules.carrier.domain.EquipmentStatus;
 import com.freightclub.modules.carrier.domain.EquipmentType;

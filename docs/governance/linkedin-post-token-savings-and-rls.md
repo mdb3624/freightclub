@@ -1,27 +1,117 @@
-# LinkedIn Post: Token Savings Through Governance
+# LinkedIn Post Series: Token Savings Through Governance
 
-**Status:** Draft approved 2026-08-18. Single continuous long-form post with full case-study detail, not yet published.
+**Status:** Draft approved 2026-08-18. Split into a 7-post series (intro + 5 mechanisms + closer) for sequential posting over a few weeks, not yet published.
 
----
-
-**How we cut AI development costs by governing *how* the AI works, not by using it less.**
-
-Most teams treat AI coding assistants as pure spend to minimize. We treat ours as a system to govern — and the two goals turned out to reinforce each other.
-
-The default instinct with AI coding tools is to control cost by using them less: fewer requests, shorter sessions, smaller models everywhere. That optimizes the wrong variable. Cost isn't driven mainly by model choice — it's driven by how much re-deriving of context happens. An agent that has to rediscover the same architecture, re-run a full test suite because there's no cheaper option, or silently drift from a standard because nothing enforces it. Our platform (Spring Boot 3 / Java 21, React 18 + TypeScript, PostgreSQL on Neon) runs under a documented, role-based operating system for AI-assisted development. It wasn't built as a cost-control measure — it was built to keep a fast-moving codebase correct and auditable. The cost savings turned out to be a side effect of doing that well. Here's what that looks like in practice, mechanism by mechanism.
-
-**Model-tiered delegation.** Not every task in a session carries the same judgment weight. Mapping which TypeScript modules exist, summarizing a log file, or doing a mechanical find-and-replace doesn't need the same model as deciding whether to consolidate two duplicate domain classes into one. We explicitly route: lightweight models for pure retrieval/summarization fan-out (e.g., "map the TypeScript, Java, and Python portions of this codebase and report back a combined architecture summary," dispatched as parallel search agents); a mid-tier model for day-to-day implementation, targeted debugging, and test authoring; and the top-tier model for architecture decisions and multi-file refactors where a wrong call is expensive to unwind. This isn't a blanket downgrade — it's matching capability to the actual judgment required, which is where most of the token spend on "exploration" tasks was going.
-
-**Targeted verification over full rebuilds — with a hard line on when full is mandatory.** The project's testing standards explicitly separate two modes. During red/green TDD iteration, we run a single test class against an already-running database container — no full Docker teardown, no full rebuild, no full suite. Before a PR, merge, or deploy, the full Mandatory Pre-Test Protocol runs: clean Docker volumes, rebuild the backend JAR and frontend, rebuild and start the full test environment, wait for health, then run the entire suite. This is non-negotiable and isn't shortened even late in a session. The point isn't "skip testing to save tokens" — it's recognizing that a full rebuild proves the same thing ten times over during iteration when a targeted run already proved it once. The expensive path is reserved for the one place it earns its cost: the actual merge gate. On a recent full-protocol run, the complete backend suite reported 902 tests, 0 failures, 0 errors, 0 skipped — the full-cost verification still happens, just not on every single edit.
-
-**CI as the actual gate, not a policy document.** A governance rule that isn't enforced by a build is just a comment nobody reads. Two real examples surfaced during this project's own audits. First, the coverage gate was silently dead: `jacoco-maven-plugin`'s `check` execution — the goal that actually enforces the branch-coverage minimum — was bound to Maven's `verify` phase, but CI (and the Docker test container) only ran `mvn test`, a phase that generates the coverage *report* but never runs the enforcing *check*. Every prior CI run and reviewer sign-off that cited "coverage passed" had been reading a number that was never actually gating anything. The fix was to rebind `check` to the `test` phase, so the container's own exit code reflects the real gate; measured coverage at fix time was 69.49% branch — real headroom above the newly-enforced 65% floor, ratcheting toward an 80% target, not the stale number previously assumed. Second, a pre-commit hook that blocked direct commits to `main` only worked on the one machine it was installed on, since `.git/hooks/` isn't version-controlled — GitHub branch-protection rules remain the only layer of the intended three (branch protection, pre-commit hook, PR review trail) that's guaranteed to apply everywhere, now documented explicitly rather than assumed. Both gaps were found by treating "does the gate actually run" as a thing to verify, not a thing to trust because it's written down.
-
-**Security enforced at the database, not just the app layer — including finding what's still open.** Multi-tenant data isolation runs on native PostgreSQL row-level security: every query is implicitly scoped to `tenant_id` by the database itself, not by application-layer `WHERE` clauses that a future edit could accidentally drop. That's a stronger guarantee than convention — it holds even if a service method forgets to filter. The honest part of this story, not just the flattering part: the database role every application query runs as held a bypass privilege, meaning RLS policies were silently not being enforced for any query that role ran, from the start of the project until it was caught and revoked. Once revoked, RLS became genuinely enforced for the first time — which immediately surfaced a second, previously-masked gap: several RLS policies had been written strictly enough to be correct for a user acting on their own data, but to break a legitimate cross-tenant mutation (like a trucker claiming or delivering a shipper's load) now that bypass no longer papered over it. That gap is tracked as open technical debt with a specific fix path, not silently patched inline or left undocumented. The actual value of the governance system here isn't "we're fully secure" — it's that gaps get written down, tracked, and fixed in priority order instead of disappearing into an unreviewed diff.
-
-**Structured escalation instead of silent rework.** When any role in the system — implementation, review, design — hits input from an earlier stage that's wrong, incomplete, or impossible to build, the rule is to escalate forward with a written ticket, never quietly go back and change the earlier stage's output. A recent example: a session flagged duplicate-looking class names across an old flat package structure and a newer modular one. Investigation found three genuinely different situations behind that one flat list — a true duplicate with a single consumer (safe to delete), an orphaned class with zero consumers anywhere in the codebase (dead code, safe to delete), and a much larger in-progress architectural migration masquerading as a simple duplicate (correctly left alone and escalated as its own decision rather than rushed). The fix that shipped touched exactly the two safe cases, verified by both a targeted test run and the full pre-merge protocol, with the third case explicitly logged as out of scope rather than silently attempted.
-
-None of these mechanisms are exotic. They're the same discipline a well-run engineering team already applies to human contributors — code review, CI gates, a change-ticket process, escalation paths — applied consistently to AI-assisted work instead of treated as optional because "the AI is fast anyway." The token savings come from not re-doing verification that's already been done, and not burning a top-tier model on retrieval work. The security and reliability gains come from the same root cause: gates that are actually enforced, and gaps that get written down instead of quietly worked around. The result isn't "AI but cheaper" — it's fewer tokens spent re-deriving context, and a paper trail that makes the codebase more auditable than if a human wrote it alone.
+**Posting order:** Post 0 (teaser/intro) → Posts 1-5 (one mechanism each, any order, weekly cadence recommended) → Post 6 (closer/wrap-up).
 
 ---
 
-*Describes the governance system as of 2026-08-18. The cross-tenant write-authorization gap referenced above is open, tracked technical debt at time of writing, not resolved — included deliberately, because an accurate account of what's still open is part of what makes this system worth writing about.*
+## Post 0 — Teaser / Intro
+
+**Most teams treat AI coding assistants as pure spend to minimize. We treat ours as a system to govern — and it turns out the two goals reinforce each other.**
+
+Over the next few weeks I'm going to walk through five specific mechanisms we run on a production SaaS platform (Spring Boot 3 / Java 21, React 18 + TypeScript, PostgreSQL) that cut AI development costs — not by using the tool less, but by governing *how* it works.
+
+Each post is one real mechanism, with real numbers, including the gaps it exposed along the way. No abstractions, no "AI transformed our workflow" hand-waving — actual before/after from our own audits:
+
+1️⃣ Model-tiered delegation — matching model cost to the judgment a task actually requires
+2️⃣ Targeted verification vs. full rebuilds — and the hard line on when "full" is non-negotiable
+3️⃣ CI as the real gate — including a coverage check that had been silently dead for weeks
+4️⃣ Database-enforced security — and the privilege we found and revoked mid-project
+5️⃣ Structured escalation — how we stop bad decisions from compounding silently
+
+The throughline: cost control and quality control turned out to be the same discipline, not a tradeoff. First one drops next week.
+
+---
+
+## Post 1 — Model-Tiered Delegation
+
+Not every task in an AI coding session carries the same judgment weight. Mapping which modules exist in a codebase or summarizing a log file doesn't need the same model as deciding whether to consolidate two duplicate domain classes into one — but it's tempting to just run everything on the expensive model because it's "easier."
+
+We route explicitly instead:
+
+→ Lightweight models handle pure retrieval/summarization fan-out — e.g., "map the TypeScript, Java, and Python portions of this codebase, report back a combined architecture summary," dispatched as parallel search agents.
+
+→ A mid-tier model handles day-to-day implementation, targeted debugging, and test authoring.
+
+→ The top-tier model is reserved for architecture decisions and multi-file refactors, where a wrong call is expensive to unwind.
+
+This isn't a blanket downgrade — it's matching capability to the judgment actually required. Most of the token spend on "exploration" work was going to a model that didn't need to be doing it.
+
+Next: why we stopped running full builds during iteration — and where we drew a hard line on when we don't.
+
+---
+
+## Post 2 — Targeted Verification vs. Full Rebuilds
+
+Our testing standards explicitly separate two modes, and mixing them up was costing us both time and tokens.
+
+**During iteration** (red/green TDD): run a single test class against an already-running database container. No full Docker teardown, no full rebuild, no full suite. It proves the one thing that changed.
+
+**Before a merge**: the full Mandatory Pre-Test Protocol runs — clean volumes, rebuild backend and frontend from scratch, rebuild the full test environment, wait for health, run everything. Non-negotiable, no shortcuts, not even late in a long session.
+
+The insight isn't "test less to save money." It's that a full rebuild proves the same thing ten times over during iteration when a targeted run already proved it once — so we reserve the expensive path for the one place it actually earns its cost: the real merge gate. On a recent full-protocol run, the complete backend suite reported 902 tests, 0 failures, 0 errors, 0 skipped. Full-cost verification still happens — just not on every single edit.
+
+Next: what happens when the "gate" you're trusting turns out to have been dead the whole time.
+
+---
+
+## Post 3 — CI as the Actual Gate, Not a Policy Document
+
+A governance rule that isn't enforced by a build is just a comment nobody reads. We found two real examples of that in our own project.
+
+**The coverage gate was silently dead.** The Maven goal that actually *enforces* our branch-coverage minimum was bound to the `verify` phase — but CI only ran `test`, a phase that generates the coverage report but never runs the enforcing check. Every prior sign-off citing "coverage passed" had been reading a number that was never actually gating anything. Once we rebound the check to run where CI actually looks, real coverage measured 69.49% branch — genuine headroom above our now-enforced floor, not the stale number everyone had been trusting.
+
+**A pre-commit hook only worked on one machine.** It correctly blocked direct commits to `main` — but `.git/hooks/` isn't version-controlled, so the fix protected exactly the one clone it was installed in. GitHub's own branch protection is now documented as the only layer guaranteed to apply everywhere.
+
+Both were found the same way: by treating "does this actually run" as something to verify, not something to trust because it's written down.
+
+Next: the database privilege that had been quietly defeating our security model since day one.
+
+---
+
+## Post 4 — Security Enforced at the Database, Not Just the App Layer
+
+Our multi-tenant isolation runs on native PostgreSQL row-level security — every query scoped to a tenant by the database itself, not by an application `WHERE` clause a future edit could accidentally drop. That's a stronger guarantee than convention: it holds even if a service method forgets to filter.
+
+Here's the part that isn't just the flattering half of the story. The database role every application query runs as had held a bypass privilege since the start of the project — meaning RLS policies were silently not being enforced at all for any query that role ran. Once we caught it and revoked the privilege, RLS became genuinely enforced for the first time. That immediately surfaced a *second*, previously-masked gap: some policies had been written strictly enough to work for a user acting on their own data, but broke a legitimate cross-tenant action (like a trucker fulfilling a shipper's order) now that bypass no longer papered over it.
+
+That gap is now tracked as open technical debt with a specific fix path — not silently patched, not left undocumented. The real value of a governance system isn't "we're fully secure." It's that gaps get written down and fixed in priority order instead of disappearing into an unreviewed diff.
+
+Next: how we keep one bad assumption from silently becoming three bad decisions downstream.
+
+---
+
+## Post 5 — Structured Escalation Instead of Silent Rework
+
+When any stage of our process hits input from an earlier stage that's wrong, incomplete, or impossible to build, the rule is simple: escalate forward with a written ticket. Never quietly go back and change what came before.
+
+A recent example: a review flagged what looked like duplicate class names across an old package structure and a newer one. On investigation, it was three genuinely different situations hiding behind one flat list — a true duplicate with a single consumer (safe to delete), an orphaned class with zero consumers anywhere (dead code, safe to delete), and a much larger in-progress architectural migration masquerading as a simple duplicate.
+
+We fixed the two safe cases immediately, verified by both a targeted test run and the full pre-merge protocol. The third case — the one that looked simple but wasn't — got logged explicitly as its own decision, out of scope for that change, instead of being rushed through.
+
+That's the pattern: the fast, safe fixes ship immediately. The ones that need real judgment get a paper trail instead of a guess.
+
+Last post in the series: what all five of these add up to.
+
+---
+
+## Post 6 — Closer / Wrap-Up
+
+Five posts, five real mechanisms, no abstractions:
+
+1️⃣ Model-tiered delegation
+2️⃣ Targeted verification, with a hard line on when full verification is mandatory
+3️⃣ CI gates we verified actually run, not just documented
+4️⃣ Database-enforced tenant isolation, including a real privilege gap we found and fixed
+5️⃣ Structured escalation that stops bad assumptions from compounding silently
+
+None of this is exotic. It's the same discipline a well-run engineering team already applies to human contributors — code review, CI gates, a change-ticket process, escalation paths — applied consistently to AI-assisted work instead of treated as optional because "the AI is fast anyway."
+
+The token savings come from not re-doing verification that's already been done, and not burning a top-tier model on retrieval work. The security and reliability gains come from the same root cause: gates that are actually enforced, and gaps that get written down instead of quietly worked around.
+
+The result isn't "AI but cheaper." It's fewer tokens spent re-deriving context, and a paper trail that makes the codebase more auditable than if a human had written it alone.
+
+---
+
+*Describes the governance system as of 2026-08-18. The cross-tenant write-authorization gap referenced in Post 4 is open, tracked technical debt at time of writing, not resolved — included deliberately, because an accurate account of what's still open is part of what makes this system worth writing about.*

@@ -3,8 +3,16 @@ name: CI
 on:
   push:
     branches: ["**"]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - "handoff/**"
   pull_request:
     branches: ["**"]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - "handoff/**"
 
 jobs:
   backend:

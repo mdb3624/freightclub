@@ -7,12 +7,14 @@ on:
       - "**/*.md"
       - "docs/**"
       - "handoff/**"
+      - ".gitignore"
   pull_request:
     branches: ["**"]
     paths-ignore:
       - "**/*.md"
       - "docs/**"
       - "handoff/**"
+      - ".gitignore"
 
 jobs:
   backend:

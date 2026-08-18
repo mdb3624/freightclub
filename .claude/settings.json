@@ -54,6 +54,15 @@
             "command": "f=$(jq -r '.tool_input.file_path // empty'); case \"$f\" in *.sql) mvn flyway:validate -f backend/pom.xml ;; esac"
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if git diff --name-only | grep -q '.ts$'; then npx tsc --noEmit; fi 2>/dev/null || true"
+          }
+        ]
       }
     ]
   }

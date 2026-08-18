@@ -3,7 +3,6 @@
     "allow": [
       "WebSearch",
       "Bash(*)",
-      "Plugin:context-mode:context-mode:*",
       "Read(/c/projects/freightclub/**)",
       "Read(C:/projects/freightclub/**)",
       "Read(C:\\\\projects\\\\freightclub\\\\**)",
@@ -31,7 +30,19 @@
       "mcp__browser-use__browser_close_all",
       "mcp__browser-use__retry_with_browser_use_agent",
       "mcp__browser-use__browser_list_sessions",
-      "mcp__neon__run_sql_transaction"
+      "mcp__neon__run_sql_transaction",
+      "Skill(update-config)",
+      "WebFetch(domain:mdbintegratedlogistics.com)",
+      "WebFetch(domain:www.mdbintegratedlogistics.com)",
+      "WebFetch(domain:mdbfreightclub.com)",
+      "WebFetch(domain:freightclub-backend-5gecbdg27a-uc.a.run.app)",
+      "mcp__MCP_DOCKER__browser_click",
+      "mcp__MCP_DOCKER__browser_type",
+      "mcp__MCP_DOCKER__browser_network_requests",
+      "mcp__MCP_DOCKER__browser_console_messages",
+      "mcp__MCP_DOCKER__browser_network_request",
+      "mcp__MCP_DOCKER__browser_wait_for",
+      "Skill(claude-api)"
     ],
     "deny": [
       "Read(.env)",

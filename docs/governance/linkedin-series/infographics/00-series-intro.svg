@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg0" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0B1120"/>
+      <stop offset="100%" stop-color="#111C33"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg0)"/>
+  <rect x="0" y="0" width="1200" height="10" fill="#3B82F6"/>
+
+  <text x="80" y="100" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#7DD3FC" letter-spacing="3">SERIES INTRO</text>
+  <text x="80" y="170" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="bold" fill="#F8FAFC">Token Savings Through</text>
+  <text x="80" y="230" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="bold" fill="#F8FAFC">Governance</text>
+
+  <text x="80" y="290" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#94A3B8">We govern how our AI-assisted dev workflow works —</text>
+  <text x="80" y="322" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#94A3B8">and it turned out to be cheaper, not just safer.</text>
+
+  <!-- 5 mechanism chips -->
+  <g font-family="Arial, Helvetica, sans-serif" font-size="21" fill="#E2E8F0">
+    <rect x="80" y="370" width="1040" height="52" rx="8" fill="#1E293B"/>
+    <text x="105" y="404">1️⃣  Model-tiered delegation</text>
+
+    <rect x="80" y="432" width="1040" height="52" rx="8" fill="#1E293B"/>
+    <text x="105" y="466">2️⃣  Targeted verification vs. full rebuilds</text>
+
+    <rect x="80" y="494" width="1040" height="52" rx="8" fill="#1E293B"/>
+    <text x="105" y="528">3️⃣  A CI coverage gate that had been silently dead</text>
+  </g>
+
+  <text x="80" y="600" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#64748B">Article 0 of 6 · Token Savings Through Governance</text>
+  <text x="1000" y="600" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#64748B" text-anchor="end">+ 2 more →</text>
+</svg>

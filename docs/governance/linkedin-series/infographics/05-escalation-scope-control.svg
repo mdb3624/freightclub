@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg5" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0B1120"/>
+      <stop offset="100%" stop-color="#131B2E"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg5)"/>
+  <rect x="0" y="0" width="1200" height="10" fill="#FBBF24"/>
+
+  <text x="80" y="90" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#FBBF24" letter-spacing="3">ARTICLE 5 / 6</text>
+  <text x="80" y="150" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="bold" fill="#F8FAFC">Stopping One Bad Assumption</text>
+  <text x="80" y="196" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="bold" fill="#F8FAFC">From Becoming Three</text>
+
+  <text x="80" y="240" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#94A3B8">One flagged pattern. Three different situations underneath it.</text>
+
+  <g font-family="Arial, Helvetica, sans-serif">
+    <rect x="80" y="270" width="1040" height="80" rx="10" fill="#0F2A24"/>
+    <text x="105" y="308" font-size="21" font-weight="bold" fill="#34D399">1 · True duplicate, one caller</text>
+    <text x="105" y="336" font-size="18" fill="#94A3B8">→ Fixed immediately, verified by targeted + full test run</text>
+
+    <rect x="80" y="360" width="1040" height="80" rx="10" fill="#0F2A24"/>
+    <text x="105" y="398" font-size="21" font-weight="bold" fill="#34D399">2 · Orphaned dead code, zero callers</text>
+    <text x="105" y="426" font-size="18" fill="#94A3B8">→ Fixed immediately, safe to delete outright</text>
+
+    <rect x="80" y="450" width="1040" height="80" rx="10" fill="#3B1E1E"/>
+    <text x="105" y="488" font-size="21" font-weight="bold" fill="#FCA5A5">3 · Larger migration disguised as a duplicate</text>
+    <text x="105" y="516" font-size="18" fill="#94A3B8">→ NOT touched — escalated forward as its own decision</text>
+  </g>
+
+  <text x="80" y="595" font-family="Arial, Helvetica, sans-serif" font-size="19" font-style="italic" fill="#CBD5E1">Escalate forward with a ticket. Never quietly rework what came before.</text>
+</svg>

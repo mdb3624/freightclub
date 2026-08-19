@@ -1,26 +1,40 @@
-# LinkedIn Article Series: Token Savings Through Governance
+# LinkedIn Series: Token Savings Through Governance
 
-**Status:** Draft, expanded from the 7-post series into full-length LinkedIn Articles. Not yet published.
-
-Each short post in the original series (`../linkedin-post-token-savings-and-rls.md`) is expanded here into a full-length article — the format LinkedIn Articles support, as opposed to the character-limited main feed post. Post the short version to the feed to drive traffic; link the corresponding article as the "read the full story" follow-up (or publish the article first and tease it with the short post — either order works with the first-comment-link mechanic noted in the parent doc).
+**Status:** Draft, editorial pass applied 2026-08-18. Each entry has a separate short-form post file (for the LinkedIn feed) and a full-length article file (for LinkedIn Articles / a linked "read the full story"). Not yet published.
 
 ## Files
 
-| # | Title | File |
-|---|-------|------|
-| 0 | Series Intro: Why We Govern AI Coding the Way We Govern Engineers | `00-series-intro.md` |
-| 1 | Model-Tiered Delegation: Stop Paying Premium Prices for Grunt Work | `01-model-tiered-delegation.md` |
-| 2 | Targeted Verification vs. Full Rebuilds: Where We Draw the Line | `02-targeted-verification.md` |
-| 3 | The Coverage Gate That Had Been Silently Dead for Weeks | `03-dead-coverage-gate.md` |
-| 4 | The Database Privilege That Was Quietly Defeating Our Security Model | `04-database-security-rls.md` |
-| 5 | Stopping One Bad Assumption From Becoming Three | `05-escalation-scope-control.md` |
-| 6 | What Five Governance Mechanisms Add Up To | `06-series-wrapup.md` |
+| # | Topic | Post (short, feed) | Article (full-length) |
+|---|-------|---------------------|------------------------|
+| 0 | Series intro / teaser | `00-series-intro-post.md` | `00-series-intro.md` |
+| 1 | Model-tiered delegation | `01-model-tiered-delegation-post.md` | `01-model-tiered-delegation.md` |
+| 2 | Targeted verification vs. full rebuilds | `02-targeted-verification-post.md` | `02-targeted-verification.md` |
+| 3 | The coverage gate that had been silently dead | `03-dead-coverage-gate-post.md` | `03-dead-coverage-gate.md` |
+| 4 | The database privilege that quietly defeated security | `04-database-security-rls-post.md` | `04-database-security-rls.md` |
+| 5 | Stopping one bad assumption from becoming three | `05-escalation-scope-control-post.md` | `05-escalation-scope-control.md` |
+| 6 | Series wrap-up | `06-series-wrapup-post.md` | `06-series-wrapup.md` |
+
+## How the pair works
+
+Post to the LinkedIn feed with the short-form `*-post.md` text. Publish the corresponding `*.md` article as a LinkedIn Article (or link out to it) for readers who want the full story. Post text stays feed-length (150-250 words, ends in a discussion question); article text is the expanded, full-depth version of the same material — same underlying facts, more narrative and explanation.
 
 ## Sourcing note
 
-Every technical fact in this series — test counts, coverage percentages, the specific gate and privilege failures — is sourced from this project's own Technical Debt Ledger (`.claude/learnings.md`) and real CI/test-run output, not invented for narrative effect. Where something is still open/unresolved (the cross-tenant write-authorization gap referenced in Article 4), the articles say so explicitly rather than implying it's fixed.
+Every technical fact across both posts and articles — test counts, coverage percentages, the specific gate and privilege failures — is sourced from this project's own Technical Debt Ledger (`.claude/learnings.md`) and real CI/test-run output, not invented for narrative effect. Where something is still open/unresolved (the cross-tenant write-authorization gap referenced in entry 4), both the post and the article say so explicitly rather than implying it's fixed. One deliberate exception: an editorial suggestion to add an aggregate "~35-40% token savings" figure to Post 0 was **not applied**, since no such measurement exists.
 
-## Publishing mechanics (carried over from the short-post series doc)
+## Publishing mechanics
 
-- Keep links out of short-post bodies; for Post 4 specifically, publish the article, then link it from the **first comment** on the short post rather than the post body.
-- Recommended cadence: weekly, Tuesday mornings — see the calendar in `../linkedin-post-token-savings-and-rls.md`.
+- Keep links out of post bodies generally — links suppress algorithmic reach. For Post 4 specifically, publish the text directly with no link, and drop the article link (plus any supporting RLS-policy diagram) in the **first comment** instead.
+- Each post ends with a direct discussion question — reply to early comments quickly, since early engagement velocity drives reach more than the post itself.
+- Recommended cadence: weekly, Tuesday mornings.
+
+**Recommended launch calendar:**
+| Week | Entry |
+|------|-------|
+| 1 | 0 — Series intro |
+| 2 | 1 — Model-tiered delegation |
+| 3 | 2 — Targeted verification |
+| 4 | 3 — Dead coverage gate |
+| 5 | 4 — Database security / RLS |
+| 6 | 5 — Escalation & scope control |
+| 7 | 6 — Series wrap-up |

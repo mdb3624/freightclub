@@ -4,6 +4,8 @@
 
 ## Files
 
+See `STRATEGY.md` for the audience, positioning, and success-metrics behind this series.
+
 | # | Topic | Post (short, feed) | Article (full-length) |
 |---|-------|---------------------|------------------------|
 | 0 | Series intro / teaser | `00-series-intro-post.md` | `00-series-intro.md` |

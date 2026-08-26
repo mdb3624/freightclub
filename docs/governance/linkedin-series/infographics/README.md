@@ -5,7 +5,7 @@ One SVG infographic per article/post pair, 1200×630 (LinkedIn feed image aspect
 | File | Pairs with |
 |------|-----------|
 | `00-series-intro.svg` | Post/Article 0 |
-| `01-model-tiered-delegation.svg` | Post/Article 1 |
+| `Model-Tiered_AI_Delegation_Framework.png` | Post/Article 1 |
 | `02-targeted-verification.svg` | Post/Article 2 |
 | `03-dead-coverage-gate.svg` | Post/Article 3 |
 | `04-database-security-rls.svg` | Post/Article 4 |

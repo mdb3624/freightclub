@@ -85,6 +85,7 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 * [ ] **Frontend E2E:** `npm run test:e2e` (Playwright) passes with 0 failures and evidence artifacts.
 * [ ] **Multi-tenant isolation:** Verified Tenant A cannot see Tenant B's cached data.
 * [ ] **Actual CI Status (MANDATORY, NEW 2026-06-26):** Run `gh pr checks <PR#>` and confirm every required check shows `pass`/`success` — not just `pending`/absent. Local Docker/`mvn`/`npm` runs verify the code works in your environment; they do NOT verify GitHub Actions CI passes. Treat a PR with red or unchecked GH Actions status as **REJECTED** regardless of local evidence, per the same standard as any other hard gate.
+* [ ] **Mutation Coverage — RLS/tenant-isolation & load-claiming classes only (NEW 2026-08-26):** If the PR touches a class under `com.freightclub.security.TenantContextHolder`-scoped repositories/services, or load-claiming/assignment logic (e.g. `LoadAssignmentService`, anything using `@Lock(LockModeType.PESSIMISTIC_WRITE)`), run `mvn org.pitest:pitest-maven:mutationCoverage -Pmutation-test -Djacoco.skip=true` (backend `pom.xml`'s opt-in `mutation-test` profile) against the touched class. A surviving mutant in scope is a **REJECT** unless a CHG-### is filed and tracked separately. Out of scope for every other class — do not run or require this broadly; JaCoCo branch coverage passing is not evidence a test's assertions are meaningful (root incident: PR #99, 2026-08-26 — `testReassignLoadToCarrier_UpdatesAssignment` passed at 98% line coverage while asserting nothing that the `reassignLoadToCarrier()` method itself produced, because the constructor already set a non-null `assignedAt`).
 
 ## 🚦 Rejection Verdicts
 
@@ -179,6 +180,6 @@ This checklist defines the mandatory "Hard Gates" for any code merge, in additio
 
 ---
 
-*Last updated: 2026-07-19*
+*Last updated: 2026-08-26*
 
 *Applies to: All phases; strict visual evidence enforcement active.*

@@ -10,6 +10,7 @@ import com.freightclub.modules.load.infrastructure.LoadAssignmentRepository;
 import com.freightclub.repository.LoadRepository;
 import com.freightclub.security.TenantContextHolder;
 import com.freightclub.service.LoadAssignedToCarrierEvent;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
@@ -118,6 +119,8 @@ class LoadAssignmentServiceTest {
   void testReassignLoadToCarrier_UpdatesAssignment() {
     LoadAssignment existing = new LoadAssignment(
         "id-1", TEST_LOAD_ID, TEST_TENANT_ID, "old-carrier-123", TEST_SHIPPER_ID);
+    OffsetDateTime originalAssignedAt = OffsetDateTime.now().minusDays(1);
+    existing.setAssignedAt(originalAssignedAt);
 
     when(repository.findByLoadAndTenant(TEST_LOAD_ID, TEST_TENANT_ID))
         .thenReturn(Optional.of(existing));
@@ -129,6 +132,9 @@ class LoadAssignmentServiceTest {
 
     assertEquals(TEST_CARRIER_ID, result.getAssignedCarrierId());
     assertNotNull(result.getAssignedAt());
+    assertTrue(
+        result.getAssignedAt().isAfter(originalAssignedAt),
+        "reassignment must refresh assignedAt, not keep the prior assignment's timestamp");
     verify(repository, times(1)).save(any(LoadAssignment.class));
   }
 

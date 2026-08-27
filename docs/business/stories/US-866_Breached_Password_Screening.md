@@ -1,12 +1,12 @@
 # US-866: Breached-Password Screening on Registration & Password Change
 
 **Story Type:** Security Hardening
-**Status:** DRAFT — pending Gate 1 approval
+**Status:** READY_FOR_DESIGN
 **Priority:** P1
 **Persona:** N/A (platform/security — protects all personas' accounts: Shipper, Carrier, Admin)
 **Scope:** BACKEND_ONLY
 **Depends On:** None
-**Jira:** *(to be created at Gate 1 approval, per BA Jira Tracking rule)*
+**Jira:** PENDING — Atlassian FREIG instance returned "deactivated due to inactivity" (503) on 2026-08-27; ticket creation deferred until the subscription is reactivated, per explicit user decision (not silently dropped — backfill required before this story can be marked DONE).
 
 ---
 
@@ -65,4 +65,4 @@ This story implements only the breach-screening half of the council's recommenda
 
 ## Approval
 
-*Pending — AC-1 through AC-5 and the Decision Log require explicit approval from Mike before this story can be marked `READY_FOR_DESIGN`, mirrored to Jira, and handed to ARCHITECT.*
+AC-1 through AC-5 and the Decision Log approved by Mike, 2026-08-27. Jira mirroring deferred (instance deactivated, see Jira field above) — story proceeds to ARCHITECT with this noted as outstanding backfill work, not a blocker on design/implementation.

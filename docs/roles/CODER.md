@@ -94,7 +94,7 @@ If rejected: LIBRARIAN decides whether to fix inputs or create Change Request (C
 - **Soft Deletes:** All repositories must filter `deleted_at IS NULL`
 - **Multi-Tenancy:** All queries must filter by `TenantContextHolder.get()`
 - **RLS Enforcement:** Database row-level security must be enforced
-- **Branch Coverage:** Minimum 80% (JaCoCo enforced)
+- **Branch Coverage:** CI-enforced floor is 65% branch (JaCoCo `check`, bound to `mvn test`); 80% is the target to ratchet toward, not yet the enforced minimum — see `CLAUDE.md` Core Goal and `docs/roles/REVIEWER.md`'s Testing gate for the authoritative statement of this.
 
 ## Phase Lock: Once You Accept, You're Locked
 
@@ -120,7 +120,7 @@ LIBRARIAN decides:
 1. **RED:** Write failing test from AC. Before implementing anything, run the new test and confirm it fails with a message that names the specific behavior under test — not a compile error, not an unrelated failure. If the test passes before any implementation exists, the assertion is vacuous (it isn't actually checking what it claims to); fix the assertion before writing implementation, not after.
 2. **GREEN:** Implement minimal code to pass.
 3. **REFACTOR:** Clean code while maintaining green tests. If a refactor changes what an *existing* passing test's assertions actually depend on (e.g. a value that used to be set by the method under test is now set earlier, by a constructor or a caller), re-verify that test the same way as step 1 — temporarily revert the refactored line and confirm the test would fail without it. A test that still passes after this check is silently vacuous and must be strengthened before the refactor is considered done.
-4. **VERIFY:** Check JaCoCo coverage ≥ 80%.
+4. **VERIFY:** Check JaCoCo branch coverage clears the 65% CI-enforced floor; push toward the 80% target where the story's own scope reasonably allows it.
 
 Repeat for each AC.
 

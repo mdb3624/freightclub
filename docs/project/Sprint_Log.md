@@ -435,3 +435,36 @@ $ gh pr view 80 --json state,mergedAt,headRefName,title
 - [x] `docs/changes/CHG-864.md` created, status RESOLVED
 - ⚠️ US-827 explicitly flagged (inherited from original draft): needs an ARCHITECT discovery pass before further breakdown — not yet READY_FOR_DESIGN.
 - [ ] `feature/US-849-carrier-network-epic` branch to be deleted now that recovery is complete
+
+---
+
+## LIBRARIAN_SIGN_OFF: US-866 (Breached-Password Screening on Registration) — 2026-08-27
+
+**Origin:** `/council-review` (2026-08-27) evaluating a proposed password-strength meter + composition rules. Council converged, citing NIST SP 800-63B Revision 4, that composition rules are the current standard's specific anti-pattern and breach-corpus screening is the actual SHALL-level control. Full story: `docs/business/stories/US-866_Breached_Password_Screening.md`.
+
+**CHG-866 (same day, filed during ARCHITECT's Input Acceptance Gate):** AC-2 (password-change screening) removed — no password-change flow exists anywhere in the backend (`passwordEncoder.encode()` called exactly once, at registration). Story narrowed to registration-only, confirmed with Mike directly. Full ticket: `docs/changes/CHG-866.md`.
+
+**Shipped (PR #102, verified via full Docker Mandatory Pre-Test Protocol, backend suite 0 failures/0 errors run clean twice):**
+- `PasswordBreachChecker`/`HibpPasswordBreachChecker` (HIBP k-anonymity range API), wired into `AuthService.register()` as a fail-fast boundary check.
+- `PasswordBreachedException` → HTTP 400 via `GlobalExceptionHandler`.
+- `AuthServiceTest` +3, `HibpPasswordBreachCheckerTest` +5 (new file, `MockRestServiceServer`).
+- AC-5 real-call evidence: live unmocked query from inside the Docker test network against the HIBP endpoint, confirming `Password1!` present 584,516 times in the real breach corpus.
+
+**Two real bugs found and fixed along the way (not caused by this story):**
+1. `backend/src/test/resources/application-test.yml` shadows `backend/src/main/resources/application-test.yml` on the `@SpringBootTest` classpath — an `app.hibp.enabled: false` override placed only in the latter silently never applied, so `AuthIntegrationTest` made real HIBP calls and correctly rejected its own fixture password. Fixed by adding the same override to the shadowing file.
+2. `application.yml` had `EIA_ENABLED` bound under the wrong YAML key (nested under `login-lookup:` instead of `eia:`) — `app.eia.enabled` was never actually set from that file. One-line adjacent fix, not investigated further.
+
+**Jira backfill (PR #103, 2026-08-27):** FREIG Atlassian instance was deactivated due to inactivity when US-866 shipped; ticket creation deferred per explicit user decision, tracked as required backfill in `Story_Map.md` and both mapping files. Instance reactivated same day — [FREIG-126](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-126) created and transitioned to Done; all PENDING references backfilled.
+
+**LIBRARIAN verification:**
+- [x] PR #102 state independently confirmed MERGED (`gh pr view --json state,mergedAt`, 2026-08-27T19:18:44Z) — not accepted from memory
+- [x] PR #103 state independently confirmed MERGED (2026-08-27T20:06:04Z)
+- [x] All CI checks independently confirmed green on both PRs (9 checks on #102, 3 on #103's docs-only change)
+- [x] Story doc status field updated: READY_FOR_DESIGN → DONE
+- [x] `Story_Map.md` US-866 row status: COMPLETED, Jira column populated with FREIG-126
+- [x] Jira ticket created, transitioned to Done, both mapping files updated
+- [x] Post-merge branch cleanup run (`git fetch --prune` + merged-branch check) — no stale branches
+- [x] Traceability: Story → ARCH design → CHG-866 → PR #102 (code) → PR #103 (Jira backfill) → Story_Map.md → FREIG-126 all link correctly
+- [x] Full sign-off memo: `docs/project/LIBRARIAN_SIGN_OFF_US866.md`
+
+**Status:** ✅ DONE. Merged to `main` 2026-08-27 (PR #102, PR #103).

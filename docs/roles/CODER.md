@@ -128,6 +128,24 @@ Repeat for each AC.
 
 ---
 
+## 🛑 Fail-Fast Boundary Validation (MANDATORY — Effective 2026-08-27)
+
+Council-review conclusion (2026-08-27): mandate this at trust-boundary crossings only, not at every function/method. A blanket "validate every function's inputs" rule was explicitly rejected — it duplicates checks the boundary already performed, inflates cyclomatic complexity against the <10 target, and generates JaCoCo-rewarded dead branches that fight the coverage goal instead of serving it. Internal calls between methods in the same trust domain (private helpers, package-internal collaborators already covered by a boundary check upstream) do **not** need their own guard clauses — trust your own validated callers.
+
+**This IS a trust boundary — a null/invalid value here must be rejected immediately, not allowed to propagate:**
+- Every controller endpoint's request DTO — mandatory `@Valid`/Bean Validation (`@NotNull`, `@NotBlank`, etc.), not a hand-rolled null check.
+- Any point resolving `TenantContextHolder.getTenantId()` (or `.getUserId()`) before using the value in a query or business decision — a silently-null tenant context that isn't rejected here doesn't crash cleanly, it produces a wrong-tenant query result or an RLS-scoped no-op several layers downstream, far from the actual defect. This is the single highest-leverage guard clause in this codebase given the RLS architecture.
+- Any external payload after deserialization — carrier API responses, webhook bodies, third-party integration data — before it's used, not after.
+- Money/rate/quote calculation inputs, before the calculation runs.
+
+**This is NOT a trust boundary — do not add a guard clause here just because this rule exists:**
+- A private/package-private method called only by an already-validated caller in the same class or service.
+- A value already proven non-null by an upstream `@Valid` DTO or a prior guard clause earlier in the same call chain.
+
+**Enforcement, same discipline as the Red-Green-Refactor step above:** write the null/invalid-input test first (Red), confirm it fails before the guard clause exists, then add the guard clause (Green). A guard clause added without a preceding failing test is exactly the vacuous-test risk this file already guards against — don't let this rule become copy-pasted defensive code nobody's test actually exercises.
+
+---
+
 ## 🔌 External Config/Secret Wiring Verification (MANDATORY — Effective 2026-07-14)
 
 Mocked unit/component tests prove your logic is correct given a value — they cannot prove the value ever arrives. FREIG-116/US-854: 100% green tests (backend unit tests mocking `EiaFuelPriceService`, frontend `LoadBoardTable.test.tsx` given a hand-built prop) shipped while the real feature returned `available:false` in every environment, because `docker-compose.test.yml` never passed the API key/enabled env vars through AND `application.yml` never bound them to a `@Value` property in the first place. Nothing in the automated suite touched that seam.

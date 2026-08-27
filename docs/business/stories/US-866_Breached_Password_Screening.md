@@ -3,7 +3,7 @@
 **Scope note (CHG-866, 2026-08-27):** Originally scoped to cover both registration and password-change. ARCHITECT discovery found no password-change flow exists anywhere in the backend (`passwordEncoder.encode()` is called exactly once, at registration). Narrowed to registration only — see CHG-866 and Out of Scope below.
 
 **Story Type:** Security Hardening
-**Status:** READY_FOR_DESIGN
+**Status:** DONE — CODER complete, verified via full Docker Pre-Test Protocol
 **Priority:** P1
 **Persona:** N/A (platform/security — protects all personas' accounts: Shipper, Carrier, Admin)
 **Scope:** BACKEND_ONLY
@@ -71,3 +71,34 @@ This story implements only the breach-screening half of the council's recommenda
 AC-1 through AC-5 and the Decision Log approved by Mike, 2026-08-27. Jira mirroring deferred (instance deactivated, see Jira field above) — story proceeds to ARCHITECT with this noted as outstanding backfill work, not a blocker on design/implementation.
 
 **Scope narrowed post-approval (CHG-866, same day):** ARCHITECT's Input Acceptance Gate found AC-2 has no password-change flow to attach to. Confirmed with Mike directly; AC-2 removed, story proceeds registration-only. See CHG-866 for full detail.
+
+---
+
+## Final Disposition (2026-08-27)
+
+**Shipped, verified via full Docker Pre-Test Protocol (backend suite: 0 failures, 0 errors, clean on two consecutive full runs):**
+
+- `PasswordBreachChecker` interface + `BreachCheckResult` enum (`CLEAN`/`BREACHED`/`CHECK_UNAVAILABLE`), `HibpPasswordBreachChecker` implementation (HIBP k-anonymity range API — only a 5-character SHA-1 prefix ever leaves the process, never the full password or full hash).
+- Wired into `AuthService.register()` as a fail-fast boundary check (per `docs/roles/CODER.md`'s Fail-Fast Boundary Validation section), right after the existing email-uniqueness check, before any tenant/user work.
+- `PasswordBreachedException` → `GlobalExceptionHandler` → HTTP 400 with the AC-1 rejection message.
+- `AuthServiceTest`: 3 new tests (`rejectsRegistration_whenPasswordIsBreached`, `proceedsWithRegistration_whenPasswordIsClean`, `proceedsWithRegistration_whenBreachCheckUnavailable`) — verified load-bearing per the Red-phase discipline added earlier this session (guard clause temporarily disabled, confirmed the rejection test genuinely fails without it, then restored).
+- `HibpPasswordBreachCheckerTest`: 5 tests against `MockRestServiceServer` covering BREACHED/CLEAN/outage/disabled/k-anonymity-prefix-only paths.
+- Config: `app.hibp.enabled` (default `true`) + `app.hibp.base-url` added to `backend/src/main/resources/application.yml`. Disabled by default in both test-config locations for suite determinism — `application-test.yml` (used by the standalone Docker `backend-test` service) and, critically, the **separate** `src/test/resources/application-test.yml` (shadows the former on the `@SpringBootTest` classpath — this is what actually governs `AuthIntegrationTest`).
+
+**Real bug found and fixed during implementation (not caused by this story, but blocked it until found):**
+
+`backend/src/main/resources/application.yml` had `EIA_ENABLED` bound under the wrong YAML key — nested inside `login-lookup:` instead of `eia:` (an indentation bug), meaning `app.eia.enabled` was never actually set from that file at all; `EiaFuelPriceService`'s `@Value("${app.eia.enabled:false}")` silently fell back to its Java-level default regardless of the env var. Fixed as a one-line adjacent correction while wiring `app.hibp.*` into the same block. Flagged here per the project's "flag debt outside current scope" rule — this predates US-866 and wasn't investigated further (e.g. whether `EIA_ENABLED=true` was ever actually intended in any environment).
+
+**AC-5 evidence — real unmocked call against the live HIBP endpoint, from inside the Docker test network:**
+
+```
+$ docker exec freightclub-test-backend curl -sS "https://api.pwnedpasswords.com/range/32CA9"
+...
+FC1A0F5B6330E3F4C8C1BBECDE9BEDB9573:584516
+...
+```
+(`32CA9` + `FC1A0F5B6330E3F4C8C1BBECDE9BEDB9573` is the SHA-1 hash of `Password1!`, split at the k-anonymity prefix boundary — confirmed present in the real breach corpus 584,516 times. This exact password was also what an existing integration test fixture (`AuthIntegrationTest`) used as its "valid" test password, which is what surfaced the config-shadowing bug above: with breach-checking correctly wired end-to-end, `AuthIntegrationTest` genuinely failed against this real breached password until the test-scope config was fixed — direct proof the feature works, not just that it compiles.)
+
+**Not shipped / explicitly out of scope:** see Out of Scope section above (length increase, composition rules, frontend meter, MFA/passkeys, password-change screening — tracked under CHG-866 for a future story).
+
+**Outstanding:** Jira ticket creation (instance deactivated, see Jira field above).

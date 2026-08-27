@@ -43,6 +43,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, message, req);
     }
 
+    @ExceptionHandler(PasswordBreachedException.class)
+    public ResponseEntity<ErrorResponse> handlePasswordBreached(PasswordBreachedException ex, HttpServletRequest req) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req);
+    }
+
     @ExceptionHandler(InvalidJoinCodeException.class)
     public ResponseEntity<ErrorResponse> handleInvalidJoinCode(InvalidJoinCodeException ex, HttpServletRequest req) {
         // Changed from HttpStatus.BAD_REQUEST to CONFLICT to fix test invalidJoinCode_409

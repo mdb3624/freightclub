@@ -7,12 +7,15 @@ import com.freightclub.dto.LoginRequest;
 import com.freightclub.dto.RegisterRequest;
 import com.freightclub.exception.EmailAlreadyExistsException;
 import com.freightclub.exception.InvalidJoinCodeException;
+import com.freightclub.exception.PasswordBreachedException;
 import com.freightclub.repository.TenantRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.AuthenticatedUserPrincipal;
+import com.freightclub.security.BreachCheckResult;
 import com.freightclub.security.JwtService;
 import com.freightclub.security.LoginLookupCredentials;
 import com.freightclub.security.LoginLookupRepository;
+import com.freightclub.security.PasswordBreachChecker;
 import com.freightclub.security.RefreshTokenService;
 import com.freightclub.security.TenantContextHolder;
 import com.freightclub.security.TenantLookupResult;
@@ -49,6 +52,7 @@ class AuthServiceTest {
     @Mock private RefreshTokenService refreshTokenService;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private AuthenticationManager authenticationManager;
+    @Mock private PasswordBreachChecker passwordBreachChecker;
 
     @InjectMocks
     private AuthService authService;
@@ -266,6 +270,74 @@ class AuthServiceTest {
 
             assertThatThrownBy(() -> authService.register(invalid))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        // US-866 AC-1/AC-3/AC-4: breached-password screening at registration.
+        @Nested
+        class PasswordBreachScreening {
+
+            @Test
+            // AC-1: a password found in the breach corpus rejects registration before any
+            // tenant/user work happens.
+            void rejectsRegistration_whenPasswordIsBreached() {
+                when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
+                when(passwordBreachChecker.isBreached(anyString())).thenReturn(BreachCheckResult.BREACHED);
+
+                assertThatThrownBy(() -> authService.register(shipperRegisterRequest()))
+                        .isInstanceOf(PasswordBreachedException.class);
+
+                verify(tenantRepository, never()).save(any());
+                verify(userRepository, never()).save(any());
+            }
+
+            @Test
+            // AC-3: a clean password proceeds exactly as registration did before this story.
+            void proceedsWithRegistration_whenPasswordIsClean() {
+                when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
+                when(passwordBreachChecker.isBreached(anyString())).thenReturn(BreachCheckResult.CLEAN);
+                when(tenantRepository.save(any())).thenAnswer(inv -> {
+                    Tenant t = inv.getArgument(0);
+                    setField(t, "id", "tenant-clean");
+                    return t;
+                });
+                when(userRepository.save(any())).thenAnswer(inv -> {
+                    User u = inv.getArgument(0);
+                    setField(u, "id", "user-clean");
+                    return u;
+                });
+                when(jwtService.generateAccessToken(any())).thenReturn("token");
+                when(refreshTokenService.createRefreshToken("user-clean")).thenReturn("refresh");
+
+                AuthService.AuthResult result = authService.register(shipperRegisterRequest());
+
+                assertThat(result.user().getEmail()).isEqualTo("shipper@example.com");
+                verify(userRepository).save(any());
+            }
+
+            @Test
+            // AC-4/BR-4: the breach check being unavailable (outage, or disabled) must NOT
+            // block registration — fail open, same outcome as CLEAN.
+            void proceedsWithRegistration_whenBreachCheckUnavailable() {
+                when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
+                when(passwordBreachChecker.isBreached(anyString())).thenReturn(BreachCheckResult.CHECK_UNAVAILABLE);
+                when(tenantRepository.save(any())).thenAnswer(inv -> {
+                    Tenant t = inv.getArgument(0);
+                    setField(t, "id", "tenant-unavailable");
+                    return t;
+                });
+                when(userRepository.save(any())).thenAnswer(inv -> {
+                    User u = inv.getArgument(0);
+                    setField(u, "id", "user-unavailable");
+                    return u;
+                });
+                when(jwtService.generateAccessToken(any())).thenReturn("token");
+                when(refreshTokenService.createRefreshToken("user-unavailable")).thenReturn("refresh");
+
+                AuthService.AuthResult result = authService.register(shipperRegisterRequest());
+
+                assertThat(result.user().getEmail()).isEqualTo("shipper@example.com");
+                verify(userRepository).save(any());
+            }
         }
     }
 

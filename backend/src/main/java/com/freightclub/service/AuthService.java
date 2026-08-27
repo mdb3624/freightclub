@@ -7,11 +7,14 @@ import com.freightclub.dto.LoginRequest;
 import com.freightclub.dto.RegisterRequest;
 import com.freightclub.exception.EmailAlreadyExistsException;
 import com.freightclub.exception.InvalidJoinCodeException;
+import com.freightclub.exception.PasswordBreachedException;
 import com.freightclub.repository.TenantRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.AuthenticatedUserPrincipal;
+import com.freightclub.security.BreachCheckResult;
 import com.freightclub.security.JwtService;
 import com.freightclub.security.LoginLookupRepository;
+import com.freightclub.security.PasswordBreachChecker;
 import com.freightclub.security.RefreshTokenService;
 import com.freightclub.security.TenantContextHolder;
 import com.freightclub.security.TenantLookupResult;
@@ -39,6 +42,7 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final PasswordBreachChecker passwordBreachChecker;
 
     public AuthService(UserRepository userRepository,
                        TenantRepository tenantRepository,
@@ -46,7 +50,8 @@ public class AuthService {
                        JwtService jwtService,
                        RefreshTokenService refreshTokenService,
                        PasswordEncoder passwordEncoder,
-                       AuthenticationManager authenticationManager) {
+                       AuthenticationManager authenticationManager,
+                       PasswordBreachChecker passwordBreachChecker) {
         this.userRepository = userRepository;
         this.tenantRepository = tenantRepository;
         this.loginLookupRepository = loginLookupRepository;
@@ -54,6 +59,7 @@ public class AuthService {
         this.refreshTokenService = refreshTokenService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.passwordBreachChecker = passwordBreachChecker;
     }
 
     public AuthResult register(RegisterRequest request) {
@@ -62,6 +68,15 @@ public class AuthService {
         // false under RLS with no context bound, letting duplicate emails through).
         if (loginLookupRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyExistsException(request.email());
+        }
+
+        // US-866 AC-1/BR-1: fail-fast boundary check — reject a breached password before any
+        // tenant/user work happens. AC-4/BR-4: BreachCheckResult.CHECK_UNAVAILABLE (disabled or
+        // the corpus couldn't be reached) is deliberately treated the same as CLEAN here — only
+        // a confirmed BREACHED result rejects. See docs/roles/CODER.md Fail-Fast Boundary
+        // Validation.
+        if (passwordBreachChecker.isBreached(request.password()) == BreachCheckResult.BREACHED) {
+            throw new PasswordBreachedException();
         }
 
         boolean hasJoinCode = request.joinCode() != null && !request.joinCode().isBlank();

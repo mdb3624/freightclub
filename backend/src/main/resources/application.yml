@@ -31,10 +31,13 @@ app:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8080,http://localhost:5173}
   eia:
     api-key: ${EIA_API_KEY:}
+    enabled: ${EIA_ENABLED:false}
+  hibp:
+    enabled: ${HIBP_ENABLED:true}
+    base-url: ${HIBP_BASE_URL:https://api.pwnedpasswords.com}
   login-lookup:
     username: ${DB_LOGIN_USER:freightclub_login_lookup}
     password: ${DB_LOGIN_PASSWORD}
-    enabled: ${EIA_ENABLED:false}
   jwt:
     secret: ${APP_JWT_SECRET}
     issuer: ${JWT_ISSUER:freightclub}

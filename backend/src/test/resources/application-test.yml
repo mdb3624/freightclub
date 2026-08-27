@@ -61,6 +61,11 @@ app:
     allowed-origins: http://localhost
   eia:
     enabled: false
+  hibp:
+    # Disabled by default so @SpringBootTest suites are deterministic and network-independent.
+    # US-866 AC-5's real-call verification is a separate, manual one-off check, not part of
+    # the routine automated suite.
+    enabled: false
   storage:
     path: ${java.io.tmpdir}/freightclub-test-uploads
 

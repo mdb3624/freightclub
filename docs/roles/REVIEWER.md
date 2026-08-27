@@ -70,6 +70,7 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 * [ ] Constructor injection used (no field `@Autowired`).
 * [ ] Exception handling appropriate (not suppressed).
 * [ ] No unused imports or variables.
+* [ ] **Fail-Fast Boundary Validation (NEW 2026-08-27):** New/touched controller endpoints have `@Valid` on the request DTO. New/touched code resolving `TenantContextHolder` before a query/decision, deserializing an external payload, or running a money/rate calculation has an explicit guard against null/invalid input, backed by a test that was confirmed to fail before the guard existed (per `docs/roles/CODER.md`'s Fail-Fast Boundary Validation section). Guard clauses added to internal, same-trust-domain methods with no boundary justification are scope creep, not compliance — REJECT the boundary gap, don't reward decorative validation elsewhere.
 
 ### ⚡ Performance & Caching (Phase 7+)
 
@@ -180,6 +181,6 @@ This checklist defines the mandatory "Hard Gates" for any code merge, in additio
 
 ---
 
-*Last updated: 2026-08-26*
+*Last updated: 2026-08-27*
 
 *Applies to: All phases; strict visual evidence enforcement active.*

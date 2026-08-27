@@ -117,12 +117,32 @@ LIBRARIAN decides:
 
 ## Workflow: Red-Green-Refactor
 
-1. **RED:** Write failing test from AC
-2. **GREEN:** Implement minimal code to pass
-3. **REFACTOR:** Clean code while maintaining green tests
-4. **VERIFY:** Check JaCoCo coverage ≥ 80%
+1. **RED:** Write failing test from AC. Before implementing anything, run the new test and confirm it fails with a message that names the specific behavior under test — not a compile error, not an unrelated failure. If the test passes before any implementation exists, the assertion is vacuous (it isn't actually checking what it claims to); fix the assertion before writing implementation, not after.
+2. **GREEN:** Implement minimal code to pass.
+3. **REFACTOR:** Clean code while maintaining green tests. If a refactor changes what an *existing* passing test's assertions actually depend on (e.g. a value that used to be set by the method under test is now set earlier, by a constructor or a caller), re-verify that test the same way as step 1 — temporarily revert the refactored line and confirm the test would fail without it. A test that still passes after this check is silently vacuous and must be strengthened before the refactor is considered done.
+4. **VERIFY:** Check JaCoCo coverage ≥ 80%.
 
 Repeat for each AC.
+
+**Root incident (2026-08-26):** `testReassignLoadToCarrier_UpdatesAssignment` asserted `getAssignedAt()` was non-null — true at 98% JaCoCo line coverage, but the value was already set by the `LoadAssignment` constructor, so the test never actually proved `reassignLoadToCarrier()` did anything. Found by a scoped PIT mutation-testing pilot (`backend/pom.xml`'s opt-in `mutation-test` profile), not by this workflow — this step exists so the same class of bug is caught for free, mechanically, during authoring instead of requiring a separate tooling pass. See `docs/roles/REVIEWER.md`'s Mutation Coverage gate for where the expensive/tooled version of this check still lives (scoped to RLS/tenant-isolation and load-claiming classes only — do not run full mutation testing on every commit; this step is the cheap, universal substitute for it).
+
+---
+
+## 🛑 Fail-Fast Boundary Validation (MANDATORY — Effective 2026-08-27)
+
+Council-review conclusion (2026-08-27): mandate this at trust-boundary crossings only, not at every function/method. A blanket "validate every function's inputs" rule was explicitly rejected — it duplicates checks the boundary already performed, inflates cyclomatic complexity against the <10 target, and generates JaCoCo-rewarded dead branches that fight the coverage goal instead of serving it. Internal calls between methods in the same trust domain (private helpers, package-internal collaborators already covered by a boundary check upstream) do **not** need their own guard clauses — trust your own validated callers.
+
+**This IS a trust boundary — a null/invalid value here must be rejected immediately, not allowed to propagate:**
+- Every controller endpoint's request DTO — mandatory `@Valid`/Bean Validation (`@NotNull`, `@NotBlank`, etc.), not a hand-rolled null check.
+- Any point resolving `TenantContextHolder.getTenantId()` (or `.getUserId()`) before using the value in a query or business decision — a silently-null tenant context that isn't rejected here doesn't crash cleanly, it produces a wrong-tenant query result or an RLS-scoped no-op several layers downstream, far from the actual defect. This is the single highest-leverage guard clause in this codebase given the RLS architecture.
+- Any external payload after deserialization — carrier API responses, webhook bodies, third-party integration data — before it's used, not after.
+- Money/rate/quote calculation inputs, before the calculation runs.
+
+**This is NOT a trust boundary — do not add a guard clause here just because this rule exists:**
+- A private/package-private method called only by an already-validated caller in the same class or service.
+- A value already proven non-null by an upstream `@Valid` DTO or a prior guard clause earlier in the same call chain.
+
+**Enforcement, same discipline as the Red-Green-Refactor step above:** write the null/invalid-input test first (Red), confirm it fails before the guard clause exists, then add the guard clause (Green). A guard clause added without a preceding failing test is exactly the vacuous-test risk this file already guards against — don't let this rule become copy-pasted defensive code nobody's test actually exercises.
 
 ---
 

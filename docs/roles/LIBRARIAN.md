@@ -54,7 +54,7 @@ Before marking a 700-series story (US-701–US-706) as **DONE**, the Librarian M
 - [ ] Cache hit/miss monitoring configured
 
 ### Test Coverage
-- [ ] ≥80% branch coverage (JaCoCo report verified)
+- [ ] Branch coverage clears the 65% CI-enforced floor (JaCoCo report verified); 80% is the target, not yet the enforced minimum — see `CLAUDE.md` Core Goal
 - [ ] Unit test: Cache eviction on POST/PUT/DELETE
 - [ ] Integration test: Multi-tenant cache isolation
 - [ ] Test results documented in sign-off memo
@@ -84,7 +84,7 @@ When marking a story "DONE", create a memo file: `docs/project/LIBRARIAN_SIGN_OF
 - [x] Code review PASSED (no hard gate failures)
 - [x] Cache behavior verified (@Cacheable/@CacheEvict present)
 - [x] Multi-tenant isolation test passing
-- [x] JaCoCo coverage ≥ 80%
+- [x] JaCoCo branch coverage clears the 65% CI floor (80% target, not the enforced minimum)
 - [x] All ACs implemented and tested
 - [x] Traceability links verified
 

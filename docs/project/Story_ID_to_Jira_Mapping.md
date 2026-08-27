@@ -237,7 +237,7 @@ curl -u "email:token" \
 | US-864 | [FREIG-123](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-123) | US-864: Functional Carrier Results Sorting | To Do |
 | US-865 | [FREIG-124](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-124) | US-865: Recent Carrier Reviews in Detail Panel | To Do |
 | US-827 | [FREIG-125](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-125) | US-827: Real Quote Request Workflow | To Do |
-| US-866 | PENDING (Jira instance deactivated, 2026-08-27) | US-866: Breached-Password Screening on Registration & Password Change | To Do |
+| US-866 | [FREIG-126](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-126) | US-866: Breached-Password Screening on Registration | Done |
 
 ---
 

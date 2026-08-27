@@ -8,7 +8,7 @@
 **Persona:** N/A (platform/security — protects all personas' accounts: Shipper, Carrier, Admin)
 **Scope:** BACKEND_ONLY
 **Depends On:** None
-**Jira:** PENDING — Atlassian FREIG instance returned "deactivated due to inactivity" (503) on 2026-08-27; ticket creation deferred until the subscription is reactivated, per explicit user decision (not silently dropped — backfill required before this story can be marked DONE).
+**Jira:** [FREIG-126](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-126) — backfilled 2026-08-27 after the Atlassian subscription was reactivated (originally deferred: instance had returned "deactivated due to inactivity", 503).
 
 ---
 
@@ -101,4 +101,4 @@ FC1A0F5B6330E3F4C8C1BBECDE9BEDB9573:584516
 
 **Not shipped / explicitly out of scope:** see Out of Scope section above (length increase, composition rules, frontend meter, MFA/passkeys, password-change screening — tracked under CHG-866 for a future story).
 
-**Outstanding:** Jira ticket creation (instance deactivated, see Jira field above).
+**Outstanding:** None — Jira backfilled ([FREIG-126](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-126), 2026-08-27).

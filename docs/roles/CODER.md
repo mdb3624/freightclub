@@ -117,12 +117,14 @@ LIBRARIAN decides:
 
 ## Workflow: Red-Green-Refactor
 
-1. **RED:** Write failing test from AC
-2. **GREEN:** Implement minimal code to pass
-3. **REFACTOR:** Clean code while maintaining green tests
-4. **VERIFY:** Check JaCoCo coverage ≥ 80%
+1. **RED:** Write failing test from AC. Before implementing anything, run the new test and confirm it fails with a message that names the specific behavior under test — not a compile error, not an unrelated failure. If the test passes before any implementation exists, the assertion is vacuous (it isn't actually checking what it claims to); fix the assertion before writing implementation, not after.
+2. **GREEN:** Implement minimal code to pass.
+3. **REFACTOR:** Clean code while maintaining green tests. If a refactor changes what an *existing* passing test's assertions actually depend on (e.g. a value that used to be set by the method under test is now set earlier, by a constructor or a caller), re-verify that test the same way as step 1 — temporarily revert the refactored line and confirm the test would fail without it. A test that still passes after this check is silently vacuous and must be strengthened before the refactor is considered done.
+4. **VERIFY:** Check JaCoCo coverage ≥ 80%.
 
 Repeat for each AC.
+
+**Root incident (2026-08-26):** `testReassignLoadToCarrier_UpdatesAssignment` asserted `getAssignedAt()` was non-null — true at 98% JaCoCo line coverage, but the value was already set by the `LoadAssignment` constructor, so the test never actually proved `reassignLoadToCarrier()` did anything. Found by a scoped PIT mutation-testing pilot (`backend/pom.xml`'s opt-in `mutation-test` profile), not by this workflow — this step exists so the same class of bug is caught for free, mechanically, during authoring instead of requiring a separate tooling pass. See `docs/roles/REVIEWER.md`'s Mutation Coverage gate for where the expensive/tooled version of this check still lives (scoped to RLS/tenant-isolation and load-claiming classes only — do not run full mutation testing on every commit; this step is the cheap, universal substitute for it).
 
 ---
 

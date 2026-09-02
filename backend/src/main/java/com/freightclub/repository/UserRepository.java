@@ -27,6 +27,10 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query("SELECT COUNT(u) FROM User u WHERE u.tenantId = :tenantId AND u.isTenantAdmin = true AND u.deletedAt IS NULL")
     long countTenantAdmins(@Param("tenantId") String tenantId);
 
+    // Zero-admin reconciliation (2026-09-02): who gets nominated when a tenant has no admin.
+    @Query("SELECT u FROM User u WHERE u.tenantId = :tenantId AND u.deletedAt IS NULL ORDER BY u.createdAt ASC")
+    List<User> findAllByTenantIdAndDeletedAtIsNullOrderByCreatedAtAsc(@Param("tenantId") String tenantId);
+
     // US-876/878 BR-5: lets the frontend apply the 1-seat collapse display rule.
     @Query("SELECT COUNT(u) FROM User u WHERE u.tenantId = :tenantId AND u.deletedAt IS NULL")
     long countByTenantIdAndDeletedAtIsNull(@Param("tenantId") String tenantId);

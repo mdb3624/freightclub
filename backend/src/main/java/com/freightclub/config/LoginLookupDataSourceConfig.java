@@ -7,7 +7,11 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
@@ -110,5 +114,34 @@ public class LoginLookupDataSourceConfig {
             @Qualifier("superUserReadDataSource") DataSource superUserReadDataSource
     ) {
         return new JdbcTemplate(superUserReadDataSource);
+    }
+
+    // US-880: a governed write action (suspend user, force reset, etc. — US-881/884/886) and
+    // its audit log entry (US-880's admin_audit_log) must succeed or fail together. Both go
+    // through superUserReadJdbcTemplate/superUserReadDataSource, so a transaction manager bound
+    // to that same DataSource lets a calling service annotate its method
+    // @Transactional("superUserTransactionManager") and have the action's write and the audit
+    // insert share one connection/transaction — no separate coordination needed. Not @Primary:
+    // the app's real transaction manager (JPA, bound to the main tenant-scoped DataSource) must
+    // stay the unqualified default everywhere else.
+    @Bean(name = "superUserTransactionManager")
+    public PlatformTransactionManager superUserTransactionManager(
+            @Qualifier("superUserReadDataSource") DataSource superUserReadDataSource
+    ) {
+        return new DataSourceTransactionManager(superUserReadDataSource);
+    }
+
+    // Same @ConditionalOnMissingBean(TransactionManager.class) trap as DataSource/JdbcTemplate
+    // above: Spring Boot's JPA transaction-manager autoconfiguration backs off entirely the
+    // instant any other PlatformTransactionManager bean exists (superUserTransactionManager,
+    // just added) — so the app's real, main transaction manager needs an explicit, @Primary
+    // definition here too, or every unqualified @Transactional across the entire codebase
+    // (which is nearly all of it) fails at runtime with "No bean named 'transactionManager'
+    // available." Discovered via the full backend suite going from 962/0 to 4 failures/115
+    // errors the moment superUserTransactionManager was added.
+    @Primary
+    @Bean(name = "transactionManager")
+    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
     }
 }

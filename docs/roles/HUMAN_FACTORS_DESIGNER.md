@@ -299,6 +299,8 @@ Added 2026-09-02 per Director feedback: the highest-cost, most recurring quality
 
 This applies to every multi-field entry screen (load posting/edit, carrier/shipper profile, cost profile, org settings, any future form) and must be checked explicitly as part of the VDOD checklist below before a design is marked `READY_FOR_CODER`.
 
+**Reference models (user-confirmed, 2026-09-02):** `frontend/src/pages/ShipperDashboard.tsx`, `frontend/src/pages/TruckerDashboard.tsx`, and `frontend/src/pages/ProfilePage.tsx` (the Shipper Profile, routed at `/shipper/profile`) are the confirmed positive examples of this standard. Before designing or revising another screen, read these first and compare structure against them — don't re-derive the rules above from scratch each time.
+
 ---
 
 ## ⚠️ ANTI-PATTERNS (FORBIDDEN)

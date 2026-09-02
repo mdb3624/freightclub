@@ -173,6 +173,12 @@ public class User {
     @Column(name = "is_tenant_admin", nullable = false)
     private boolean isTenantAdmin = false;
 
+    // US-881: Super-User-initiated account lock, orthogonal to deleted_at (soft-delete) and
+    // is_tenant_admin — a suspended account keeps its data/tenant membership, only login is
+    // blocked.
+    @Column(name = "is_suspended", nullable = false)
+    private boolean isSuspended = false;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -274,6 +280,8 @@ public class User {
     public void setNotifyInApp(boolean notifyInApp) { this.notifyInApp = notifyInApp; }
     public boolean isTenantAdmin() { return isTenantAdmin; }
     public void setTenantAdmin(boolean tenantAdmin) { this.isTenantAdmin = tenantAdmin; }
+    public boolean isSuspended() { return isSuspended; }
+    public void setSuspended(boolean suspended) { this.isSuspended = suspended; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getDeletedAt() { return deletedAt; }
     public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }

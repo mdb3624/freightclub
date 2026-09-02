@@ -5,6 +5,7 @@ import com.freightclub.domain.User;
 import com.freightclub.domain.UserRole;
 import com.freightclub.dto.LoginRequest;
 import com.freightclub.dto.RegisterRequest;
+import com.freightclub.exception.AccountSuspendedException;
 import com.freightclub.exception.EmailAlreadyExistsException;
 import com.freightclub.exception.InvalidJoinCodeException;
 import com.freightclub.exception.PasswordBreachedException;
@@ -165,6 +166,12 @@ public class AuthService {
                     .orElseThrow(() -> new IllegalStateException("User disappeared after authentication"));
         } finally {
             TenantContextHolder.clear();
+        }
+
+        // US-881 AC-2: checked AFTER credentials are verified, not before — never reveal
+        // suspension status to someone who hasn't proven they know the password.
+        if (user.isSuspended()) {
+            throw new AccountSuspendedException();
         }
 
         String accessToken = jwtService.generateAccessToken(user);

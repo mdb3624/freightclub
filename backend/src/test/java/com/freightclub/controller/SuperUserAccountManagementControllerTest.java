@@ -1,8 +1,10 @@
 package com.freightclub.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freightclub.dto.ActivityEventResponse;
 import com.freightclub.dto.SuperUserActionRequest;
 import com.freightclub.service.SuperUserAccountManagementService;
+import com.freightclub.service.SuperUserActivityService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,11 +17,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SuperUserAccountManagementControllerTest {
 
     @MockBean private SuperUserAccountManagementService superUserAccountManagementService;
+    @MockBean private SuperUserActivityService superUserActivityService;
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
@@ -94,5 +99,23 @@ class SuperUserAccountManagementControllerTest {
                         .content(objectMapper.writeValueAsString(new SuperUserActionRequest("Suspected compromise"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resetToken").value("raw-reset-token"));
+    }
+
+    @Test
+    void activity_ok_forSuperUser() throws Exception {
+        when(superUserActivityService.getActivity("user-1")).thenReturn(List.of(
+                new ActivityEventResponse("LOGIN", "Logged in", LocalDateTime.now())));
+
+        mockMvc.perform(get("/api/v1/super-user/users/user-1/activity").with(superUser("admin-1")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].eventType").value("LOGIN"));
+    }
+
+    @Test
+    void activity_forbidden_forTenantAdmin() throws Exception {
+        mockMvc.perform(get("/api/v1/super-user/users/user-1/activity").with(tenantAdmin("tenant-admin-1")))
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(superUserActivityService);
     }
 }

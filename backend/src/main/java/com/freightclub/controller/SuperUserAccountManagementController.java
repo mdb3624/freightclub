@@ -1,13 +1,17 @@
 package com.freightclub.controller;
 
+import com.freightclub.dto.ActivityEventResponse;
 import com.freightclub.dto.ForcePasswordResetResponse;
 import com.freightclub.dto.SuperUserActionRequest;
 import com.freightclub.service.SuperUserAccountManagementService;
+import com.freightclub.service.SuperUserActivityService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 // US-881: gated ROLE_ADMIN (Super User), same platform-wide role as the rest of
 // /api/v1/super-user/*.
@@ -17,9 +21,17 @@ import org.springframework.web.bind.annotation.*;
 public class SuperUserAccountManagementController {
 
     private final SuperUserAccountManagementService superUserAccountManagementService;
+    private final SuperUserActivityService superUserActivityService;
 
-    public SuperUserAccountManagementController(SuperUserAccountManagementService superUserAccountManagementService) {
+    public SuperUserAccountManagementController(SuperUserAccountManagementService superUserAccountManagementService,
+                                                  SuperUserActivityService superUserActivityService) {
         this.superUserAccountManagementService = superUserAccountManagementService;
+        this.superUserActivityService = superUserActivityService;
+    }
+
+    @GetMapping("/{userId}/activity")
+    public ResponseEntity<List<ActivityEventResponse>> activity(@PathVariable String userId) {
+        return ResponseEntity.ok(superUserActivityService.getActivity(userId));
     }
 
     @PostMapping("/{userId}/suspend")

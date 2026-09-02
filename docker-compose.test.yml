@@ -16,7 +16,13 @@ services:
       # reason — this was the actual gap AC-5 exists to close.
       POSTGRES_USER: freightclub_test_admin
       POSTGRES_PASSWORD: freightclub_admin
-      POSTGRES_INITDB_ARGS: "-c shared_preload_libraries=pgrowlocks -c max_connections=200"
+      # Raised from 200: US-750/751/752 added a third narrow-role DataSource
+      # (superUserReadDataSource) alongside the existing primary + loginLookup pools. Each
+      # distinct @SpringBootTest context (one per unique @MockBean combination across the
+      # growing number of *ControllerTest classes) opens its own copy of all three pools, and
+      # Spring's context cache keeps up to 32 of them alive concurrently — 200 was already
+      # tight before this story's tests added ~5 more distinct contexts.
+      POSTGRES_INITDB_ARGS: "-c shared_preload_libraries=pgrowlocks -c max_connections=400"
     volumes:
       - postgres_test_data:/var/lib/postgresql/data
     ports:
@@ -56,6 +62,10 @@ services:
       # V20260721_1400. SELECT-only, two tables, two columns sets.
       DB_LOGIN_USER: freightclub_login_lookup
       DB_LOGIN_PASSWORD: freightclub_login
+      # US-750/751/752: narrow, read-only, BYPASSRLS role for the one legitimate cross-tenant
+      # surface on the platform (Super User dashboard/disputes/health) — see V20260901_1200.
+      DB_SUPER_USER_READ_USER: freightclub_super_user_read
+      DB_SUPER_USER_READ_PASSWORD: freightclub_super_read
       APP_JWT_SECRET: test-secret-32-chars-minimum-required-here
       JWT_SECRET: test-secret-32-chars-minimum-required-here
       CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:9090
@@ -89,6 +99,10 @@ services:
       FLYWAY_DB_PASSWORD: freightclub_admin
       DB_LOGIN_USER: freightclub_login_lookup
       DB_LOGIN_PASSWORD: freightclub_login
+      # US-750/751/752: narrow, read-only, BYPASSRLS role for the one legitimate cross-tenant
+      # surface on the platform (Super User dashboard/disputes/health) — see V20260901_1200.
+      DB_SUPER_USER_READ_USER: freightclub_super_user_read
+      DB_SUPER_USER_READ_PASSWORD: freightclub_super_read
     command: mvn clean test
 
   frontend-test:

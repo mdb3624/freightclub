@@ -147,6 +147,8 @@ class AuthServiceTest {
             assertThat(result.user().getEmail()).isEqualTo("shipper@example.com");
             assertThat(result.user().getRole()).isEqualTo(UserRole.SHIPPER);
             assertThat(result.user().getTenantId()).isEqualTo("tenant-new");
+            // US-874 AC-1: first user of a brand-new tenant becomes its admin.
+            assertThat(result.user().isTenantAdmin()).isTrue();
             verify(tenantRepository).save(any());
             verify(userRepository).save(any());
             verify(loginLookupRepository, never()).findTenantByJoinCode(anyString());
@@ -176,10 +178,69 @@ class AuthServiceTest {
             AuthService.AuthResult result = authService.register(joinRequest);
 
             assertThat(result.user().getTenantId()).isEqualTo("tenant-existing");
+            // US-874 AC-2: joining via join code never grants admin status, regardless of
+            // the inviting member's own admin status.
+            assertThat(result.user().isTenantAdmin()).isFalse();
             verify(tenantRepository, never()).save(any());
             // Registration's tenant lookup by join code must go through the pre-auth path,
             // not the JPA repository (which has no tenant context to satisfy RLS with here).
             verify(tenantRepository, never()).findByJoinCode(anyString());
+        }
+
+        // US-876/878 AC-2: a new member joining via join code inherits the tenant's org
+        // defaults at signup.
+        @Test
+        void inheritsOrgDefaults_whenJoiningExistingTenant() {
+            RegisterRequest joinRequest = new RegisterRequest(
+                    "new@example.com", "password123",
+                    "Grace", "Hopper",
+                    UserRole.SHIPPER,
+                    null, "ABCD1234",
+                    null, null, null
+            );
+
+            when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
+            when(loginLookupRepository.findTenantByJoinCode("ABCD1234"))
+                    .thenReturn(Optional.of(new TenantLookupResult("tenant-existing", "ABCD1234", "Existing Corp", "FREE")));
+            Tenant tenantWithDefaults = new Tenant();
+            tenantWithDefaults.setDefaultPickupCity("Austin");
+            tenantWithDefaults.setNotifyEmail(false);
+            when(tenantRepository.findById("tenant-existing")).thenReturn(Optional.of(tenantWithDefaults));
+            when(userRepository.save(any())).thenAnswer(inv -> {
+                User u = inv.getArgument(0);
+                setField(u, "id", "user-joined-2");
+                return u;
+            });
+            when(jwtService.generateAccessToken(any())).thenReturn("access-token");
+            when(refreshTokenService.createRefreshToken("user-joined-2")).thenReturn("refresh-token");
+
+            AuthService.AuthResult result = authService.register(joinRequest);
+
+            assertThat(result.user().getDefaultPickupCity()).isEqualTo("Austin");
+            assertThat(result.user().isNotifyEmail()).isFalse();
+        }
+
+        // US-874 BR-3 companion: brand-new tenants have no org defaults yet — nothing to
+        // inherit, and this must not throw looking for a tenant that doesn't have any set.
+        @Test
+        void doesNotLookUpOrgDefaults_whenCreatingBrandNewTenant() {
+            when(loginLookupRepository.existsByEmail(anyString())).thenReturn(false);
+            when(tenantRepository.save(any())).thenAnswer(inv -> {
+                Tenant t = inv.getArgument(0);
+                setField(t, "id", "tenant-brand-new");
+                return t;
+            });
+            when(userRepository.save(any())).thenAnswer(inv -> {
+                User u = inv.getArgument(0);
+                setField(u, "id", "user-brand-new");
+                return u;
+            });
+            when(jwtService.generateAccessToken(any())).thenReturn("token");
+            when(refreshTokenService.createRefreshToken("user-brand-new")).thenReturn("refresh");
+
+            authService.register(shipperRegisterRequest());
+
+            verify(tenantRepository, never()).findById(anyString());
         }
 
         @Test

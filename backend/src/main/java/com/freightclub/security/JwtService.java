@@ -35,6 +35,8 @@ public class JwtService {
                 .claim("email", user.getEmail())
                 .claim("role", user.getRole().name())
                 .claim("tenantId", user.getTenantId())
+                // US-874: additive tenant-admin capability, independent of role.
+                .claim("isTenantAdmin", user.isTenantAdmin())
                 .issuer(issuer)
                 .audience().add(audience).and()
                 .issuedAt(now)

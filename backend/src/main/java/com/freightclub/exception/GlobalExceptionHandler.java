@@ -110,6 +110,21 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req);
     }
 
+    @ExceptionHandler(TeamMemberNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleTeamMemberNotFound(TeamMemberNotFoundException ex, HttpServletRequest req) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), req);
+    }
+
+    @ExceptionHandler(DisputeNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDisputeNotFound(DisputeNotFoundException ex, HttpServletRequest req) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), req);
+    }
+
+    @ExceptionHandler(LastTenantAdminException.class)
+    public ResponseEntity<ErrorResponse> handleLastTenantAdmin(LastTenantAdminException ex, HttpServletRequest req) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), req);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(HttpServletRequest req) {
         return build(HttpStatus.FORBIDDEN, "Access denied", req);

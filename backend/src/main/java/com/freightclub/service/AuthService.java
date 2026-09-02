@@ -83,6 +83,10 @@ public class AuthService {
         boolean hasCompanyName = request.companyName() != null && !request.companyName().isBlank();
 
         String tenantId;
+        // US-874 BR-2/BR-3: creating a brand-new tenant makes this user its admin; joining
+        // an existing one via join code never does, regardless of the inviting member's own
+        // admin status.
+        boolean isNewTenantAdmin;
         if (hasJoinCode) {
             // No tenant context exists yet — this lookup crosses tenant boundaries by
             // definition, so it runs through freightclub_login_lookup, not the JPA/
@@ -91,6 +95,7 @@ public class AuthService {
                     .findTenantByJoinCode(request.joinCode().toUpperCase().trim())
                     .orElseThrow(InvalidJoinCodeException::new);
             tenantId = tenant.tenantId();
+            isNewTenantAdmin = false;
         } else if (hasCompanyName) {
             // Brand-new tenant: tenants_insert (V20260721_1401) allows this with no
             // context bound — it's the root of the multi-tenancy hierarchy.
@@ -99,6 +104,7 @@ public class AuthService {
             tenant.setJoinCode(generateJoinCode());
             tenantRepository.save(tenant);
             tenantId = tenant.getId();
+            isNewTenantAdmin = true;
         } else {
             throw new IllegalArgumentException("Either companyName or joinCode is required");
         }
@@ -110,6 +116,7 @@ public class AuthService {
         user.setRole(request.role());
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());
+        user.setTenantAdmin(isNewTenantAdmin);
 
         if (request.role() == UserRole.TRUCKER) {
             user.setMcNumber(request.mcNumber());
@@ -123,6 +130,12 @@ public class AuthService {
         // open connection (register()'s transaction started before the tenant was known).
         TenantContextHolder.setTenantId(tenantId);
         try {
+            // US-876/878 AC-2: a new member joining via join code inherits org defaults at
+            // signup. Brand-new-tenant admins have no org defaults yet to inherit (BR-3 only
+            // applies to joining an existing tenant), so this only runs on the join path.
+            if (hasJoinCode) {
+                applyOrgDefaults(user, tenantId);
+            }
             userRepository.save(user);
         } finally {
             TenantContextHolder.clear();
@@ -192,6 +205,32 @@ public class AuthService {
 
     public long accessTokenExpirySeconds() {
         return jwtService.getAccessTokenExpiryMs() / 1000;
+    }
+
+    // US-876/878 BR-3/AC-2: pre-fills a brand-new member's fields from their tenant's org
+    // defaults. Only ever called at creation (before the user has any values of their own to
+    // clobber), so there is no "existing customization" to protect here — that protection
+    // lives entirely in OrgSettingsService, which never touches individual users' rows.
+    private void applyOrgDefaults(User user, String tenantId) {
+        tenantRepository.findById(tenantId).ifPresent(tenant -> {
+            if (tenant.getDefaultPickupAddress1() != null) user.setDefaultPickupAddress1(tenant.getDefaultPickupAddress1());
+            if (tenant.getDefaultPickupAddress2() != null) user.setDefaultPickupAddress2(tenant.getDefaultPickupAddress2());
+            if (tenant.getDefaultPickupCity() != null) user.setDefaultPickupCity(tenant.getDefaultPickupCity());
+            if (tenant.getDefaultPickupState() != null) user.setDefaultPickupState(tenant.getDefaultPickupState());
+            if (tenant.getDefaultPickupZip() != null) user.setDefaultPickupZip(tenant.getDefaultPickupZip());
+            if (tenant.getBillingAddress1() != null) user.setBillingAddress1(tenant.getBillingAddress1());
+            if (tenant.getBillingAddress2() != null) user.setBillingAddress2(tenant.getBillingAddress2());
+            if (tenant.getBillingCity() != null) user.setBillingCity(tenant.getBillingCity());
+            if (tenant.getBillingState() != null) user.setBillingState(tenant.getBillingState());
+            if (tenant.getBillingZip() != null) user.setBillingZip(tenant.getBillingZip());
+            if (tenant.getFuelCostPerGallon() != null) user.setFuelCostPerGallon(tenant.getFuelCostPerGallon());
+            if (tenant.getMaintenanceCostPerMile() != null) user.setMaintenanceCostPerMile(tenant.getMaintenanceCostPerMile());
+            if (tenant.getMonthlyFixedCosts() != null) user.setMonthlyFixedCosts(tenant.getMonthlyFixedCosts());
+            if (tenant.getTargetMarginPerMile() != null) user.setTargetMarginPerMile(tenant.getTargetMarginPerMile());
+            if (tenant.getNotifyEmail() != null) user.setNotifyEmail(tenant.getNotifyEmail());
+            if (tenant.getNotifySms() != null) user.setNotifySms(tenant.getNotifySms());
+            if (tenant.getNotifyInApp() != null) user.setNotifyInApp(tenant.getNotifyInApp());
+        });
     }
 
     private String generateJoinCode() {

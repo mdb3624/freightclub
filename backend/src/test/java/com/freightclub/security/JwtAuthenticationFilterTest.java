@@ -38,11 +38,18 @@ class JwtAuthenticationFilterTest {
     }
 
     private Claims makeClaims(String subject, String role, String tenantId) {
+        return makeClaims(subject, role, tenantId, null);
+    }
+
+    private Claims makeClaims(String subject, String role, String tenantId, Boolean isTenantAdmin) {
         Map<String, Object> data = new java.util.HashMap<>();
         data.put("sub", subject);
         data.put("role", role);
         if (tenantId != null) {
             data.put("tenantId", tenantId);
+        }
+        if (isTenantAdmin != null) {
+            data.put("isTenantAdmin", isTenantAdmin);
         }
         return new DefaultClaims(data);
     }
@@ -68,6 +75,35 @@ class JwtAuthenticationFilterTest {
             assertThat(auth.getPrincipal()).isEqualTo("user-1");
             assertThat(auth.getAuthorities()).anyMatch(a -> a.getAuthority().equals("ROLE_SHIPPER"));
             verify(filterChain).doFilter(request, response);
+        }
+
+        // US-874: is_tenant_admin is additive — a second authority alongside ROLE_<role>.
+        @Test
+        void addsTenantAdminAuthority_whenClaimTrue() throws Exception {
+            when(request.getRequestURI()).thenReturn("/api/v1/loads");
+            when(request.getHeader("Authorization")).thenReturn("Bearer valid-token");
+            Claims claims = makeClaims("user-1", "SHIPPER", "tenant-1", true);
+            when(jwtService.validateAndGetClaims("valid-token")).thenReturn(claims);
+
+            filter.doFilter(request, response, filterChain);
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            assertThat(auth.getAuthorities()).anyMatch(a -> a.getAuthority().equals("ROLE_SHIPPER"));
+            assertThat(auth.getAuthorities()).anyMatch(a -> a.getAuthority().equals("ROLE_TENANT_ADMIN"));
+        }
+
+        @Test
+        void omitsTenantAdminAuthority_whenClaimFalseOrAbsent() throws Exception {
+            when(request.getRequestURI()).thenReturn("/api/v1/loads");
+            when(request.getHeader("Authorization")).thenReturn("Bearer valid-token");
+            // Absent claim (e.g. a token issued before US-874) must default to non-admin, not error.
+            Claims claims = makeClaims("user-1", "SHIPPER", "tenant-1", null);
+            when(jwtService.validateAndGetClaims("valid-token")).thenReturn(claims);
+
+            filter.doFilter(request, response, filterChain);
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            assertThat(auth.getAuthorities()).noneMatch(a -> a.getAuthority().equals("ROLE_TENANT_ADMIN"));
         }
 
         @Test

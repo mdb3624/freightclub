@@ -2,6 +2,7 @@ package com.freightclub.config;
 
 import com.freightclub.security.AuthRateLimitFilter;
 import com.freightclub.security.JwtAuthenticationFilter;
+import com.freightclub.security.RequestMetricsFilter;
 import com.freightclub.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -28,21 +30,32 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+// US-875/877: @PreAuthorize was used throughout the codebase (ProfileController,
+// TeamController) but never actually enforced — @EnableMethodSecurity was missing entirely,
+// so every @PreAuthorize annotation in the app was silent decoration. Discovered while
+// verifying TeamController's ROLE_TENANT_ADMIN gate (AC-5) returned 200 instead of 403 for a
+// non-admin. Fixing this activates every existing @PreAuthorize check app-wide, not just this
+// story's — verified via full backend suite, not just this story's tests, precisely because
+// of that blast radius.
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthRateLimitFilter authRateLimitFilter;
+    private final RequestMetricsFilter requestMetricsFilter;
 
     @Value("${app.cors.allowed-origins}")
     private String allowedOrigins;
 
     public SecurityConfig(UserDetailsServiceImpl userDetailsService,
                           JwtAuthenticationFilter jwtAuthenticationFilter,
-                          AuthRateLimitFilter authRateLimitFilter) {
+                          AuthRateLimitFilter authRateLimitFilter,
+                          RequestMetricsFilter requestMetricsFilter) {
         this.userDetailsService = userDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.authRateLimitFilter = authRateLimitFilter;
+        this.requestMetricsFilter = requestMetricsFilter;
     }
 
     @Bean
@@ -55,6 +68,13 @@ public class SecurityConfig {
     @Bean
     public FilterRegistrationBean<AuthRateLimitFilter> authRateLimitFilterRegistration() {
         FilterRegistrationBean<AuthRateLimitFilter> registration = new FilterRegistrationBean<>(authRateLimitFilter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean<RequestMetricsFilter> requestMetricsFilterRegistration() {
+        FilterRegistrationBean<RequestMetricsFilter> registration = new FilterRegistrationBean<>(requestMetricsFilter);
         registration.setEnabled(false);
         return registration;
     }
@@ -94,7 +114,8 @@ public class SecurityConfig {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(authRateLimitFilter, JwtAuthenticationFilter.class);
+            .addFilterBefore(authRateLimitFilter, JwtAuthenticationFilter.class)
+            .addFilterBefore(requestMetricsFilter, AuthRateLimitFilter.class);
 
         return http.build();
     }

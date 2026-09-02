@@ -15,6 +15,7 @@ spring:
     placeholders:
       login_lookup_password: ${DB_LOGIN_PASSWORD}
       runtime_password: ${DB_PASSWORD}
+      super_user_read_password: ${DB_SUPER_USER_READ_PASSWORD}
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -38,6 +39,9 @@ app:
   login-lookup:
     username: ${DB_LOGIN_USER:freightclub_login_lookup}
     password: ${DB_LOGIN_PASSWORD}
+  super-user-read:
+    username: ${DB_SUPER_USER_READ_USER:freightclub_super_user_read}
+    password: ${DB_SUPER_USER_READ_PASSWORD}
   jwt:
     secret: ${APP_JWT_SECRET}
     issuer: ${JWT_ISSUER:freightclub}

@@ -45,7 +45,9 @@ public class CacheConfig {
         "financialForecast",   // LoadFinancialService: financial forecast (1h TTL)
         "analytics",           // AnalyticsAggregationJob: general analytics cache
         "laneAnalytics",       // AnalyticsAggregationJob: lane-specific analytics
-        "demandForecast"       // AnalyticsAggregationJob: demand forecasting (4h TTL)
+        "demandForecast",      // AnalyticsAggregationJob: demand forecasting (4h TTL)
+        "superUserDashboard",  // US-750: Super User Dashboard (5m TTL)
+        "platformHealth"       // US-752: Platform Health Metrics (10s TTL)
     );
   }
 }

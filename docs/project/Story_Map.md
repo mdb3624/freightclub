@@ -235,6 +235,7 @@ BA-scoped 2026-09-01 for the next sprint. Extends Phase 9's Super User stories (
 | US-876 | Shipper Admin: Org Settings & Defaults | DONE | 9 | US-874, US-875 | ✅ RLS. Shipped 2026-09-02, PR #107 merged (`05c2d438`). Story doc: `docs/business/stories/US-876_Shipper_Admin_Org_Settings.md`. Sign-off: `docs/project/LIBRARIAN_SIGN_OFF_US874.md` | Jira: FREIG-139 |
 | US-877 | Carrier Admin: Team & Seat Management | DONE | 9 | US-874 | ✅ RLS, ✅ soft-delete on removal. Shipped 2026-09-02, PR #107 merged (`05c2d438`). Story doc: `docs/business/stories/US-877_Carrier_Admin_Team_Seat_Management.md`. Sign-off: `docs/project/LIBRARIAN_SIGN_OFF_US874.md` | Jira: FREIG-140 |
 | US-878 | Carrier Admin: Org Settings & Defaults | DONE | 9 | US-874, US-877 | ✅ RLS. Shipped 2026-09-02, PR #107 merged (`05c2d438`). Story doc: `docs/business/stories/US-878_Carrier_Admin_Org_Settings.md`. Sign-off: `docs/project/LIBRARIAN_SIGN_OFF_US874.md` | Jira: FREIG-141 |
+| US-879 | Tenant Admin Zero-Admin Reconciliation | DONE | 9 | US-874 | ✅ RLS (cross-tenant detection via `freightclub_super_user_read`, promotion via tenant-scoped JPA). P0 — fixed all 13 production tenants left with zero admins after US-874-878 shipped; also fixes `@EnableScheduling` never being registered platform-wide. Council-review verdict (RESHAPE) adopted as design basis. Story doc: `docs/business/stories/US-879_Tenant_Admin_Zero_Admin_Reconciliation.md` | Jira: FREIG-142 |
 
 ---
 

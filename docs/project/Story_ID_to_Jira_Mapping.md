@@ -261,6 +261,7 @@ curl -u "email:token" \
 | US-876 | [FREIG-139](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-139) | US-876: Shipper Admin - Org Settings & Defaults | To Do |
 | US-877 | [FREIG-140](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-140) | US-877: Carrier Admin - Team & Seat Management | To Do |
 | US-878 | [FREIG-141](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-141) | US-878: Carrier Admin - Org Settings & Defaults | To Do |
+| US-879 | [FREIG-142](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-142) | US-879: Tenant Admin Zero-Admin Reconciliation | To Do |
 
 ---
 

@@ -42,6 +42,8 @@ app:
   super-user-read:
     username: ${DB_SUPER_USER_READ_USER:freightclub_super_user_read}
     password: ${DB_SUPER_USER_READ_PASSWORD}
+  tenant-admin-reconciliation:
+    cron: ${TENANT_ADMIN_RECONCILIATION_CRON:0 0 3 * * *}
   jwt:
     secret: ${APP_JWT_SECRET}
     issuer: ${JWT_ISSUER:freightclub}

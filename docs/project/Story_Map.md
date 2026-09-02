@@ -211,9 +211,9 @@
 
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
-| US-750 | Super User Dashboard (Users, Loads, Tenants) | READY_FOR_DESIGN | 9 | US-874 | ✅ NFR-504 (5m TTL). Drafted for real 2026-09-01 as part of Admin persona sprint scoping — story doc: `docs/business/stories/US-750_Super_User_Dashboard.md` | Jira: FREIG-135 |
-| US-751 | Dispute Resolution Tools (Super User) | READY_FOR_DESIGN | 9 | US-750, US-874 | ✅ NFR-504 (5m TTL). Drafted for real 2026-09-01 — story doc: `docs/business/stories/US-751_Dispute_Resolution_Tools.md`. (Bare `US-751.md` in `docs/business/stories/` is unrelated historical content, superseded to US-868 — do not confuse the two.) | Jira: FREIG-136 |
-| US-752 | Platform Health Metrics (Real-Time) | READY_FOR_DESIGN | 9 | US-750, US-874 | ✅ NFR-504 (10s TTL). Drafted for real 2026-09-01 — story doc: `docs/business/stories/US-752_Platform_Health_Metrics.md`. (Bare `US-752.md` is unrelated historical content, superseded to US-869.) | Jira: FREIG-137 |
+| US-750 | Super User Dashboard (Users, Loads, Tenants) | DONE | 9 | US-874 | ✅ NFR-504 (5m TTL). Shipped 2026-09-02, PR #107 merged (`05c2d438`). Story doc: `docs/business/stories/US-750_Super_User_Dashboard.md`. Sign-off: `docs/project/LIBRARIAN_SIGN_OFF_US874.md` | Jira: FREIG-135 |
+| US-751 | Dispute Resolution Tools (Super User) | DONE | 9 | US-750, US-874 | ✅ NFR-504 (5m TTL). Shipped 2026-09-02, PR #107 merged (`05c2d438`). Story doc: `docs/business/stories/US-751_Dispute_Resolution_Tools.md`. (Bare `US-751.md` in `docs/business/stories/` is unrelated historical content, superseded to US-868 — do not confuse the two.) Sign-off: `docs/project/LIBRARIAN_SIGN_OFF_US874.md` | Jira: FREIG-136 |
+| US-752 | Platform Health Metrics (Real-Time) | DONE | 9 | US-750, US-874 | ✅ NFR-504 (10s TTL). Shipped 2026-09-02, PR #107 merged (`05c2d438`). Story doc: `docs/business/stories/US-752_Platform_Health_Metrics.md`. (Bare `US-752.md` is unrelated historical content, superseded to US-869.) Sign-off: `docs/project/LIBRARIAN_SIGN_OFF_US874.md` | Jira: FREIG-137 |
 | US-753 | Rate Benchmarking Tool (Shipper)    | MIGRATION_PENDING | 9 | US-502, US-203 | ✅ NFR-504 (1h TTL) |
 | US-754 | Carrier Scorecard (Detailed Metrics) | MIGRATION_PENDING | 9 | US-402, US-701 | ✅ NFR-504 (1h TTL) |
 | US-755 | ELD Integration for HOS Tracking    | MIGRATION_PENDING | 9 | US-101 | ✅ RLS, ✅ No-Lombok |
@@ -230,11 +230,11 @@ BA-scoped 2026-09-01 for the next sprint. Extends Phase 9's Super User stories (
 
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
 | :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
-| US-874 | Role Model Foundation (Super User + Tenant Admins) | READY_FOR_DESIGN | 9 | — | ✅ RLS unchanged, ✅ No-Lombok. P0 — blocks US-750, US-751, US-752, US-875, US-876, US-877, US-878. Story doc: `docs/business/stories/US-874_Role_Model_Foundation.md` | Jira: FREIG-134 |
-| US-875 | Shipper Admin: Team & Seat Management | READY_FOR_DESIGN | 9 | US-874 | ✅ RLS, ✅ soft-delete on removal. Story doc: `docs/business/stories/US-875_Shipper_Admin_Team_Seat_Management.md` | Jira: FREIG-138 |
-| US-876 | Shipper Admin: Org Settings & Defaults | READY_FOR_DESIGN | 9 | US-874, US-875 | ✅ RLS. Story doc: `docs/business/stories/US-876_Shipper_Admin_Org_Settings.md` | Jira: FREIG-139 |
-| US-877 | Carrier Admin: Team & Seat Management | READY_FOR_DESIGN | 9 | US-874 | ✅ RLS, ✅ soft-delete on removal. Story doc: `docs/business/stories/US-877_Carrier_Admin_Team_Seat_Management.md` | Jira: FREIG-140 |
-| US-878 | Carrier Admin: Org Settings & Defaults | READY_FOR_DESIGN | 9 | US-874, US-877 | ✅ RLS. Story doc: `docs/business/stories/US-878_Carrier_Admin_Org_Settings.md` | Jira: FREIG-141 |
+| US-874 | Role Model Foundation (Super User + Tenant Admins) | DONE | 9 | — | ✅ RLS unchanged, ✅ No-Lombok. Shipped 2026-09-02, PR #107 merged (`05c2d438`). Story doc: `docs/business/stories/US-874_Role_Model_Foundation.md`. Sign-off: `docs/project/LIBRARIAN_SIGN_OFF_US874.md` | Jira: FREIG-134 |
+| US-875 | Shipper Admin: Team & Seat Management | DONE | 9 | US-874 | ✅ RLS, ✅ soft-delete on removal. Shipped 2026-09-02, PR #107 merged (`05c2d438`). Story doc: `docs/business/stories/US-875_Shipper_Admin_Team_Seat_Management.md`. Sign-off: `docs/project/LIBRARIAN_SIGN_OFF_US874.md` | Jira: FREIG-138 |
+| US-876 | Shipper Admin: Org Settings & Defaults | DONE | 9 | US-874, US-875 | ✅ RLS. Shipped 2026-09-02, PR #107 merged (`05c2d438`). Story doc: `docs/business/stories/US-876_Shipper_Admin_Org_Settings.md`. Sign-off: `docs/project/LIBRARIAN_SIGN_OFF_US874.md` | Jira: FREIG-139 |
+| US-877 | Carrier Admin: Team & Seat Management | DONE | 9 | US-874 | ✅ RLS, ✅ soft-delete on removal. Shipped 2026-09-02, PR #107 merged (`05c2d438`). Story doc: `docs/business/stories/US-877_Carrier_Admin_Team_Seat_Management.md`. Sign-off: `docs/project/LIBRARIAN_SIGN_OFF_US874.md` | Jira: FREIG-140 |
+| US-878 | Carrier Admin: Org Settings & Defaults | DONE | 9 | US-874, US-877 | ✅ RLS. Shipped 2026-09-02, PR #107 merged (`05c2d438`). Story doc: `docs/business/stories/US-878_Carrier_Admin_Org_Settings.md`. Sign-off: `docs/project/LIBRARIAN_SIGN_OFF_US874.md` | Jira: FREIG-141 |
 
 ---
 

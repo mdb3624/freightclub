@@ -42,7 +42,12 @@ Write-Host ""
 # just fixed in the test environment. FLYWAY_DB_USERNAME/PASSWORD (neondb_owner)
 # let Flyway keep doing DDL/role-management that freightclub_runtime can't.
 # DB_LOGIN_USER/PASSWORD is the narrowly-scoped pre-auth role from V20260721_1400.
-$SecretRefs = "DB_URL=DB_URL:latest,DB_USERNAME=DB_USERNAME:latest,DB_PASSWORD=DB_PASSWORD:latest,APP_JWT_SECRET=APP_JWT_SECRET:latest,JWT_SECRET=APP_JWT_SECRET:latest,FLYWAY_DB_USERNAME=FLYWAY_DB_USERNAME:latest,FLYWAY_DB_PASSWORD=FLYWAY_DB_PASSWORD:latest,DB_LOGIN_USER=DB_LOGIN_USER:latest,DB_LOGIN_PASSWORD=DB_LOGIN_PASSWORD:latest"
+# DB_SUPER_USER_READ_USER/PASSWORD (US-750/751/752, 2026-09-01) is the narrowly-scoped
+# BYPASSRLS role backing the Super User dashboard/dispute/health cross-tenant reads
+# (V20260901_1200). Required — app.super-user-read.password and the Flyway
+# super_user_read_password placeholder have no default; omitting this secret ref
+# crashes both the Flyway migration and backend startup.
+$SecretRefs = "DB_URL=DB_URL:latest,DB_USERNAME=DB_USERNAME:latest,DB_PASSWORD=DB_PASSWORD:latest,APP_JWT_SECRET=APP_JWT_SECRET:latest,JWT_SECRET=APP_JWT_SECRET:latest,FLYWAY_DB_USERNAME=FLYWAY_DB_USERNAME:latest,FLYWAY_DB_PASSWORD=FLYWAY_DB_PASSWORD:latest,DB_LOGIN_USER=DB_LOGIN_USER:latest,DB_LOGIN_PASSWORD=DB_LOGIN_PASSWORD:latest,DB_SUPER_USER_READ_USER=DB_SUPER_USER_READ_USER:latest,DB_SUPER_USER_READ_PASSWORD=DB_SUPER_USER_READ_PASSWORD:latest"
 
 $BackendUrl = "freightclub-backend-5gecbdg27a-uc.a.run.app"
 $BackendUrlAlt = "freightclub-backend-404925591110.us-central1.run.app"

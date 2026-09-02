@@ -239,6 +239,21 @@ BA-scoped 2026-09-01 for the next sprint. Extends Phase 9's Super User stories (
 
 ---
 
+## Phase 9c: Super User Management Capability — NEW
+
+BA-scoped 2026-09-02, resolved via `/council-review` ("Super User feature gaps" session, verdict GO-scoped) after the founder reviewed the shipped US-750 dashboard and found it read-mostly/unable to act on anything. Council converged: real management capability is needed now, scoped narrowly (not a full admin platform) — user suspend/reset/activity-view first, tenant suspend second, impersonation last with the heaviest guardrails, health alerting via webhook not a custom incident UI. Full verdict and per-story rationale in each story doc's Background/Decision Log.
+
+| ID     | Title                                  | Status      | Phase | Depends On | Guardrails |
+| :----- | :------------------------------------- | :---------- | :---- | :--------- | :--------- |
+| US-880 | Super User Audit Log (Foundation) | READY_FOR_DESIGN | 9 | US-874 | P0 — precondition for US-881/882/884/885; append-only enforced at DB grant level. Story doc: `docs/business/stories/US-880_Super_User_Audit_Log_Foundation.md` | Jira: FREIG-143 |
+| US-881 | Super User: Suspend/Reactivate User + Force Password Reset | READY_FOR_DESIGN | 9 | US-874, US-880 | P0 — highest council consensus. New `is_suspended` field, session invalidation. Story doc: `docs/business/stories/US-881_Super_User_Suspend_Reactivate_Reset_Password.md` | Jira: FREIG-144 |
+| US-882 | Super User: Per-User Activity View | READY_FOR_DESIGN | 9 | US-874, US-880 | P1 — read-only, no new tracking infra. Story doc: `docs/business/stories/US-882_Super_User_Per_User_Activity_View.md` | Jira: FREIG-145 |
+| US-883 | Platform Health Alerting (Webhook) | READY_FOR_DESIGN | 9 | US-752 | P1 — Slack/email webhook, debounced, fail-open. Story doc: `docs/business/stories/US-883_Platform_Health_Alerting.md` | Jira: FREIG-146 |
+| US-884 | Super User: Tenant Suspend/Deactivate | READY_FOR_DESIGN | 9 | US-874, US-880 | P2 — access lock only, no billing/plan/deletion. Story doc: `docs/business/stories/US-884_Super_User_Tenant_Suspend_Deactivate.md` | Jira: FREIG-147 |
+| US-885 | Super User: Scoped User Impersonation | READY_FOR_DESIGN | 9 | US-874, US-880, US-881 | P3 — ships last, deliberately; time-boxed, banner, re-auth, audit-logged. Story doc: `docs/business/stories/US-885_Super_User_Scoped_Impersonation.md` | Jira: FREIG-148 |
+
+---
+
 ## Phase 10: Shipper Dashboard Refinement (5 stories) — ✅ COMPLETE
 
 | ID     | Title                                  | Status      | Phase | Depends On | Guardrails |

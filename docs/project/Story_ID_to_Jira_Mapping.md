@@ -262,6 +262,12 @@ curl -u "email:token" \
 | US-877 | [FREIG-140](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-140) | US-877: Carrier Admin - Team & Seat Management | To Do |
 | US-878 | [FREIG-141](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-141) | US-878: Carrier Admin - Org Settings & Defaults | To Do |
 | US-879 | [FREIG-142](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-142) | US-879: Tenant Admin Zero-Admin Reconciliation | To Do |
+| US-880 | [FREIG-143](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-143) | US-880: Super User Audit Log (Foundation) | To Do |
+| US-881 | [FREIG-144](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-144) | US-881: Super User - Suspend/Reactivate + Force Password Reset | To Do |
+| US-882 | [FREIG-145](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-145) | US-882: Super User - Per-User Activity View | To Do |
+| US-883 | [FREIG-146](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-146) | US-883: Platform Health Alerting (Webhook) | To Do |
+| US-884 | [FREIG-147](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-147) | US-884: Super User - Tenant Suspend/Deactivate | To Do |
+| US-885 | [FREIG-148](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-148) | US-885: Super User - Scoped User Impersonation | To Do |
 
 ---
 

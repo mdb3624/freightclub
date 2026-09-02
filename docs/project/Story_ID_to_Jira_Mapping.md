@@ -238,6 +238,29 @@ curl -u "email:token" \
 | US-865 | [FREIG-124](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-124) | US-865: Recent Carrier Reviews in Detail Panel | To Do |
 | US-827 | [FREIG-125](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-125) | US-827: Real Quote Request Workflow | To Do |
 | US-866 | [FREIG-126](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-126) | US-866: Breached-Password Screening on Registration | Done |
+| US-754 | [FREIG-50](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-50) | [SUPERSEDED by FREIG-127] US-754: Optimize Cloud CDN Configuration for Asset Delivery | Superseded |
+| US-867 | [FREIG-127](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-127) | US-867: Carrier Mobile Static Asset CDN Caching | To Do |
+| US-751 | [FREIG-47](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-47) | [SUPERSEDED by FREIG-128] US-751: Code-Split Auth Module from Dashboard Bundle | Superseded |
+| US-868 | [FREIG-128](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-128) | US-868: Code-Split Auth Module from Dashboard Bundle | To Do |
+| US-752 | [FREIG-48](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-48) | [SUPERSEDED by FREIG-129] US-752: Lazy-Load Font Subsets After Authentication | Superseded |
+| US-869 | [FREIG-129](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-129) | US-869: Lazy-Load Font Subsets After Authentication | To Do |
+| US-753 | [FREIG-49](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-49) | [SUPERSEDED by FREIG-130] US-753: Replace Zod Validation with Lightweight Regex for Login | Superseded |
+| US-870 | [FREIG-130](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-130) | US-870: Replace Zod Validation with Lightweight Regex for Login | To Do |
+| US-755 | [FREIG-51](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-51) | [SUPERSEDED by FREIG-131] US-755: Replace React Query for Static Dashboard Queries | Superseded |
+| US-871 | [FREIG-131](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-131) | US-871: Replace React Query for Static Dashboard Queries | To Do |
+| US-756 | [FREIG-52](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-52) | [SUPERSEDED by FREIG-132] US-756: Optimize Login Page Hydration to <100ms | Superseded |
+| US-872 | [FREIG-132](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-132) | US-872: Optimize Login Page Hydration to <100ms | To Do |
+| US-757 | [FREIG-53](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-53) | [SUPERSEDED by FREIG-133] US-757: Trucker Cost Per Mile Calculator | Superseded |
+| US-873 | [FREIG-133](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-133) | US-873: Trucker Cost Per Mile Calculator (unverified) | To Do |
+| US-704 | [FREIG-32](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-32) | US-704: Load Board Analytics & Insights (Story_Map row was missing, added 2026-09-01) | To Do |
+| US-874 | [FREIG-134](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-134) | US-874: Role Model Foundation (Super User + Tenant Admins) | To Do |
+| US-750 | [FREIG-135](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-135) | US-750: Super User Dashboard (Users, Loads, Tenants) | To Do |
+| US-751 | [FREIG-136](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-136) | US-751: Dispute Resolution Tools (Super User) | To Do |
+| US-752 | [FREIG-137](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-137) | US-752: Platform Health Metrics (Real-Time) | To Do |
+| US-875 | [FREIG-138](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-138) | US-875: Shipper Admin - Team & Seat Management | To Do |
+| US-876 | [FREIG-139](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-139) | US-876: Shipper Admin - Org Settings & Defaults | To Do |
+| US-877 | [FREIG-140](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-140) | US-877: Carrier Admin - Team & Seat Management | To Do |
+| US-878 | [FREIG-141](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-141) | US-878: Carrier Admin - Org Settings & Defaults | To Do |
 
 ---
 

@@ -71,4 +71,19 @@ describe('useLogin', () => {
 
     expect(mockNavigate).toHaveBeenCalledWith('/dashboard/shipper', { replace: true })
   })
+
+  // US-750: ADMIN (Super User) has no tenant, so no persona dashboard to land on.
+  it('navigates ADMIN role to /super-user', async () => {
+    (authApi.login as ReturnType<typeof vi.fn>).mockResolvedValue({
+      accessToken: 'token-789',
+      user: { id: 'u3', role: 'ADMIN', firstName: 'A', lastName: 'Admin', email: 'a@test.com' },
+    })
+
+    const { result } = renderHook(() => useLogin(), { wrapper })
+    result.current.mutate({ email: 'a@test.com', password: 'pw' })
+
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalled())
+
+    expect(mockNavigate).toHaveBeenCalledWith('/super-user', { replace: true })
+  })
 })

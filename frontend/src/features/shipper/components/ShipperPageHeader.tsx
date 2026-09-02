@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { useLogout } from '@/features/auth/hooks/useLogout'
-import { LogOut, User, Settings, Bell } from 'lucide-react'
+import { LogOut, User, Settings, Bell, Users } from 'lucide-react'
 
 /**
  * ShipperPageHeader: Mandatory header for all Shipper pages
@@ -69,6 +69,13 @@ export function ShipperPageHeader() {
 
   const handleSettingsClick = () => {
     navigate('/settings/preferred-carriers')
+    setShowDropdown(false)
+  }
+
+  // US-875/876: contained section, reachable only from this existing nav — never inline on
+  // the dashboard/load board (per council-review BR-7). Only rendered for tenant admins.
+  const handleTeamSettingsClick = () => {
+    navigate('/shipper/admin/team')
     setShowDropdown(false)
   }
 
@@ -359,6 +366,32 @@ export function ShipperPageHeader() {
               <Settings size={16} />
               Settings
             </button>
+
+            {user?.isTenantAdmin && (
+              <button
+                role="menuitem"
+                data-testid="team-settings-menuitem"
+                onClick={handleTeamSettingsClick}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--space-sm)',
+                  width: '100%',
+                  padding: 'var(--space-sm) var(--space-md)',
+                  border: 'none',
+                  background: 'transparent',
+                  fontSize: 'var(--font-size-sm)',
+                  color: 'var(--color-text-primary)',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-interactive-bg)')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+              >
+                <Users size={16} />
+                Team &amp; Org Settings
+              </button>
+            )}
 
             <div style={{ borderTop: 'var(--border-divider)' }}>
               <button

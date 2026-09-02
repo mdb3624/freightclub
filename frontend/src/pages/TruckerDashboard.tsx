@@ -464,10 +464,15 @@ function MyStatsTab({ profile, history }: { profile: any; history: any }) {
   )
 }
 
-function SettingsTab({ onLogout }: { onLogout: () => void }) {
+function SettingsTab({ onLogout, isTenantAdmin }: { onLogout: () => void; isTenantAdmin?: boolean }) {
   const items = [
     { icon: '👤', label: 'Profile', sub: 'DOT number, CDL, insurance', to: '/carrier/profile' },
     { icon: '⚙', label: 'Cost Profile', sub: 'Set CPM, fuel & maintenance costs', to: '/carrier/cost-profile' },
+    // US-877/878: contained section, reachable only here — never inline on the load board
+    // (council-review BR-7). Only shown for tenant admins.
+    ...(isTenantAdmin
+      ? [{ icon: '🚚', label: 'Team & Fleet Settings', sub: 'Manage drivers & fleet cost defaults', to: '/carrier/admin/team' }]
+      : []),
     { icon: '💳', label: 'Payments', sub: 'Bank account & payout settings', to: null },
     { icon: '📋', label: 'Load History', sub: 'All completed loads', to: null },
     { icon: '🔔', label: 'Notifications', sub: 'Alerts & email preferences', to: null },
@@ -659,7 +664,7 @@ export function TruckerDashboard() {
           )}
 
           {tab === 'settings' && (
-            <SettingsTab onLogout={logout} />
+            <SettingsTab onLogout={logout} isTenantAdmin={user?.isTenantAdmin} />
           )}
         </div>
 

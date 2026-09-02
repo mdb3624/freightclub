@@ -8,6 +8,10 @@ export interface User {
   role: UserRole
   tenantId: string
   equipmentType?: string
+  // US-874: additive tenant-admin capability — a SHIPPER/TRUCKER user who created their
+  // tenant. Not a separate role; role stays SHIPPER/TRUCKER regardless of this flag.
+  // Optional or absent (older cached auth state) must be treated as false, never as admin.
+  isTenantAdmin?: boolean
 }
 
 export interface AuthResponse {

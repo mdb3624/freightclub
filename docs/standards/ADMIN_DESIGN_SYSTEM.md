@@ -1,15 +1,15 @@
 # Admin Design System
 
-**Authority:** BA (business rules below) → HFD (visual tokens/layout, not yet filled)
+**Authority:** BA (business rules) + HFD (visual tokens/layout, locked below)
 **Applies To:** Super User stories (US-750, US-751, US-752) and tenant-admin stories (US-875, US-876, US-877, US-878)
-**Status:** BUSINESS-RULE SCAFFOLDING ONLY — not a locked standard
+**Status:** LOCKED STANDARD (visual tokens finalized 2026-09-02)
 **Depends On:** US-874 (Role Model Foundation)
 
 ---
 
 ## Why This File Exists Now
 
-`CLAUDE.md`'s Known Doc/Reality Gaps section previously blocked creating this file preemptively — there was zero real Admin precedent (no components, no shipped stories, no BA business rules) to derive it from. That gate is satisfied as of 2026-09-01: US-750, US-751, US-752, US-874–878 are real, BA-drafted stories with real business rules. This file captures those rules so HFD has something to design against. **It intentionally contains no colors, spacing, typography, or component tokens** — those are HFD's Gate Check output, produced from these business rules, not invented ahead of them. Do not treat any placeholder below as a design decision.
+`CLAUDE.md`'s Known Doc/Reality Gaps section previously blocked creating this file preemptively — there was zero real Admin precedent (no components, no shipped stories, no BA business rules) to derive it from. That gate was satisfied 2026-09-01 (US-750, US-751, US-752, US-874–878 shipped as real, BA-drafted stories with real business rules and working screens), and the visual token decisions below were finalized 2026-09-02 via `/council-review` after real screens existed to evaluate — not invented ahead of them.
 
 ---
 
@@ -61,14 +61,46 @@ The council's Contrarian flagged, and this file records as a standing warning: T
 
 ---
 
-## Not Yet Defined (HFD to produce)
+## Visual System: Tenant Admin (Shipper Admin / Carrier Admin) — CONFIRMED
 
-- Color tokens / typography — TBD, pending HFD design pass. Default assumption per business rules above: Super User is new (no forced reuse); Shipper Admin/Carrier Admin should default to reusing their existing persona's locked system unless HFD documents a specific reason not to.
-- Exact settings-section entry point and component inventory within `ShipperPageLayout`/the Carrier shell (confirmed merged per the council verdict above; specific nav/route/component shape is still HFD's to produce).
-- Touch-target minimums, responsive breakpoints for the Carrier-side mobile admin surface — TBD; Super User's device target (desktop-only ops tool vs. also-mobile) is itself a separate open question, unaffected by this verdict.
+Not a default assumption anymore — verified against the actual shipped code (`ShipperTeamSettingsPage.tsx`, `CarrierTeamSettingsPage.tsx`):
+
+- **Shipper Admin** genuinely reuses `ShipperPageLayout` and `SHIPPER_DESIGN_SYSTEM.md`'s CSS custom properties (`var(--color-text-secondary)`, `.panel`/`.panel-title` classes) — zero new tokens invented. No further action needed.
+- **Carrier Admin** genuinely reuses `CARRIER_DESIGN_SYSTEM.md`'s locked tokens — its local `C = {...}` palette object is byte-identical to the locked values (`bg: #121212`, `surface: #1A1A1A`, `border: #2A2A2A`, `text: #F5F5F5`, `accent: #C9A876`). **Hygiene note for CODER (not a design deviation):** this is redeclared as a local JS object instead of referencing the CSS custom properties directly — low but real drift risk if the locked tokens change later and this file isn't updated in lockstep. Fix opportunistically, not urgent.
+
+## Visual System: Super User — "Ops Dark" (LOCKED, formalized via `/council-review` 2026-09-02)
+
+The Super User dashboard shipped with a one-off, undocumented dark palette borrowed wholesale from GitHub's dark theme (`#58A6FF` blue accent). A council review considered three options — reuse Shipper's light cream/bronze theme, keep/formalize the existing dark palette, or something else — specifically prompted by the fact that Super User operates from an office laptop, not a truck cab (i.e., Carrier's sunlight-glare rationale for dark mode doesn't apply here). **Verdict: keep dark, but own it.** Score: Contrarian 2/10 · Expansionist 7/10 · Logician 2/10 · Researcher 2/10 · Buyer 2/10 · Futurist 2/10 (all scored toward the light/Shipper-reuse option — 5 of 6 rejected it).
+
+**Why dark, if not for glare:** this dashboard's actual job is dense cross-tenant tabular data reviewed in long monitoring sessions, plus a 10-second-refresh live health monitor and a disputes queue whose entire value depends on red/amber/green status states reading unambiguously. Status-color legibility is measurably better against a dark canvas than a light one, and Shipper's own bronze accent already occupies visual space adjacent to "warning" amber — reusing that palette here risked exactly the alert states this screen exists to surface becoming hard to distinguish. Industry convention for this exact job (Datadog, Grafana, GitHub, Linear, PagerDuty) converges on dark for the same reason. This is a genuinely different design problem from Carrier's — justified by density and alert legibility, not readability-under-glare — which is why it's documented as its own system rather than treated as "Carrier's palette, reused."
+
+**Why not the borrowed GitHub-blue as-is:** it had no FreightClub identity behind it and was never a considered decision — just whatever a component default happened to be. Locked tokens below replace the blue accent with FreightClub's own bronze/copper (already proven to work on a dark background — it's Carrier's accent color too), so this reads as *this platform's* control-plane tool, not a generic dev-console skin.
+
+```css
+/* ── Ops Dark (Super User only) ────────────────────────────── */
+--admin-bg:            #0E1116;   /* Page background */
+--admin-surface:       #161B22;   /* Cards, tiles, table rows */
+--admin-border:        #2D333B;   /* Panel/table/input borders */
+--admin-text-primary:  #E6EDF3;   /* Body text, data */
+--admin-text-dim:      #8B949E;   /* Labels, secondary text */
+--admin-accent:        #C9A876;   /* FreightClub bronze — active tab, CTA, links (was #58A6FF blue — replaced) */
+--admin-danger:        #F85149;   /* Error/unhealthy status */
+--admin-success:       #3FB950;   /* Healthy status */
+
+/* Typography: system-ui, sans-serif (no custom display font — this is a utility surface, not a
+   branded customer-facing one). Sizes in use: 11px (labels) / 12-13px (body, table) / 14-16px
+   (headers) / 20-24px (stat tiles). Spacing: 8px grid, consistent with the rest of the app.
+   Border-radius: 6px (buttons/inputs), 8px (cards/tiles). */
+```
+
+**Component patterns already in use** (reference, not aspirational — read `SuperUserDashboardPage.tsx` directly): stat tiles (label + large number), tab navigation (active tab = filled accent background), data tables with `--admin-border` row dividers, and a forced-reason resolution pattern (a text field that must be non-empty before the confirming action is enabled — see `DisputesTab`, matching US-751 BR-3).
+
+## Information Architecture (applies here too)
+
+The Org Settings form (US-876/878) and dispute-resolution flow (US-751) are both multi-field/data-entry surfaces and must follow `docs/roles/HUMAN_FACTORS_DESIGNER.md`'s Information Architecture & Data Entry Efficiency standard (added 2026-09-02): minimize typing where a default/autofill/reuse is available, group semantically-related fields (e.g., a dispute's outcome selection and its required reason) as adjacent units.
 
 ---
 
 ## Next Step
 
-HFD Gate Check (per `docs/roles/HUMAN_FACTORS_DESIGNER.md`) against these business rules, producing the visual/token decisions above and a matching `docs/roles/ADMIN_HFD_RULES.md` workflow document (companion file, also currently a business-rule-only stub — see that file).
+Full `docs/roles/ADMIN_HFD_RULES.md` workflow checklist (mirroring `SHIPPER_HFD_RULES.md`'s Phase 1/2/3 structure) using the now-locked decisions above.

@@ -4,13 +4,20 @@ import { useLogout } from '@/features/auth/hooks/useLogout'
 import * as api from './api'
 import type { DisputeOutcome } from './types'
 
+// "Ops Dark" — Super User's own locked system (formalized via /council-review, 2026-09-02;
+// see docs/standards/ADMIN_DESIGN_SYSTEM.md). Distinct from both Shipper (light, customer-
+// facing) and Carrier (dark, sunlight-glare-driven): this dashboard is dense cross-tenant
+// tabular/log data reviewed in long monitoring sessions, and its red/amber/green alert states
+// (dispute urgency, live health) need to read unambiguously — that's the job dark serves here,
+// not glare. Accent uses FreightClub's own bronze/copper (matching Shipper/Carrier) instead of
+// a borrowed GitHub-blue, so this reads as this platform's tool, not a generic dev-console skin.
 const S = {
   bg: '#0E1116',
   surface: '#161B22',
   border: '#2D333B',
   text: '#E6EDF3',
   dim: '#8B949E',
-  accent: '#58A6FF',
+  accent: '#C9A876',
   danger: '#F85149',
 }
 

@@ -62,6 +62,10 @@ public class TestAuthController {
     private String lastName;
     private String role;
     private String companyName;
+    // US-875/877 E2E: lets a test register a second member of an existing tenant (via its
+    // join code) instead of always creating a brand-new tenant/admin — needed to exercise
+    // team-management flows (remove, grant/revoke admin) against a real second user.
+    private String joinCode;
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -75,6 +79,8 @@ public class TestAuthController {
     public void setRole(String role) { this.role = role; }
     public String getCompanyName() { return companyName; }
     public void setCompanyName(String companyName) { this.companyName = companyName; }
+    public String getJoinCode() { return joinCode; }
+    public void setJoinCode(String joinCode) { this.joinCode = joinCode; }
   }
 
   @PostMapping("/register")
@@ -86,8 +92,9 @@ public class TestAuthController {
           req.getFirstName(),
           req.getLastName(),
           UserRole.valueOf(req.getRole().toUpperCase()),
-          req.getCompanyName(),
-          null, null, null, null
+          req.getJoinCode() == null ? req.getCompanyName() : null,
+          req.getJoinCode(),
+          null, null, null
       ));
 
       ResponseCookie cookie = ResponseCookie

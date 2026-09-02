@@ -31,7 +31,7 @@ class SuperUserDashboardServiceTest {
         when(superUserReadJdbcTemplate.queryForList("SELECT status AS k, COUNT(*) AS cnt FROM freightclub.loads WHERE deleted_at IS NULL GROUP BY status"))
                 .thenReturn(List.of(Map.of("k", "OPEN", "cnt", 4L)));
         when(superUserReadJdbcTemplate.query(anyString(), (RowMapper<Object>) any())).thenAnswer(inv ->
-                List.of(new SuperUserDashboardResponse.TenantSummary("Acme Freight", "FREE", 5L)));
+                List.of(new SuperUserDashboardResponse.TenantSummary("tenant-1", "Acme Freight", "FREE", 5L)));
 
         SuperUserDashboardService service = new SuperUserDashboardService(superUserReadJdbcTemplate);
         SuperUserDashboardResponse result = service.getDashboard();

@@ -12,5 +12,5 @@ public record SuperUserDashboardResponse(
         Map<String, Long> loadCountByStatus,
         List<TenantSummary> tenants
 ) {
-    public record TenantSummary(String name, String plan, long memberCount) {}
+    public record TenantSummary(String id, String name, String plan, long memberCount) {}
 }

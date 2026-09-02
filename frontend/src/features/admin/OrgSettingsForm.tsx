@@ -32,6 +32,7 @@ export function OrgSettingsForm({ persona, settings, onSave, isSaving, theme }: 
     <div style={{ marginBottom: 12 }}>
       <label style={labelStyle}>{label}</label>
       <input
+        data-testid={`org-setting-${key}`}
         type={type}
         style={inputStyle}
         value={(form[key] as string | number | null | undefined) ?? ''}

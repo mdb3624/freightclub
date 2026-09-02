@@ -38,7 +38,7 @@ export interface SuperUserDashboard {
   tenantCount: number
   userCountByRole: Record<string, number>
   loadCountByStatus: Record<string, number>
-  tenants: { name: string; plan: string; memberCount: number }[]
+  tenants: { id: string; name: string; plan: string; memberCount: number }[]
 }
 
 export interface DisputeQueueItem {

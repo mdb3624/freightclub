@@ -103,7 +103,7 @@ function DashboardTab() {
         </thead>
         <tbody>
           {data.tenants.map((t) => (
-            <tr key={t.name} style={{ borderBottom: `1px solid ${S.border}` }}>
+            <tr key={t.id} style={{ borderBottom: `1px solid ${S.border}` }}>
               <td style={{ padding: '6px 8px' }}>{t.name}</td>
               <td style={{ padding: '6px 8px' }}>{t.plan}</td>
               <td style={{ padding: '6px 8px' }}>{t.memberCount}</td>
@@ -133,8 +133,8 @@ function DisputesTab() {
     },
   })
 
-  if (isLoading) return <p style={{ color: S.dim }}>Loading…</p>
-  if (!data || data.length === 0) return <p style={{ color: S.dim }}>No open disputes.</p>
+  if (isLoading) return <p data-testid="super-user-disputes" style={{ color: S.dim }}>Loading…</p>
+  if (!data || data.length === 0) return <p data-testid="super-user-disputes" style={{ color: S.dim }}>No open disputes.</p>
 
   return (
     <div data-testid="super-user-disputes">

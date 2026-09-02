@@ -36,10 +36,11 @@ public class SuperUserDashboardService {
         Map<String, Long> loadCountByStatus = groupCounts(
                 "SELECT status AS k, COUNT(*) AS cnt FROM freightclub.loads WHERE deleted_at IS NULL GROUP BY status");
 
-        // US-750 AC-4: name, plan, member count only — no cross-tenant load/document content.
+        // US-750 AC-4: id (for a stable frontend list key only — never rendered), name, plan,
+        // member count — no cross-tenant load/document content.
         List<SuperUserDashboardResponse.TenantSummary> tenants = superUserReadJdbcTemplate.query(
                 """
-                SELECT t.name AS name, t.plan AS plan,
+                SELECT t.id AS id, t.name AS name, t.plan AS plan,
                        (SELECT COUNT(*) FROM freightclub.users u
                         WHERE u.tenant_id = t.id AND u.deleted_at IS NULL) AS member_count
                 FROM freightclub.tenants t
@@ -47,7 +48,7 @@ public class SuperUserDashboardService {
                 ORDER BY t.name ASC
                 """,
                 (rs, rowNum) -> new SuperUserDashboardResponse.TenantSummary(
-                        rs.getString("name"), rs.getString("plan"), rs.getLong("member_count"))
+                        rs.getString("id"), rs.getString("name"), rs.getString("plan"), rs.getLong("member_count"))
         );
 
         return new SuperUserDashboardResponse(tenantCount, userCountByRole, loadCountByStatus, tenants);

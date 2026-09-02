@@ -18,6 +18,19 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     boolean existsByEmail(String email);
 
+    // US-875/877: shared team-management queries — persona-agnostic (role filtering, if any,
+    // happens at the caller, not here; a tenant's team includes SHIPPER or TRUCKER members
+    // depending which persona's tenant it is, never both).
+    @Query("SELECT u FROM User u WHERE u.tenantId = :tenantId AND u.deletedAt IS NULL ORDER BY u.firstName ASC, u.lastName ASC")
+    List<User> findAllByTenantIdAndDeletedAtIsNull(@Param("tenantId") String tenantId);
+
+    @Query("SELECT COUNT(u) FROM User u WHERE u.tenantId = :tenantId AND u.isTenantAdmin = true AND u.deletedAt IS NULL")
+    long countTenantAdmins(@Param("tenantId") String tenantId);
+
+    // US-876/878 BR-5: lets the frontend apply the 1-seat collapse display rule.
+    @Query("SELECT COUNT(u) FROM User u WHERE u.tenantId = :tenantId AND u.deletedAt IS NULL")
+    long countByTenantIdAndDeletedAtIsNull(@Param("tenantId") String tenantId);
+
     @Query("""
             SELECT u FROM User u
             WHERE u.tenantId = :tenantId

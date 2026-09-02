@@ -464,20 +464,26 @@ function MyStatsTab({ profile, history }: { profile: any; history: any }) {
   )
 }
 
-function SettingsTab({ onLogout }: { onLogout: () => void }) {
+function SettingsTab({ onLogout, isTenantAdmin }: { onLogout: () => void; isTenantAdmin?: boolean }) {
   const items = [
-    { icon: '👤', label: 'Profile', sub: 'DOT number, CDL, insurance', to: '/carrier/profile' },
-    { icon: '⚙', label: 'Cost Profile', sub: 'Set CPM, fuel & maintenance costs', to: '/carrier/cost-profile' },
-    { icon: '💳', label: 'Payments', sub: 'Bank account & payout settings', to: null },
-    { icon: '📋', label: 'Load History', sub: 'All completed loads', to: null },
-    { icon: '🔔', label: 'Notifications', sub: 'Alerts & email preferences', to: null },
-    { icon: '❓', label: 'Support', sub: 'Help center & contact us', to: null },
+    { id: 'profile', icon: '👤', label: 'Profile', sub: 'DOT number, CDL, insurance', to: '/carrier/profile' },
+    { id: 'cost-profile', icon: '⚙', label: 'Cost Profile', sub: 'Set CPM, fuel & maintenance costs', to: '/carrier/cost-profile' },
+    // US-877/878: contained section, reachable only here — never inline on the load board
+    // (council-review BR-7). Only shown for tenant admins.
+    ...(isTenantAdmin
+      ? [{ id: 'team-settings', icon: '🚚', label: 'Team & Fleet Settings', sub: 'Manage drivers & fleet cost defaults', to: '/carrier/admin/team' }]
+      : []),
+    { id: 'payments', icon: '💳', label: 'Payments', sub: 'Bank account & payout settings', to: null },
+    { id: 'load-history', icon: '📋', label: 'Load History', sub: 'All completed loads', to: null },
+    { id: 'notifications', icon: '🔔', label: 'Notifications', sub: 'Alerts & email preferences', to: null },
+    { id: 'support', icon: '❓', label: 'Support', sub: 'Help center & contact us', to: null },
   ]
   return (
     <div style={{ padding: 12 }}>
-      {items.map(({ icon, label, sub, to }) => (
+      {items.map(({ id, icon, label, sub, to }) => (
         <div
           key={label}
+          data-testid={`settings-item-${id}`}
           onClick={() => { if (to) window.location.href = to }}
           style={{
             display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px',
@@ -659,7 +665,7 @@ export function TruckerDashboard() {
           )}
 
           {tab === 'settings' && (
-            <SettingsTab onLogout={logout} />
+            <SettingsTab onLogout={logout} isTenantAdmin={user?.isTenantAdmin} />
           )}
         </div>
 
@@ -676,6 +682,7 @@ export function TruckerDashboard() {
           {TABS.map((t) => (
             <button
               key={t.id}
+              data-testid={`bottom-tab-${t.id}`}
               onClick={() => setTab(t.id)}
               aria-selected={tab === t.id}
               role="tab"

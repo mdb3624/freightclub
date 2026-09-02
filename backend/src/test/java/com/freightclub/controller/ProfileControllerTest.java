@@ -117,6 +117,7 @@ class ProfileControllerTest {
 
     @Test
     void updateEquipment_returns200() throws Exception {
+        when(carrierProfileService.isEquipmentOwner("eq-1")).thenReturn(true);
         when(carrierProfileService.updateEquipment(eq("trucker-1"), any())).thenReturn(sampleEquipment());
 
         mockMvc.perform(put("/api/v1/profile/equipment/eq-1").with(trucker("trucker-1"))
@@ -128,6 +129,7 @@ class ProfileControllerTest {
 
     @Test
     void deleteEquipment_returns204() throws Exception {
+        when(carrierProfileService.isEquipmentOwner("eq-1")).thenReturn(true);
         doNothing().when(carrierProfileService).deleteEquipment("trucker-1", "eq-1");
 
         mockMvc.perform(delete("/api/v1/profile/equipment/eq-1").with(trucker("trucker-1")))
@@ -136,6 +138,7 @@ class ProfileControllerTest {
 
     @Test
     void deleteEquipment_notOwned_returns403() throws Exception {
+        when(carrierProfileService.isEquipmentOwner("eq-99")).thenReturn(true);
         doThrow(new IllegalStateException("Equipment does not belong to this trucker"))
                 .when(carrierProfileService).deleteEquipment("trucker-1", "eq-99");
 
@@ -145,6 +148,7 @@ class ProfileControllerTest {
 
     @Test
     void deleteEquipment_notFound_returns400() throws Exception {
+        when(carrierProfileService.isEquipmentOwner("eq-missing")).thenReturn(true);
         doThrow(new IllegalArgumentException("Equipment not found"))
                 .when(carrierProfileService).deleteEquipment("trucker-1", "eq-missing");
 
@@ -176,6 +180,7 @@ class ProfileControllerTest {
 
     @Test
     void updateLane_returns200() throws Exception {
+        when(carrierProfileService.isLaneOwner("lane-1")).thenReturn(true);
         when(carrierProfileService.updateLane(eq("trucker-1"), any())).thenReturn(sampleLane());
 
         mockMvc.perform(put("/api/v1/profile/lanes/lane-1").with(trucker("trucker-1"))
@@ -186,6 +191,7 @@ class ProfileControllerTest {
 
     @Test
     void deleteLane_returns204() throws Exception {
+        when(carrierProfileService.isLaneOwner("lane-1")).thenReturn(true);
         doNothing().when(carrierProfileService).deleteLane("trucker-1", "lane-1");
 
         mockMvc.perform(delete("/api/v1/profile/lanes/lane-1").with(trucker("trucker-1")))
@@ -213,6 +219,7 @@ class ProfileControllerTest {
 
     @Test
     void setAvailability_returns200() throws Exception {
+        when(profileService.isOwner("trucker-1")).thenReturn(true);
         when(carrierProfileService.setAvailability(eq("trucker-1"), any())).thenReturn(sampleAvailability());
 
         mockMvc.perform(put("/api/v1/profile/availability").with(trucker("trucker-1"))

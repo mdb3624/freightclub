@@ -74,4 +74,50 @@ describe('ProtectedRoute', () => {
     expect(screen.getByText('Home Page')).toBeInTheDocument()
     expect(screen.queryByText('Trucker Content')).not.toBeInTheDocument()
   })
+
+  // US-874/875: requireTenantAdmin gates independently of role — a plain SHIPPER member
+  // (correct role, no admin flag) must not reach an admin-only route.
+  describe('requireTenantAdmin', () => {
+    it('redirects a plain (non-admin) member even with the correct role', () => {
+      useAuthStore.setState({
+        accessToken: 'token',
+        user: { ...mockShipper, isTenantAdmin: false },
+        isAuthenticated: true,
+      })
+
+      renderInRouter(
+        <ProtectedRoute role="SHIPPER" requireTenantAdmin>
+          <div>Team Settings</div>
+        </ProtectedRoute>
+      )
+      expect(screen.getByText('Home Page')).toBeInTheDocument()
+      expect(screen.queryByText('Team Settings')).not.toBeInTheDocument()
+    })
+
+    it('redirects when isTenantAdmin is absent (older cached auth state)', () => {
+      useAuthStore.setState({ accessToken: 'token', user: mockShipper, isAuthenticated: true })
+
+      renderInRouter(
+        <ProtectedRoute role="SHIPPER" requireTenantAdmin>
+          <div>Team Settings</div>
+        </ProtectedRoute>
+      )
+      expect(screen.getByText('Home Page')).toBeInTheDocument()
+    })
+
+    it('renders children for a tenant admin with the correct role', () => {
+      useAuthStore.setState({
+        accessToken: 'token',
+        user: { ...mockShipper, isTenantAdmin: true },
+        isAuthenticated: true,
+      })
+
+      renderInRouter(
+        <ProtectedRoute role="SHIPPER" requireTenantAdmin>
+          <div>Team Settings</div>
+        </ProtectedRoute>
+      )
+      expect(screen.getByText('Team Settings')).toBeInTheDocument()
+    })
+  })
 })

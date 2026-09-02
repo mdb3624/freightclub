@@ -28,6 +28,10 @@ const QuoteRequestPlaceholder = lazy(() => import('@/pages/QuoteRequestPlacehold
 const PaymentsPlaceholder = lazy(() => import('@/pages/PaymentsPlaceholder').then(m => ({ default: m.PaymentsPlaceholder })))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })))
 const TruckerLandingPage = lazy(() => import('@/pages/TruckerLandingPage').then(m => ({ default: m.TruckerLandingPage })))
+// US-750-752/875-878: Admin persona sprint
+const ShipperTeamSettingsPage = lazy(() => import('@/features/admin/ShipperTeamSettingsPage').then(m => ({ default: m.ShipperTeamSettingsPage })))
+const CarrierTeamSettingsPage = lazy(() => import('@/features/admin/CarrierTeamSettingsPage').then(m => ({ default: m.CarrierTeamSettingsPage })))
+const SuperUserDashboardPage = lazy(() => import('@/features/admin/SuperUserDashboardPage').then(m => ({ default: m.SuperUserDashboardPage })))
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
   state = { hasError: false }
@@ -280,6 +284,42 @@ export default function App() {
           <ProtectedRoute>
             <Suspense fallback={<PageLoader />}>
               <ProfilePage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* US-875/876: Shipper Admin — Team & Org Settings (contained section, per council-review) */}
+      <Route
+        path="/shipper/admin/team"
+        element={
+          <ProtectedRoute role="SHIPPER" requireTenantAdmin>
+            <Suspense fallback={<PageLoader />}>
+              <ShipperTeamSettingsPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* US-877/878: Carrier Admin — Team & Fleet Settings (mobile-first, per council-review) */}
+      <Route
+        path="/carrier/admin/team"
+        element={
+          <ProtectedRoute role="TRUCKER" requireTenantAdmin>
+            <Suspense fallback={<PageLoader />}>
+              <CarrierTeamSettingsPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* US-750/751/752: Super User — platform-wide, cross-tenant */}
+      <Route
+        path="/super-user"
+        element={
+          <ProtectedRoute role="ADMIN">
+            <Suspense fallback={<PageLoader />}>
+              <SuperUserDashboardPage />
             </Suspense>
           </ProtectedRoute>
         }

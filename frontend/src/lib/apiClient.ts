@@ -93,3 +93,6 @@ export const apiPut = <T>(url: string, data?: unknown, config?: AxiosRequestConf
 
 export const apiPatch = <T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> =>
   apiClient.patch<T>(url, data, config).then((r) => r.data)
+
+export const apiDelete = <T>(url: string, config?: AxiosRequestConfig): Promise<T> =>
+  apiClient.delete<T>(url, config).then((r) => r.data)

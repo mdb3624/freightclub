@@ -52,13 +52,19 @@ public class LoginLookupDataSourceConfig {
             @Value("${app.login-lookup.username}") String username,
             @Value("${app.login-lookup.password}") String password
     ) {
-        return DataSourceBuilder.create()
+        // Narrow pool size: this role is hit only at pre-auth lookup, and every extra pool
+        // multiplies across every distinct @SpringBootTest context the suite spins up —
+        // a default-sized (10) pool here was enough to exhaust Postgres's connection ceiling
+        // once a third pool (superUserReadDataSource) was added alongside it.
+        HikariDataSource ds = DataSourceBuilder.create()
                 .type(HikariDataSource.class)
                 .url(url)
                 .username(username)
                 .password(password)
                 .driverClassName("org.postgresql.Driver")
                 .build();
+        ds.setMaximumPoolSize(2);
+        return ds;
     }
 
     // Same @ConditionalOnMissingBean(JdbcTemplate.class) trap as DataSource above —
@@ -76,5 +82,33 @@ public class LoginLookupDataSourceConfig {
             @Qualifier("loginLookupDataSource") DataSource loginLookupDataSource
     ) {
         return new JdbcTemplate(loginLookupDataSource);
+    }
+
+    // US-750/751/752: third connection pool, same reasoning as loginLookupDataSource above —
+    // a narrowly-scoped, BYPASSRLS role (V20260901_1200) for the Super User dashboard's one
+    // legitimate cross-tenant read surface, kept off the tenant-scoped JPA path entirely.
+    @Bean(name = "superUserReadDataSource")
+    public DataSource superUserReadDataSource(
+            @Value("${spring.datasource.url}") String url,
+            @Value("${app.super-user-read.username}") String username,
+            @Value("${app.super-user-read.password}") String password
+    ) {
+        // Narrow pool size — see loginLookupDataSource's comment above; same reasoning.
+        HikariDataSource ds = DataSourceBuilder.create()
+                .type(HikariDataSource.class)
+                .url(url)
+                .username(username)
+                .password(password)
+                .driverClassName("org.postgresql.Driver")
+                .build();
+        ds.setMaximumPoolSize(2);
+        return ds;
+    }
+
+    @Bean(name = "superUserReadJdbcTemplate")
+    public JdbcTemplate superUserReadJdbcTemplate(
+            @Qualifier("superUserReadDataSource") DataSource superUserReadDataSource
+    ) {
+        return new JdbcTemplate(superUserReadDataSource);
     }
 }

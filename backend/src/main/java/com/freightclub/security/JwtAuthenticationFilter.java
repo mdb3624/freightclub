@@ -55,6 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     String userId = claims.getSubject();
                     String role = claims.get("role", String.class);
                     String tenantId = claims.get("tenantId", String.class);
+                    Boolean isTenantAdmin = claims.get("isTenantAdmin", Boolean.class);
 
                     // AC-2: Reject with 403 if tenant_id claim is missing or blank
                     if (tenantId == null || tenantId.isBlank()) {
@@ -67,11 +68,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     TenantContextHolder.setTenantId(tenantId);
                     TenantContextHolder.setUserId(userId);
 
-                    var auth = new UsernamePasswordAuthenticationToken(
-                            userId,
-                            null,
-                            List.of(new SimpleGrantedAuthority("ROLE_" + role))
-                    );
+                    // US-874: is_tenant_admin is additive, independent of persona role — a
+                    // second authority alongside ROLE_<role>, not a replacement for it. Older
+                    // tokens issued before this claim existed simply carry no extra authority
+                    // (Boolean.TRUE.equals(null) is false), which is the correct non-admin default.
+                    List<SimpleGrantedAuthority> authorities = Boolean.TRUE.equals(isTenantAdmin)
+                            ? List.of(new SimpleGrantedAuthority("ROLE_" + role), new SimpleGrantedAuthority("ROLE_TENANT_ADMIN"))
+                            : List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
+                    var auth = new UsernamePasswordAuthenticationToken(userId, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 } catch (JwtException ex) {
                     // AC-2: Reject with 401 if JWT is invalid or malformed

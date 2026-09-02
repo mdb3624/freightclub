@@ -12,8 +12,11 @@ export function useLogin() {
     mutationFn: (data: LoginFormValues) => authApi.login(data),
     onSuccess: (response) => {
       setAuth(response.accessToken, response.user)
-      const destination = response.user.role === 'SHIPPER'
-        ? '/dashboard/shipper'
+      // US-750: ADMIN (Super User) lands on its own platform-wide surface, never a persona
+      // dashboard — there is no tenant for this role to have a dashboard for.
+      const destination =
+        response.user.role === 'ADMIN' ? '/super-user'
+        : response.user.role === 'SHIPPER' ? '/dashboard/shipper'
         : '/dashboard/trucker'
       navigate(destination, { replace: true })
     },

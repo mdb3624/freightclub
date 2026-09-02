@@ -166,6 +166,13 @@ public class User {
     @Column(name = "notify_in_app", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
     private boolean notifyInApp = true;
 
+    // US-874: additive tenant-admin capability — a SHIPPER/TRUCKER user who created their
+    // tenant (registered with companyName, not joinCode). Not a separate role; role stays
+    // SHIPPER/TRUCKER regardless of this flag. Cross-tenant "Super User" is the unrelated
+    // ADMIN UserRole value, not this.
+    @Column(name = "is_tenant_admin", nullable = false)
+    private boolean isTenantAdmin = false;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -265,6 +272,8 @@ public class User {
     public void setNotifySms(boolean notifySms) { this.notifySms = notifySms; }
     public boolean isNotifyInApp() { return notifyInApp; }
     public void setNotifyInApp(boolean notifyInApp) { this.notifyInApp = notifyInApp; }
+    public boolean isTenantAdmin() { return isTenantAdmin; }
+    public void setTenantAdmin(boolean tenantAdmin) { this.isTenantAdmin = tenantAdmin; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getDeletedAt() { return deletedAt; }
     public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }

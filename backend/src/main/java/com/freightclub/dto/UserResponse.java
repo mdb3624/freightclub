@@ -9,7 +9,8 @@ public record UserResponse(
         String lastName,
         String role,
         String tenantId,
-        String equipmentType
+        String equipmentType,
+        boolean isTenantAdmin
 ) {
     public static UserResponse from(User user) {
         return new UserResponse(
@@ -19,7 +20,8 @@ public record UserResponse(
                 user.getLastName(),
                 user.getRole().name(),
                 user.getTenantId(),
-                user.getEquipmentType() != null ? user.getEquipmentType().name() : null
+                user.getEquipmentType() != null ? user.getEquipmentType().name() : null,
+                user.isTenantAdmin()
         );
     }
 }

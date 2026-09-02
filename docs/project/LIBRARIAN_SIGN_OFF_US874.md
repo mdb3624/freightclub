@@ -60,5 +60,21 @@ Role model is additive: `is_tenant_admin` boolean flag on the existing `User` en
 
 ---
 
-**Signed:** Claude (acting BA/ARCHITECT/CODER/REVIEWER/LIBRARIAN, single session, 2026-09-01)
-**Date:** 2026-09-01
+## Production Deployment (2026-09-02)
+
+- [x] Real gap caught pre-deploy: `deploy-prod.ps1` never wired `DB_SUPER_USER_READ_USER`/`DB_SUPER_USER_READ_PASSWORD` (new this sprint, backing `freightclub_super_user_read`) — the Flyway placeholder and `app.super-user-read.password` have no default, so deploying as-is would have crashed the migration and backend startup. Fixed in PR #109 before any deploy attempt (same class of gap as FREIG-116).
+- [x] `DB_SUPER_USER_READ_USER`/`DB_SUPER_USER_READ_PASSWORD` created in GCP Secret Manager (project `freight-club-495117`)
+- [x] Backend (`mvn clean package -DskipTests`) and frontend (`npm run build`) built clean; new admin bundles present in frontend build output (`SuperUserDashboardPage`, `OrgSettingsForm`, `ShipperTeamSettingsPage`, `CarrierTeamSettingsPage`)
+- [x] Both images built `--no-cache` and pushed to Artifact Registry (`us-central1-docker.pkg.dev/freight-club-495117/freightclub-repo/freightclub-{backend,frontend}:latest`)
+- [x] `.\deploy-prod.ps1` run clean: `freightclub-backend-00084-bp7` and `freightclub-frontend-00058-t2p` deployed, each serving 100% of traffic; script's own health check passed (HTTP 200)
+- [x] Smoke test: backend `/actuator/health` direct → 200; CORS preflight (`OPTIONS /api/v1/auth/login`, `Origin: <frontend-url>`) → 200 with correct `Access-Control-Allow-Origin`
+- [x] Frontend proxy path (`/api/v1/actuator/health`) returns 401, not 502/504 — confirms the proxy is correctly reaching the backend and Spring Security is enforcing auth as configured; **flagged as pre-existing, out-of-scope debt** (not introduced by this sprint): `docs/OPERATIONS.md`'s documented smoke-test command targets a path (`/api/v1/actuator/health`) that Spring Security's `permitAll` list doesn't cover (only the unprefixed `/actuator/health` is public) — either the doc's curl command or the `permitAll` matcher should be corrected in a future story
+
+## Final Story Closure
+
+All 8 stories (US-874, US-750, US-751, US-752, US-875, US-876, US-877, US-878): implemented, tested, merged to `main`, deployed to production, `Story_Map.md` status `DONE`, Jira FREIG-134–141 transitioned to Done.
+
+---
+
+**Signed:** Claude (acting BA/ARCHITECT/CODER/REVIEWER/LIBRARIAN, single session, 2026-09-01 to 2026-09-02)
+**Date:** 2026-09-02

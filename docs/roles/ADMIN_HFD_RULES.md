@@ -2,24 +2,22 @@
 
 **Role:** HFD (Human Factors Designer)
 **Applies To:** US-750, US-751, US-752 (Super User) and US-875, US-876, US-877, US-878 (Shipper Admin / Carrier Admin)
-**Authority:** Sequential Lock Protocol + `docs/standards/ADMIN_DESIGN_SYSTEM.md` (business rules only, not yet a locked visual standard)
-**Status:** BUSINESS-RULE SCAFFOLDING ONLY — not the mandatory workflow checklist yet
+**Authority:** Sequential Lock Protocol + `docs/standards/ADMIN_DESIGN_SYSTEM.md` (LOCKED STANDARD as of 2026-09-02)
+**Status:** Workflow checklist below is the mandatory reference for any future Admin-surface changes
 
 ---
 
 ## Why This File Exists Now
 
-Same trigger as `docs/standards/ADMIN_DESIGN_SYSTEM.md`: the Admin persona previously had zero real precedent, so `SHIPPER_HFD_RULES.md`'s and `CARRIER_HFD_RULES.md`'s structural pattern was deliberately not copied for Admin ahead of real stories existing. US-750–752 and US-874–878 are now real, BA-approved-pending stories. This file is the BA-side handoff — the actual mandatory workflow checklist (mirroring `SHIPPER_HFD_RULES.md`'s Phase 1/2/3 structure) is HFD's to write once design work actually starts.
+Same trigger as `docs/standards/ADMIN_DESIGN_SYSTEM.md`: the Admin persona previously had zero real precedent, so `SHIPPER_HFD_RULES.md`'s and `CARRIER_HFD_RULES.md`'s structural pattern was deliberately not copied for Admin ahead of real stories existing. US-750–752 and US-874–878 shipped 2026-09-02, and the visual tokens below were locked the same day via `/council-review`, using the real, deployed screens as evidence rather than inventing a system ahead of them.
 
 ---
 
-## Gate Check — What HFD Must Confirm Before Designing Any Admin Story
+## Gate Check — What HFD Must Confirm Before Touching Any Admin Screen
 
-Per the standing rule ("HFD is PROHIBITED from finalizing a UI design until BA has provided Business Rules"), the business rules HFD needs are in each story doc plus the summary in `ADMIN_DESIGN_SYSTEM.md`. Before starting design on any of these 7 stories, HFD must confirm:
-
-- [ ] `docs/business/stories/US-874_Role_Model_Foundation.md` is at least READY_FOR_DESIGN (all Admin stories below it are gated on the role model existing).
-- [ ] Which of the two design tracks a given story belongs to: **Super User** (new, cross-tenant, no existing persona to inherit from) vs. **tenant Admin** (Shipper Admin inherits Shipper's locked system; Carrier Admin inherits Carrier's).
-- [ ] For Super User stories specifically: device target is not yet decided (desktop-only ops tool has been assumed by BA as the default given every other admin-shaped tool in this codebase is desktop, but this has not been explicitly asked/confirmed — flag to BA/Director before locking layout if it matters to the design).
+- [ ] Which of the two design tracks a given change belongs to: **Super User** ("Ops Dark" system, `docs/standards/ADMIN_DESIGN_SYSTEM.md`'s dedicated section) vs. **tenant Admin** (Shipper Admin inherits Shipper's locked system via `ShipperPageLayout`; Carrier Admin inherits Carrier's locked tokens).
+- [ ] For Super User work: confirmed desktop-only (office/laptop use, per the council review that settled the Ops Dark palette decision) — no mobile-responsive requirement unless that assumption changes.
+- [ ] Read `SuperUserDashboardPage.tsx` directly for current component patterns (stat tiles, tab nav, forced-reason resolve flow) before adding new ones — don't invent a parallel pattern for something already solved there.
 
 ---
 
@@ -49,6 +47,21 @@ Before designing US-875 and US-877 as two separate screens, check `ADMIN_DESIGN_
 
 ---
 
-## Not Yet Defined
+## Phase 1: Track Identification
 
-Full Phase 1/2/3 workflow checklist (mirroring `SHIPPER_HFD_RULES.md`), component inventory, exact viewport targets per track, and sign-off checklist — all TBD, to be written by HFD once design work on these stories actually begins. The UI-placement and mobile-degrade questions that would normally block this checklist have already been resolved above via `/council-review`.
+1. Confirm which track (Super User / Shipper Admin / Carrier Admin) per the Gate Check above.
+2. For Super User: no persona inheritance — read `ADMIN_DESIGN_SYSTEM.md`'s Ops Dark token table directly.
+3. For Shipper/Carrier Admin: confirm the change fits inside the existing `ShipperPageLayout`/Carrier shell without new tokens; if it genuinely can't, that's an escalation (CHG-### per the Sequential Lock Protocol), not a silent new-token decision.
+
+## Phase 2: Design Against Locked Tokens
+
+1. Pull exact hex/spacing values from `ADMIN_DESIGN_SYSTEM.md` — no ad-hoc colors, no "close enough" spacing.
+2. Check every new/changed field against `docs/roles/HUMAN_FACTORS_DESIGNER.md`'s Information Architecture & Data Entry Efficiency standard (minimize typing, group related fields as adjacent units).
+3. For Super User specifically: any new status/alert state must be checked for legibility against the dark `--admin-bg`/`--admin-surface` canvas — this system exists specifically because alert-color legibility was the deciding factor in locking it (see `ADMIN_DESIGN_SYSTEM.md`'s council-review rationale); don't erode that with a new low-contrast addition.
+
+## Phase 3: Sign-Off
+
+- [ ] Colors/spacing/typography sourced from the locked tokens, not invented
+- [ ] Information Architecture checklist applied to any new form/multi-field surface
+- [ ] For Carrier Admin work: touch targets ≥48×48px per `CARRIER_HFD_RULES.md` (inherited, not re-derived)
+- [ ] Reuse Warning (both this file and `ADMIN_DESIGN_SYSTEM.md`) checked — US-875/877's shared mechanics must not be reimplemented separately

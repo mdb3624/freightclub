@@ -283,6 +283,24 @@ All HFD deliverables must include accessibility verification:
 
 ---
 
+## 📝 INFORMATION ARCHITECTURE & DATA ENTRY EFFICIENCY (MANDATORY)
+
+Added 2026-09-02 per Director feedback: the highest-cost, most recurring quality gap in HFD output has not been visual polish — it's forms whose field order and grouping follow the underlying data model or story-AC sequence instead of the user's actual mental model of the task. This has cost hours of manual correction, repeatedly, and is a *more* load-bearing defect than "AI slop" visual aesthetics (fonts, gradients) — fix this before spending effort on cosmetic passes.
+
+**Rule 1 — Minimize typing.** Before specifying any free-text field, ask: can this be defaulted, autofilled, inferred from another field already entered, or reused from existing data (the user's profile, org settings, a prior entry) instead of typed fresh? A field that could be pre-populated and isn't is a defect, not a neutral choice.
+
+**Rule 2 — Group by task, not by schema.** Fields the user thinks of as one unit must be laid out as one visual unit, regardless of how they're modeled in the database or ordered in the story's AC list:
+- Origin and destination are one "route" decision — adjacent, not separated by unrelated fields.
+- A time window belongs with the location/event it governs (pickup window next to pickup details, delivery window next to delivery details) — never pulled into a separate generic "dates" section away from what they're dates *for*.
+- A contact's name, phone, and email are one unit — never split across the form.
+- General principle: if two fields are always filled in together or referenced together in the user's head, they must be visually adjacent in the layout.
+
+**Rule 3 — Field order follows the user's information-gathering sequence, not convenience of implementation.** Ask what a person doing this task in the real world would naturally know/decide first, second, third — that's the field order, not alphabetical, not database-column order, not "whatever was easiest to wire up."
+
+This applies to every multi-field entry screen (load posting/edit, carrier/shipper profile, cost profile, org settings, any future form) and must be checked explicitly as part of the VDOD checklist below before a design is marked `READY_FOR_CODER`.
+
+---
+
 ## ⚠️ ANTI-PATTERNS (FORBIDDEN)
 
 | Anti-Pattern | Why It's Forbidden | Correct Approach |
@@ -294,6 +312,8 @@ All HFD deliverables must include accessibility verification:
 | Color-only status encoding | Fails accessibility for color-blind users | Pair color with text/icon (Persistent Redundancy Framework) |
 | Responsive design without breakpoint testing | Works on one device, breaks on others | Test all breakpoints; specify in spec |
 | "The CODER can interpret the design" | Vague specs lead to implementation mismatches | Provide mockup + detailed spec + audit trail |
+| Fields ordered by data model/story-AC sequence | Forces the user to re-derive their own mental model of the task; costly to correct after the fact | Group and order fields by the user's task (see Information Architecture section above) |
+| Free-text field where a default/autofill/reuse was available | Unnecessary typing burden on a mobile, one-thumb user | Default from known data (profile, org settings, a prior field) before asking the user to type |
 
 ---
 
@@ -303,6 +323,8 @@ Use this checklist for every UI story before declaring `READY_FOR_CODER`:
 
 **Design Specification:**
 - [ ] User story AC clearly mapped to UI elements
+- [ ] Every free-text field checked for a default/autofill/reuse-from-known-data alternative (Information Architecture Rule 1)
+- [ ] Related fields (route pairs, time windows tied to their event, contact info) grouped as adjacent visual units, not ordered by schema/AC sequence (Information Architecture Rule 2/3)
 - [ ] Wireframe provided (ASCII, Mermaid, or interactive mockup)
 - [ ] Color palette documented with hex values
 - [ ] Typography specs provided (fonts, weights, sizes)

@@ -2,6 +2,7 @@ package com.freightclub.controller;
 
 import com.freightclub.dto.*;
 import com.freightclub.service.AuthService;
+import com.freightclub.service.PasswordResetService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -24,11 +25,14 @@ public class AuthController {
     private static final String REFRESH_COOKIE_NAME = "refreshToken";
 
     private final AuthService authService;
+    private final PasswordResetService passwordResetService;
     private final boolean cookieSecure;
 
     public AuthController(AuthService authService,
+                          PasswordResetService passwordResetService,
                           @Value("${app.cookie.secure:true}") boolean cookieSecure) {
         this.authService = authService;
+        this.passwordResetService = passwordResetService;
         this.cookieSecure = cookieSecure;
     }
 
@@ -86,6 +90,15 @@ public class AuthController {
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, expiredCookie.toString())
                 .build();
+    }
+
+    // US-881 BR-4: public self-service redemption of a Super-User-issued reset token — the
+    // user sets their own new password, never the Super User.
+    @PermitAll
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody RedeemPasswordResetTokenRequest request) {
+        passwordResetService.redeem(request.token(), request.newPassword());
+        return ResponseEntity.noContent().build();
     }
 
     @PermitAll

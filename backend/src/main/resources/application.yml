@@ -44,6 +44,10 @@ app:
     password: ${DB_SUPER_USER_READ_PASSWORD}
   tenant-admin-reconciliation:
     cron: ${TENANT_ADMIN_RECONCILIATION_CRON:0 0 3 * * *}
+  health-alerting:
+    webhook-url: ${APP_HEALTH_ALERT_WEBHOOK_URL:}
+    debounce-minutes: ${HEALTH_ALERT_DEBOUNCE_MINUTES:15}
+    error-rate-threshold: ${HEALTH_ALERT_ERROR_RATE_THRESHOLD:0.5}
   impersonation:
     duration-minutes: ${IMPERSONATION_DURATION_MINUTES:15}
     timeout-reconciliation-cron: ${IMPERSONATION_TIMEOUT_RECONCILIATION_CRON:0 * * * * *}

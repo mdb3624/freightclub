@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 // US-752 AC-1/AC-4: healthy path reports both signals; a failing DB ping must report
@@ -18,6 +19,7 @@ class PlatformHealthServiceTest {
 
     @Mock private JdbcTemplate jdbcTemplate;
     @Mock private RequestMetricsFilter requestMetricsFilter;
+    @Mock private PlatformHealthAlertService platformHealthAlertService;
 
     @Test
     void reportsHealthy_whenDbPingSucceeds() {
@@ -25,7 +27,7 @@ class PlatformHealthServiceTest {
         when(requestMetricsFilter.getTotalRequests()).thenReturn(100L);
         when(requestMetricsFilter.getErrorResponses()).thenReturn(2L);
 
-        PlatformHealthService service = new PlatformHealthService(jdbcTemplate, requestMetricsFilter);
+        PlatformHealthService service = new PlatformHealthService(jdbcTemplate, requestMetricsFilter, platformHealthAlertService);
         PlatformHealthResponse result = service.getHealth();
 
         assertThat(result.backendHealthy()).isTrue();
@@ -39,9 +41,23 @@ class PlatformHealthServiceTest {
         when(requestMetricsFilter.getTotalRequests()).thenReturn(50L);
         when(requestMetricsFilter.getErrorResponses()).thenReturn(50L);
 
-        PlatformHealthService service = new PlatformHealthService(jdbcTemplate, requestMetricsFilter);
+        PlatformHealthService service = new PlatformHealthService(jdbcTemplate, requestMetricsFilter, platformHealthAlertService);
         PlatformHealthResponse result = service.getHealth();
 
         assertThat(result.backendHealthy()).isFalse();
+    }
+
+    // US-883 BR-1: the freshly-computed health result is handed to the alert service on every
+    // computation (cache-miss) — no separate scheduler needed.
+    @Test
+    void evaluatesAlerting_onEveryComputation() {
+        when(jdbcTemplate.queryForObject("SELECT 1", Integer.class)).thenReturn(1);
+        when(requestMetricsFilter.getTotalRequests()).thenReturn(10L);
+        when(requestMetricsFilter.getErrorResponses()).thenReturn(0L);
+
+        PlatformHealthService service = new PlatformHealthService(jdbcTemplate, requestMetricsFilter, platformHealthAlertService);
+        PlatformHealthResponse result = service.getHealth();
+
+        verify(platformHealthAlertService).evaluate(result);
     }
 }

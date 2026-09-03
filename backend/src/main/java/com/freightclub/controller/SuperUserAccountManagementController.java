@@ -1,10 +1,13 @@
 package com.freightclub.controller;
 
 import com.freightclub.dto.ActivityEventResponse;
+import com.freightclub.dto.CreateUserInTenantRequest;
 import com.freightclub.dto.ForcePasswordResetResponse;
+import com.freightclub.dto.ProvisioningResponse;
 import com.freightclub.dto.SuperUserActionRequest;
 import com.freightclub.service.SuperUserAccountManagementService;
 import com.freightclub.service.SuperUserActivityService;
+import com.freightclub.service.SuperUserProvisioningService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,11 +25,24 @@ public class SuperUserAccountManagementController {
 
     private final SuperUserAccountManagementService superUserAccountManagementService;
     private final SuperUserActivityService superUserActivityService;
+    private final SuperUserProvisioningService superUserProvisioningService;
 
     public SuperUserAccountManagementController(SuperUserAccountManagementService superUserAccountManagementService,
-                                                  SuperUserActivityService superUserActivityService) {
+                                                  SuperUserActivityService superUserActivityService,
+                                                  SuperUserProvisioningService superUserProvisioningService) {
         this.superUserAccountManagementService = superUserAccountManagementService;
         this.superUserActivityService = superUserActivityService;
+        this.superUserProvisioningService = superUserProvisioningService;
+    }
+
+    // US-886 BR-1: adds a user to an existing tenant.
+    @PostMapping
+    public ResponseEntity<ProvisioningResponse> createUserInTenant(@AuthenticationPrincipal String actorUserId,
+                                                                     @Valid @RequestBody CreateUserInTenantRequest request) {
+        String token = superUserProvisioningService.createUserInExistingTenant(
+                actorUserId, request.tenantId(), request.email(), request.firstName(), request.lastName(),
+                request.role(), request.reason());
+        return ResponseEntity.ok(new ProvisioningResponse(token));
     }
 
     @GetMapping("/{userId}/activity")

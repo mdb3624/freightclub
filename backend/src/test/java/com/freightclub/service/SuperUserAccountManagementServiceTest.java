@@ -24,10 +24,11 @@ class SuperUserAccountManagementServiceTest {
     @Mock private AdminAuditLogService adminAuditLogService;
     @Mock private RefreshTokenService refreshTokenService;
     @Mock private PasswordEncoder passwordEncoder;
+    @Mock private PasswordResetTokenIssuer passwordResetTokenIssuer;
 
     private SuperUserAccountManagementService newService() {
         return new SuperUserAccountManagementService(
-                superUserReadJdbcTemplate, adminAuditLogService, refreshTokenService, passwordEncoder);
+                superUserReadJdbcTemplate, adminAuditLogService, refreshTokenService, passwordEncoder, passwordResetTokenIssuer);
     }
 
     @Test
@@ -75,15 +76,14 @@ class SuperUserAccountManagementServiceTest {
     void forcePasswordReset_invalidatesPasswordIssuesTokenRevokesSessionsAndAudits() {
         SuperUserAccountManagementService service = newService();
         when(passwordEncoder.encode(anyString())).thenReturn("$2a$hashed");
+        when(passwordResetTokenIssuer.issue("user-1")).thenReturn("raw-token-123");
 
         String rawToken = service.forcePasswordReset("admin-1", "user-1", "Suspected compromise");
 
-        assertThat(rawToken).isNotBlank();
+        assertThat(rawToken).isEqualTo("raw-token-123");
         verify(superUserReadJdbcTemplate).update(
                 contains("password_hash = ?"), eq("$2a$hashed"), eq("user-1"));
-        verify(superUserReadJdbcTemplate).update(
-                contains("INSERT INTO freightclub.password_reset_tokens"),
-                anyString(), eq("user-1"), anyString(), any());
+        verify(passwordResetTokenIssuer).issue("user-1");
         verify(adminAuditLogService).record("admin-1", "PASSWORD_RESET_FORCED", "user-1", "Suspected compromise");
         verify(refreshTokenService).revokeAllForUser("user-1");
     }
@@ -94,6 +94,6 @@ class SuperUserAccountManagementServiceTest {
 
         assertThatThrownBy(() -> service.forcePasswordReset("admin-1", "user-1", null))
                 .isInstanceOf(IllegalArgumentException.class);
-        verifyNoInteractions(superUserReadJdbcTemplate, refreshTokenService, passwordEncoder);
+        verifyNoInteractions(superUserReadJdbcTemplate, refreshTokenService, passwordEncoder, passwordResetTokenIssuer);
     }
 }

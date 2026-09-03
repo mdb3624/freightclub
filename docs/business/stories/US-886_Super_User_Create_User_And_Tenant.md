@@ -28,16 +28,16 @@ Raised directly by the founder (2026-09-02) as a second concrete "manage" gap al
 - BR-2: **Create new tenant + first user:** creates a new `Tenant` and its first `User` together, mirroring `AuthService.register()`'s existing "new company" path — the created user is automatically `is_tenant_admin = true` (same bootstrap semantics already established for self-service new-tenant signup, per US-874's Decision Log).
 - BR-3: Bypasses the join-code flow entirely — the Super User has direct tenant access, no invite code needed for either scenario.
 - BR-4: Both actions require a mandatory reason and write an audit log entry (US-880) — this is a privileged write action like every other Super User capability in this batch.
-- BR-5: **Credential handling:** since there is no working email delivery in production today (`app.email.enabled` is false, no provider configured — pre-existing, separate platform gap, not this story's problem to fix), the Super User sets (or the system generates) a temporary password shown once at creation time, communicated to the customer out-of-band (phone/email manually) by the Super User. The new user is required to change their password on first login. This differs from US-881's "never let the Super User see a password" rule for *existing* users — for brand-new account creation there is no prior self-service credential to preserve, and no working invite-email flow to fall back on.
+- BR-5: **Credential handling — corrected during implementation (2026-09-02), same fix as US-881's BR-4.** The original wording ("temporary password shown once") re-invents US-881's already-solved problem and reopens the same question BR-4 there closed: how does the user actually get in without a working email flow? Corrected: no working password is ever set for the new user (matching the exact mechanism US-881 built for force-password-reset — an unusable random hash), and a single-use setup token is issued and shown to the Super User instead, relayed out-of-band the same way as US-881. The new user redeems it via the same `POST /api/v1/auth/reset-password` endpoint already built for US-881 to set their own first password. No new login-gating mechanism needed — the user simply cannot log in at all until they redeem the token, which is a stronger and simpler guarantee than a "must change password" flag would be.
 - BR-6: Email uniqueness and standard registration validation rules (matching `AuthService.register()`'s existing checks) apply identically here — this is not a bypass of data integrity rules, only of the join-code/self-service requirement.
 
 ---
 
 ## Acceptance Criteria
 
-- AC-1: Given a Super User adds a new user to an existing tenant with a reason, when the action completes, then a new `User` row exists scoped to that tenant with the matching persona role, a temporary password is shown once, and an audit entry is written.
-- AC-2: Given a Super User creates a new tenant with a first user and a reason, when the action completes, then a new `Tenant` and `User` exist, the user is `is_tenant_admin = true`, a temporary password is shown once, and an audit entry is written.
-- AC-3: Given the new user's first login attempt with the temporary password, then they are required to set a new password before proceeding further.
+- AC-1: Given a Super User adds a new user to an existing tenant with a reason, when the action completes, then a new `User` row exists scoped to that tenant with the matching persona role, a one-time setup token is returned, and an audit entry is written.
+- AC-2: Given a Super User creates a new tenant with a first user and a reason, when the action completes, then a new `Tenant` and `User` exist, the user is `is_tenant_admin = true`, a one-time setup token is returned, and an audit entry is written.
+- AC-3: Given the new user has not yet redeemed their setup token, when they attempt to log in, then it fails (no working password exists yet) — they must redeem the token via `POST /api/v1/auth/reset-password` first, after which login with their chosen password succeeds.
 - AC-4: Given a Super User attempts to create a user with an email that already exists on the platform, then the action is rejected with the same validation error `AuthService.register()` already produces.
 - AC-5: Given either action is submitted with an empty/blank reason, then it is rejected before any state changes.
 - AC-6: Given a non-Super-User attempts either action via the API directly, then they receive a 403.
@@ -53,7 +53,7 @@ Raised directly by the founder (2026-09-02) as a second concrete "manage" gap al
 | Role | `role` | `users.role` | Enum (SHIPPER/TRUCKER) | Yes |
 | Email | `email` | `users.email` | String | Yes |
 | First/last name | `firstName`, `lastName` | `users.first_name`, `users.last_name` | String | Yes |
-| Temporary password | *(system-generated or Super-User-set)* | `users.password_hash` (hashed) | String | Yes |
+| Setup token (shown once to Super User) | *(response only)* | `password_reset_tokens.token_hash` (US-881) | String | N/A |
 | Reason | `reason` | `admin_audit_log.reason` (US-880) | TEXT | Yes |
 
 ---
@@ -78,7 +78,7 @@ Actor: Super User. Sequence: account-provisioning, upstream of every persona's a
 ## Decision Log (Tier B — non-financial, BA autonomous)
 
 - **Both scenarios in one story, not two:** confirmed with the founder — add-to-existing-tenant and create-new-tenant share almost all mechanics (validation, audit, temporary-password handling), differing only in whether a `tenantId` is supplied or a `Tenant` is created first.
-- **Temporary password shown once, not emailed:** the honest consequence of the pre-existing "no email provider configured in production" gap — rather than build a workaround (e.g., a fake email path) or block this story on fixing that separate gap, the Super User communicates the credential out-of-band, matching how a solo-founder-run support operation would actually work today.
+- **Setup token, not a temporary password — reuses US-881's mechanism rather than reinventing it:** the original draft independently arrived at the same "no email flow exists" problem US-881 already solved, and would have built a second, parallel credential-handling mechanism. Reusing the reset-token flow means one code path, one security review, and a stronger guarantee (the account has no usable password at all until setup, rather than a shared secret sitting in a Super User's chat history).
 - **Bypasses join-code, not registration validation:** this is a convenience for the Super User's direct access, not a loosening of data-integrity rules — email uniqueness and other `AuthService.register()` checks still apply.
 
 ---

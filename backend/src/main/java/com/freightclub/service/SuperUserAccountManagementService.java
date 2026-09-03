@@ -8,9 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.UUID;
 
 // US-881: suspend/reactivate/force-password-reset. Each action + its audit entry (US-880) run
@@ -26,16 +23,18 @@ public class SuperUserAccountManagementService {
     private final AdminAuditLogService adminAuditLogService;
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
-    private final SecureRandom secureRandom = new SecureRandom();
+    private final PasswordResetTokenIssuer passwordResetTokenIssuer;
 
     public SuperUserAccountManagementService(@Qualifier("superUserReadJdbcTemplate") JdbcTemplate superUserReadJdbcTemplate,
                                               AdminAuditLogService adminAuditLogService,
                                               RefreshTokenService refreshTokenService,
-                                              PasswordEncoder passwordEncoder) {
+                                              PasswordEncoder passwordEncoder,
+                                              PasswordResetTokenIssuer passwordResetTokenIssuer) {
         this.superUserReadJdbcTemplate = superUserReadJdbcTemplate;
         this.adminAuditLogService = adminAuditLogService;
         this.refreshTokenService = refreshTokenService;
         this.passwordEncoder = passwordEncoder;
+        this.passwordResetTokenIssuer = passwordResetTokenIssuer;
     }
 
     // US-881 BR-5/AC-5
@@ -73,11 +72,7 @@ public class SuperUserAccountManagementService {
         superUserReadJdbcTemplate.update(
                 "UPDATE freightclub.users SET password_hash = ? WHERE id = ?", unusablePasswordHash, targetUserId);
 
-        String rawToken = generateRawToken();
-        String tokenHash = hashToken(rawToken);
-        superUserReadJdbcTemplate.update(
-                "INSERT INTO freightclub.password_reset_tokens (id, user_id, token_hash, expires_at) VALUES (?, ?, ?, ?)",
-                UUID.randomUUID().toString(), targetUserId, tokenHash, LocalDateTime.now().plusHours(1));
+        String rawToken = passwordResetTokenIssuer.issue(targetUserId);
 
         adminAuditLogService.record(actorUserId, "PASSWORD_RESET_FORCED", targetUserId, reason);
         refreshTokenService.revokeAllForUser(targetUserId);
@@ -87,22 +82,6 @@ public class SuperUserAccountManagementService {
     private void requireReason(String reason) {
         if (reason == null || reason.isBlank()) {
             throw new IllegalArgumentException("A reason is required for this action");
-        }
-    }
-
-    private String generateRawToken() {
-        byte[] bytes = new byte[32];
-        secureRandom.nextBytes(bytes);
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
-    }
-
-    private String hashToken(String rawToken) {
-        try {
-            java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(rawToken.getBytes());
-            return Base64.getEncoder().encodeToString(hash);
-        } catch (java.security.NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256 not available", e);
         }
     }
 }

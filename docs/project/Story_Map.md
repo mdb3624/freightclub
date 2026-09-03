@@ -251,7 +251,7 @@ BA-scoped 2026-09-02, resolved via `/council-review` ("Super User feature gaps" 
 | US-883 | Platform Health Alerting (Webhook) | READY_FOR_DESIGN | 9 | US-752 | P1 — Slack/email webhook, debounced, fail-open. Story doc: `docs/business/stories/US-883_Platform_Health_Alerting.md` | Jira: FREIG-146 |
 | US-884 | Super User: Tenant Suspend/Deactivate | READY_FOR_DESIGN | 9 | US-874, US-880 | P2 — access lock only, no billing/plan/deletion. Story doc: `docs/business/stories/US-884_Super_User_Tenant_Suspend_Deactivate.md` | Jira: FREIG-147 |
 | US-885 | Super User: Scoped User Impersonation | READY_FOR_DESIGN | 9 | US-874, US-880, US-881 | P3 — ships last, deliberately; time-boxed, banner, re-auth, audit-logged. Story doc: `docs/business/stories/US-885_Super_User_Scoped_Impersonation.md` | Jira: FREIG-148 |
-| US-886 | Super User: Create User (Existing Tenant or New Tenant) | READY_FOR_DESIGN | 9 | US-874, US-880 | P1 — founder-identified gap (not from council session). Bypasses join-code, not validation; temp password shown once (no email provider in prod). Story doc: `docs/business/stories/US-886_Super_User_Create_User_And_Tenant.md` | Jira: FREIG-149 |
+| US-886 | Super User: Create User (Existing Tenant or New Tenant) | DONE | 9 | US-874, US-880, US-881 | P1 — founder-identified gap. Shipped 2026-09-02; reuses US-881's setup-token mechanism instead of a temp password (corrected during implementation). Story doc: `docs/business/stories/US-886_Super_User_Create_User_And_Tenant.md` | Jira: FREIG-149 |
 
 ---
 

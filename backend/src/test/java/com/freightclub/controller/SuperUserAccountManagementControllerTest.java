@@ -1,10 +1,13 @@
 package com.freightclub.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freightclub.domain.UserRole;
 import com.freightclub.dto.ActivityEventResponse;
+import com.freightclub.dto.CreateUserInTenantRequest;
 import com.freightclub.dto.SuperUserActionRequest;
 import com.freightclub.service.SuperUserAccountManagementService;
 import com.freightclub.service.SuperUserActivityService;
+import com.freightclub.service.SuperUserProvisioningService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -35,6 +38,7 @@ class SuperUserAccountManagementControllerTest {
 
     @MockBean private SuperUserAccountManagementService superUserAccountManagementService;
     @MockBean private SuperUserActivityService superUserActivityService;
+    @MockBean private SuperUserProvisioningService superUserProvisioningService;
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
@@ -117,5 +121,33 @@ class SuperUserAccountManagementControllerTest {
                 .andExpect(status().isForbidden());
 
         verifyNoInteractions(superUserActivityService);
+    }
+
+    @Test
+    void createUserInTenant_returnsSetupToken_forSuperUser() throws Exception {
+        CreateUserInTenantRequest request = new CreateUserInTenantRequest(
+                "tenant-1", "new@example.com", "New", "User", UserRole.SHIPPER, "Customer requested teammate");
+        when(superUserProvisioningService.createUserInExistingTenant(
+                "admin-1", "tenant-1", "new@example.com", "New", "User", UserRole.SHIPPER, "Customer requested teammate"))
+                .thenReturn("setup-token-abc");
+
+        mockMvc.perform(post("/api/v1/super-user/users").with(superUser("admin-1"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.setupToken").value("setup-token-abc"));
+    }
+
+    @Test
+    void createUserInTenant_forbidden_forTenantAdmin() throws Exception {
+        CreateUserInTenantRequest request = new CreateUserInTenantRequest(
+                "tenant-1", "new@example.com", "New", "User", UserRole.SHIPPER, "reason");
+
+        mockMvc.perform(post("/api/v1/super-user/users").with(tenantAdmin("tenant-admin-1"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(superUserProvisioningService);
     }
 }

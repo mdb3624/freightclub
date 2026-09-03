@@ -1,5 +1,6 @@
 import axios, { type AxiosRequestConfig, type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 import { useAuthStore } from '@/store/authStore'
+import { useImpersonationStore, isImpersonationExpired } from '@/store/impersonationStore'
 import type { RefreshResponse } from '@/types'
 
 const apiClient = axios.create({
@@ -8,9 +9,15 @@ const apiClient = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
-// Attach access token to every request
+// US-885: while an impersonation session is active (and not client-side-known-expired), every
+// request authenticates AS the impersonated target — never the real Super User's own token —
+// so the app genuinely renders that user's own dashboards/data. The real Super User's session
+// in authStore is never touched; ending impersonation (or the token expiring) just falls back
+// to it automatically.
 apiClient.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().accessToken
+  const impersonation = useImpersonationStore.getState()
+  const impersonationActive = impersonation.token && !isImpersonationExpired(impersonation.expiresAt)
+  const token = impersonationActive ? impersonation.token : useAuthStore.getState().accessToken
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -63,6 +70,16 @@ apiClient.interceptors.response.use(
       originalRequest._retry ||
       isNoRefreshPath(originalRequest.url)
     ) {
+      return Promise.reject(error)
+    }
+
+    // US-885: a 401 while impersonating means that token (deliberately not tied to any
+    // refresh-token row) is dead — end the session client-side rather than refreshing, which
+    // would otherwise silently fall back to the real Super User's OWN credentials while the
+    // banner still claimed to be impersonating someone else.
+    const impersonation = useImpersonationStore.getState()
+    if (impersonation.token && !isImpersonationExpired(impersonation.expiresAt)) {
+      impersonation.clear()
       return Promise.reject(error)
     }
 

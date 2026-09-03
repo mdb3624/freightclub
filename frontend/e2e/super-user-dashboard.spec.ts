@@ -49,6 +49,82 @@ test('Super User logs in, lands on the platform-wide dashboard, and can view dis
   expect(assetFailures, `Unexpected failed asset requests: ${assetFailures.join(', ')}`).toEqual([])
 })
 
+async function loginAsSuperUser(page: import('@playwright/test').Page) {
+  const superUser = await registerSuperUser()
+  await page.goto(`${FRONTEND}/`, { waitUntil: 'networkidle' })
+  await page.locator('[data-testid="header-login-btn"]').click()
+  await page.fill('[data-testid="email-input"]', superUser.email)
+  await page.fill('[data-testid="password-input"]', superUser.password)
+  await page.click('[data-testid="login-submit-btn"]')
+  await page.waitForURL(/\/super-user/, { timeout: 30000 })
+  return superUser
+}
+
+async function registerShipperAndGetId(request: import('@playwright/test').APIRequestContext) {
+  const email = `shipper-target-${Date.now()}@freightclub.local`
+  const password = 'E2ETestPassword123!'
+  const res = await request.post(`${BACKEND}/api/test/auth/register`, {
+    data: { email, password, firstName: 'Target', lastName: 'Shipper', role: 'SHIPPER', companyName: `co-${Date.now()}` },
+  })
+  const body = await res.json()
+  return { email, password, userId: body.user.id }
+}
+
+// US-880/881/886: the frontend build-out for the Super User management endpoints — real
+// backend calls, not mocked, since these are governed/audited write actions.
+test('Super User suspends a user from the Users tab and it blocks their login', async ({ page, request }) => {
+  const superUser = await loginAsSuperUser(page)
+  const target = await registerShipperAndGetId(request)
+  void superUser
+
+  await page.locator('[data-testid="super-user-tab-users"]').click()
+  await page.fill('[data-testid="user-id-input"]', target.userId)
+  await page.fill('[data-testid="user-reason-input"]', 'E2E fraud report')
+  await page.click('[data-testid="suspend-user-btn"]')
+  await expect(page.getByText('Action completed.')).toBeVisible({ timeout: 10000 })
+
+  // The suspended user really cannot log in — full round trip through the real API.
+  const loginRes = await request.post(`${BACKEND}/api/v1/auth/login`, {
+    data: { email: target.email, password: target.password },
+  })
+  expect(loginRes.status()).toBe(403)
+})
+
+// US-886: create a user in an existing tenant, then redeem the returned setup token for real.
+test('Super User creates a user in an existing tenant and the setup token is redeemable', async ({ page, request }) => {
+  await loginAsSuperUser(page)
+  const email = `created-by-super-user-${Date.now()}@example.com`
+  const companyRes = await request.post(`${BACKEND}/api/test/auth/register`, {
+    data: {
+      email: `owner-${Date.now()}@example.com`, password: 'E2ETestPassword123!',
+      firstName: 'Owner', lastName: 'Co', role: 'SHIPPER', companyName: `existing-co-${Date.now()}`,
+    },
+  })
+  const tenantId = (await companyRes.json()).user.tenantId
+
+  await page.locator('[data-testid="super-user-tab-create"]').click()
+  await page.fill('[data-testid="create-tenant-id-input"]', tenantId)
+  await page.fill('[data-testid="create-email-input"]', email)
+  await page.fill('[data-testid="create-first-name-input"]', 'New')
+  await page.fill('[data-testid="create-last-name-input"]', 'Teammate')
+  await page.fill('[data-testid="create-reason-input"]', 'E2E teammate request')
+  await page.click('[data-testid="create-submit-btn"]')
+
+  const tokenEl = page.locator('[data-testid="issued-token"]')
+  await expect(tokenEl).toBeVisible({ timeout: 10000 })
+  const setupToken = await tokenEl.textContent()
+
+  const redeemRes = await request.post(`${BACKEND}/api/v1/auth/reset-password`, {
+    data: { token: setupToken, newPassword: 'BrandNewPassword1!' },
+  })
+  expect(redeemRes.status()).toBe(204)
+
+  const loginRes = await request.post(`${BACKEND}/api/v1/auth/login`, {
+    data: { email, password: 'BrandNewPassword1!' },
+  })
+  expect(loginRes.status()).toBe(200)
+})
+
 test('a plain Shipper cannot reach /super-user', async ({ page, request }) => {
   const email = `shipper-not-admin-${Date.now()}@freightclub.local`
   await request.post(`${BACKEND}/api/test/auth/register`, {

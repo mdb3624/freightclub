@@ -1,7 +1,7 @@
 # US-885: Super User — Scoped User Impersonation
 
 **Story Type:** New Feature
-**Status:** READY_FOR_DESIGN
+**Status:** DONE
 **Priority:** P3 (last in the batch, deliberately — see Background)
 **Persona:** Super User (platform ADMIN role)
 **Scope:** FULL_STACK
@@ -73,10 +73,11 @@ Actor: Super User. Sequence: support-investigation tool, cross-cutting — not p
 
 ---
 
-## Not Yet Defined (ARCHITECT/HFD to resolve)
+## Resolved During Implementation (2026-09-02)
 
-- Exact session mechanism for time-boxed impersonation (separate short-lived JWT? session flag on the existing token? — ARCHITECT's call).
-- Whether impersonation permits write actions at all, or is strictly view-only in v1. Given this is the highest-risk story in the batch, defaulting to view-only for the first version and expanding later (if a real need is demonstrated) is the safer default — but this is ARCHITECT/Director's call to confirm, not decided here.
+- **Session mechanism:** a separate, short-lived `generateImpersonationToken` JWT type — authenticates AS the target user (so tenant-scoped reads work through the existing code paths unmodified) but carries the real Super User's id and the session id in `impersonatedBy`/`impersonationSessionId` claims, read by `JwtAuthenticationFilter` into a new `ImpersonationContextHolder`. Expiry is fixed at 15 minutes (BR-1), independent of the normal access-token TTL. An `impersonation_sessions` table (mirrors `refresh_tokens`/`password_reset_tokens` — no tenant_id/RLS, BYPASSRLS-role-only access) tracks start/expiry/end for audit and reconciliation.
+- **Write-permission question: view-only in v1**, per the story's own recommended safer default — enforced in `JwtAuthenticationFilter` itself (any non-GET/HEAD/OPTIONS request is rejected with 403 while an impersonation token is active), with one explicit exception for the end-impersonation endpoint itself. Expanding to permit writes is a future story, not decided here.
+- **AC-2's "automatic end" audit entry:** the JWT's own expiry already ends *access* the instant it lapses; a new `ImpersonationTimeoutReconciliationService` (mirrors the existing `TenantAdminReconciliationService` `@Scheduled` pattern) polls every minute to close the session row and write the required audit entry for anything nobody explicitly ended.
 
 ---
 

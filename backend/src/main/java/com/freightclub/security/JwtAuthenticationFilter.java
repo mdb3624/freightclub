@@ -68,6 +68,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     TenantContextHolder.setTenantId(tenantId);
                     TenantContextHolder.setUserId(userId);
 
+                    // US-885: an impersonation token authenticates AS the target user (so
+                    // tenant-scoped reads work unmodified) but carries the real Super User's id
+                    // separately — BR-4 requires write actions never be silently attributed to
+                    // the impersonated user, so the safer v1 default (per the story's own
+                    // "Not Yet Defined" recommendation) is view-only: only GET/HEAD/OPTIONS are
+                    // allowed, plus the one explicit exception to end the session itself.
+                    Boolean impersonating = claims.get("impersonating", Boolean.class);
+                    if (Boolean.TRUE.equals(impersonating)) {
+                        String superUserId = claims.get("impersonatedBy", String.class);
+                        String sessionId = claims.get("impersonationSessionId", String.class);
+                        ImpersonationContextHolder.set(superUserId, sessionId);
+
+                        String method = request.getMethod();
+                        boolean isSafeMethod = "GET".equals(method) || "HEAD".equals(method) || "OPTIONS".equals(method);
+                        boolean isEndImpersonation = uri.equals("/api/v1/super-user/impersonation/end");
+                        if (!isSafeMethod && !isEndImpersonation) {
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                                    "Impersonation sessions are view-only");
+                            return;
+                        }
+                    }
+
                     // US-874: is_tenant_admin is additive, independent of persona role — a
                     // second authority alongside ROLE_<role>, not a replacement for it. Older
                     // tokens issued before this claim existed simply carry no extra authority
@@ -90,6 +112,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } finally {
             // AC-3: Clear context in finally block to prevent ThreadLocal leaks even on exception
             TenantContextHolder.clear();
+            ImpersonationContextHolder.clear();
         }
     }
 

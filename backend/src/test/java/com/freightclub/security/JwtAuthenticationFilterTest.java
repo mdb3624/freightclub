@@ -35,6 +35,7 @@ class JwtAuthenticationFilterTest {
     void clearContext() {
         SecurityContextHolder.clearContext();
         TenantContextHolder.clear();
+        ImpersonationContextHolder.clear();
     }
 
     private Claims makeClaims(String subject, String role, String tenantId) {
@@ -51,6 +52,18 @@ class JwtAuthenticationFilterTest {
         if (isTenantAdmin != null) {
             data.put("isTenantAdmin", isTenantAdmin);
         }
+        return new DefaultClaims(data);
+    }
+
+    private Claims makeImpersonationClaims(String targetUserId, String role, String tenantId,
+                                            String superUserId, String sessionId) {
+        Map<String, Object> data = new java.util.HashMap<>();
+        data.put("sub", targetUserId);
+        data.put("role", role);
+        data.put("tenantId", tenantId);
+        data.put("impersonating", true);
+        data.put("impersonatedBy", superUserId);
+        data.put("impersonationSessionId", sessionId);
         return new DefaultClaims(data);
     }
 
@@ -191,6 +204,62 @@ class JwtAuthenticationFilterTest {
             verify(response).setHeader("WWW-Authenticate", "Bearer");
             verify(response).sendError(HttpServletResponse.SC_FORBIDDEN, "Missing or invalid tenant_id claim in JWT");
             verify(filterChain, never()).doFilter(request, response);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // US-885: impersonation tokens — view-only enforcement + context binding
+    // -------------------------------------------------------------------------
+
+    @Nested
+    class Impersonation {
+
+        @Test
+        void bindsImpersonationContext_andAllowsSafeMethod() throws Exception {
+            when(request.getRequestURI()).thenReturn("/api/v1/loads");
+            when(request.getMethod()).thenReturn("GET");
+            when(request.getHeader("Authorization")).thenReturn("Bearer impersonation-token");
+            Claims claims = makeImpersonationClaims("target-1", "SHIPPER", "tenant-1", "admin-1", "session-1");
+            when(jwtService.validateAndGetClaims("impersonation-token")).thenReturn(claims);
+            doAnswer(inv -> {
+                assertThat(ImpersonationContextHolder.getSuperUserId()).isEqualTo("admin-1");
+                assertThat(ImpersonationContextHolder.getSessionId()).isEqualTo("session-1");
+                return null;
+            }).when(filterChain).doFilter(request, response);
+
+            filter.doFilter(request, response, filterChain);
+
+            verify(filterChain).doFilter(request, response);
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            assertThat(auth.getPrincipal()).isEqualTo("target-1");
+        }
+
+        @Test
+        void rejectsWithForbidden_onWriteMethod_whileImpersonating() throws Exception {
+            when(request.getRequestURI()).thenReturn("/api/v1/loads");
+            when(request.getMethod()).thenReturn("POST");
+            when(request.getHeader("Authorization")).thenReturn("Bearer impersonation-token");
+            Claims claims = makeImpersonationClaims("target-1", "SHIPPER", "tenant-1", "admin-1", "session-1");
+            when(jwtService.validateAndGetClaims("impersonation-token")).thenReturn(claims);
+
+            filter.doFilter(request, response, filterChain);
+
+            verify(response).sendError(HttpServletResponse.SC_FORBIDDEN, "Impersonation sessions are view-only");
+            verify(filterChain, never()).doFilter(request, response);
+        }
+
+        // BR-2: the one-click "end impersonation" control must still work — it is itself a POST.
+        @Test
+        void allowsEndImpersonationEndpoint_evenThoughItsAWrite() throws Exception {
+            when(request.getRequestURI()).thenReturn("/api/v1/super-user/impersonation/end");
+            when(request.getMethod()).thenReturn("POST");
+            when(request.getHeader("Authorization")).thenReturn("Bearer impersonation-token");
+            Claims claims = makeImpersonationClaims("target-1", "SHIPPER", "tenant-1", "admin-1", "session-1");
+            when(jwtService.validateAndGetClaims("impersonation-token")).thenReturn(claims);
+
+            filter.doFilter(request, response, filterChain);
+
+            verify(filterChain).doFilter(request, response);
         }
     }
 }

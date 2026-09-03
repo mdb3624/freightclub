@@ -135,6 +135,16 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.FORBIDDEN, ex.getMessage(), req);
     }
 
+    @ExceptionHandler(InvalidReauthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidReauthentication(InvalidReauthenticationException ex, HttpServletRequest req) {
+        return build(HttpStatus.UNAUTHORIZED, ex.getMessage(), req);
+    }
+
+    @ExceptionHandler(CannotImpersonateAdminException.class)
+    public ResponseEntity<ErrorResponse> handleCannotImpersonateAdmin(CannotImpersonateAdminException ex, HttpServletRequest req) {
+        return build(HttpStatus.FORBIDDEN, ex.getMessage(), req);
+    }
+
     @ExceptionHandler(InvalidPasswordResetTokenException.class)
     public ResponseEntity<ErrorResponse> handleInvalidPasswordResetToken(InvalidPasswordResetTokenException ex, HttpServletRequest req) {
         return build(HttpStatus.UNAUTHORIZED, ex.getMessage(), req);

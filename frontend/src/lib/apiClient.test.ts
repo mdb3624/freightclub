@@ -9,6 +9,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import type { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import apiClient from './apiClient'
 import { useAuthStore } from '@/store/authStore'
+import { useImpersonationStore } from '@/store/impersonationStore'
 import type { User } from '@/types'
 
 const mockUser: User = {
@@ -44,6 +45,7 @@ const realLocation = window.location
 
 beforeEach(() => {
   useAuthStore.setState({ accessToken: 'stale-token', user: mockUser, isAuthenticated: true })
+  useImpersonationStore.getState().clear()
   localStorage.clear()
   Object.defineProperty(window, 'location', {
     configurable: true,
@@ -54,6 +56,7 @@ beforeEach(() => {
 afterEach(() => {
   Object.defineProperty(window, 'location', { configurable: true, value: realLocation })
   apiClient.defaults.adapter = undefined
+  useImpersonationStore.getState().clear()
 })
 
 describe('apiClient refresh-on-401 interceptor', () => {
@@ -161,5 +164,76 @@ describe('apiClient refresh-on-401 interceptor', () => {
 
     await expect(apiClient.post('/loads', {})).rejects.toMatchObject({ response: { status: 500 } })
     expect(refreshCallCount).toBe(0)
+  })
+})
+
+// US-885: apiClient must authenticate as the impersonated target whenever a session is active,
+// never mixing that in with the real Super User's own credentials.
+describe('apiClient impersonation token handling', () => {
+  it('prefers the active impersonation token over the normal access token', async () => {
+    useImpersonationStore.getState().start({
+      token: 'impersonation-jwt',
+      sessionId: 'session-1',
+      expiresAt: new Date(Date.now() + 5 * 60_000).toISOString(),
+      target: { id: 'u1', email: 't@example.com', firstName: 'T', lastName: 'User', role: 'SHIPPER' },
+    })
+
+    let seenAuthHeader: unknown
+    const adapter: AxiosAdapter = async (config) => {
+      seenAuthHeader = config.headers.Authorization
+      return okResponse(config, {})
+    }
+    apiClient.defaults.adapter = adapter
+
+    await apiClient.get('/loads')
+
+    expect(seenAuthHeader).toBe('Bearer impersonation-jwt')
+  })
+
+  it('falls back to the normal access token once the impersonation session is client-side expired', async () => {
+    useImpersonationStore.getState().start({
+      token: 'impersonation-jwt',
+      sessionId: 'session-1',
+      expiresAt: new Date(Date.now() - 1000).toISOString(),
+      target: { id: 'u1', email: 't@example.com', firstName: 'T', lastName: 'User', role: 'SHIPPER' },
+    })
+
+    let seenAuthHeader: unknown
+    const adapter: AxiosAdapter = async (config) => {
+      seenAuthHeader = config.headers.Authorization
+      return okResponse(config, {})
+    }
+    apiClient.defaults.adapter = adapter
+
+    await apiClient.get('/loads')
+
+    expect(seenAuthHeader).toBe('Bearer stale-token')
+  })
+
+  it('a 401 while impersonating clears the impersonation session instead of refreshing with the Super User\'s own credentials', async () => {
+    useImpersonationStore.getState().start({
+      token: 'impersonation-jwt',
+      sessionId: 'session-1',
+      expiresAt: new Date(Date.now() + 5 * 60_000).toISOString(),
+      target: { id: 'u1', email: 't@example.com', firstName: 'T', lastName: 'User', role: 'SHIPPER' },
+    })
+
+    let refreshCallCount = 0
+    const adapter: AxiosAdapter = async (config) => {
+      if (config.url === '/loads') throw unauthorizedError(config)
+      if (config.url === '/auth/refresh') {
+        refreshCallCount++
+        return okResponse(config, {})
+      }
+      throw new Error(`unexpected request to ${config.url}`)
+    }
+    apiClient.defaults.adapter = adapter
+
+    await expect(apiClient.get('/loads')).rejects.toBeTruthy()
+
+    expect(refreshCallCount).toBe(0)
+    expect(useImpersonationStore.getState().token).toBeNull()
+    // The real Super User's own session must be untouched.
+    expect(useAuthStore.getState().accessToken).toBe('stale-token')
   })
 })

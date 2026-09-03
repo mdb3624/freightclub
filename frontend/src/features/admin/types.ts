@@ -58,3 +58,49 @@ export interface PlatformHealth {
   totalRequests: number
   errorResponses: number
 }
+
+// US-880: append-only audit trail for every Super User write action.
+export interface AuditLogEntry {
+  id: string
+  actorUserId: string
+  actionType: string
+  targetId: string
+  reason: string
+  createdAt: string
+}
+
+// US-882: a user's merged activity — login events (proxied via refresh-token issuance) and
+// audit entries where they were the target of a Super User action.
+export interface ActivityEvent {
+  eventType: string
+  description: string
+  occurredAt: string
+}
+
+export type AdminRole = 'SHIPPER' | 'TRUCKER'
+
+// US-886: the new user's setup token (never a password) — the Super User relays it out-of-band.
+export interface ProvisioningResult {
+  setupToken: string
+}
+
+// US-881: the reset token (never the new password) — relayed out-of-band.
+export interface ForcePasswordResetResult {
+  resetToken: string
+}
+
+// US-885: target summary returned alongside a new impersonation session.
+export interface ImpersonationTarget {
+  id: string
+  email: string
+  firstName: string
+  lastName: string
+  role: string
+}
+
+export interface ImpersonationStartResult {
+  impersonationToken: string
+  sessionId: string
+  expiresAt: string
+  target: ImpersonationTarget
+}

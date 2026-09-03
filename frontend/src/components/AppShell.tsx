@@ -5,6 +5,7 @@ import { useLogout } from '@/features/auth/hooks/useLogout'
 import { NotificationBell } from '@/features/notifications/components/NotificationBell'
 import { Button } from '@/components/ui/Button'
 import { usePersonaTheme } from '@/contexts/PersonaThemeContext'
+import { ImpersonationBanner } from '@/components/ImpersonationBanner'
 
 interface AppShellProps {
   children: React.ReactNode
@@ -73,6 +74,8 @@ export function AppShell({ children, maxWidth = '6xl', fullBleed = false }: AppS
       <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-50 focus:bg-primary-600 focus:text-white focus:px-4 focus:py-2">
         Skip to main content
       </a>
+
+      <ImpersonationBanner />
 
       <header className={`sticky top-0 z-30 flex items-center px-6 ${isCarrier ? 'h-14 border-b border-carrier-border bg-carrier-bg' : 'h-16 border-b border-[#D8CEB8] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.05)]'}`}>
         <div className={`mx-auto ${widthClass} flex w-full items-center justify-between gap-4`}>

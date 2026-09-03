@@ -9,6 +9,7 @@ import com.freightclub.exception.AccountSuspendedException;
 import com.freightclub.exception.EmailAlreadyExistsException;
 import com.freightclub.exception.InvalidJoinCodeException;
 import com.freightclub.exception.PasswordBreachedException;
+import com.freightclub.exception.TenantSuspendedException;
 import com.freightclub.repository.TenantRepository;
 import com.freightclub.repository.UserRepository;
 import com.freightclub.security.AuthenticatedUserPrincipal;
@@ -159,13 +160,23 @@ public class AuthService {
         // below succeeds under users_tenant_isolation — setTenantId re-applies SET LOCAL to
         // this transaction's already-open connection itself (mid-transaction, like register()).
         User user;
+        Tenant tenant;
         TenantContextHolder.setTenantId(principal.getTenantId());
         TenantContextHolder.setUserId(principal.getUserId());
         try {
             user = userRepository.findByEmailAndDeletedAtIsNull(request.email())
                     .orElseThrow(() -> new IllegalStateException("User disappeared after authentication"));
+            tenant = tenantRepository.findById(user.getTenantId())
+                    .orElseThrow(() -> new IllegalStateException("Tenant disappeared after authentication"));
         } finally {
             TenantContextHolder.clear();
+        }
+
+        // US-884 BR-1/AC-2: tenant-level lock is independent of and layered on top of the
+        // user-level one — checked first so a suspended tenant blocks login regardless of the
+        // individual user's own is_suspended status.
+        if (tenant.isSuspended()) {
+            throw new TenantSuspendedException();
         }
 
         // US-881 AC-2: checked AFTER credentials are verified, not before — never reveal

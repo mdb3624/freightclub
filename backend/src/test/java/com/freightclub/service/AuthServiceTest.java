@@ -419,6 +419,7 @@ class AuthServiceTest {
                     .thenReturn(new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities()));
             when(userRepository.findByEmailAndDeletedAtIsNull("shipper@example.com"))
                     .thenReturn(Optional.of(user));
+            when(tenantRepository.findById("tenant-1")).thenReturn(Optional.of(new Tenant()));
             when(jwtService.generateAccessToken(user)).thenReturn("access-token");
             when(refreshTokenService.createRefreshToken("user-1")).thenReturn("refresh-token");
 
@@ -441,6 +442,7 @@ class AuthServiceTest {
                 assertThat(TenantContextHolder.getTenantId()).isEqualTo("tenant-from-login");
                 return Optional.of(user);
             });
+            when(tenantRepository.findById("tenant-1")).thenReturn(Optional.of(new Tenant()));
             when(jwtService.generateAccessToken(user)).thenReturn("token");
             when(refreshTokenService.createRefreshToken("user-1")).thenReturn("refresh");
 
@@ -460,6 +462,25 @@ class AuthServiceTest {
 
             assertThatThrownBy(() -> authService.login(request))
                     .isInstanceOf(BadCredentialsException.class);
+        }
+
+        @Test
+        void throws_whenTenantSuspended() {
+            User user = makeUser("user-1", "shipper@example.com", UserRole.SHIPPER);
+            Tenant suspendedTenant = new Tenant();
+            suspendedTenant.setSuspended(true);
+            LoginRequest request = new LoginRequest("shipper@example.com", "password123");
+            AuthenticatedUserPrincipal principal = makePrincipal("user-1", "tenant-1", "shipper@example.com", UserRole.SHIPPER);
+
+            when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                    .thenReturn(new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities()));
+            when(userRepository.findByEmailAndDeletedAtIsNull("shipper@example.com"))
+                    .thenReturn(Optional.of(user));
+            when(tenantRepository.findById("tenant-1")).thenReturn(Optional.of(suspendedTenant));
+
+            assertThatThrownBy(() -> authService.login(request))
+                    .isInstanceOf(com.freightclub.exception.TenantSuspendedException.class);
+            verifyNoInteractions(jwtService, refreshTokenService);
         }
     }
 

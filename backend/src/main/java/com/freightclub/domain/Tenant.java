@@ -36,6 +36,11 @@ public class Tenant {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    // US-884: platform-level access lock, independent of any individual user's own
+    // is_suspended flag (US-881) — layered on top of, not merged with, that user-level lock.
+    @Column(name = "is_suspended", nullable = false)
+    private boolean isSuspended = false;
+
     // US-876/878: org-level defaults. All nullable — null means "no org default set", per
     // BR-3/BR-5 in both stories (never conflated with "explicitly set to blank/zero").
     @Column(name = "default_pickup_address_1", length = 500)
@@ -87,6 +92,8 @@ public class Tenant {
     public String getJoinCode() { return joinCode; }
     public void setJoinCode(String joinCode) { this.joinCode = joinCode; }
     public String getPlan() { return plan; }
+    public boolean isSuspended() { return isSuspended; }
+    public void setSuspended(boolean isSuspended) { this.isSuspended = isSuspended; }
 
     public String getDefaultPickupAddress1() { return defaultPickupAddress1; }
     public void setDefaultPickupAddress1(String v) { this.defaultPickupAddress1 = v; }

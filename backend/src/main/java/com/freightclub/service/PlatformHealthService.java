@@ -18,10 +18,13 @@ public class PlatformHealthService {
 
     private final JdbcTemplate jdbcTemplate;
     private final RequestMetricsFilter requestMetricsFilter;
+    private final PlatformHealthAlertService platformHealthAlertService;
 
-    public PlatformHealthService(JdbcTemplate jdbcTemplate, RequestMetricsFilter requestMetricsFilter) {
+    public PlatformHealthService(JdbcTemplate jdbcTemplate, RequestMetricsFilter requestMetricsFilter,
+                                  PlatformHealthAlertService platformHealthAlertService) {
         this.jdbcTemplate = jdbcTemplate;
         this.requestMetricsFilter = requestMetricsFilter;
+        this.platformHealthAlertService = platformHealthAlertService;
     }
 
     // US-752 BR-3: 10-second TTL, materially tighter than US-750's 5-minute dashboard TTL
@@ -37,10 +40,12 @@ public class PlatformHealthService {
             backendHealthy = false;
         }
 
-        return new PlatformHealthResponse(
+        PlatformHealthResponse response = new PlatformHealthResponse(
                 backendHealthy,
                 requestMetricsFilter.getTotalRequests(),
                 requestMetricsFilter.getErrorResponses()
         );
+        platformHealthAlertService.evaluate(response);
+        return response;
     }
 }

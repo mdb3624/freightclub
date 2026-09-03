@@ -1,7 +1,7 @@
 # US-883: Platform Health Alerting (Webhook)
 
 **Story Type:** New Feature
-**Status:** READY_FOR_DESIGN
+**Status:** DONE
 **Priority:** P1
 **Persona:** Super User (platform ADMIN role) — but the "recipient" is outside the app (Slack/email)
 **Scope:** BACKEND

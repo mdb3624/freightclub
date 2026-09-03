@@ -146,6 +146,7 @@ function DashboardTab() {
                 {actingOnTenantId === t.id ? (
                   <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                     <input
+                      aria-label={`Reason for ${t.name}`}
                       data-testid={`tenant-reason-${t.id}`}
                       placeholder="Reason (required)"
                       value={reason}
@@ -318,8 +319,8 @@ function UsersTab() {
     <div data-testid="super-user-users">
       <h2 style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>Manage a user</h2>
       <div style={{ background: S.surface, border: `1px solid ${S.border}`, borderRadius: 8, padding: 16, maxWidth: 480 }}>
-        <input data-testid="user-id-input" placeholder="Target user ID" value={userId} onChange={(e) => setUserId(e.target.value)} style={inputStyle} />
-        <input data-testid="user-reason-input" placeholder="Reason (required for suspend/reactivate/reset/impersonate)" value={reason} onChange={(e) => setReason(e.target.value)} style={inputStyle} />
+        <input aria-label="Target user ID" data-testid="user-id-input" placeholder="Target user ID" value={userId} onChange={(e) => setUserId(e.target.value)} style={inputStyle} />
+        <input aria-label="Reason" data-testid="user-reason-input" placeholder="Reason (required for suspend/reactivate/reset/impersonate)" value={reason} onChange={(e) => setReason(e.target.value)} style={inputStyle} />
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
           <button data-testid="suspend-user-btn" disabled={!idReady || !reasonReady || busy} onClick={() => suspend.mutate()} style={{ ...dangerBtnStyle, opacity: !idReady || !reasonReady ? 0.5 : 1 }}>Suspend</button>
@@ -339,6 +340,8 @@ function UsersTab() {
           Impersonate (view-only, 15 min, requires re-authentication)
         </h3>
         <input
+          aria-label="Your own password (re-authentication)"
+          autoComplete="current-password"
           data-testid="reauth-password-input"
           type="password"
           placeholder="Your own password (re-authentication)"
@@ -436,19 +439,23 @@ function CreateUserTab() {
           </button>
         </div>
 
+        {/* Field order matches this app's own established RegisterForm convention (company/tenant
+            → who → contact → role) — name comes before email, not after, per
+            HUMAN_FACTORS_DESIGNER.md's Information Architecture Rule 3 (natural sequence) and
+            consistency with existing patterns. */}
         {mode === 'existing' ? (
-          <input data-testid="create-tenant-id-input" placeholder="Existing tenant ID" value={tenantId} onChange={(e) => setTenantId(e.target.value)} style={inputStyle} />
+          <input aria-label="Existing tenant ID" data-testid="create-tenant-id-input" placeholder="Existing tenant ID" value={tenantId} onChange={(e) => setTenantId(e.target.value)} style={inputStyle} />
         ) : (
-          <input data-testid="create-company-name-input" placeholder="New company name" value={companyName} onChange={(e) => setCompanyName(e.target.value)} style={inputStyle} />
+          <input aria-label="New company name" data-testid="create-company-name-input" placeholder="New company name" value={companyName} onChange={(e) => setCompanyName(e.target.value)} style={inputStyle} />
         )}
-        <input data-testid="create-email-input" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
-        <input data-testid="create-first-name-input" placeholder="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={inputStyle} />
-        <input data-testid="create-last-name-input" placeholder="Last name" value={lastName} onChange={(e) => setLastName(e.target.value)} style={inputStyle} />
-        <select data-testid="create-role-select" value={role} onChange={(e) => setRole(e.target.value as 'SHIPPER' | 'TRUCKER')} style={inputStyle}>
+        <input aria-label="First name" data-testid="create-first-name-input" placeholder="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={inputStyle} />
+        <input aria-label="Last name" data-testid="create-last-name-input" placeholder="Last name" value={lastName} onChange={(e) => setLastName(e.target.value)} style={inputStyle} />
+        <input aria-label="Email" data-testid="create-email-input" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
+        <select aria-label="Role" data-testid="create-role-select" value={role} onChange={(e) => setRole(e.target.value as 'SHIPPER' | 'TRUCKER')} style={inputStyle}>
           <option value="SHIPPER">Shipper</option>
           <option value="TRUCKER">Trucker</option>
         </select>
-        <input data-testid="create-reason-input" placeholder="Reason (required)" value={reason} onChange={(e) => setReason(e.target.value)} style={inputStyle} />
+        <input aria-label="Reason (required)" data-testid="create-reason-input" placeholder="Reason (required)" value={reason} onChange={(e) => setReason(e.target.value)} style={inputStyle} />
 
         <button data-testid="create-submit-btn" disabled={!ready || active.isPending} onClick={() => active.mutate()} style={{ ...primaryBtnStyle, opacity: !ready ? 0.5 : 1 }}>
           Create
@@ -475,6 +482,7 @@ function AuditLogTab() {
       <h2 style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>Audit log</h2>
       <div style={{ display: 'flex', gap: 8, marginBottom: 12, maxWidth: 480 }}>
         <input
+          aria-label="Filter by target ID"
           data-testid="audit-target-filter"
           placeholder="Filter by target ID (optional)"
           value={targetId}

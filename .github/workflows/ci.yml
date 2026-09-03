@@ -32,14 +32,15 @@ jobs:
           POSTGRES_USER: freightclub_test_admin
           POSTGRES_PASSWORD: freightclub_admin
           POSTGRES_DB: freightclub_test
-          # Matches docker-compose.test.yml's test-db service. Postgres' default
-          # max_connections=100 was never overridden here (unlike locally), so a
-          # full mvn test run — 16+ cached Spring test contexts, each with its
-          # own runtime/login-lookup/flyway-admin connection pools — could exceed
-          # it, surfacing as "remaining connection slots are reserved for roles
-          # with the SUPERUSER attribute" and cascading into unrelated test
-          # failures near the end of the run.
-          POSTGRES_INITDB_ARGS: "-c max_connections=200"
+          # Matches docker-compose.test.yml's test-db service (also bumped to 400 this
+          # session for the identical reason). 200 was already a prior fix for the same
+          # exhaustion pattern; three new @SpringBootTest integration classes added in the
+          # Super User admin-management batch (US-880/881/886) pushed connection demand back
+          # past 200, reproducing "remaining connection slots are reserved for roles with the
+          # SUPERUSER attribute" 3/3 times in CI on the same commit. Bumped to 400 to match
+          # local and give real headroom as the suite keeps growing, rather than re-triggering
+          # CI runs indefinitely.
+          POSTGRES_INITDB_ARGS: "-c max_connections=400"
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -144,7 +145,7 @@ jobs:
           POSTGRES_PASSWORD: freightclub_admin
           POSTGRES_DB: freightclub_test
           # See identical note in the `backend` job above.
-          POSTGRES_INITDB_ARGS: "-c max_connections=200"
+          POSTGRES_INITDB_ARGS: "-c max_connections=400"
         options: >-
           --health-cmd pg_isready
           --health-interval 10s

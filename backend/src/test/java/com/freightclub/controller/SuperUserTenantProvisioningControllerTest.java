@@ -3,7 +3,9 @@ package com.freightclub.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freightclub.domain.UserRole;
 import com.freightclub.dto.CreateTenantWithFirstUserRequest;
+import com.freightclub.dto.SuperUserActionRequest;
 import com.freightclub.service.SuperUserProvisioningService;
+import com.freightclub.service.SuperUserTenantManagementService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,6 +20,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -30,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SuperUserTenantProvisioningControllerTest {
 
     @MockBean private SuperUserProvisioningService superUserProvisioningService;
+    @MockBean private SuperUserTenantManagementService superUserTenantManagementService;
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
@@ -70,5 +74,45 @@ class SuperUserTenantProvisioningControllerTest {
                 .andExpect(status().isForbidden());
 
         verifyNoInteractions(superUserProvisioningService);
+    }
+
+    @Test
+    void suspend_noContent_forSuperUser() throws Exception {
+        mockMvc.perform(post("/api/v1/super-user/tenants/tenant-1/suspend").with(superUser("admin-1"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new SuperUserActionRequest("Non-payment"))))
+                .andExpect(status().isNoContent());
+
+        verify(superUserTenantManagementService).suspendTenant(eq("admin-1"), eq("tenant-1"), eq("Non-payment"));
+    }
+
+    @Test
+    void suspend_badRequest_whenReasonBlank() throws Exception {
+        mockMvc.perform(post("/api/v1/super-user/tenants/tenant-1/suspend").with(superUser("admin-1"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"reason\":\"\"}"))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(superUserTenantManagementService);
+    }
+
+    @Test
+    void suspend_forbidden_forTenantAdmin() throws Exception {
+        mockMvc.perform(post("/api/v1/super-user/tenants/tenant-1/suspend").with(tenantAdmin("tenant-admin-1"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new SuperUserActionRequest("reason"))))
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(superUserTenantManagementService);
+    }
+
+    @Test
+    void reactivate_noContent_forSuperUser() throws Exception {
+        mockMvc.perform(post("/api/v1/super-user/tenants/tenant-1/reactivate").with(superUser("admin-1"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new SuperUserActionRequest("Cleared"))))
+                .andExpect(status().isNoContent());
+
+        verify(superUserTenantManagementService).reactivateTenant(eq("admin-1"), eq("tenant-1"), eq("Cleared"));
     }
 }

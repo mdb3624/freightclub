@@ -1,7 +1,7 @@
 # US-884: Super User — Tenant Suspend/Deactivate
 
 **Story Type:** New Feature
-**Status:** READY_FOR_DESIGN
+**Status:** DONE
 **Priority:** P2
 **Persona:** Super User (platform ADMIN role)
 **Scope:** FULL_STACK

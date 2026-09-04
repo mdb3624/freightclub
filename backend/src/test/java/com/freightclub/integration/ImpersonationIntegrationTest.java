@@ -46,12 +46,12 @@ class ImpersonationIntegrationTest {
     }
 
     private SuperUserSession registerSuperUserAndLogin(String email, String password) throws Exception {
-        mockMvc.perform(post("/api/v1/auth/register")
+        mockMvc.perform(post("/api/test/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new RegisterRequest(
                                 email, password, "Sam", "SuperUser", UserRole.ADMIN,
                                 "n-a-" + UUID.randomUUID(), null, null, null, null))))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
         MvcResult loginResult = mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new LoginRequest(email, password))))
@@ -117,12 +117,12 @@ class ImpersonationIntegrationTest {
     @Test
     void start_rejectsImpersonatingAnotherAdmin() throws Exception {
         SuperUserSession actor = registerSuperUserAndLogin("actor-" + UUID.randomUUID() + "@freightclub.local", "Password1!");
-        MvcResult otherAdminReg = mockMvc.perform(post("/api/v1/auth/register")
+        MvcResult otherAdminReg = mockMvc.perform(post("/api/test/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new RegisterRequest(
                                 "other-admin-" + UUID.randomUUID() + "@freightclub.local", "Password1!", "Other", "Admin",
                                 UserRole.ADMIN, "n-a-" + UUID.randomUUID(), null, null, null, null))))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andReturn();
         String otherAdminId = objectMapper.readTree(otherAdminReg.getResponse().getContentAsString()).get("user").get("id").asText();
 

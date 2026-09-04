@@ -75,6 +75,27 @@ class AuthControllerTest {
                 .andExpect(header().exists("Set-Cookie"));
     }
 
+    // Security fix (2026-09-03): POST /api/v1/auth/register was PermitAll with zero
+    // restriction on request.role() — anyone could self-register as role=ADMIN and get a
+    // fully-functional platform Super User account. Discovered live in production. The
+    // public endpoint must reject ADMIN outright; internal bootstrap paths (see
+    // DefaultSuperUserBootstrapRunner) call AuthService.register() directly, not through
+    // this controller, so they are unaffected by this boundary check.
+    @Test
+    void register_rejectsAdminRole_withForbidden() throws Exception {
+        RegisterRequest req = new RegisterRequest(
+                "attacker@example.com", "password123",
+                "Attacker", "User", UserRole.ADMIN,
+                "Evil Corp", null, null, null, null);
+
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isForbidden());
+
+        org.mockito.Mockito.verifyNoInteractions(authService);
+    }
+
     @Test
     void login_returns200WithTokenAndCookie() throws Exception {
         User user = makeUser("user-1", "login@example.com");

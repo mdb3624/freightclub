@@ -43,12 +43,12 @@ class SuperUserAccountManagementIntegrationTest {
 
     private String loginAsSuperUserAndGetAccessToken() throws Exception {
         String email = "super-user-" + UUID.randomUUID() + "@freightclub.local";
-        mockMvc.perform(post("/api/v1/auth/register")
+        mockMvc.perform(post("/api/test/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new RegisterRequest(
                                 email, "Password1!", "Sam", "SuperUser", UserRole.ADMIN,
                                 "n-a-" + UUID.randomUUID(), null, null, null, null))))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
         MvcResult loginResult = mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new LoginRequest(email, "Password1!"))))
@@ -94,12 +94,12 @@ class SuperUserAccountManagementIntegrationTest {
     @Test
     void suspend_rejectsSelfSuspend() throws Exception {
         String email = "self-suspend-" + UUID.randomUUID() + "@freightclub.local";
-        mockMvc.perform(post("/api/v1/auth/register")
+        mockMvc.perform(post("/api/test/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new RegisterRequest(
                                 email, "Password1!", "Sam", "SuperUser", UserRole.ADMIN,
                                 "n-a-" + UUID.randomUUID(), null, null, null, null))))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
         MvcResult loginResult = mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new LoginRequest(email, "Password1!"))))

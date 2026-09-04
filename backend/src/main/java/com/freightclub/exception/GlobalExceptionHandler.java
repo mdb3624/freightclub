@@ -130,6 +130,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.FORBIDDEN, ex.getMessage(), req);
     }
 
+    @ExceptionHandler(AdminSelfRegistrationNotAllowedException.class)
+    public ResponseEntity<ErrorResponse> handleAdminSelfRegistrationNotAllowed(AdminSelfRegistrationNotAllowedException ex, HttpServletRequest req) {
+        return build(HttpStatus.FORBIDDEN, ex.getMessage(), req);
+    }
+
     @ExceptionHandler(TenantSuspendedException.class)
     public ResponseEntity<ErrorResponse> handleTenantSuspended(TenantSuspendedException ex, HttpServletRequest req) {
         return build(HttpStatus.FORBIDDEN, ex.getMessage(), req);

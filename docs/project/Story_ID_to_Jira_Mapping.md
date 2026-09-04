@@ -269,6 +269,7 @@ curl -u "email:token" \
 | US-884 | [FREIG-147](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-147) | US-884: Super User - Tenant Suspend/Deactivate | To Do |
 | US-885 | [FREIG-148](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-148) | US-885: Super User - Scoped User Impersonation | To Do |
 | US-886 | [FREIG-149](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-149) | US-886: Super User - Create User (Existing Tenant or New Tenant) | To Do |
+| US-887 | [FREIG-150](https://mdb-intergrated-logistics.atlassian.net/browse/FREIG-150) | US-887: Security - Restrict Admin Self-Registration + Default Super User Bootstrap | Done |
 
 ---
 

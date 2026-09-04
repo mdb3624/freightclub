@@ -39,6 +39,13 @@ public class AuthController {
     @PermitAll
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+        // Security fix (2026-09-03): this endpoint is unauthenticated (PermitAll) — without
+        // this check, request.role() == ADMIN let anyone self-register as a platform Super
+        // User with zero gating. ADMIN accounts must only come from an existing Super User's
+        // Create User flow or the internal bootstrap runner, never this public boundary.
+        if (request.role() == com.freightclub.domain.UserRole.ADMIN) {
+            throw new com.freightclub.exception.AdminSelfRegistrationNotAllowedException();
+        }
         AuthService.AuthResult result = authService.register(request);
         ResponseCookie cookie = buildRefreshCookie(result.rawRefreshToken(), authService.accessTokenExpirySeconds() * 480);
         AuthResponse body = AuthResponse.of(

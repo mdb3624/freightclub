@@ -13,7 +13,14 @@ Current phase, story status, and sprint state are LIBRARIAN-owned and live in `d
 
 ## 🤖 Role-Based Operating Context
 
-You are operating in a multi-role system. Assume the specific persona requested and load its full instructions from `docs/roles/` before acting:
+**STOP AND VERIFY (literal first action — before any Write/Edit on implementation code, before anything else):** any new work item (story, feature, bug fix beyond a one-line change) is CODER work in this system, whether or not the word "CODER" or a slash command was used to invoke it. Before writing a single line of implementation code:
+1. Load `docs/roles/CODER.md` in full and run its Input Acceptance Gate checklist against this specific story/task — do not proceed from memory of having read it before.
+2. If the story is `NEW_FEATURE` or carries `FULL_STACK`/`UI_ONLY` scope, confirm an HFD design artifact exists (`docs/hfd/`, or the story doc's own HFD section) before touching any frontend file. If it doesn't exist, invoke the `run-story` skill (`.claude/skills/run-story/SKILL.md`) to produce it — do not implement the frontend yourself and note the gap as debt.
+3. An active `/goal` spanning multiple stories does **not** waive this. Speed pressure from an autonomous multi-story goal is exactly the condition under which this gate is most likely to be skipped and most costly to skip — treat "many stories to get through" as a reason to check this per-story, not a reason to batch past it.
+
+This precondition exists because it was skipped for an entire multi-story batch (the Super User admin batch, 2026-09-02/03): implementation happened directly from BA story docs without ever loading `CODER.md`, producing backend-only "FULL_STACK" stories with no HFD design phase, caught only after the fact by the user. `CODER.md`'s gate was never wrong or missing — it was never opened.
+
+Once CODER.md's gate is satisfied, assume the specific persona requested and load its full instructions from `docs/roles/`:
 
 - **ARCHITECT.md** (Domain & Schema Design) — no Java code, domain modeling (Mermaid) required
 - **CODER.md** (Feature Implementation) — Red-Green-Refactor, no-Lombok, test class first

@@ -47,7 +47,10 @@ Write-Host ""
 # (V20260901_1200). Required — app.super-user-read.password and the Flyway
 # super_user_read_password placeholder have no default; omitting this secret ref
 # crashes both the Flyway migration and backend startup.
-$SecretRefs = "DB_URL=DB_URL:latest,DB_USERNAME=DB_USERNAME:latest,DB_PASSWORD=DB_PASSWORD:latest,APP_JWT_SECRET=APP_JWT_SECRET:latest,JWT_SECRET=APP_JWT_SECRET:latest,FLYWAY_DB_USERNAME=FLYWAY_DB_USERNAME:latest,FLYWAY_DB_PASSWORD=FLYWAY_DB_PASSWORD:latest,DB_LOGIN_USER=DB_LOGIN_USER:latest,DB_LOGIN_PASSWORD=DB_LOGIN_PASSWORD:latest,DB_SUPER_USER_READ_USER=DB_SUPER_USER_READ_USER:latest,DB_SUPER_USER_READ_PASSWORD=DB_SUPER_USER_READ_PASSWORD:latest"
+# DEFAULT_SUPER_USER_EMAIL/PASSWORD (US-887, 2026-09-04) feed DefaultSuperUserBootstrapRunner —
+# optional (the runner no-ops if either is blank) and idempotent (no-ops once any ADMIN account
+# already exists), so it's safe to leave these bound on every future deploy indefinitely.
+$SecretRefs = "DB_URL=DB_URL:latest,DB_USERNAME=DB_USERNAME:latest,DB_PASSWORD=DB_PASSWORD:latest,APP_JWT_SECRET=APP_JWT_SECRET:latest,JWT_SECRET=APP_JWT_SECRET:latest,FLYWAY_DB_USERNAME=FLYWAY_DB_USERNAME:latest,FLYWAY_DB_PASSWORD=FLYWAY_DB_PASSWORD:latest,DB_LOGIN_USER=DB_LOGIN_USER:latest,DB_LOGIN_PASSWORD=DB_LOGIN_PASSWORD:latest,DB_SUPER_USER_READ_USER=DB_SUPER_USER_READ_USER:latest,DB_SUPER_USER_READ_PASSWORD=DB_SUPER_USER_READ_PASSWORD:latest,DEFAULT_SUPER_USER_EMAIL=DEFAULT_SUPER_USER_EMAIL:latest,DEFAULT_SUPER_USER_PASSWORD=DEFAULT_SUPER_USER_PASSWORD:latest"
 
 $BackendUrl = "freightclub-backend-5gecbdg27a-uc.a.run.app"
 $BackendUrlAlt = "freightclub-backend-404925591110.us-central1.run.app"

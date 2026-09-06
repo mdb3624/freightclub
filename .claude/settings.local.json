@@ -49,5 +49,11 @@
       "Read(**/secrets/**)"
     ]
   },
-  "defaultMode": "ask"
+  "defaultMode": "ask",
+  "autoMode": {
+  "allow": [
+    "$defaults",
+    "Bash(gh pr merge *)"
+  ]
+}
 }

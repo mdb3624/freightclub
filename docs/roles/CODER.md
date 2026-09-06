@@ -75,13 +75,7 @@ If rejected: LIBRARIAN decides whether to fix inputs or create Change Request (C
 
 **No extraneous code:** Implement exactly what the design handoff specifies — no new abstraction, service, or endpoint beyond what's needed for the current story's AC, even if a duplicate-looking path seems locally simpler than reusing/extending the existing one. "This is basically the same thing but slightly different" is the CHG-ticket conversation, not a license to add a second implementation.
 
-**Example (Phase 10):**
-- Story needs to calculate carrier affinity (preferred carrier ranking)
-- Search: `CarrierAffinityService` already exists
-- ✅ **REUSE:** Inject it; write tests for your story's specific use case
-- ❌ **DON'T:** Create `CarrierAffinityCalculator` or `PreferredCarrierRanker` (duplicates)
-
-**Counter-example — what step 5 exists to catch (2026-07-20):** US-761 (Phase 7) already implemented the shipper dashboard's activeShipments/onTimeCarrierPct/estimatedCostPerMile KPI aggregate at `/shipper/dashboard-summary`, stuck at `READY FOR REVIEWER RE-AUDIT` but fully committed and routed. US-820 (Phase 10) rebuilt the identical capability from scratch as `KPISummaryService`/`/shipper/dashboard/kpi-summary` without finding it — steps 1-4 (domain-service-class dedup) wouldn't have caught this since the duplication was at the endpoint/application-service level. The two independently-invented "active load" status filters then silently diverged, producing a real production bug months later. US-820's `KPISummaryController`/`KPISummaryService` also shipped and lived in production with **zero tests** — REVIEWER's controller-test hard gate exists on paper but wasn't mechanically enforced at merge time.
+**Root incident and worked example:** see `docs/postmortems/CODER_REVIEWER_INCIDENTS.md` ("Duplicate KPI Implementations: US-761 vs US-820") for why this step exists and what correct reuse looks like.
 
 **Rejection Rule:** If code review finds duplicate service implementations OR a new endpoint that could have reused/extended an existing (even non-DONE) story's endpoint, CODER must refactor before merge (violates Phase 10 platform integrity).
 
@@ -124,7 +118,7 @@ LIBRARIAN decides:
 
 Repeat for each AC.
 
-**Root incident (2026-08-26):** `testReassignLoadToCarrier_UpdatesAssignment` asserted `getAssignedAt()` was non-null — true at 98% JaCoCo line coverage, but the value was already set by the `LoadAssignment` constructor, so the test never actually proved `reassignLoadToCarrier()` did anything. Found by a scoped PIT mutation-testing pilot (`backend/pom.xml`'s opt-in `mutation-test` profile), not by this workflow — this step exists so the same class of bug is caught for free, mechanically, during authoring instead of requiring a separate tooling pass. See `docs/roles/REVIEWER.md`'s Mutation Coverage gate for where the expensive/tooled version of this check still lives (scoped to RLS/tenant-isolation and load-claiming classes only — do not run full mutation testing on every commit; this step is the cheap, universal substitute for it).
+**Why this matters:** see `docs/postmortems/CODER_REVIEWER_INCIDENTS.md` ("Vacuous Test Passed at 98% Line Coverage: PR #99") — this step exists so that class of bug is caught for free, mechanically, during authoring instead of requiring a separate tooling pass. See `docs/roles/REVIEWER.md`'s Mutation Coverage gate for where the expensive/tooled version of this check still lives (scoped to RLS/tenant-isolation and load-claiming classes only — not run on every commit; this step is the cheap, universal substitute for it).
 
 ---
 
@@ -148,7 +142,7 @@ Council-review conclusion (2026-08-27): mandate this at trust-boundary crossings
 
 ## 🔌 External Config/Secret Wiring Verification (MANDATORY — Effective 2026-07-14)
 
-Mocked unit/component tests prove your logic is correct given a value — they cannot prove the value ever arrives. FREIG-116/US-854: 100% green tests (backend unit tests mocking `EiaFuelPriceService`, frontend `LoadBoardTable.test.tsx` given a hand-built prop) shipped while the real feature returned `available:false` in every environment, because `docker-compose.test.yml` never passed the API key/enabled env vars through AND `application.yml` never bound them to a `@Value` property in the first place. Nothing in the automated suite touched that seam.
+Mocked unit/component tests prove your logic is correct given a value — they cannot prove the value ever arrives. Root incident (FREIG-116/US-854): `docs/postmortems/TESTING_INCIDENTS.md` ("Mocked Tests Cannot Catch Config/Wiring Bugs").
 
 **Before declaring any story complete that introduces a new external API key, external service config, or env-var-backed `@Value` property:**
 1. Grep every `application-*.yml` actually in use and confirm the new property is declared there (not just referenced via `@Value("${...}")` — an undeclared property silently binds to its default).

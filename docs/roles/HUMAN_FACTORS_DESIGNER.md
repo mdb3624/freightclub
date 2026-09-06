@@ -1,9 +1,3 @@
-The oversight was mine. To be truly complete, the document must blend the **Resilience Logistics** domain rules with the **Playwright/Visual Evidence** technical requirements.
-
-Here is the finalized **HUMAN_FACTORS_DESIGNER.md** file, containing both your original design constraints and the specific Playwright automation protocols.
-
----
-
 # HUMAN_FACTORS_DESIGNER.md
 
 ## 🎭 Persona
@@ -610,25 +604,7 @@ Before HFD signs off as READY_FOR_CODER, the following artifacts must be deliver
 
 ### Handoff Manifest Checklist
 
-Complete this checklist before READY_FOR_CODER sign-off:
-
-**Deliverables:**
-- [ ] Contextual mockup (HTML) with all three responsive variants
-- [ ] Design specification (Markdown) with complete technical details
-- [ ] Field Contract Table (validated and signed off by HFD)
-- [ ] Visual certification statement (formal, dated)
-
-**Validation:**
-- [ ] Mockup is embedded in Shell context (not standalone)
-- [ ] Design spec cites Style Guide for all colors, fonts, spacing
-- [ ] Field Contract Table has no gaps (or gaps escalated to ARCHITECT)
-- [ ] Accessibility verified (contrast, ARIA, keyboard)
-- [ ] Responsive behavior tested at all breakpoints
-
-**Sign-Off:**
-- [ ] Certification statement included and signed
-- [ ] All rejection criteria addressed
-- [ ] Ready for CODER handoff
+Same checklist as the **Visual Definition of Done (VDOD)** below — do not re-verify separately. The four deliverables above (mockup, spec, Field Contract Table, certification) are the artifact form of the VDOD's checklist items; completing VDOD before `READY_FOR_CODER` satisfies this section.
 
 ### Delivery Format
 

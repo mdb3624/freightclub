@@ -2,6 +2,8 @@
 
 *Short-form LinkedIn post companion to the article: [04-database-security-rls.md](04-database-security-rls.md).*
 
+*Published: [Database Privilege Quietly Defeating Our Security Model](https://www.linkedin.com/pulse/database-privilege-quietly-defeating-our-security-model-mike-barnes-ly6nc)*
+
 *(Publishing note: post the text below directly — no link in the body. Drop the article link and any supporting RLS-policy diagram/snippet in the first comment instead. Links inside a post body suppress algorithmic reach; the first comment doesn't carry the same penalty.)*
 
 ---

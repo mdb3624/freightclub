@@ -1,9 +1,9 @@
-# US-755: Replace React Query for Static Dashboard Queries
+# US-871: Replace React Query for Static Dashboard Queries
 
-> ⚠️ **SUPERSEDED 2026-09-01 — see CHG-868.** This ID collided with an unrelated `Story_Map.md` Phase 9 entry ("ELD Integration for HOS Tracking") and was never cataloged there. Renumbered as **[US-871: Replace React Query for Static Dashboard Queries](./US-871_Replace_React_Query_Static_Queries.md)** (Jira FREIG-131; old ticket FREIG-51 marked superseded). This file is kept for historical reference only — do not implement against it.
+> **Renumbering Note (CHG-868, 2026-09-01):** Recovered from old **US-755** (Jira FREIG-51 → FREIG-131), whose ID collided with an unrelated `Story_Map.md` Phase 9 entry ("ELD Integration for HOS Tracking") — this story was never cataloged there. Content preserved verbatim from the original draft except this note.
 
 **Phase:** Infrastructure (Performance Optimization)  
-**Status:** SUPERSEDED — see US-871  
+**Status:** DESIGN_APPROVED  
 **Priority:** MEDIUM  
 **Effort:** 3-4 hours  
 **Impact:** 5-8% additional bundle reduction (5-8 KB)

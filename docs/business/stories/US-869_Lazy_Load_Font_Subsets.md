@@ -1,9 +1,9 @@
-# US-752: Lazy-Load Font Subsets After Authentication
+# US-869: Lazy-Load Font Subsets After Authentication
 
-> ⚠️ **SUPERSEDED 2026-09-01 — see CHG-868.** This ID collided with an unrelated `Story_Map.md` Phase 9 entry ("Platform Health Metrics (Real-Time)") and was never cataloged there. Renumbered as **[US-869: Lazy-Load Font Subsets After Authentication](./US-869_Lazy_Load_Font_Subsets.md)** (Jira FREIG-129; old ticket FREIG-48 marked superseded). This file is kept for historical reference only — do not implement against it.
+> **Renumbering Note (CHG-868, 2026-09-01):** Recovered from old **US-752** (Jira FREIG-48 → FREIG-129), whose ID collided with an unrelated `Story_Map.md` Phase 9 entry ("Platform Health Metrics (Real-Time)") — this story was never cataloged there. Content preserved verbatim from the original draft except this note.
 
 **Phase:** Infrastructure (Performance Optimization)  
-**Status:** SUPERSEDED — see US-869  
+**Status:** DESIGN_APPROVED  
 **Priority:** CRITICAL  
 **Effort:** 2-3 hours  
 **Impact:** 40% reduction in initial page load (200-300 KB deferred)

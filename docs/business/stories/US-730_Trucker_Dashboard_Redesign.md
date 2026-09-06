@@ -1,5 +1,7 @@
 # US-730: Trucker Dashboard Redesign (Operations Hub)
 
+> ⚠️ **SUPERSEDED — flagged 2026-09-01 via CHG-868 systematic ID-collision audit.** This is an early planning draft under the `US-730` ID that was never given its own distinct ID, never entered Jira, and never got a `Story_Map.md` row. The canonical `US-730` ("EPIC: Carrier Dashboard MVP — Operations Platform," Phase 7a, `COMPLETED`) plus its sub-stories (US-730a through US-730h) shipped the actual Carrier/Trucker dashboard — this draft's scope was superseded by that shipped work, not implemented as written here. Kept for historical reference only; do not implement against it. If a genuine gap remains versus what shipped, BA must draft it fresh under a new ID.
+
 **Phase:** 7+ (Shipper Dashboard alignment: [[US-103-v2]])  
 **Type:** FULL_STACK (UI + Backend endpoints for dashboard aggregation)  
 **Priority:** P1 (Post-Shipper Dashboard launch)  

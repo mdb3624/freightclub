@@ -1,5 +1,7 @@
 # US-730: Earnings Log (Owner/Operator)
 
+> ⚠️ **SUPERSEDED — renumbered to [US-730g](../../project/Story_Map.md) (Per-Load Earnings Log) on 2026-07-04 via CHG-849** to resolve an ID collision with the Phase 7a Carrier Dashboard MVP epic, which also uses `US-730`. This file was never annotated at the time (found during the 2026-09-01 CHG-868 systematic ID-collision audit). Content below is historical — see `Story_Map.md`'s US-730g row for current status (`MIGRATION_PENDING`, Phase 7b).
+
 **Epic:** Phase 7b — Financial Intelligence  
 **Status:** AC FINALIZED (Ready for Implementation)  
 **Dependencies:** US-702 (Preferred Lanes ✅ design), US-701 (CarrierCostProfile ✅)  

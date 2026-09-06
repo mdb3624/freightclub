@@ -1,8 +1,10 @@
-# US-757: Trucker Cost Per Mile Calculator - Granular Cost Tracking
+# US-873: Trucker Cost Per Mile Calculator - Granular Cost Tracking
 
-> ⚠️ **SUPERSEDED 2026-09-01 — see CHG-868.** This ID collided with an unrelated `Story_Map.md` Phase 9 entry ("Freight Insurance Integration (Per-Load)") and was never cataloged there. Renumbered as **[US-873: Trucker Cost Per Mile Calculator](./US-873_Trucker_CPM_Calculator.md)** (Jira FREIG-133; old ticket FREIG-53 marked superseded) — that file flags this story's "DONE" claim as unverified and possibly duplicating already-shipped US-730a work. This file is kept for historical reference only — do not implement against it.
+> **Renumbering Note (CHG-868, 2026-09-01):** Recovered from old **US-757** (Jira FREIG-53 → FREIG-133), whose ID collided with an unrelated `Story_Map.md` Phase 9 entry ("Freight Insurance Integration (Per-Load)") — this story was never cataloged there. Content preserved verbatim from the original draft except this note.
+>
+> ⚠️ **Status flagged, not trusted as-is:** this file's own header claims `✅ DONE`, but its Definition of Done leaves "Deployed to staging" and "LIBRARIAN sign-off" unchecked, and `Story_Map.md` has no record of this work under any ID. It may also duplicate already-shipped capability in **US-730a** ("Cost Profile Setup API & UI", `COMPLETED`, which the Story_Map notes as covering live RPM calculation via `CarrierCostProfile`). **BA must re-verify against the current codebase before this moves to design** — do not assume it is done, and do not assume it is still needed as separately scoped work.
 
-**Status:** SUPERSEDED — see US-873 (was: ✅ DONE, unverified)  
+**Status:** ✅ DONE *(unverified — see flag above)*  
 **Priority:** HIGH  
 **Effort:** 21 points (16-20 hours)  
 **Impact:** Enables data-driven profitability decisions, foundational for Phase 7b (Financial Intelligence)  
@@ -156,7 +158,7 @@ This story enables the **Cost Per Mile (CPM) Calculator**, a tool that calculate
 ## Definition of Done
 
 - [x] User Story reviewed and approved by Director (BA Gate 1) ✅
-- [x] Technical design completed by Architect (`DESIGN_TruckerCPMCalculator_US757.md`) ✅
+- [x] Technical design completed by Architect (`DESIGN_TruckerCPMCalculator_US757.md`) ✅ *(filename references old ID)*
 - [x] Database schema reviewed (migration checklist passed) ✅
 - [x] Frontend form implemented with all 11 fields ✅
 - [x] API endpoints tested (GET/PUT /api/v1/profile with new fields) ✅

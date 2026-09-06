@@ -1,9 +1,9 @@
-# US-751: Code-Split Auth Module from Dashboard Bundle
+# US-868: Code-Split Auth Module from Dashboard Bundle
 
-> ⚠️ **SUPERSEDED 2026-09-01 — see CHG-868.** This ID collided with an unrelated `Story_Map.md` Phase 9 entry ("Dispute Resolution Tools") and was never cataloged there. Renumbered as **[US-868: Code-Split Auth Module from Dashboard Bundle](./US-868_Code_Split_Auth_Module.md)** (Jira FREIG-128; old ticket FREIG-47 marked superseded). This file is kept for historical reference only — do not implement against it.
+> **Renumbering Note (CHG-868, 2026-09-01):** Recovered from old **US-751** (Jira FREIG-47 → FREIG-128), whose ID collided with an unrelated `Story_Map.md` Phase 9 entry ("Dispute Resolution Tools") — this story was never cataloged there. Content preserved verbatim from the original draft except this note and the ID/dependency references below.
 
 **Phase:** Infrastructure (Performance Optimization)  
-**Status:** SUPERSEDED — see US-868  
+**Status:** DESIGN_APPROVED  
 **Priority:** CRITICAL  
 **Effort:** 5-8 hours  
 **Impact:** 15% reduction in login page bundle size (76 KB savings)
@@ -88,7 +88,7 @@ As a **platform operator**, I need to split the authentication module (login/reg
 
 ## Dependencies
 
-- Blocks: US-752 (Font optimization), US-753 (CDN tuning)
+- Blocks: US-869 (Font optimization), US-870 (CDN tuning) *(renumbered from old US-752/US-753)*
 - Depends on: Vite bundler working correctly
 - No database changes required
 

@@ -92,3 +92,42 @@ Actor: Super User. Sequence: support-investigation tool, cross-cutting — not p
 ## Approval
 
 Approved by Mike, 2026-09-02, as part of the "Super User feature gaps" council-reviewed batch (US-880 through US-885).
+
+---
+
+## Librarian Sign-Off: US-885 (Super User Scoped Impersonation)
+
+**Date:** 2026-09-06
+**Reviewer:** Retroactive fresh-context REVIEWER audit (2026-09-06)
+**Librarian:** Claude (LIBRARIAN role, this session)
+**Status:** ✅ DONE
+
+### Context
+
+US-885 shipped 2026-09-02/03 without an independent fresh-context REVIEWER/LIBRARIAN pass — it was implemented and self-reviewed in one continuous session, flagged as known debt in `docs/project/Story_Map.md` ("REVIEWER/LIBRARIAN fresh-context gates remain unremediated debt"). A separate fresh-context agent ran the retroactive REVIEWER audit on 2026-09-06 and returned **APPROVED**: all 7 ACs and 6 Business Rules verified against real code/tests, with one technical-debt item (`impersonation_sessions` has no RLS policy) assessed as following established precedent, not a new violation.
+
+This sign-off independently re-verifies that audit's key claims rather than accepting its summary at face value, per LIBRARIAN's own mandatory PR-verification rule.
+
+### Independent Verification Performed
+
+- [x] **PR merge state** — `gh pr view 125 --json state,mergedAt,statusCheckRollup` run directly (not asserted from the audit report): `state: MERGED`, `mergedAt: 2026-09-03T02:17:59Z`. All status checks (`Backend — Build & Test` x2, `Frontend — Lint, Test & Build` x2, `E2E Tests — Playwright` x2, `check-story-files`, Vercel) show `conclusion: SUCCESS` / `state: SUCCESS`. No failing or pending checks.
+- [x] **Story doc read in full** — `docs/business/stories/US-885_Super_User_Scoped_Impersonation.md` confirmed: 7 ACs, 6 Business Rules, Resolved-During-Implementation notes on session mechanism (separate short-lived JWT type, 15-min fixed expiry, `ImpersonationContextHolder`), view-only write-permission default enforced in `JwtAuthenticationFilter`, and the `ImpersonationTimeoutReconciliationService` for AC-2's automatic-end audit entry.
+- [x] **RLS exemption doc** — `.claude/rules/postgres-native.md` §"RLS Exemption: Session-Token Tables" (line 21) confirmed present and codified 2026-09-06: names `refresh_tokens`, `password_reset_tokens`, `impersonation_sessions` explicitly as RLS-exempt session/token tables, states the rationale (no `tenant_id`, app-layer/BYPASSRLS access control, no tenant dimension), cites the US-885 retroactive audit as the discovery event, and scopes the exemption's boundary (does not apply to any table with `tenant_id` or tenant business data).
+- [x] **Story_Map.md row** — confirmed and updated (see below); prior debt-note wording matched what was reported.
+
+### Verification Checklist
+
+- [x] PR #125 confirmed MERGED with all CI checks SUCCESS (verified directly via `gh pr view`, not taken on report)
+- [x] Retroactive REVIEWER audit (fresh-context, independent) returned APPROVED — 7/7 ACs, 6/6 Business Rules
+- [x] RLS technical-debt item assessed correctly as existing precedent (`refresh_tokens`/`password_reset_tokens` shape), now codified in `.claude/rules/postgres-native.md`
+- [x] No contradictions found between the audit's claims and independently-checked evidence (PR state, CI checks, doc contents)
+- [x] Traceability links verified (story doc ↔ PR #125 ↔ Story_Map.md ↔ RLS exemption doc)
+
+### Outcome
+
+Both previously-missing fresh-context gates (REVIEWER, LIBRARIAN) have now run independently and are documented here. No discrepancies were found between what this session was told and what it independently verified. US-885 remains **DONE**; the "unremediated debt" note in `Story_Map.md` is retired and replaced with a reference to this sign-off.
+
+---
+
+**Signed:** Claude (LIBRARIAN role)
+**Date:** 2026-09-06

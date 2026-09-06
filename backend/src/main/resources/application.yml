@@ -33,6 +33,7 @@ app:
   eia:
     api-key: ${EIA_API_KEY:}
     enabled: ${EIA_ENABLED:false}
+    refresh-interval-ms: ${EIA_REFRESH_INTERVAL_MS:21600000}
   hibp:
     enabled: ${HIBP_ENABLED:true}
     base-url: ${HIBP_BASE_URL:https://api.pwnedpasswords.com}

@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Duration;
@@ -16,12 +18,18 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * US-888: the live fetch (with retry/backoff) only ever runs on the {@link #refreshCache()}
+ * schedule, off any request thread. {@link #getDieselPrices()} reads the cache unconditionally
+ * once one exists, and only falls through to a single bounded-timeout attempt on true cold start
+ * (no cache yet) — it never retries inline, so a slow EIA can no longer block a caller for the
+ * ~63s worst case the old retry-loop-in-the-request-path design allowed.
+ */
 @Service
 public class EiaFuelPriceService {
 
     private static final Logger log = LoggerFactory.getLogger(EiaFuelPriceService.class);
     private static final String EIA_URL = "https://api.eia.gov/v2/petroleum/pri/gnd/data/";
-    private static final Duration CACHE_TTL = Duration.ofHours(6);
     private static final Duration STALE_THRESHOLD = Duration.ofHours(48);
 
     @Value("${app.eia.api-key:}")
@@ -30,52 +38,70 @@ public class EiaFuelPriceService {
     @Value("${app.eia.enabled:false}")
     private boolean enabled;
 
-    private final org.springframework.web.client.RestTemplate restTemplate;
+    /** Used only by the scheduled background refresh — retries/backoff are free here since nothing waits on them. */
+    private final RestTemplate restTemplate;
+
+    /** Used only by the cold-start path in getDieselPrices() — single attempt, short timeout, never retried. */
+    private final RestTemplate coldStartRestTemplate;
+
     private final ObjectMapper objectMapper;
 
     private volatile DieselPriceResponse cachedResponse;
     private volatile Instant cacheTime;
 
     public EiaFuelPriceService(ObjectMapper objectMapper) {
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout((int) Duration.ofSeconds(5).toMillis());
-        factory.setReadTimeout((int) Duration.ofSeconds(15).toMillis());
-        this.restTemplate = new org.springframework.web.client.RestTemplate(factory);
+        this.restTemplate = buildRestTemplate(Duration.ofSeconds(5), Duration.ofSeconds(15));
+        this.coldStartRestTemplate = buildRestTemplate(Duration.ofSeconds(2), Duration.ofSeconds(3));
         this.objectMapper = objectMapper;
     }
 
+    private static RestTemplate buildRestTemplate(Duration connectTimeout, Duration readTimeout) {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout((int) connectTimeout.toMillis());
+        factory.setReadTimeout((int) readTimeout.toMillis());
+        return new RestTemplate(factory);
+    }
+
+    /** Never blocks on a live fetch once a cache value exists — only a true cold start reaches the network here. */
     public DieselPriceResponse getDieselPrices() {
         if (!enabled || apiKey == null || apiKey.isBlank()) {
             return DieselPriceResponse.unavailable();
-        }
-
-        if (cachedResponse != null && cacheTime != null) {
-            if (Duration.between(cacheTime, Instant.now()).compareTo(CACHE_TTL) < 0) {
-                return cachedResponse;
-            }
-        }
-
-        DieselPriceResponse fresh = fetchWithRetry();
-        if (fresh != null) {
-            cachedResponse = fresh;
-            cacheTime = Instant.now();
-            return fresh;
         }
 
         if (cachedResponse != null) {
             boolean stale = Duration.between(cacheTime, Instant.now()).compareTo(STALE_THRESHOLD) > 0;
             return cachedResponse.withStale(stale);
         }
+
+        DieselPriceResponse fresh = fetchOnce(coldStartRestTemplate, "cold-start");
+        if (fresh != null) {
+            cachedResponse = fresh;
+            cacheTime = Instant.now();
+            return fresh;
+        }
         return DieselPriceResponse.unavailable();
+    }
+
+    /** Runs off the request path — the 3-attempt retry/backoff here costs nothing since no caller is waiting. */
+    @Scheduled(fixedRateString = "${app.eia.refresh-interval-ms:21600000}")
+    public void refreshCache() {
+        if (!enabled || apiKey == null || apiKey.isBlank()) {
+            return;
+        }
+        DieselPriceResponse fresh = fetchWithRetry();
+        if (fresh != null) {
+            cachedResponse = fresh;
+            cacheTime = Instant.now();
+        }
     }
 
     private DieselPriceResponse fetchWithRetry() {
         long delayMs = 1000;
         for (int attempt = 1; attempt <= 3; attempt++) {
             try {
-                return fetch();
+                return fetch(restTemplate);
             } catch (Exception e) {
-                log.error("EIA API fetch failed (attempt {}/3): {} {}", attempt, e.getClass().getSimpleName(), e.getMessage());
+                log.error("EIA API background refresh failed (attempt {}/3): {} {}", attempt, e.getClass().getSimpleName(), e.getMessage());
                 if (attempt < 3) {
                     try {
                         Thread.sleep(delayMs);
@@ -90,7 +116,16 @@ public class EiaFuelPriceService {
         return null;
     }
 
-    private DieselPriceResponse fetch() throws Exception {
+    private DieselPriceResponse fetchOnce(RestTemplate rt, String context) {
+        try {
+            return fetch(rt);
+        } catch (Exception e) {
+            log.error("EIA API {} fetch failed: {} {}", context, e.getClass().getSimpleName(), e.getMessage());
+            return null;
+        }
+    }
+
+    private DieselPriceResponse fetch(RestTemplate rt) throws Exception {
         String url = UriComponentsBuilder.fromHttpUrl(EIA_URL)
                 .queryParam("api_key", apiKey)
                 .queryParam("frequency", "weekly")
@@ -107,7 +142,7 @@ public class EiaFuelPriceService {
                 .build(false)
                 .toUriString();
 
-        String body = restTemplate.getForObject(url, String.class);
+        String body = rt.getForObject(url, String.class);
         return parseResponse(body);
     }
 

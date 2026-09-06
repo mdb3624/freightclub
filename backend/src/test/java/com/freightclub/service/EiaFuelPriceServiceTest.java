@@ -114,8 +114,11 @@ class EiaFuelPriceServiceTest {
     @BeforeEach
     void setUp() {
         service = new EiaFuelPriceService(objectMapper);
-        // Replace the internally-constructed RestTemplate with the mock
+        // Replace both internally-constructed RestTemplates with the same mock — tests
+        // distinguish "which path ran" by checking whether an interaction happened at all,
+        // not by which field it came from.
         ReflectionTestUtils.setField(service, "restTemplate", restTemplate);
+        ReflectionTestUtils.setField(service, "coldStartRestTemplate", restTemplate);
     }
 
     private void enableService(String apiKey) {
@@ -170,16 +173,15 @@ class EiaFuelPriceServiceTest {
         }
     }
 
-    // ── Cache warm ────────────────────────────────────────────────────────────
+    // ── Cache warm / cold start (US-888: sync path never retries) ──────────────
 
     @Nested
-    @DisplayName("getDieselPrices — cache behaviour")
+    @DisplayName("getDieselPrices — never blocks on network once cache exists (US-888 AC1)")
     class Cache {
 
         @Test
-        @DisplayName("returns cached response without hitting API when cache is warm")
-        void shouldReturnCachedPrice_whenCacheIsWarm() {
-            // AC: cache TTL branch — cacheTime within 6h → cachedResponse returned, no HTTP call
+        @DisplayName("returns cached response without hitting API when cache is fresh")
+        void shouldReturnCachedPrice_whenCacheIsFresh() {
             enableService("test-key");
 
             DieselPriceResponse cached = new DieselPriceResponse(
@@ -190,36 +192,51 @@ class EiaFuelPriceServiceTest {
 
             DieselPriceResponse result = service.getDieselPrices();
 
-            assertThat(result).isSameAs(cached);
+            assertThat(result).isEqualTo(cached);
             verifyNoInteractions(restTemplate);
         }
 
         @Test
-        @DisplayName("fetches fresh data and updates cache when cache is expired")
-        void shouldFetchFreshData_whenCacheIsExpired() {
-            // AC: cache TTL branch — cacheTime > 6h ago → fetch() called, cache updated
+        @DisplayName("US-888 AC1: returns existing cache with NO network call even when cache is past the old 6h TTL")
+        void shouldReturnCache_withNoHttpCall_whenCacheIsPastOldTtlButWithin48h() {
+            // This is the core behavior change: the sync path used to re-fetch (with retries) once
+            // cache passed 6h. It no longer does — only the @Scheduled refresh touches the network now.
             enableService("test-key");
 
-            // Seed with a stale cacheTime (7 hours ago)
-            DieselPriceResponse stale = new DieselPriceResponse(
+            DieselPriceResponse existing = new DieselPriceResponse(
                     4.0, 0.0, 3.8, 0.0, 3.7, 0.0, 3.5, 0.0, 4.4, 0.0,
                     "2026-05-18", false, true);
-            ReflectionTestUtils.setField(service, "cachedResponse", stale);
-            ReflectionTestUtils.setField(service, "cacheTime", Instant.now().minusSeconds(7 * 3600));
-
-            when(restTemplate.getForObject(anyString(), eq(String.class))).thenReturn(VALID_EIA_JSON);
+            ReflectionTestUtils.setField(service, "cachedResponse", existing);
+            ReflectionTestUtils.setField(service, "cacheTime", Instant.now().minusSeconds(10 * 3600)); // 10h old
 
             DieselPriceResponse result = service.getDieselPrices();
 
             assertThat(result.available()).isTrue();
-            assertThat(result.period()).isEqualTo("2026-05-25");
-            verify(restTemplate, times(1)).getForObject(anyString(), eq(String.class));
+            assertThat(result.stale()).isFalse(); // within 48h → stale=false
+            verifyNoInteractions(restTemplate);
         }
 
         @Test
-        @DisplayName("fetches fresh data when no cache exists at all")
-        void shouldFetchFreshData_whenCacheIsEmpty() {
-            // AC: cold start — cachedResponse=null → fetch() called
+        @DisplayName("returns stale=true purely from cache age, still with no network call")
+        void shouldReturnStaleTrue_fromCacheAgeAlone_withNoHttpCall() {
+            enableService("test-key");
+
+            DieselPriceResponse existing = new DieselPriceResponse(
+                    4.0, 0.0, 3.8, 0.0, 3.7, 0.0, 3.5, 0.0, 4.4, 0.0,
+                    "2026-05-15", false, true);
+            ReflectionTestUtils.setField(service, "cachedResponse", existing);
+            ReflectionTestUtils.setField(service, "cacheTime", Instant.now().minusSeconds(50 * 3600)); // 50h old
+
+            DieselPriceResponse result = service.getDieselPrices();
+
+            assertThat(result.available()).isTrue();
+            assertThat(result.stale()).isTrue();
+            verifyNoInteractions(restTemplate);
+        }
+
+        @Test
+        @DisplayName("US-888 AC3: cold start makes exactly ONE fetch attempt, no retry loop")
+        void shouldMakeExactlyOneAttempt_onColdStart_success() {
             enableService("test-key");
 
             when(restTemplate.getForObject(anyString(), eq(String.class))).thenReturn(VALID_EIA_JSON);
@@ -232,51 +249,8 @@ class EiaFuelPriceServiceTest {
         }
 
         @Test
-        @DisplayName("returns stale cached response when fetch fails and cache is within 48h")
-        void shouldReturnStaleCache_whenFetchFailsAndCacheWithin48h() {
-            // AC: stale fallback branch — fetch returns null, cache age < 48h → withStale(false)
-            enableService("test-key");
-
-            DieselPriceResponse existing = new DieselPriceResponse(
-                    4.0, 0.0, 3.8, 0.0, 3.7, 0.0, 3.5, 0.0, 4.4, 0.0,
-                    "2026-05-18", false, true);
-            // Cache is 10 hours old — expired (> 6h) but within 48h stale threshold
-            ReflectionTestUtils.setField(service, "cachedResponse", existing);
-            ReflectionTestUtils.setField(service, "cacheTime", Instant.now().minusSeconds(10 * 3600));
-
-            when(restTemplate.getForObject(anyString(), eq(String.class)))
-                    .thenThrow(new RuntimeException("EIA API down"));
-
-            DieselPriceResponse result = service.getDieselPrices();
-
-            assertThat(result.available()).isTrue();
-            assertThat(result.stale()).isFalse(); // within 48h → stale=false
-        }
-
-        @Test
-        @DisplayName("returns stale=true when fetch fails and cache is older than 48h")
-        void shouldReturnStaleTrue_whenFetchFailsAndCacheOlderThan48h() {
-            // AC: stale threshold branch — cache age > 48h → withStale(true)
-            enableService("test-key");
-
-            DieselPriceResponse existing = new DieselPriceResponse(
-                    4.0, 0.0, 3.8, 0.0, 3.7, 0.0, 3.5, 0.0, 4.4, 0.0,
-                    "2026-05-15", false, true);
-            ReflectionTestUtils.setField(service, "cachedResponse", existing);
-            ReflectionTestUtils.setField(service, "cacheTime", Instant.now().minusSeconds(50 * 3600));
-
-            when(restTemplate.getForObject(anyString(), eq(String.class)))
-                    .thenThrow(new RuntimeException("EIA API down"));
-
-            DieselPriceResponse result = service.getDieselPrices();
-
-            assertThat(result.stale()).isTrue();
-        }
-
-        @Test
-        @DisplayName("returns unavailable when fetch fails and no cache exists")
-        void shouldReturnUnavailable_whenFetchFailsAndNoCacheExists() {
-            // AC: no-cache fallback — fetch returns null, cachedResponse=null → unavailable()
+        @DisplayName("US-888 AC3: cold start returns unavailable after exactly ONE failed attempt — no retry/backoff")
+        void shouldMakeExactlyOneAttempt_onColdStart_failure() {
             enableService("test-key");
 
             when(restTemplate.getForObject(anyString(), eq(String.class)))
@@ -285,6 +259,86 @@ class EiaFuelPriceServiceTest {
             DieselPriceResponse result = service.getDieselPrices();
 
             assertThat(result.available()).isFalse();
+            verify(restTemplate, times(1)).getForObject(anyString(), eq(String.class));
+        }
+    }
+
+    // ── Scheduled background refresh (US-888 AC2/AC4) ──────────────────────────
+
+    @Nested
+    @DisplayName("refreshCache — scheduled, off the request path")
+    class ScheduledRefresh {
+
+        @Test
+        @DisplayName("US-888 AC2: successful refresh populates the cache")
+        void shouldPopulateCache_onSuccessfulRefresh() {
+            enableService("test-key");
+            when(restTemplate.getForObject(anyString(), eq(String.class))).thenReturn(VALID_EIA_JSON);
+
+            service.refreshCache();
+
+            DieselPriceResponse cached = (DieselPriceResponse) ReflectionTestUtils.getField(service, "cachedResponse");
+            assertThat(cached).isNotNull();
+            assertThat(cached.available()).isTrue();
+            assertThat(cached.eastPrice()).isEqualTo(4.1);
+        }
+
+        @Test
+        @DisplayName("US-888 AC4: retries up to 3 times with backoff on failure, unchanged from prior behavior")
+        void shouldRetry3Times_onNetworkFailure() {
+            enableService("test-key");
+            when(restTemplate.getForObject(anyString(), eq(String.class)))
+                    .thenThrow(new RuntimeException("timeout"));
+
+            service.refreshCache();
+
+            verify(restTemplate, times(3)).getForObject(anyString(), eq(String.class));
+        }
+
+        @Test
+        @DisplayName("succeeds on second attempt when first attempt throws")
+        void shouldSucceed_onSecondAttemptAfterFirstFailure() {
+            enableService("test-key");
+            when(restTemplate.getForObject(anyString(), eq(String.class)))
+                    .thenThrow(new RuntimeException("transient"))
+                    .thenReturn(VALID_EIA_JSON);
+
+            service.refreshCache();
+
+            verify(restTemplate, times(2)).getForObject(anyString(), eq(String.class));
+            DieselPriceResponse cached = (DieselPriceResponse) ReflectionTestUtils.getField(service, "cachedResponse");
+            assertThat(cached.available()).isTrue();
+        }
+
+        @Test
+        @DisplayName("leaves the existing cache untouched when all 3 attempts fail")
+        void shouldLeaveCacheUntouched_whenAllAttemptsFail() {
+            enableService("test-key");
+            DieselPriceResponse existing = new DieselPriceResponse(
+                    4.0, 0.0, 3.8, 0.0, 3.7, 0.0, 3.5, 0.0, 4.4, 0.0,
+                    "2026-05-18", false, true);
+            ReflectionTestUtils.setField(service, "cachedResponse", existing);
+            Instant originalCacheTime = Instant.now().minusSeconds(3600);
+            ReflectionTestUtils.setField(service, "cacheTime", originalCacheTime);
+
+            when(restTemplate.getForObject(anyString(), eq(String.class)))
+                    .thenThrow(new RuntimeException("EIA API down"));
+
+            service.refreshCache();
+
+            assertThat(ReflectionTestUtils.getField(service, "cachedResponse")).isEqualTo(existing);
+            assertThat(ReflectionTestUtils.getField(service, "cacheTime")).isEqualTo(originalCacheTime);
+        }
+
+        @Test
+        @DisplayName("no-ops (no HTTP call) when disabled")
+        void shouldNoOp_whenDisabled() {
+            ReflectionTestUtils.setField(service, "enabled", false);
+            ReflectionTestUtils.setField(service, "apiKey", "some-key");
+
+            service.refreshCache();
+
+            verifyNoInteractions(restTemplate);
         }
     }
 
@@ -329,12 +383,11 @@ class EiaFuelPriceServiceTest {
         }
 
         @Test
-        @DisplayName("falls back to stale cache when response has missing region")
-        void shouldFallToCache_whenRegionMissingInResponse() {
-            // AC: missing region check — region list empty → IllegalArgumentException → retry → null fetch → stale cache
+        @DisplayName("background refresh leaves prior cache untouched when response has missing region")
+        void shouldLeaveCacheUntouched_whenRegionMissingInResponse() {
+            // AC: missing region check — region list empty → IllegalArgumentException → all 3 retries fail → cache untouched
             enableService("test-key");
 
-            // Prime cache so stale fallback can be exercised
             DieselPriceResponse existing = new DieselPriceResponse(
                     4.0, 0.0, 3.8, 0.0, 3.7, 0.0, 3.5, 0.0, 4.4, 0.0,
                     "2026-05-18", false, true);
@@ -343,10 +396,10 @@ class EiaFuelPriceServiceTest {
 
             when(restTemplate.getForObject(anyString(), eq(String.class))).thenReturn(MISSING_REGION_JSON);
 
-            DieselPriceResponse result = service.getDieselPrices();
+            service.refreshCache();
 
-            // fetch fails after retries → stale cache returned
-            assertThat(result.available()).isTrue();
+            assertThat(ReflectionTestUtils.getField(service, "cachedResponse")).isEqualTo(existing);
+            verify(restTemplate, times(3)).getForObject(anyString(), eq(String.class));
         }
 
         @Test
@@ -374,36 +427,6 @@ class EiaFuelPriceServiceTest {
             DieselPriceResponse result = service.getDieselPrices();
 
             assertThat(result.available()).isFalse();
-        }
-
-        @Test
-        @DisplayName("retries up to 3 times on network failure before giving up")
-        void shouldRetry3Times_onNetworkFailure() {
-            // AC: fetchWithRetry loop — 3 attempts made before returning null
-            enableService("test-key");
-            when(restTemplate.getForObject(anyString(), eq(String.class)))
-                    .thenThrow(new RuntimeException("timeout"));
-
-            DieselPriceResponse result = service.getDieselPrices();
-
-            // 3 attempts total
-            verify(restTemplate, times(3)).getForObject(anyString(), eq(String.class));
-            assertThat(result.available()).isFalse();
-        }
-
-        @Test
-        @DisplayName("succeeds on second attempt when first attempt throws")
-        void shouldSucceed_onSecondAttemptAfterFirstFailure() {
-            // AC: fetchWithRetry partial failure — attempt 1 throws, attempt 2 succeeds
-            enableService("test-key");
-            when(restTemplate.getForObject(anyString(), eq(String.class)))
-                    .thenThrow(new RuntimeException("transient"))
-                    .thenReturn(VALID_EIA_JSON);
-
-            DieselPriceResponse result = service.getDieselPrices();
-
-            assertThat(result.available()).isTrue();
-            verify(restTemplate, times(2)).getForObject(anyString(), eq(String.class));
         }
     }
 }

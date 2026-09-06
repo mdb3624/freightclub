@@ -68,10 +68,10 @@ Before marking a 700-series story (US-701–US-706) as **DONE**, the Librarian M
 
 ## Sign-Off Template
 
-When marking a story "DONE", create a memo file: `docs/project/LIBRARIAN_SIGN_OFF_US{###}.md`
+When marking a story "DONE", append a `## Librarian Sign-Off` section directly to the bottom of the story's own file (`docs/business/stories/US-###.md`) — do not create a separate memo file. This keeps the story's full lifecycle (BA → ARCH → HFD → CODE → REVIEW → sign-off) in one document instead of splitting closeout evidence into a file that can be forgotten or land on a separate branch (see the "Story close-out ships in the same PR as its code" rule above — a second file is exactly the split that rule exists to prevent).
 
 ```markdown
-# Librarian Sign-Off: US-### (Feature Name)
+## Librarian Sign-Off: US-### (Feature Name)
 
 **Date:** YYYY-MM-DD  
 **Reviewer:** [Name]  

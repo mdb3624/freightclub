@@ -1,7 +1,8 @@
 ---
 name: wrap-up
 description: |
-  Analyze the current session's conversation history to extract insights, identify friction patterns, skill gaps, and architectural knowledge. Automatically categorize findings by role (Architect, Librarian, Coder, Reviewer, Business Analyst, UX Designer) and update project rules, documentation, and auto-memory accordingly. Execute file modifications by reading existing content first, batch all changes, and commit atomically. Use this skill at the end of a session to distill learnings into permanent project context. Disable-Model-Invocation: true
+  Analyze the current session's conversation history to extract insights, identify friction patterns, skill gaps, and architectural knowledge. Automatically categorize findings by role (Architect, Librarian, Coder, Reviewer, Business Analyst, UX Designer) and update project rules, documentation, and auto-memory accordingly. Execute file modifications by reading existing content first, batch all changes, and commit atomically. Use this skill at the end of a session to distill learnings into permanent project context.
+disable-model-invocation: true
 ---
 
 # /wrap-up — Session Insights & Automation Refinement

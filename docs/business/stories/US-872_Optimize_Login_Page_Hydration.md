@@ -1,8 +1,8 @@
-# US-756: Optimize Login Page Hydration to <100ms
+# US-872: Optimize Login Page Hydration to <100ms
 
-> ⚠️ **SUPERSEDED 2026-09-01 — see CHG-868.** This ID collided with an unrelated `Story_Map.md` Phase 9 entry ("Document Upload (Insurance, CDL, Medical)") and was never cataloged there. Renumbered as **[US-872: Optimize Login Page Hydration to <100ms](./US-872_Optimize_Login_Page_Hydration.md)** (Jira FREIG-132; old ticket FREIG-52 marked superseded) — that file also flags a likely conflict with the already-shipped US-855 login-modal consolidation. This file is kept for historical reference only — do not implement against it.
+> **Renumbering Note (CHG-868, 2026-09-01):** Recovered from old **US-756** (Jira FREIG-52 → FREIG-132), whose ID collided with an unrelated `Story_Map.md` Phase 9 entry ("Document Upload (Insurance, CDL, Medical)") — this story was never cataloged there. Content preserved verbatim from the original draft except this note.
 
-**Status:** SUPERSEDED — see US-872  
+**Status:** READY_FOR_DESIGN  
 **Priority:** HIGH  
 **Effort:** 13 points (8-12 hours)  
 **Impact:** Critical performance improvement, reduced bounce rate
@@ -95,3 +95,4 @@ As a **user**, I need the login page to load in under 100ms on first visit so th
 - Strategy: Separate minimal app for login, load main app asynchronously post-auth
 - No backend changes required (auth flow unchanged)
 - Team decision: Option 1 (Separate Login App) chosen for lowest risk + guaranteed success
+- ⚠️ **Cross-check before implementation:** `docs/business/stories/US-855_Marketing_Home_Page_And_Login_Modal.md` (DONE) already deleted a standalone `login-app` Vite micro-app that was "never wired into nginx/deployment" and consolidated login into an in-page modal on the main app. This story's "separate login app" strategy may directly conflict with that shipped decision — BA must re-verify scope/relevance before this moves to design, not assume the original 2026-04-era plan still applies.

@@ -1,9 +1,9 @@
-# US-753: Replace Zod Validation with Lightweight Regex for Login
+# US-870: Replace Zod Validation with Lightweight Regex for Login
 
-> ⚠️ **SUPERSEDED 2026-09-01 — see CHG-868.** This ID collided with an unrelated `Story_Map.md` Phase 9 entry ("Rate Benchmarking Tool (Shipper)") and was never cataloged there. Renumbered as **[US-870: Replace Zod Validation with Lightweight Regex for Login](./US-870_Replace_Zod_Validation.md)** (Jira FREIG-130; old ticket FREIG-49 marked superseded). This file is kept for historical reference only — do not implement against it.
+> **Renumbering Note (CHG-868, 2026-09-01):** Recovered from old **US-753** (Jira FREIG-49 → FREIG-130), whose ID collided with an unrelated `Story_Map.md` Phase 9 entry ("Rate Benchmarking Tool (Shipper)") — this story was never cataloged there. Content preserved verbatim from the original draft except this note.
 
 **Phase:** Infrastructure (Performance Optimization)  
-**Status:** SUPERSEDED — see US-870  
+**Status:** DESIGN_APPROVED  
 **Priority:** HIGH  
 **Effort:** 1-2 hours  
 **Impact:** 7% reduction in auth bundle (36-42 KB savings)

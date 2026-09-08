@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/governance/linkedin-series/04-database-security-rls.md",
+                "file": "docs/governance/linkedin-series/05-escalation-scope-control-post.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "04-database-security-rls"
+              "title": "05-escalation-scope-control-post"
             }
           }
         ]
@@ -187,6 +187,11 @@
   },
   "active": "d2114ff5eea9810c",
   "lastOpenFiles": [
+    "docs/governance/linkedin-series/05-escalation-scope-control.md",
+    "docs/governance/linkedin-series/infographics/05-escalation-scope-control.png",
+    "docs/governance/linkedin-series/infographics/Gemini_Generated_Image_urndh3urndh3urnd.png",
+    "docs/governance/linkedin-series/infographics/Unconfirmed 50839.crdownload",
+    "docs/governance/linkedin-series/04-database-security-rls.md",
     "docs/governance/linkedin-series/infographics/The_Privilege_That_Quietly_Defeated_Security.jpg",
     "docs/governance/linkedin-series/infographics/False_Security_in_Software_Pipelines.png",
     "backend/target/surefire-reports/TEST-com.freightclub.storage.StorageServiceProdProfileWiringTest.xml",
@@ -198,7 +203,6 @@
     "backend/target/surefire-reports/TEST-com.freightclub.service.TeamServiceTest.xml",
     "backend/target/surefire-reports/com.freightclub.service.TeamServiceTest.txt",
     "backend/target/surefire-reports/TEST-com.freightclub.service.TeamServiceTest$SetTenantAdminStatus.xml",
-    "backend/target/surefire-reports/com.freightclub.service.TeamServiceTest$SetTenantAdminStatus.txt",
     "backend/target/classes/db/migration/MIGRATION_CHECKLIST.md",
     "docs/business/stories/US-888_EIA_Background_Refresh.md",
     "docs/business/stories/US-887_Restrict_Admin_Self_Registration.md",
@@ -226,12 +230,8 @@
     "backend/target/site/jacoco/jacoco-resources/session.gif",
     "backend/target/site/jacoco/jacoco-resources/report.gif",
     "backend/target/site/jacoco/jacoco-resources/redbar.gif",
-    "backend/target/site/jacoco/jacoco-resources/package.gif",
-    "backend/target/site/jacoco/jacoco-resources/method.gif",
-    "backend/target/site/jacoco/jacoco-resources/group.gif",
     "Inbox/Diane Holmes/Business Plan Analysis.md",
     "docs/hfd/US-880-886_Super_User_Frontend_Retroactive_HFD_Audit.md",
-    "docs/business/stories/US-886_Super_User_Create_User_And_Tenant.md",
-    "docs/business/stories/US-885_Super_User_Scoped_Impersonation.md"
+    "docs/business/stories/US-886_Super_User_Create_User_And_Tenant.md"
   ]
 }

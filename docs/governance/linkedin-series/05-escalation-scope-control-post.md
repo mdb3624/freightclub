@@ -2,6 +2,8 @@
 
 *Short-form LinkedIn post companion to the article: [05-escalation-scope-control.md](05-escalation-scope-control.md).*
 
+*Published: [Stopping One Bad Assumption From Becoming Three](https://www.linkedin.com/pulse/stopping-one-bad-assumption-from-becoming-three-mike-barnes-ihspc)*
+
 ---
 
 Finding a hidden bug mid-task creates a dangerous temptation: "While I'm in this file, I'll just fix this second thing, clean up this package, and rewrite this helper."

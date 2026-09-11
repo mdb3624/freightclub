@@ -275,6 +275,32 @@
                 <version>3.1.2</version>
             </plugin>
             <plugin>
+                <!--
+                  CHG-871: complexity report only — never fails the build itself. Raw
+                  cyclomatic complexity is a poor risk signal on its own (a fully-tested
+                  complex method is safe; an untested one isn't) — the exec-maven-plugin
+                  execution below joins this report with JaCoCo's coverage report and
+                  gates on CRAP score instead. Ruleset is the pre-existing, previously
+                  unwired backend/pmd-ruleset.xml (methodReportLevel=10).
+                -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.26.0</version>
+                <configuration>
+                    <rulesets>
+                        <ruleset>pmd-ruleset.xml</ruleset>
+                    </rulesets>
+                    <linkXRef>false</linkXRef>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>complexity-report</id>
+                        <phase>test</phase>
+                        <goals><goal>pmd</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
@@ -324,6 +350,38 @@
                                     </limits>
                                 </rule>
                             </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!--
+                  CHG-871: CRAP gate — joins the PMD complexity report above with this
+                  JaCoCo coverage report and fails the build only when a method's CRAP
+                  score (cc^2 * (1-coverage)^3 + cc) exceeds crap.threshold (default
+                  100, set from the real baseline scanned 2026-09-09 — every legitimate
+                  method scored <= 58.5). Declared after jacoco so it runs after report
+                  data exists; same-phase plugin executions run in POM declaration
+                  order. Bound to `test`, not `verify`, for the same reason as the
+                  JaCoCo check above.
+                -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>crap-gate</id>
+                        <phase>test</phase>
+                        <goals><goal>java</goal></goals>
+                        <configuration>
+                            <mainClass>com.freightclub.tooling.CrapGate</mainClass>
+                            <classpathScope>test</classpathScope>
+                            <systemProperties>
+                                <systemProperty>
+                                    <key>crap.threshold</key>
+                                    <value>100</value>
+                                </systemProperty>
+                            </systemProperties>
                         </configuration>
                     </execution>
                 </executions>

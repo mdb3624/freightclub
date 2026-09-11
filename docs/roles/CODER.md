@@ -89,6 +89,14 @@ If rejected: LIBRARIAN decides whether to fix inputs or create Change Request (C
 - **Multi-Tenancy:** All queries must filter by `TenantContextHolder.get()`
 - **RLS Enforcement:** Database row-level security must be enforced
 - **Branch Coverage:** CI-enforced floor is 65% branch (JaCoCo `check`, bound to `mvn test`); 80% is the target to ratchet toward, not yet the enforced minimum — see `CLAUDE.md` Core Goal and `docs/roles/REVIEWER.md`'s Testing gate for the authoritative statement of this.
+- **Complexity (CRAP, CHG-871):** CI-enforced via `CrapGate`, bound to `mvn test` (`backend/pom.xml`). Not a flat complexity ceiling — a method's CRAP score (`cc² × (1-coverage)³ + cc`) fails the build above 100. If it fails, don't guess — use the table below:
+
+  | Coverage | Complexity | Action |
+  |---|---|---|
+  | Low (<70%) | Any | **Add tests first.** `(1-coverage)³` dominates the formula — this usually resolves CRAP with no logic change. |
+  | High (≥90%) | Very high (>30) | **Decompose the method.** Existing tests already prove behavior, so extraction is safe. |
+  | High (≥90%) | Moderate (10–30) | No action needed — CRAP will already sit near the complexity floor. |
+  | Any | Fix is out of scope for the current story | **CHG-### escalation** per the Change Request Protocol — never a silent suppression or threshold override. |
 
 ## Phase Lock: Once You Accept, You're Locked
 

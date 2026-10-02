@@ -53,6 +53,15 @@ Full incident narratives behind these rules: `docs/postmortems/TESTING_INCIDENTS
 
 - Backend unit: 80% branch target (CI-enforced floor is 65% branch via JaCoCo `check`, ratchets up over time — see `backend/pom.xml`). Backend integration: ≥70%. Frontend unit: ≥60%. E2E: golden path + 2 critical edge cases per story. No story marked DONE below 70% overall.
 
+## Coverage-Weighted Complexity (CRAP) — CHG-871
+
+Raw cyclomatic complexity alone is a poor risk signal: a fully-tested complex method is safe, an untested one isn't. `backend/pom.xml` enforces **CRAP** (Change Risk Anti-Pattern: `cc² × (1-coverage)³ + cc`) instead of a flat complexity ceiling, for every method PMD's `CyclomaticComplexity` rule flags at complexity ≥ 10 (`backend/pmd-ruleset.xml`).
+
+- **Enforcement:** `CrapGate` (`backend/src/test/java/com/freightclub/tooling/CrapGate.java`) joins `target/pmd.xml` (PMD, report-only) with `target/site/jacoco/jacoco.xml` (JaCoCo) via `exec-maven-plugin`, bound to the `test` phase — same phase as JaCoCo's `check` goal, deliberately not `verify`, for the same reason documented on that plugin block in `pom.xml` (a `verify`-bound gate silently never ran for months; see the coverage-gate history above it).
+- **Threshold:** CRAP > 100 fails the build. Set from the real baseline scanned 2026-09-09 across the whole backend: every legitimate method scored ≤ 58.5; only one method exceeded it (a genuinely untested 46-branch method, CRAP 2162 before it was covered — see CHG-871 in `.claude/learnings.md`).
+- **What CODER does when it fails:** see the decision table in `docs/roles/CODER.md` — low coverage first (usually resolves CRAP on its own, no logic change), decompose only if coverage is already high. Out-of-scope violations are a CHG-###, never a silent suppression.
+- **Class-level PMD aggregate violations** (sum of all method complexities in a class) are reported by PMD but not gated by `CrapGate` — they're a weaker signal (large POJOs with many trivial accessors trip this without any real risk) and are tracked as architecture debt in `.claude/learnings.md` when they corroborate an existing known issue, not chased as a mechanical checklist.
+
 ## No-Lombok in Test Fixtures
 
 Standard Java POJOs (explicit constructors/getters/setters) — no `@Data`/`@Getter`/`@Setter`/`@Builder`. Lombok obscures test data construction and complicates debugging.

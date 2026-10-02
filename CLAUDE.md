@@ -7,7 +7,7 @@ This file provides mandatory operating context for AI interactions within the Re
 Current phase, story status, and sprint state are LIBRARIAN-owned and live in `docs/project/Sprint_Log.md` and `docs/project/Story_Map.md` — read those for what's actually in flight, not a snapshot here.
 
 - **Methodology:** TDD (Red → Green → Refactor)
-- **Core Goal:** 80% Branch Coverage & Cyclomatic Complexity < 10. CI-enforced floor today is 65% branch (JaCoCo `check`, bound to `mvn test` — fixed 2026-07-20, previously dead config bound to `verify`, which CI never runs). 80% remains the target to ratchet toward, not yet the enforced minimum.
+- **Core Goal:** 80% Branch Coverage & low-risk complexity. CI-enforced floor today is 65% branch (JaCoCo `check`, bound to `mvn test` — fixed 2026-07-20, previously dead config bound to `verify`, which CI never runs). 80% remains the target to ratchet toward, not yet the enforced minimum. Complexity is enforced as **CRAP score** (`cc² × (1-coverage)³ + cc`, threshold 100), not a flat "complexity < 10" — a high-complexity method with strong test coverage is not a violation; `CrapGate` (CHG-871, bound to `mvn test`) is the mechanical gate. See `.claude/rules/testing_standards.md`.
 
 ---
 
@@ -52,7 +52,7 @@ Full protocol, ticket template, and worked examples: `.claude/rules/change-reque
 
 ## 🔐 Git Branch Enforcement — Summary
 
-No direct commits to `main`, ever. Three layers: (1) GitHub branch-protection rules on `main` reject direct pushes, (2) a local pre-commit hook, (3) the PR workflow itself giving REVIEWER an audit trail. Full setup script, one-time install steps, and the complete pre-commit checklist: `docs/OPERATIONS.md`.
+No direct commits to `main`, ever. Three layers: (1) GitHub branch-protection rules on `main` reject direct pushes (documented from 2026-06-14, but not actually enabled until 2026-10-02: PR required, `Backend — Build & Test` and `Frontend — Lint, Test & Build` required and up to date, admins included), (2) a local pre-commit hook, (3) the PR workflow itself giving REVIEWER an audit trail. Full setup script, one-time install steps, and the complete pre-commit checklist: `docs/OPERATIONS.md`.
 
 ---
 

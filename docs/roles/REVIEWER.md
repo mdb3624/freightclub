@@ -20,7 +20,7 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 * ❌ **E2E Failure:** `npm run test:e2e` (Playwright) has failures or was skipped.
 * ❌ **Coverage Gap:** Any UI feature shipped without a passing Playwright e2e test for the golden path.
 * ❌ **Table Security:** Any table without an RLS policy.
-* ❌ **Complexity:** Any method with cyclomatic complexity > 10.
+* ❌ **Complexity (CHG-871):** CI already auto-rejects (build failure) any method whose CRAP score (`cc² × (1-coverage)³ + cc`) exceeds 100 via `backend/pom.xml`'s `CrapGate` execution — that's the mechanical floor, not this checklist's bar. A flat "complexity > 10" reading is no longer the rule: a high-complexity method with strong test coverage is not a violation (see `.claude/rules/testing_standards.md`'s CRAP section for why). Treat a `CrapGate` failure in CI the same as a JaCoCo failure — do not manually override it.
 * ❌ **Test Coverage:** CI already auto-rejects (build failure) below 65% branch coverage via `backend/pom.xml`'s JaCoCo `check` goal — that's the mechanical floor, not this checklist's bar. 80% branch remains the target: treat anything in the 65-80% range as a judgment call (approve with a technical-debt note, or request more tests, based on what the story actually touched) rather than an automatic reject.
 * ❌ *(Phase 7+)* GET endpoint without `@Cacheable` or missing `TenantContextHolder.getTenantId()`.
 * ❌ **Platform Integrity Violation (all work, not phase-gated):** Same domain logic implemented in multiple services or classes (duplicate calculations, filters, or transformations). Single source of truth must be enforced.
@@ -81,7 +81,7 @@ Before beginning a code audit, the Reviewer must verify the **Artifact Chain**:
 
 ### 🧪 Testing
 
-* [ ] **Backend:** `mvn test` passes with 0 failures; JaCoCo `check` (CI-enforced floor 65% branch) is green; 80% branch is the target beyond the floor.
+* [ ] **Backend:** `mvn test` passes with 0 failures; JaCoCo `check` (CI-enforced floor 65% branch) is green; 80% branch is the target beyond the floor; `CrapGate` (CHG-871, CRAP threshold 100) is green.
 * [ ] **Frontend Unit:** `npm run test` passes with 0 failures.
 * [ ] **Frontend E2E:** `npm run test:e2e` (Playwright) passes with 0 failures and evidence artifacts.
 * [ ] **Multi-tenant isolation:** Verified Tenant A cannot see Tenant B's cached data.
@@ -129,7 +129,7 @@ This checklist defines the mandatory "Hard Gates" for any code merge, in additio
 * [ ] **PostGIS Usage**: Are geographic queries utilizing indexed spatial functions for performance?
 
 ### 4. Reliability & Testing
-* [ ] **Backend Tests**: `mvn test` passes with 0 failures; JaCoCo `check` (CI-enforced floor 65% branch) is green; 80% branch remains the target beyond the floor.
+* [ ] **Backend Tests**: `mvn test` passes with 0 failures; JaCoCo `check` (CI-enforced floor 65% branch) is green; 80% branch remains the target beyond the floor; `CrapGate` (CHG-871, CRAP threshold 100) is green.
 * [ ] **Backend Integration Tests**: Controller-level `@SpringBootTest` + `MockMvc` tests MUST exist for every new endpoint — unit tests alone are not sufficient evidence. Test class name must follow `*ControllerTest` convention. Evidence: log line `[INFO] Running com.freightclub.controller.*ControllerTest` in Docker tester output.
 * [ ] **Frontend Unit Tests**: `npm run test` passes with 0 failures.
 * [ ] **Frontend E2E Tests**: `npm run test:e2e` passes with 0 failures. Any UI feature touched by the story must have a Playwright golden-path test before sign-off.

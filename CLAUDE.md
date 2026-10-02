@@ -52,7 +52,7 @@ Full protocol, ticket template, and worked examples: `.claude/rules/change-reque
 
 ## 🔐 Git Branch Enforcement — Summary
 
-No direct commits to `main`, ever. Three layers: (1) GitHub branch-protection rules on `main` reject direct pushes, (2) a local pre-commit hook, (3) the PR workflow itself giving REVIEWER an audit trail. Full setup script, one-time install steps, and the complete pre-commit checklist: `docs/OPERATIONS.md`.
+No direct commits to `main`, ever. Three layers: (1) GitHub branch-protection rules on `main` reject direct pushes (documented from 2026-06-14, but not actually enabled until 2026-10-02: PR required, `Backend — Build & Test` and `Frontend — Lint, Test & Build` required and up to date, admins included), (2) a local pre-commit hook, (3) the PR workflow itself giving REVIEWER an audit trail. Full setup script, one-time install steps, and the complete pre-commit checklist: `docs/OPERATIONS.md`.
 
 ---
 
